@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "Bl_Orders_2023 (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "Bl_Orders_2023 (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}
