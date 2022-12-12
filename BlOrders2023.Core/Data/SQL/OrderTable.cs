@@ -26,7 +26,11 @@ namespace BlOrders2023.Core.Data.SQL
 
         public async Task<IEnumerable<Order>> GetAsync() =>
             await _db.Orders
+                .OrderByDescending(order => order.PickupDate)
+                .ThenBy(order => order.OrderID)
+                .Take(100)
                 .Include(order => order.Items)
+                .Include(order => order.Customer)
                 .AsNoTracking()
                 .ToListAsync();
 

@@ -1,0 +1,36 @@
+﻿<Page
+    x:Class="BlOrders2023.Views.OrdersPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:BlOrders2023.Models"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" 
+    mc:Ignorable="d">
+
+    <RelativePanel x:Name="ContentArea">
+        <ComboBox x:Uid="Order_Search"/>
+        <ItemsRepeaterScrollHost RelativePanel.Below="Order_Search" HorizontalAlignment="Stretch">
+            <ScrollViewer>
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.Orders}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:Name="OrderExpander" x:DataType="models:Order">
+                            <Expander ExpandDirection="Down" HorizontalAlignment="Stretch" CornerRadius="20">
+                                <Expander.Header>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="{x:Bind OrderID}" Padding="0,0,20,0" HorizontalAlignment="Left" HorizontalTextAlignment="Left"/>
+                                        <TextBlock Text="{x:Bind Customer.CustomerName}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{x:Bind PickupDate.Date.ToShortDateString()}" HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <Expander.Content>
+                                    <TextBlock Text="TKJEHKJHSDLKJFHAKJBDSF:LKJNLKSFDNA"/>
+                                </Expander.Content>
+                            </Expander>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </ItemsRepeaterScrollHost>
+    </RelativePanel>
+</Page>

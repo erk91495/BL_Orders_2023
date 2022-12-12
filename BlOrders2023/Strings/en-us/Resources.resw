@@ -123,7 +123,7 @@
   <data name="AppDescription" xml:space="preserve">
     <value>BlOrders2023</value>
   </data>
-  <data name="Shell_FillOrders.Content" xml:space="preserve">
+  <data name="Shell_Orders.Content" xml:space="preserve">
     <value>Fill Orders</value>
   </data>
   <data name="Shell_Reports.Content" xml:space="preserve">

@@ -2,9 +2,9 @@
 
 namespace BlOrders2023.ViewModels;
 
-public class ReportsViewModel : ObservableRecipient
+public class ReportsPageViewModel : ObservableRecipient
 {
-    public ReportsViewModel()
+    public ReportsPageViewModel()
     {
     }
 }

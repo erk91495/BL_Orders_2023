@@ -20,17 +20,19 @@
               VerticalAlignment="Top"
               HorizontalAlignment="Left"
               Grid.Row="0"
-              Margin="10,10,0,0">
+              Margin="10,15,0,0">
             <Image Source="/Assets/WindowIcon.ico"
+                   VerticalAlignment="Top"
                    HorizontalAlignment="Left"
                    Width="16"
-                   Height="16" />
+                   Height="30"/>
             <TextBlock x:Name="AppTitleBarText"
                        HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
+                       VerticalAlignment="Top"
                        TextWrapping="NoWrap"
                        Style="{StaticResource CaptionTextBlockStyle}"
-                       Margin="0,0,0,0"/>
+                       Margin="0,0,0,0"
+                       Padding="10,0,0,0"/>
         </StackPanel>
         
         <NavigationView
@@ -51,12 +53,12 @@
                 TODO: Update item icons by updating FontIcon.Glyph properties.
                 https://docs.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font#icon-list
                 -->
-                <NavigationViewItem x:Uid="Shell_FillOrders" helpers:NavigationHelper.NavigateTo="BlOrders2023.ViewModels.FillOrdersViewModel">
+                <NavigationViewItem x:Uid="Shell_Orders" helpers:NavigationHelper.NavigateTo="BlOrders2023.ViewModels.OrdersPageViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Uid="Shell_Reports" helpers:NavigationHelper.NavigateTo="BlOrders2023.ViewModels.ReportsViewModel">
+                <NavigationViewItem x:Uid="Shell_Reports" helpers:NavigationHelper.NavigateTo="BlOrders2023.ViewModels.ReportsPageViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
                     </NavigationViewItem.Icon>
