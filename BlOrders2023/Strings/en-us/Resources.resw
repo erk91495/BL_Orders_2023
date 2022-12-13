@@ -159,4 +159,19 @@
   <data name="Customer_Name.Name" xml:space="preserve">
     <value>Customer_Name</value>
   </data>
+  <data name="OrdersGridColumn_Customer.Header" xml:space="preserve">
+    <value>Customer Name</value>
+  </data>
+  <data name="OrdersGridColumn_OrderNumber.Header" xml:space="preserve">
+    <value>Order #</value>
+  </data>
+  <data name="OrdersGridColumn_OrderStatus.Header" xml:space="preserve">
+    <value>Order Status</value>
+  </data>
+  <data name="OrdersGridColumn_PickupDate.Header" xml:space="preserve">
+    <value>Pickup Date</value>
+  </data>
+  <data name="Order_OrdersGrid.Name" xml:space="preserve">
+    <value>Orders_Grid</value>
+  </data>
 </root>

@@ -37,6 +37,6 @@ public class Order
     public bool? Printed { get; set; }
     public bool? OKToProcess { get; set; }
     public bool? Paid { get; set; }
-
+    public OrderStatus OrderStatus { get; set; }
     public List<OrderItem> Items { get; set; } = new List<OrderItem>();
 }

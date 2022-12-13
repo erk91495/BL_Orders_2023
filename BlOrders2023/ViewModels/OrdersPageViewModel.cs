@@ -5,50 +5,103 @@ using BlOrders2023.Models;
 using System.Linq;
 using BlOrders2023.Core.Data.SQL;
 using BlOrders2023.Core.Data;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using Microsoft.UI.Dispatching;
+using CommunityToolkit.WinUI;
 
 namespace BlOrders2023.ViewModels;
 
 public class OrdersPageViewModel : ObservableRecipient
 {
-    public List<Order> Orders { get; set; } = new List<Order>();
-    public OrdersPageViewModel()
+    private DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+
+    /// <summary>
+    /// Initializes a new instance of the OrderListPageViewModel class.
+    /// </summary>
+    public OrdersPageViewModel() => IsLoading = false;
+
+    /// <summary>
+    /// Gets the unfiltered collection of all orders. 
+    /// </summary>
+    private List<Order> MasterOrdersList { get; } = new List<Order>();
+
+    /// <summary>
+    /// Gets the orders to display.
+    /// </summary>
+    public ObservableCollection<Order> Orders { get; private set; } = new ObservableCollection<Order>();
+
+    private bool _isLoading;
+
+    /// <summary>
+    /// Gets or sets a value that specifies whether orders are being loaded.
+    /// </summary>
+    public bool IsLoading
     {
+        get => _isLoading;
+        set => _isLoading = value;
+    }
+
+    /// <summary>
+    /// Retrieves orders from the data source.
+    /// </summary>
+    public async void LoadOrders()
+    {
+        await dispatcherQueue.EnqueueAsync(() =>
+        {
+            IsLoading = true;
+            Orders.Clear();
+            MasterOrdersList.Clear();
+        });
+
         var builder = new DbContextOptionsBuilder<BLOrdersDBContext>();
-        builder.UseSqlServer(connectionString: "Data Source=.; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true",
+        builder.UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true",
             opts => opts.CommandTimeout(300));
         var cont = new BLOrdersDBContext(builder.Options);
 
-        OrderTable table = new OrderTable(cont);
+        OrderTable table = new(cont);
 
-        var ord = cont.Orders;
-        var i = ord.First<Order>();
+        var orders = await Task.Run(table.GetAsync);
 
-        var task = Task.Run(async () => await table.GetAsync());
-        task.Wait(35000);
-        var result = task.Result;
-        if(result != null)
-            Orders = (List<Order>)result;
+        await dispatcherQueue.EnqueueAsync(() =>
+        {
+            foreach (var order in orders)
+            {
+                Orders.Add(order);
+                MasterOrdersList.Add(order);
+            }
 
-        //if (cont != null)
-        //{
-        //    var item = cont.Inventory.Find(keyValues: 41);
-        //    if (item != null)
-        //    {
-        //        item.QuantityOnHand++;
-        //    }
-        //    try
-        //    {
-        //        cont.SaveChanges();
-        //    }
-        //    catch (DbUpdateConcurrencyException ex)
-        //    {
+            IsLoading = false;
+        });
+    }
 
-        //        //TODO: Notify user on fail
-        //        // Update the values of the entity that failed to save from the store
-        //        //ex.Entries.Single().Reload();
-        //    }
-        //}
+    /// <summary>
+    /// Submits a query to the data source.
+    /// </summary>
+    public async void QueryOrders(string query)
+    {
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            IsLoading = true;
+            Orders.Clear();
+            var builder = new DbContextOptionsBuilder<BLOrdersDBContext>();
+            builder.UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true",
+                opts => opts.CommandTimeout(300));
+            var cont = new BLOrdersDBContext(builder.Options);
 
+            OrderTable table = new(cont);
+
+            var results = await Task.Run(table.GetAsync);
+            //var results = await App.Repository.Orders.GetAsync(query);
+            await dispatcherQueue.EnqueueAsync(() =>
+            {
+                foreach (Order o in results)
+                {
+                    Orders.Add(o);
+                }
+            });
+            IsLoading = false;
+        }
     }
 }

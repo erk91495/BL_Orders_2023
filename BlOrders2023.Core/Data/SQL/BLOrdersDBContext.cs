@@ -11,6 +11,19 @@ public class BLOrdersDBContext : DbContext
 {
     public BLOrdersDBContext(DbContextOptions<BLOrdersDBContext> options) : base(options)
     { }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.
+            Entity<Order>()
+            .Property(e => e.OrderStatus)
+            .HasConversion(
+                v => (int)v,
+                v => (OrderStatus)v);
+
+
+    }
+
     public DbSet<InventoryItem> Inventory { get; set; }
     public DbSet<WholesaleCustomer> Customers { get; set; }
     public DbSet<Order> Orders { get; set; }

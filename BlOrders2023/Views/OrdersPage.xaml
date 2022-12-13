@@ -5,23 +5,112 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:BlOrders2023.Models"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" 
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d">
 
-    <RelativePanel x:Name="ContentArea">
+    <RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
         <ComboBox x:Uid="Order_Search"/>
-        <ItemsRepeaterScrollHost RelativePanel.Below="Order_Search" HorizontalAlignment="Stretch">
-            <ScrollViewer>
-                <ItemsRepeater ItemsSource="{x:Bind ViewModel.Orders}">
+        <controls:DataGrid
+            x:Uid="Order_OrdersGrid"
+            RelativePanel.Below="Order_Search"
+            ItemsSource="{x:Bind ViewModel.Orders, Mode=OneWay}"
+            AutoGenerateColumns="False"
+            SelectionMode="Single"
+            CanUserResizeColumns="False"
+            CanUserReorderColumns="False"
+            CanUserSortColumns="False"
+            IsReadOnly="True"
+            >
+            <controls:DataGrid.Columns>
+                <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderNumber" Width="Auto">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="models:Order">
+                            <TextBlock Text="{x:Bind OrderID}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+                <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_Customer" Width="*">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="models:Order">
+                            <TextBlock Text="{x:Bind Customer.CustomerName}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+                <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_PickupDate" Width="*">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="models:Order">
+                            <TextBlock Text="{x:Bind PickupDate.Date.ToShortDateString()}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
+                <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderStatus" Width="*">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="models:Order">
+                            <TextBlock Text="{x:Bind OrderStatus}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+            </controls:DataGrid.Columns>
+
+        </controls:DataGrid>
+
+        <muxc:ProgressBar
+                            RelativePanel.Below="Orders_Grid"
+                            Margin="0,50,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            IsIndeterminate="True"
+                            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+
+        <!--<ItemsRepeaterScrollHost RelativePanel.Below="Order_Search" HorizontalAlignment="Stretch">
+            <ScrollViewer HorizontalAlignment="Stretch">
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.Orders}" HorizontalAlignment="Stretch">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:Name="OrderExpander" x:DataType="models:Order">
-                            <Expander ExpandDirection="Down" HorizontalAlignment="Stretch" CornerRadius="20">
+                            <Expander x:Name="Expander"  ExpandDirection="Down" HorizontalAlignment="Stretch" CornerRadius="20">
                                 <Expander.Header>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                        <TextBlock Text="{x:Bind OrderID}" Padding="0,0,20,0" HorizontalAlignment="Left" HorizontalTextAlignment="Left"/>
-                                        <TextBlock Text="{x:Bind Customer.CustomerName}" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{x:Bind PickupDate.Date.ToShortDateString()}" HorizontalAlignment="Right"/>
-                                    </StackPanel>
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Column="0" Grid.Row="0" Text="{x:Bind Customer.CustomerName}"/>
+                                        <TextBlock Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3" Text="{x:Bind OrderID}" Padding="0,0,20,0" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="5" Grid.Row="0" Text="{x:Bind PickupDate.Date.ToShortDateString()}"/>
+
+
+                                        <TextBlock Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Grid.RowSpan="2"
+                                                    Text="{x:Bind Memo}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                                    TextWrapping="WrapWholeWords" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
+
+
+                                        <TextBlock Grid.Column="5" Grid.Row="5" Text="{x:Bind PickupTime.ToString()}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
+                                        <TextBlock Grid.Column="1" Grid.Row="6" Text="{x:Bind CustID}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
+                                        <TextBlock Grid.Column="2" Grid.Row="7" Text="{x:Bind PO_Number}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
+                                        <TextBlock Grid.Column="3" Grid.Row="8" Text="{x:Bind TakenBy}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
+                                        <TextBlock Grid.Column="4" Grid.Row="9" Text="{x:Bind Shipping}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
+                                        <TextBlock Grid.Column="0" Grid.Row="10" Text="{x:Bind Frozen}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
+
+                                    </Grid>
                                 </Expander.Header>
                                 <Expander.Content>
                                     <TextBlock Text="TKJEHKJHSDLKJFHAKJBDSF:LKJNLKSFDNA"/>
@@ -31,6 +120,6 @@
                     </ItemsRepeater.ItemTemplate>
                 </ItemsRepeater>
             </ScrollViewer>
-        </ItemsRepeaterScrollHost>
+        </ItemsRepeaterScrollHost>-->
     </RelativePanel>
 </Page>
