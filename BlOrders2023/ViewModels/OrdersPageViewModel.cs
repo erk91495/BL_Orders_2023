@@ -10,6 +10,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace BlOrders2023.ViewModels;
 
@@ -34,13 +36,32 @@ public class OrdersPageViewModel : ObservableRecipient
 
     private bool _isLoading;
 
+    private Order? _selectedOrder;
+
+    /// <summary>
+    /// Gets or sets the selected order.
+    /// </summary>
+    public Order? SelectedOrder
+    {
+        get => _selectedOrder;
+        set
+        {
+            SetProperty(ref _selectedOrder, value);
+            OnPropertyChanged(nameof(SelectedOrder));
+        }
+    }
+
     /// <summary>
     /// Gets or sets a value that specifies whether orders are being loaded.
     /// </summary>
     public bool IsLoading
     {
         get => _isLoading;
-        set => _isLoading = value;
+        set
+        {
+            SetProperty(ref _isLoading, value);
+            OnPropertyChanged(nameof(IsLoading));
+        }
     }
 
     /// <summary>

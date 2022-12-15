@@ -7,119 +7,82 @@
     xmlns:models="using:BlOrders2023.Models"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:vm="using:BlOrders2023.ViewModels"
     mc:Ignorable="d">
 
-    <RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
-        <ComboBox x:Uid="Order_Search"/>
-        <controls:DataGrid
-            x:Uid="Order_OrdersGrid"
-            RelativePanel.Below="Order_Search"
-            ItemsSource="{x:Bind ViewModel.Orders, Mode=OneWay}"
-            AutoGenerateColumns="False"
-            SelectionMode="Single"
-            CanUserResizeColumns="False"
-            CanUserReorderColumns="False"
-            CanUserSortColumns="False"
-            IsReadOnly="True"
-            >
-            <controls:DataGrid.Columns>
-                <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderNumber" Width="Auto">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="models:Order">
-                            <TextBlock Text="{x:Bind OrderID}"/>
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-                <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_Customer" Width="*">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="models:Order">
-                            <TextBlock Text="{x:Bind Customer.CustomerName}"/>
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-                <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_PickupDate" Width="*">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="models:Order">
-                            <TextBlock Text="{x:Bind PickupDate.Date.ToShortDateString()}"/>
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
+    <SplitView
+        x:Name="ListSplitView"
+        DisplayMode="Inline"
+        IsPaneOpen="{x:Bind vm:Converters.IsNotNull(ViewModel.SelectedOrder), Mode=OneWay}"
+        OpenPaneLength="260"
+        PanePlacement="Right"
+        PaneBackground="Transparent">
+        
+        <SplitView.Pane>
+            <StackPanel>
+                <TextBlock Text="TEST TEXT"/>
+            </StackPanel>
+        </SplitView.Pane>
+        
+        <SplitView.Content>
+            <Grid x:Name="ContentArea" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+                <controls:DataGrid
+                    x:Name="Order_OrdersGrid"
+                    x:Uid="Order_OrdersGrid"
+                    BorderThickness="0"
+                    CanUserReorderColumns="False"
+                    CanUserResizeColumns="False"
+                    GridLinesVisibility="None"
+                    IsReadOnly="True"
+                    AutoGenerateColumns="False"
+                    ItemsSource="{x:Bind ViewModel.Orders, Mode=OneWay}"
+                    SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}"
+                    LostFocus="DataGrid_LostFocus">
+                    <controls:DataGrid.Columns>
+                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderNumber" Width="Auto">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate x:DataType="models:Order">
+                                    <TextBlock Text="{x:Bind OrderID}"/>
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_Customer" Width="*">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate x:DataType="models:Order">
+                                    <TextBlock Text="{x:Bind Customer.CustomerName}"/>
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_PickupDate" Width="*">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate x:DataType="models:Order">
+                                    <TextBlock Text="{x:Bind PickupDate.Date.ToShortDateString()}"/>
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
 
-                <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderStatus" Width="*">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="models:Order">
-                            <TextBlock Text="{x:Bind OrderStatus}"/>
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-            </controls:DataGrid.Columns>
+                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderStatus" Width="*">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate x:DataType="models:Order">
+                                    <TextBlock Text="{x:Bind OrderStatus}"/>
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                    </controls:DataGrid.Columns>
 
-        </controls:DataGrid>
+                </controls:DataGrid>
 
-        <muxc:ProgressBar
-                            RelativePanel.Below="Orders_Grid"
-                            Margin="0,50,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Top"
-                            IsIndeterminate="True"
-                            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+                <muxc:ProgressBar
+                    x:Name="progressBar"
+                    RelativePanel.Below="Order_OrdersGrid"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    IsIndeterminate="True"
 
-        <!--<ItemsRepeaterScrollHost RelativePanel.Below="Order_Search" HorizontalAlignment="Stretch">
-            <ScrollViewer HorizontalAlignment="Stretch">
-                <ItemsRepeater ItemsSource="{x:Bind ViewModel.Orders}" HorizontalAlignment="Stretch">
-                    <ItemsRepeater.ItemTemplate>
-                        <DataTemplate x:Name="OrderExpander" x:DataType="models:Order">
-                            <Expander x:Name="Expander"  ExpandDirection="Down" HorizontalAlignment="Stretch" CornerRadius="20">
-                                <Expander.Header>
-                                    <Grid HorizontalAlignment="Stretch">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Grid.Column="0" Grid.Row="0" Text="{x:Bind Customer.CustomerName}"/>
-                                        <TextBlock Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3" Text="{x:Bind OrderID}" Padding="0,0,20,0" HorizontalAlignment="Center"/>
-                                        <TextBlock Grid.Column="5" Grid.Row="0" Text="{x:Bind PickupDate.Date.ToShortDateString()}"/>
+                    Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                    Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+            </Grid>
+        </SplitView.Content>
 
-
-                                        <TextBlock Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Grid.RowSpan="2"
-                                                    Text="{x:Bind Memo}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                                                    TextWrapping="WrapWholeWords" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
-
-
-                                        <TextBlock Grid.Column="5" Grid.Row="5" Text="{x:Bind PickupTime.ToString()}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
-                                        <TextBlock Grid.Column="1" Grid.Row="6" Text="{x:Bind CustID}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
-                                        <TextBlock Grid.Column="2" Grid.Row="7" Text="{x:Bind PO_Number}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
-                                        <TextBlock Grid.Column="3" Grid.Row="8" Text="{x:Bind TakenBy}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
-                                        <TextBlock Grid.Column="4" Grid.Row="9" Text="{x:Bind Shipping}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
-                                        <TextBlock Grid.Column="0" Grid.Row="10" Text="{x:Bind Frozen}" Visibility="{Binding IsExpanded, ElementName=Expander}"/>
-
-                                    </Grid>
-                                </Expander.Header>
-                                <Expander.Content>
-                                    <TextBlock Text="TKJEHKJHSDLKJFHAKJBDSF:LKJNLKSFDNA"/>
-                                </Expander.Content>
-                            </Expander>
-                        </DataTemplate>
-                    </ItemsRepeater.ItemTemplate>
-                </ItemsRepeater>
-            </ScrollViewer>
-        </ItemsRepeaterScrollHost>-->
-    </RelativePanel>
+    </SplitView>
 </Page>

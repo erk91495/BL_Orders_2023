@@ -1,5 +1,4 @@
 ﻿using BlOrders2023.ViewModels;
-
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -28,5 +27,10 @@ public sealed partial class OrdersPage : Page
         {
             ViewModel.LoadOrders();
         }
+    }
+
+    private void DataGrid_LostFocus(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        Order_OrdersGrid.SelectedIndex = -1;
     }
 }

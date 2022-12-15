@@ -172,6 +172,6 @@
     <value>Pickup Date</value>
   </data>
   <data name="Order_OrdersGrid.Name" xml:space="preserve">
-    <value>Orders_Grid</value>
+    <value>Order_OrdersGrid</value>
   </data>
 </root>
