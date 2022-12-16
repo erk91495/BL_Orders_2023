@@ -28,9 +28,4 @@ public sealed partial class OrdersPage : Page
             ViewModel.LoadOrders();
         }
     }
-
-    private void DataGrid_LostFocus(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        Order_OrdersGrid.SelectedIndex = -1;
-    }
 }

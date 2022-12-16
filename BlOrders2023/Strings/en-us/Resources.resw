@@ -124,7 +124,7 @@
     <value>BlOrders2023</value>
   </data>
   <data name="Shell_Orders.Content" xml:space="preserve">
-    <value>Fill Orders</value>
+    <value>Orders</value>
   </data>
   <data name="Shell_Reports.Content" xml:space="preserve">
     <value>Reports</value>
@@ -173,5 +173,14 @@
   </data>
   <data name="Order_OrdersGrid.Name" xml:space="preserve">
     <value>Order_OrdersGrid</value>
+  </data>
+  <data name="Order_OrderNumber.Text" xml:space="preserve">
+    <value>Order #</value>
+  </data>
+  <data name="Order_PONumber.Text" xml:space="preserve">
+    <value>PO:  </value>
+  </data>
+  <data name="Order_ShippingType.Text" xml:space="preserve">
+    <value>Shiping Type: </value>
   </data>
 </root>

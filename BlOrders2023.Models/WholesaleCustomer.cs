@@ -33,5 +33,18 @@ namespace BlOrders2023.Models
         public string? Gift_Grocer { get; set; }
         public bool? SingleProdPerPallet { get; set; }
         public List<Order> orders { get; set; } = new List<Order>();
+
+        public string CityStateZip()
+        {
+            return String.Format("{0} {1}  {2}", City, State, ZipCode);
+        }
+
+        public string PhoneString()
+        {
+            if (PhoneExt != null)
+                return String.Format("{0} x.{1}", Phone, PhoneExt);
+            else
+                return Phone;
+        }
     }
 }

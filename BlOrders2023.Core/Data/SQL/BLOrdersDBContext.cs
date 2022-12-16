@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BlOrders2023.Models;
+using BlOrders2023.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlOrders2023.Core.Data.SQL;
@@ -14,14 +15,16 @@ public class BLOrdersDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.
-            Entity<Order>()
+        modelBuilder.Entity<Order>()
             .Property(e => e.OrderStatus)
             .HasConversion(
                 v => (int)v,
                 v => (OrderStatus)v);
-
-
+        modelBuilder.Entity<Order>()
+            .Property(e => e.Shipping)
+            .HasConversion(
+                v => (byte)v,
+                v => (ShippingType)v);
     }
 
     public DbSet<InventoryItem> Inventory { get; set; }

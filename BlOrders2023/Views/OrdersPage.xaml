@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:BlOrders2023.Models"
+    xmlns:enums="using:BlOrders2023.Models.Enums"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:vm="using:BlOrders2023.ViewModels"
@@ -14,19 +15,75 @@
         x:Name="ListSplitView"
         DisplayMode="Inline"
         IsPaneOpen="{x:Bind vm:Converters.IsNotNull(ViewModel.SelectedOrder), Mode=OneWay}"
-        OpenPaneLength="260"
+        OpenPaneLength="500"
         PanePlacement="Right"
-        PaneBackground="Transparent">
+        PaneBackground="Transparent"
+        HorizontalAlignment="Stretch">
         
         <SplitView.Pane>
-            <StackPanel>
-                <TextBlock Text="TEST TEXT"/>
+            <StackPanel Orientation="Vertical" Padding="10,0,0,10"
+                        Background="{ThemeResource SystemAltMediumLowColor}"
+                        CornerRadius="20,0,0,20">
+                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.CustomerName, Mode=OneWay}"
+                           FontSize="{StaticResource LargeFontSize}"/>
+                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Address, Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"/>
+                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.CityStateZip(), Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"/>
+                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Buyer, Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"/>
+                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.PhoneString(), Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"/>
+                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Fax, Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"/>
+                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Email, Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"/>
+
+
+                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.OrderStatus, Mode=OneWay}"
+                           HorizontalTextAlignment="Center"
+                           HorizontalAlignment="Stretch"
+                           Padding="0,10,0,5"
+                           FontSize="50"
+                           FontWeight="SemiBold"/>
+                
+                <Line X1="5" X2="475" 
+                      Stroke="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
+                      StrokeThickness="2"/>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="Order_OrderNumber" 
+                               FontSize="{StaticResource LargeFontSize}"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.OrderID, Mode=OneWay}" 
+                               FontSize="{StaticResource LargeFontSize}"
+                               FontWeight="SemiBold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="Order_PONumber"  
+                               FontSize="{StaticResource MediumFontSize}" 
+                               Padding="0,0,10,0"
+                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.PO_Number), Mode=OneWay, FallbackValue=Collapsed}"/>
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.PO_Number, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="Order_ShippingType"  
+                               FontSize="{StaticResource MediumFontSize}" 
+                               Padding="0,0,10,0"/>
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"/>
+                </StackPanel>
+
+
             </StackPanel>
         </SplitView.Pane>
         
         <SplitView.Content>
-            <Grid x:Name="ContentArea" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+            <StackPanel x:Name="ContentArea" VerticalAlignment="Stretch"
+                  Padding="0,0,0,20">
                 <controls:DataGrid
+                    CornerRadius="20"
                     x:Name="Order_OrdersGrid"
                     x:Uid="Order_OrdersGrid"
                     BorderThickness="0"
@@ -36,8 +93,7 @@
                     IsReadOnly="True"
                     AutoGenerateColumns="False"
                     ItemsSource="{x:Bind ViewModel.Orders, Mode=OneWay}"
-                    SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}"
-                    LostFocus="DataGrid_LostFocus">
+                    SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}">
                     <controls:DataGrid.Columns>
                         <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderNumber" Width="Auto">
                             <controls:DataGridTemplateColumn.CellTemplate>
@@ -81,7 +137,7 @@
 
                     Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
                     Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
-            </Grid>
+            </StackPanel>
         </SplitView.Content>
 
     </SplitView>

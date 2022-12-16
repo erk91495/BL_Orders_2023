@@ -55,8 +55,8 @@ namespace BlOrders2023.ViewModels
 
         /// <summary>
         /// Returns Visibility.Collapsed if the specified string is null or empty; otherwise, returns Visibility.Visible.
-        /// </summary>
-        public static Visibility CollapsedIfNullOrEmpty(string value) =>
+        /// </summary>s
+        public static Visibility CollapsedIfNullOrEmpty(string? value) =>
             string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
     }
 }

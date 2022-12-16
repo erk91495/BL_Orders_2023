@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.VisualBasic;
 using System.Text.Json.Serialization;
+using BlOrders2023.Models.Enums;
 
 namespace BlOrders2023.Models;
 [Table("tblOrdersWholesale")]
@@ -23,7 +18,7 @@ public class Order
     public string TakenBy { get; set; } = ""; 
     public DateTime PickupDate { get; set; }
     public DateTime PickupTime { get; set; }
-    public byte Shipping { get; set; }
+    public ShippingType Shipping { get; set; }
     public byte Boxed { get; set; }
     public short? Frozen { get; set; }
     public bool? Shipped { get; set; }
