@@ -31,14 +31,23 @@
                 <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.CityStateZip(), Mode=OneWay}"
                            FontSize="{StaticResource MediumFontSize}"/>
                 <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Buyer, Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"/>
+                           FontSize="{StaticResource MediumFontSize}"
+                           Padding="0,20,0,0"/>
                 <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.PhoneString(), Mode=OneWay}"
                            FontSize="{StaticResource MediumFontSize}"/>
                 <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Fax, Mode=OneWay}"
                            FontSize="{StaticResource MediumFontSize}"/>
-                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Email, Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"/>
-
+                <TextBlock>
+                    <TextBlock.Inlines>
+                        <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
+                            <Hyperlink.Inlines>
+                                <Span>
+                                    <Run Text="{x:Bind ViewModel.SelectedOrder.Customer.Email, Mode=OneWay}"></Run>
+                                </Span>
+                            </Hyperlink.Inlines>
+                        </Hyperlink>
+                    </TextBlock.Inlines>
+                </TextBlock>
 
                 <TextBlock Text="{x:Bind ViewModel.SelectedOrder.OrderStatus, Mode=OneWay}"
                            HorizontalTextAlignment="Center"
