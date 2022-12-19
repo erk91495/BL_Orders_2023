@@ -34,9 +34,11 @@
                            FontSize="{StaticResource MediumFontSize}"
                            Padding="0,20,0,0"/>
                 <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.PhoneString(), Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"/>
+                           FontSize="{StaticResource MediumFontSize}"
+                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
                 <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Fax, Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"/>
+                           FontSize="{StaticResource MediumFontSize}"
+                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
                 <TextBlock>
                     <TextBlock.Inlines>
                         <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
@@ -82,6 +84,13 @@
                                Padding="0,0,10,0"/>
                     <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"
                            FontSize="{StaticResource MediumFontSize}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+                    <TextBlock Text="Memo:"/>
+                    <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
+                        <TextBlock TextWrapping="WrapWholeWords" Text="orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam at lacus eu lacus volutpat ultrices. Morbi at mollis dolor. Fusce aliquet aliquet sem, in aliquam urna dignissim et."/>
+                    </Border>
                 </StackPanel>
 
 

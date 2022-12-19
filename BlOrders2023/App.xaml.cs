@@ -1,13 +1,14 @@
 ﻿using BlOrders2023.Activation;
 using BlOrders2023.Contracts.Services;
 using BlOrders2023.Core.Contracts.Services;
+using BlOrders2023.Core.Data;
 using BlOrders2023.Core.Data.SQL;
 using BlOrders2023.Core.Services;
 using BlOrders2023.Helpers;
 using BlOrders2023.Services;
 using BlOrders2023.ViewModels;
 using BlOrders2023.Views;
-
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -40,6 +41,8 @@ public partial class App : Application
 
     public static WindowEx MainWindow { get; } = new MainWindow();
 
+    public static IBLDatabase BLDatabase { get; private set; }
+
     public App()
     {
         InitializeComponent();
@@ -55,7 +58,8 @@ public partial class App : Application
             // Other Activation Handlers
 
             // Database
-            services.AddDbContext<BLOrdersDBContext>();
+            //services.AddDbContext<BLOrdersDBContext>();
+            
 
             // Services
             services.AddTransient<INavigationViewService, NavigationViewService>();
@@ -90,6 +94,11 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
+        var dbOptions = new DbContextOptionsBuilder<BLOrdersDBContext>().UseSqlServer(
+        connectionString: "Data Source=.; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
+        App.BLDatabase = new SqlBLOrdersDatabase(dbOptions);
+
         await App.GetService<IActivationService>().ActivateAsync(args);
+
     }
 }

@@ -76,13 +76,7 @@ public class OrdersPageViewModel : ObservableRecipient
             MasterOrdersList.Clear();
         });
 
-        var builder = new DbContextOptionsBuilder<BLOrdersDBContext>();
-        builder.UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true",
-            opts => opts.CommandTimeout(300));
-        var cont = new BLOrdersDBContext(builder.Options);
-
-        OrderTable table = new(cont);
-
+        IOrderTable table = App.BLDatabase.Orders;
         var orders = await Task.Run(table.GetAsync);
 
         await dispatcherQueue.EnqueueAsync(() =>
@@ -106,12 +100,8 @@ public class OrdersPageViewModel : ObservableRecipient
         {
             IsLoading = true;
             Orders.Clear();
-            var builder = new DbContextOptionsBuilder<BLOrdersDBContext>();
-            builder.UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true",
-                opts => opts.CommandTimeout(300));
-            var cont = new BLOrdersDBContext(builder.Options);
-
-            OrderTable table = new(cont);
+      
+            IOrderTable table = App.BLDatabase.Orders;
 
             var results = await Task.Run(table.GetAsync);
             //var results = await App.Repository.Orders.GetAsync(query);

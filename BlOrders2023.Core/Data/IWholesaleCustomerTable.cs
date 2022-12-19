@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlOrders2023.Core.Data
 {
-    internal interface IWholesaleCustomerTable
+    public interface IWholesaleCustomerTable
     {
         Task<IEnumerable<WholesaleCustomer>> GetAsync();
         Task<IEnumerable<WholesaleCustomer>> GetAsync(int orderID);
