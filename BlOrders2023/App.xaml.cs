@@ -46,7 +46,6 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
         UseContentRoot(AppContext.BaseDirectory).
@@ -76,6 +75,8 @@ public partial class App : Application
             services.AddTransient<OrdersPage>();
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
+            services.AddTransient<OrderDetailsPage>();
+            services.AddTransient<OrderDetailsPageViewModel>();
 
             // Configuration
         }).

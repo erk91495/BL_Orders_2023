@@ -1,4 +1,7 @@
-﻿using BlOrders2023.ViewModels;
+﻿using BlOrders2023.Contracts.Services;
+using BlOrders2023.Helpers;
+using BlOrders2023.Services;
+using BlOrders2023.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -54,5 +57,16 @@ public sealed partial class OrdersPage : Page
         //    }
         //    await EmailManager.ShowComposeNewEmailAsync(emailMessage);
         //}
+    }
+
+    private void Order_OrdersGrid_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+    {
+        var navService = App.GetService<INavigationService>();
+        navService.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.SelectedOrder);
+    }
+
+    private void Order_OrdersGrid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+    {
+
     }
 }

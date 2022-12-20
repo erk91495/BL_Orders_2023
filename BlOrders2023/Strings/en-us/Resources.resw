@@ -183,4 +183,13 @@
   <data name="Order_ShippingType.Text" xml:space="preserve">
     <value>Shiping Type: </value>
   </data>
+  <data name="OrdersGridColumn_ItemID.Header" xml:space="preserve">
+    <value>Item #</value>
+  </data>
+  <data name="OrdersGridColumn_ItemQuanRcvd.Header" xml:space="preserve">
+    <value>Qunatity Received</value>
+  </data>
+  <data name="OrdersGridColumn_ItemQuantity.Header" xml:space="preserve">
+    <value>Quantity Ordered</value>
+  </data>
 </root>

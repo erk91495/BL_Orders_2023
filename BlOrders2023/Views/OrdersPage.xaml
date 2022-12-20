@@ -21,80 +21,138 @@
         HorizontalAlignment="Stretch">
         
         <SplitView.Pane>
-            <StackPanel Orientation="Vertical" Padding="10,0,0,10"
-                        Background="{ThemeResource SystemAltMediumLowColor}"
-                        CornerRadius="20,0,0,20">
-                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.CustomerName, Mode=OneWay}"
-                           FontSize="{StaticResource LargeFontSize}"/>
-                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Address, Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"/>
-                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.CityStateZip(), Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"/>
-                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Buyer, Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"
-                           Padding="0,20,0,0"/>
-                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.PhoneString(), Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"
-                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
-                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Fax, Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"
-                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
-                <TextBlock>
-                    <TextBlock.Inlines>
-                        <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
-                            <Hyperlink.Inlines>
-                                <Span>
-                                    <Run Text="{x:Bind ViewModel.SelectedOrder.Customer.Email, Mode=OneWay}"></Run>
-                                </Span>
-                            </Hyperlink.Inlines>
-                        </Hyperlink>
-                    </TextBlock.Inlines>
-                </TextBlock>
-
-                <TextBlock Text="{x:Bind ViewModel.SelectedOrder.OrderStatus, Mode=OneWay}"
-                           HorizontalTextAlignment="Center"
-                           HorizontalAlignment="Stretch"
-                           Padding="0,10,0,5"
-                           FontSize="50"
-                           FontWeight="SemiBold"/>
-                
-                <Line X1="5" X2="475" 
-                      Stroke="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
-                      StrokeThickness="2"/>
-                
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Uid="Order_OrderNumber" 
-                               FontSize="{StaticResource LargeFontSize}"
-                               FontWeight="SemiBold"/>
-                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.OrderID, Mode=OneWay}" 
-                               FontSize="{StaticResource LargeFontSize}"
-                               FontWeight="SemiBold"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Uid="Order_PONumber"  
-                               FontSize="{StaticResource MediumFontSize}" 
-                               Padding="0,0,10,0"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.PO_Number), Mode=OneWay, FallbackValue=Collapsed}"/>
-                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.PO_Number, Mode=OneWay}"
+            <RelativePanel Padding="10,0,0,10"
+                  Background="{ThemeResource SystemAltMediumLowColor}"
+                  CornerRadius="20,0,0,20"
+                  >
+                <StackPanel x:Name="CustomerStack"
+                            Orientation="Vertical" 
+                            VerticalAlignment="Stretch" 
+                            RelativePanel.AlignTopWithPanel="True"
+                            Padding="0,0,0,10">
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.CustomerName, Mode=OneWay}"
+                               FontSize="{StaticResource LargeFontSize}"/>
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Address, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Uid="Order_ShippingType"  
-                               FontSize="{StaticResource MediumFontSize}" 
-                               Padding="0,0,10,0"/>
-                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"
-                           FontSize="{StaticResource MediumFontSize}"/>
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.CityStateZip(), Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"/>
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Buyer, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"
+                               Padding="0,20,0,0"/>
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.PhoneString(), Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"
+                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Fax, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"
+                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                    <TextBlock>
+                        <TextBlock.Inlines>
+                            <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
+                                <Hyperlink.Inlines>
+                                    <Span>
+                                        <Run Text="{x:Bind ViewModel.SelectedOrder.Customer.Email, Mode=OneWay}"></Run>
+                                    </Span>
+                                </Hyperlink.Inlines>
+                            </Hyperlink>
+                        </TextBlock.Inlines>
+                    </TextBlock>
+
+                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.OrderStatus, Mode=OneWay}"
+                               HorizontalTextAlignment="Center"
+                               HorizontalAlignment="Stretch"
+                               Padding="0,10,0,5"
+                               FontSize="50"
+                               FontWeight="SemiBold"/>
+                
+                    <Line X1="5" X2="475" 
+                          Stroke="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
+                          StrokeThickness="2"/>
+                
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Uid="Order_OrderNumber" 
+                                   FontSize="{StaticResource LargeFontSize}"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="{x:Bind ViewModel.SelectedOrder.OrderID, Mode=OneWay}" 
+                                   FontSize="{StaticResource LargeFontSize}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Uid="Order_PONumber"  
+                                   FontSize="{StaticResource MediumFontSize}" 
+                                   Padding="0,0,10,0"
+                                   Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.PO_Number), Mode=OneWay, FallbackValue=Collapsed}"/>
+                        <TextBlock Text="{x:Bind ViewModel.SelectedOrder.PO_Number, Mode=OneWay}"
+                                   FontSize="{StaticResource MediumFontSize}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Uid="Order_ShippingType"  
+                                   FontSize="{StaticResource MediumFontSize}" 
+                                   Padding="0,0,10,0"/>
+                        <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"/>
+                    </StackPanel>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+                <controls:DataGrid x:Name="ItemsGrid"
+                                   RelativePanel.Below="CustomerStack"                        
+                                   IsReadOnly="True"
+                                   ItemsSource="{x:Bind ViewModel.SelectedOrder.Items, Mode=OneWay}"
+                                   AutoGenerateColumns="False"
+                                   VerticalScrollBarVisibility="Auto">
+                    <controls:DataGrid.Columns>
+                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_ItemID" Width="*">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate x:DataType="models:OrderItem">
+                                    <TextBlock Text="{x:Bind ProductID}"/>
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                        
+                        
+                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_ItemQuantity" Width="*">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate x:DataType="models:OrderItem">
+                                    <TextBlock Text="{x:Bind Quantity}"/>
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_ItemQuanRcvd" Width="*">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate x:DataType="models:OrderItem">
+                                    <TextBlock Text="{x:Bind QuanRcvd}"/>
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                    </controls:DataGrid.Columns>
+                </controls:DataGrid>
+
+                <StackPanel x:Name="MemoStack" Orientation="Vertical"  RelativePanel.Above="ButtonStack" RelativePanel.Below="ItemsGrid"
+                            VerticalAlignment="Bottom">
                     <TextBlock Text="Memo:"/>
                     <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
-                        <TextBlock TextWrapping="WrapWholeWords" Text="orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam at lacus eu lacus volutpat ultrices. Morbi at mollis dolor. Fusce aliquet aliquet sem, in aliquam urna dignissim et."/>
+                        <TextBlock Text="lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam at lacus eu lacus volutpat ultrices. Morbi at mollis dolor. Fusce aliquet aliquet sem, in aliquam urna dignissim et."
+                                   TextWrapping="WrapWholeWords"
+                                   Margin="5,5,5,5"/>
                     </Border>
                 </StackPanel>
 
+                <Grid x:Name="ButtonStack" 
+                      RelativePanel.AlignBottomWithPanel="True" 
+                      RelativePanel.AlignRightWithPanel="True" 
+                      RelativePanel.AlignLeftWithPanel="True"
+                      Padding="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Uid="Order_BtnFillOrder" Content="Fill Order" Grid.Column="0" HorizontalAlignment="Center"/>
+                    <Button x:Uid="Order_BtnEditOrder" Content="Edit Order" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <Button x:Uid="Order_BtnFillOrder" Content="Test Button" Grid.Column="2" HorizontalAlignment="Center"/>
+                </Grid>
 
-            </StackPanel>
+
+            </RelativePanel>
         </SplitView.Pane>
         
         <SplitView.Content>
@@ -111,7 +169,10 @@
                     IsReadOnly="True"
                     AutoGenerateColumns="False"
                     ItemsSource="{x:Bind ViewModel.Orders, Mode=OneWay}"
-                    SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}">
+                    SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}"
+                    DoubleTapped="Order_OrdersGrid_DoubleTapped"
+                    RightTapped="Order_OrdersGrid_RightTapped"
+                    VerticalScrollBarVisibility="Visible">
                     <controls:DataGrid.Columns>
                         <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderNumber" Width="Auto">
                             <controls:DataGridTemplateColumn.CellTemplate>

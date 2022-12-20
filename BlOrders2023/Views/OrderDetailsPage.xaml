@@ -1,0 +1,88 @@
+<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+<!-- Licensed under the MIT License. -->
+
+<Page
+    x:Class="BlOrders2023.Views.OrderDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BlOrders2023.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:BlOrders2023.ViewModels"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <RelativePanel>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.CustomerName, Mode=OneWay}"
+                               FontSize="{StaticResource LargeFontSize}"/>
+            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.Address, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"/>
+            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.CityStateZip(), Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"/>
+            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.Buyer, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"
+                               Padding="0,20,0,0"/>
+            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.PhoneString(), Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"
+                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.CurrentOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.Fax, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"
+                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.CurrentOrder.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+            <TextBlock>
+                <TextBlock.Inlines>
+                    <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
+                        <Hyperlink.Inlines>
+                            <Span>
+                                <Run Text="{x:Bind ViewModel.CurrentOrder.Customer.Email, Mode=OneWay}"></Run>
+                            </Span>
+                        </Hyperlink.Inlines>
+                    </Hyperlink>
+                </TextBlock.Inlines>
+            </TextBlock>
+
+            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.OrderStatus, Mode=OneWay}"
+                               HorizontalTextAlignment="Center"
+                               HorizontalAlignment="Stretch"
+                               Padding="0,10,0,5"
+                               FontSize="50"
+                               FontWeight="SemiBold"/>
+
+            <Line X1="5" X2="475" 
+                          Stroke="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
+                          StrokeThickness="2"/>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Uid="Order_OrderNumber" 
+                                   FontSize="{StaticResource LargeFontSize}"
+                                   FontWeight="SemiBold"/>
+                <TextBlock Text="{x:Bind ViewModel.CurrentOrder.OrderID, Mode=OneWay}" 
+                                   FontSize="{StaticResource LargeFontSize}"
+                                   FontWeight="SemiBold"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Uid="Order_PONumber"  
+                                   FontSize="{StaticResource MediumFontSize}" 
+                                   Padding="0,0,10,0"
+                                   Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.CurrentOrder.PO_Number), Mode=OneWay, FallbackValue=Collapsed}"/>
+                <TextBlock Text="{x:Bind ViewModel.CurrentOrder.PO_Number, Mode=OneWay}"
+                                   FontSize="{StaticResource MediumFontSize}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Uid="Order_ShippingType"  
+                                   FontSize="{StaticResource MediumFontSize}" 
+                                   Padding="0,0,10,0"/>
+                <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Shipping, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+            <TextBlock Text="Memo:"/>
+            <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
+                <TextBlock Text="lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam at lacus eu lacus volutpat ultrices. Morbi at mollis dolor. Fusce aliquet aliquet sem, in aliquam urna dignissim et."
+                                   TextWrapping="WrapWholeWords"
+                                   Margin="5,5,5,5"/>
+            </Border>
+        </StackPanel>
+    </RelativePanel>
+</Page>

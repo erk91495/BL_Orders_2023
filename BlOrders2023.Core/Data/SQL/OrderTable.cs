@@ -2,10 +2,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 
 namespace BlOrders2023.Core.Data.SQL
 {
@@ -28,16 +26,21 @@ namespace BlOrders2023.Core.Data.SQL
             await _db.Orders
                 .OrderByDescending(order => order.PickupDate)
                 .ThenBy(order => order.OrderID)
-                .Take(5)
+                //.Take(50)
                 .Include(order => order.Items)
                 .Include(order => order.Customer)
+                .Include(order => order.ShippingItems)
                 .AsNoTracking()
                 .ToListAsync();
 
-        public Task<IEnumerable<Order>> GetAsync(int orderID)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<IEnumerable<Order>> GetAsync(int orderID) =>
+            await _db.Orders
+                .Include(order => order.Items)
+                .Include(order => order.Customer)
+                .Include(order => order.ShippingItems)
+                .Where(order => order.OrderID == orderID)
+                .ToListAsync();
+
 
         public Task<Order> UpsertAsync(Order order)
         {

@@ -27,7 +27,7 @@ public class OrdersPageViewModel : ObservableRecipient
     /// <summary>
     /// Gets the unfiltered collection of all orders. 
     /// </summary>
-    private List<Order> MasterOrdersList { get; } = new List<Order>();
+    private List<Order> MasterOrdersList { get; set; } = new List<Order>();
 
     /// <summary>
     /// Gets the orders to display.
@@ -81,12 +81,11 @@ public class OrdersPageViewModel : ObservableRecipient
 
         await dispatcherQueue.EnqueueAsync(() =>
         {
-            foreach (var order in orders)
+            foreach (var order in orders) 
             {
                 Orders.Add(order);
                 MasterOrdersList.Add(order);
             }
-
             IsLoading = false;
         });
     }
