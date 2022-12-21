@@ -7,6 +7,7 @@
     xmlns:models="using:BlOrders2023.Models"
     xmlns:enums="using:BlOrders2023.Models.Enums"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:vm="using:BlOrders2023.ViewModels"
     mc:Ignorable="d">
@@ -24,8 +25,7 @@
         <SplitView.Pane>
             <RelativePanel Padding="10,0,0,10"
                   Background="{ThemeResource SystemAltMediumLowColor}"
-                  CornerRadius="20,0,0,20"
-                  >
+                  CornerRadius="20,0,0,20">
                 <StackPanel x:Name="CustomerStack"
                             Orientation="Vertical" 
                             VerticalAlignment="Stretch" 
@@ -94,36 +94,20 @@
                     </StackPanel>
                 </StackPanel>
 
-                <controls:DataGrid x:Name="ItemsGrid"
-                                   RelativePanel.Below="CustomerStack"                        
-                                   IsReadOnly="True"
-                                   ItemsSource="{x:Bind ViewModel.SelectedOrder.Items, Mode=OneWay}"
-                                   AutoGenerateColumns="False"
-                                   VerticalScrollBarVisibility="Auto">
-                    <controls:DataGrid.Columns>
-                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_ItemID" Width="*">
-                            <controls:DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate x:DataType="models:OrderItem">
-                                    <TextBlock Text="{x:Bind ProductID}"/>
-                                </DataTemplate>
-                            </controls:DataGridTemplateColumn.CellTemplate>
-                        </controls:DataGridTemplateColumn>
-                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_ItemQuantity" Width="*">
-                            <controls:DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate x:DataType="models:OrderItem">
-                                    <TextBlock Text="{x:Bind Quantity}"/>
-                                </DataTemplate>
-                            </controls:DataGridTemplateColumn.CellTemplate>
-                        </controls:DataGridTemplateColumn>
-                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_ItemQuanRcvd" Width="*">
-                            <controls:DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate x:DataType="models:OrderItem">
-                                    <TextBlock Text="{x:Bind QuanRcvd}"/>
-                                </DataTemplate>
-                            </controls:DataGridTemplateColumn.CellTemplate>
-                        </controls:DataGridTemplateColumn>
-                    </controls:DataGrid.Columns>
-                </controls:DataGrid>
+                <sf:SfDataGrid x:Name="ItemsGrid"
+                               ItemsSource="{x:Bind ViewModel.SelectedOrder.Items, Mode=OneWay}"
+                               AutoGenerateColumns="False"
+                               IsReadOnly="True"
+                               RelativePanel.Below="CustomerStack"
+                               ColumnWidthMode="Auto">
+                    <sf:SfDataGrid.Columns>
+                        <sf:GridTextColumn HeaderText="Product #" MappingName="ProductID"/>
+                        <sf:GridTextColumn HeaderText="Ordered" MappingName="Quantity"/>
+                        <sf:GridTextColumn HeaderText="Received" MappingName="QuanRcvd"/>
+                    </sf:SfDataGrid.Columns>
+                </sf:SfDataGrid>
+
+
                 <StackPanel x:Name="MemoStack" Orientation="Vertical"  RelativePanel.Above="ButtonStack" RelativePanel.Below="ItemsGrid"
                             VerticalAlignment="Bottom">
                     <TextBlock Text="Memo:"/>
@@ -156,54 +140,25 @@
         <SplitView.Content>
             <StackPanel x:Name="ContentArea" VerticalAlignment="Stretch"
                   Padding="0,0,0,20">
-                <controls:DataGrid
-                    CornerRadius="20"
-                    x:Name="Order_OrdersGrid"
-                    x:Uid="Order_OrdersGrid"
-                    BorderThickness="0"
-                    CanUserReorderColumns="False"
-                    CanUserResizeColumns="False"
-                    GridLinesVisibility="None"
-                    IsReadOnly="True"
-                    AutoGenerateColumns="False"
-                    ItemsSource="{x:Bind ViewModel.Orders, Mode=OneWay}"
-                    SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}"
-                    DoubleTapped="Order_OrdersGrid_DoubleTapped"
-                    RightTapped="Order_OrdersGrid_RightTapped"
-                    VerticalScrollBarVisibility="Visible">
-                    <controls:DataGrid.Columns>
-                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderNumber" Width="Auto">
-                            <controls:DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate x:DataType="models:Order">
-                                    <TextBlock Text="{x:Bind OrderID}"/>
-                                </DataTemplate>
-                            </controls:DataGridTemplateColumn.CellTemplate>
-                        </controls:DataGridTemplateColumn>
-                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_Customer" Width="*">
-                            <controls:DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate x:DataType="models:Order">
-                                    <TextBlock Text="{x:Bind Customer.CustomerName}"/>
-                                </DataTemplate>
-                            </controls:DataGridTemplateColumn.CellTemplate>
-                        </controls:DataGridTemplateColumn>
-                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_PickupDate" Width="*">
-                            <controls:DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate x:DataType="models:Order">
-                                    <TextBlock Text="{x:Bind PickupDate.Date.ToShortDateString()}"/>
-                                </DataTemplate>
-                            </controls:DataGridTemplateColumn.CellTemplate>
-                        </controls:DataGridTemplateColumn>
-
-                        <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_OrderStatus" Width="*">
-                            <controls:DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate x:DataType="models:Order">
-                                    <TextBlock Text="{x:Bind OrderStatus}"/>
-                                </DataTemplate>
-                            </controls:DataGridTemplateColumn.CellTemplate>
-                        </controls:DataGridTemplateColumn>
-                    </controls:DataGrid.Columns>
-                </controls:DataGrid>
-
+                <ScrollViewer>
+                    <sf:SfDataGrid
+                        ItemsSource="{x:Bind ViewModel.Orders}"
+                        AutoGenerateColumns="False"
+                        ColumnWidthMode="AutoLastColumnFill"
+                        SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}"
+                        CanBeScrollAnchor="True"
+                        IsReadOnly="True"
+                        AllowResizingColumns="True"
+                        GridLinesVisibility="None">
+                    
+                        <sf:SfDataGrid.Columns>
+                            <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>
+                            <sf:GridTextColumn HeaderText="CustomerName" MappingName="Customer.CustomerName" TextWrapping="NoWrap" ColumnWidthMode="Star"/>
+                            <sf:GridDateColumn HeaderText="Pickup Date" MappingName="PickupDate"/>
+                            <sf:GridTextColumn HeaderText="Order Status" MappingName="OrderStatus"/>
+                        </sf:SfDataGrid.Columns>
+                    </sf:SfDataGrid>
+                </ScrollViewer>
                 <muxc:ProgressBar
                     x:Name="progressBar"
                     RelativePanel.Below="Order_OrdersGrid"
