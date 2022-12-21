@@ -18,12 +18,12 @@ public class InventoryItem
         get; set;
     }
 
-    [Required(AllowEmptyStrings=false)]
-    [MaxLength(30)]
-    public string ProductName
-    {
-        get; set;
-    }
+    //[Required(AllowEmptyStrings=false)]
+    //[MaxLength(30)]
+    //public string? ProductName
+    //{
+    //    get; set;
+    //}
 
     [Required]
     [ConcurrencyCheck]

@@ -45,6 +45,7 @@ public partial class App : Application
 
     public App()
     {
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Nzg3NTIwQDMyMzAyZTM0MmUzMGE2NjYvbzZCUWdiMmhSKzY4YnJoMEFFRll3TkdhdkhjZmFNM3pNakZjYnc9");
         InitializeComponent();
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().

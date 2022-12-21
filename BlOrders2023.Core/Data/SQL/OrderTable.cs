@@ -26,7 +26,7 @@ namespace BlOrders2023.Core.Data.SQL
             await _db.Orders
                 .OrderByDescending(order => order.PickupDate)
                 .ThenBy(order => order.OrderID)
-                //.Take(50)
+                .Take(50)
                 .Include(order => order.Items)
                 .Include(order => order.Customer)
                 .Include(order => order.ShippingItems)

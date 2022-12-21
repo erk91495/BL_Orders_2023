@@ -11,6 +11,7 @@
     xmlns:vm="using:BlOrders2023.ViewModels"
     mc:Ignorable="d">
 
+
     <SplitView
         x:Name="ListSplitView"
         DisplayMode="Inline"
@@ -107,8 +108,6 @@
                                 </DataTemplate>
                             </controls:DataGridTemplateColumn.CellTemplate>
                         </controls:DataGridTemplateColumn>
-                        
-                        
                         <controls:DataGridTemplateColumn x:Uid="OrdersGridColumn_ItemQuantity" Width="*">
                             <controls:DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="models:OrderItem">
@@ -125,7 +124,6 @@
                         </controls:DataGridTemplateColumn>
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
-
                 <StackPanel x:Name="MemoStack" Orientation="Vertical"  RelativePanel.Above="ButtonStack" RelativePanel.Below="ItemsGrid"
                             VerticalAlignment="Bottom">
                     <TextBlock Text="Memo:"/>
@@ -154,7 +152,7 @@
 
             </RelativePanel>
         </SplitView.Pane>
-        
+
         <SplitView.Content>
             <StackPanel x:Name="ContentArea" VerticalAlignment="Stretch"
                   Padding="0,0,0,20">
@@ -204,7 +202,6 @@
                             </controls:DataGridTemplateColumn.CellTemplate>
                         </controls:DataGridTemplateColumn>
                     </controls:DataGrid.Columns>
-
                 </controls:DataGrid>
 
                 <muxc:ProgressBar
