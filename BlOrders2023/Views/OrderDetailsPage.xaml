@@ -79,7 +79,7 @@
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
             <TextBlock Text="Memo:"/>
             <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
-                <TextBlock Text="lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam at lacus eu lacus volutpat ultrices. Morbi at mollis dolor. Fusce aliquet aliquet sem, in aliquam urna dignissim et."
+                <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Memo}"
                                    TextWrapping="WrapWholeWords"
                                    Margin="5,5,5,5"/>
             </Border>

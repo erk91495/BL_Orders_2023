@@ -12,6 +12,14 @@
     xmlns:vm="using:BlOrders2023.ViewModels"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <MenuFlyout x:Key="DataGridContextMenu">
+            <MenuFlyoutItem
+                Click="MenuFlyoutViewDetails_Click"
+                Icon="OpenFile"
+                Text="View details" />
+        </MenuFlyout>
+    </Page.Resources>
 
     <SplitView
         x:Name="ListSplitView"
@@ -167,8 +175,10 @@
                                AllowResizingColumns="True"
                                GridLinesVisibility="None"
                                DoubleTapped="Order_OrdersGrid_DoubleTapped"
+                               RightTapped="OrdersGrid_RightTapped"
                                RelativePanel.AlignRightWithPanel="True"
-                               RelativePanel.AlignLeftWithPanel="True">
+                               RelativePanel.AlignLeftWithPanel="True"
+                               ContextFlyout="{StaticResource DataGridContextMenu}">
 
                     <sf:SfDataGrid.Columns>
                         <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>
