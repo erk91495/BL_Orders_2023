@@ -17,11 +17,11 @@
         x:Name="ListSplitView"
         DisplayMode="Inline"
         IsPaneOpen="{x:Bind vm:Converters.IsNotNull(ViewModel.SelectedOrder), Mode=OneWay}"
-        OpenPaneLength="500"
+        OpenPaneLength="750"
         PanePlacement="Right"
         PaneBackground="Transparent"
         HorizontalAlignment="Stretch">
-        
+
         <SplitView.Pane>
             <RelativePanel Padding="10,0,0,10"
                   Background="{ThemeResource SystemAltMediumLowColor}"
@@ -30,6 +30,7 @@
                             Orientation="Vertical" 
                             VerticalAlignment="Stretch" 
                             RelativePanel.AlignTopWithPanel="True"
+                            HorizontalAlignment="Stretch"
                             Padding="0,0,0,10">
                     <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.CustomerName, Mode=OneWay}"
                                FontSize="{StaticResource LargeFontSize}"/>
@@ -40,12 +41,25 @@
                     <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Buyer, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
                                Padding="0,20,0,0"/>
-                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.PhoneString(), Mode=OneWay}"
-                               FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
-                    <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Fax, Mode=OneWay}"
-                               FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="P:" 
+                                   FontSize="{StaticResource MediumFontSize}"
+                                   Padding="0,0,5,0"
+                                   Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                        <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.PhoneString(), Mode=OneWay}"
+                                   Padding="0,0,5,0"
+                                   FontSize="{StaticResource MediumFontSize}"
+                                   Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="F:"
+                                   FontSize="{StaticResource MediumFontSize}"
+                                   Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                        <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Fax, Mode=OneWay}"
+                                   FontSize="{StaticResource MediumFontSize}"
+                                   Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                    </StackPanel>
                     <TextBlock>
                         <TextBlock.Inlines>
                             <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
@@ -64,11 +78,11 @@
                                Padding="0,10,0,5"
                                FontSize="50"
                                FontWeight="SemiBold"/>
-                
-                    <Line X1="5" X2="475" 
+
+                    <Line X1="5" X2="750" 
                           Stroke="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
                           StrokeThickness="2"/>
-                
+
                     <StackPanel Orientation="Horizontal">
                         <TextBlock x:Uid="Order_OrderNumber" 
                                    FontSize="{StaticResource LargeFontSize}"
@@ -99,9 +113,12 @@
                                AutoGenerateColumns="False"
                                IsReadOnly="True"
                                RelativePanel.Below="CustomerStack"
-                               ColumnWidthMode="Auto">
+                               ColumnWidthMode="Auto"
+                               AllowResizingColumns="True"
+                               RelativePanel.AlignHorizontalCenterWithPanel="True">
                     <sf:SfDataGrid.Columns>
-                        <sf:GridTextColumn HeaderText="Product #" MappingName="ProductID"/>
+                        <sf:GridTextColumn HeaderText="Product  #" MappingName="ProductID"/>
+                        <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" TextWrapping="WrapWholeWords"/>
                         <sf:GridTextColumn HeaderText="Ordered" MappingName="Quantity"/>
                         <sf:GridTextColumn HeaderText="Received" MappingName="QuanRcvd"/>
                     </sf:SfDataGrid.Columns>
@@ -138,37 +155,41 @@
         </SplitView.Pane>
 
         <SplitView.Content>
-            <StackPanel x:Name="ContentArea" VerticalAlignment="Stretch"
+            <RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch"
                   Padding="0,0,0,20">
-                <ScrollViewer>
-                    <sf:SfDataGrid
-                        ItemsSource="{x:Bind ViewModel.Orders}"
-                        AutoGenerateColumns="False"
-                        ColumnWidthMode="AutoLastColumnFill"
-                        SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}"
-                        CanBeScrollAnchor="True"
-                        IsReadOnly="True"
-                        AllowResizingColumns="True"
-                        GridLinesVisibility="None">
-                    
-                        <sf:SfDataGrid.Columns>
-                            <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>
-                            <sf:GridTextColumn HeaderText="CustomerName" MappingName="Customer.CustomerName" TextWrapping="NoWrap" ColumnWidthMode="Star"/>
-                            <sf:GridDateColumn HeaderText="Pickup Date" MappingName="PickupDate"/>
-                            <sf:GridTextColumn HeaderText="Order Status" MappingName="OrderStatus"/>
-                        </sf:SfDataGrid.Columns>
-                    </sf:SfDataGrid>
-                </ScrollViewer>
+                <sf:SfDataGrid x:Name="OrdersGrid"
+                               ItemsSource="{x:Bind ViewModel.Orders}"
+                               AutoGenerateColumns="False"
+                               ColumnWidthMode="AutoLastColumnFill"
+                               SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}"
+                               CanBeScrollAnchor="True"
+                               IsReadOnly="True"
+                               AllowResizingColumns="True"
+                               GridLinesVisibility="None"
+                               DoubleTapped="Order_OrdersGrid_DoubleTapped"
+                               RelativePanel.AlignRightWithPanel="True"
+                               RelativePanel.AlignLeftWithPanel="True">
+
+                    <sf:SfDataGrid.Columns>
+                        <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>
+                        <sf:GridTextColumn HeaderText="CustomerName" MappingName="Customer.CustomerName" TextWrapping="NoWrap" ColumnWidthMode="Star"/>
+                        <sf:GridDateColumn HeaderText="Pickup Date" MappingName="PickupDate"/>
+                        <sf:GridTextColumn HeaderText="Order Status" MappingName="OrderStatus"/>
+                    </sf:SfDataGrid.Columns>
+                </sf:SfDataGrid>
+
                 <muxc:ProgressBar
                     x:Name="progressBar"
-                    RelativePanel.Below="Order_OrdersGrid"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Top"
+                    Height="10"
                     IsIndeterminate="True"
-
                     Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
-                    Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
-            </StackPanel>
+                    Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                    RelativePanel.AlignRightWithPanel="True"
+                    RelativePanel.AlignLeftWithPanel="True"
+                    RelativePanel.Below="OrdersGrid"/>
+            </RelativePanel>
         </SplitView.Content>
 
     </SplitView>

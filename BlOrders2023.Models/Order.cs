@@ -14,7 +14,7 @@ public class Order
 
     [ForeignKey("CustID")]
     [JsonIgnore]
-    public WholesaleCustomer Customer { get; set; } = new WholesaleCustomer();
+    public virtual WholesaleCustomer Customer { get; set; } = new WholesaleCustomer();
     public string TakenBy { get; set; } = ""; 
     public DateTime PickupDate { get; set; }
     public DateTime PickupTime { get; set; }
@@ -33,6 +33,6 @@ public class Order
     public bool? OKToProcess { get; set; }
     public bool? Paid { get; set; }
     public OrderStatus OrderStatus { get; set; }
-    public List<OrderItem> Items { get; set; } = new();
-    public List<ShippingItem> ShippingItems { get; set; } = new();
+    public virtual List<OrderItem> Items { get; set; } = new();
+    public virtual List<ShippingItem> ShippingItems { get; set; } = new();
 }

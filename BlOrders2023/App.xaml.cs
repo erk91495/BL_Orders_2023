@@ -9,6 +9,7 @@ using BlOrders2023.Services;
 using BlOrders2023.ViewModels;
 using BlOrders2023.Views;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Proxies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -96,8 +97,10 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
-        var dbOptions = new DbContextOptionsBuilder<BLOrdersDBContext>().UseSqlServer(
-        connectionString: "Data Source=.; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
+        var dbOptions = new DbContextOptionsBuilder<BLOrdersDBContext>();
+            dbOptions
+            .UseLazyLoadingProxies()
+            .UseSqlServer(connectionString: "Data Source=.; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
         App.BLDatabase = new SqlBLOrdersDatabase(dbOptions);
 
         await App.GetService<IActivationService>().ActivateAsync(args);

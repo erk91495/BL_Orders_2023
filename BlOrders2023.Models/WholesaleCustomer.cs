@@ -32,7 +32,7 @@ namespace BlOrders2023.Models
         [Column("Gift-Grocer")]
         public string? Gift_Grocer { get; set; }
         public bool? SingleProdPerPallet { get; set; }
-        public List<Order> orders { get; set; } = new List<Order>();
+        public virtual List<Order> orders { get; set; } = new List<Order>();
 
         public string CityStateZip()
         {

@@ -15,7 +15,7 @@ namespace BlOrders2023.Models
         public int OrderID { get; set; }
         [ForeignKey("OrderID")]
         [JsonIgnore]
-        public Order order { get; set; } = new Order();
+        public virtual Order order { get; set; } = new Order();
         public int ProductID { get; set; }
         public float Quantity { get; set; }
         public float? PickWeight { get; set; }
@@ -26,6 +26,7 @@ namespace BlOrders2023.Models
         [Key]
         public int OrdDtl_ID { get; set; }
         public DateTime? ProdEntryDate { get; set; }
-
+        [ForeignKey("ProductID")]
+        public virtual Product Product { get; set; }
     }
 }

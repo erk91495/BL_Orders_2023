@@ -17,7 +17,7 @@ namespace BlOrders2023.Models
         public int OrderID { get; set; }
         [ForeignKey("OrderID")]
         [JsonIgnore]
-        public Order order { get; set; } = new Order();
+        public virtual Order order { get; set; } = new Order();
         [Column("ProdID")]
         public int ProductID { get; set; }
         public int? QuanRcvd { get; set; }
@@ -29,6 +29,8 @@ namespace BlOrders2023.Models
         DateTime? ScanDate { get; set; }
         [Column("PackageDate")]
         DateTime? PackDate { get; set; }
+        [ForeignKey("ProductID")]
+        public virtual Product Product { get; set; }
 
     }
 }
