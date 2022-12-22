@@ -12,8 +12,23 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <RelativePanel>
-        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+    <RelativePanel Margin="10,10,10,0">
+        <StackPanel x:Name="OrderNumber"
+                    Orientation="Horizontal" 
+                    RelativePanel.AlignTopWithPanel="True"
+                    RelativePanel.AlignLeftWithPanel="True">
+            <TextBlock x:Uid="Order_OrderNumber" 
+                                   FontSize="{StaticResource LargeFontSize}"
+                                   FontWeight="SemiBold"/>
+            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.OrderID, Mode=OneWay}" 
+                                   FontSize="{StaticResource LargeFontSize}"
+                                   FontWeight="SemiBold"/>
+        </StackPanel>
+
+        <StackPanel x:Name="CustomerInfo"  
+                    Orientation="Vertical"
+                    RelativePanel.Below="OrderNumber"
+                    RelativePanel.AlignLeftWithPanel="True">
             <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.CustomerName, Mode=OneWay}"
                                FontSize="{StaticResource LargeFontSize}"/>
             <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.Address, Mode=OneWay}"
@@ -41,6 +56,9 @@
                 </TextBlock.Inlines>
             </TextBlock>
 
+        </StackPanel>
+        <StackPanel Orientation="Vertical"
+                    RelativePanel.AlignRightWithPanel="True">
             <TextBlock Text="{x:Bind ViewModel.CurrentOrder.OrderStatus, Mode=OneWay}"
                                HorizontalTextAlignment="Center"
                                HorizontalAlignment="Stretch"
@@ -48,18 +66,6 @@
                                FontSize="50"
                                FontWeight="SemiBold"/>
 
-            <Line X1="5" X2="475" 
-                          Stroke="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
-                          StrokeThickness="2"/>
-
-            <StackPanel Orientation="Horizontal">
-                <TextBlock x:Uid="Order_OrderNumber" 
-                                   FontSize="{StaticResource LargeFontSize}"
-                                   FontWeight="SemiBold"/>
-                <TextBlock Text="{x:Bind ViewModel.CurrentOrder.OrderID, Mode=OneWay}" 
-                                   FontSize="{StaticResource LargeFontSize}"
-                                   FontWeight="SemiBold"/>
-            </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock x:Uid="Order_PONumber"  
                                    FontSize="{StaticResource MediumFontSize}" 
@@ -76,7 +82,8 @@
                                FontSize="{StaticResource MediumFontSize}"/>
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+        <StackPanel Orientation="Vertical" 
+                    RelativePanel.Below="CustomerInfo">
             <TextBlock Text="Memo:"/>
             <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
                 <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Memo}"
