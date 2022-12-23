@@ -15,25 +15,10 @@ namespace BlOrders2023.Models
         public int ProductID { get; set; }
         public string? ProductName { get; set; }
         public short? NoPerCase { get; set; }
-        [Column("Price_(Co-Op)")]
-
-        public decimal CoOpPrice { get; set; }
         [Column("Price_(Wholesale)")]
         public decimal WholesalePrice { get; set; }
-        [Column("Price_(Distributor)")]
-        public decimal DistributorPrice { get; set; }
-        [Column("Price_(Retail)")]
-        public decimal RetailPrice { get; set; }
-        [Column("Price_(DutchCreek)")]
-        public decimal DutchCreekPrice { get; set; }
-        [Column("Price_(Other)")]
-        public decimal OtherPrice { get; set; }
-        [Column("Price_(PerCan)")]
-        public decimal PerCanPrice { get; set; }
-
         public string? UPCCode { get; set; }
         public string? KPCCode { get; set; }
-
         public bool? FixedWeight { get; set; }
         public string? Packaged { get; set; }
         public string? Package { get; set; }

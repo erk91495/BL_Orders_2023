@@ -5,9 +5,11 @@ using BlOrders2023.Core.Data;
 using BlOrders2023.Core.Data.SQL;
 using BlOrders2023.Core.Services;
 using BlOrders2023.Helpers;
+using BlOrders2023.Models;
 using BlOrders2023.Services;
 using BlOrders2023.ViewModels;
 using BlOrders2023.Views;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Proxies;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,6 +65,7 @@ public partial class App : Application
             
 
             // Services
+            services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
 
             services.AddSingleton<IActivationService, ActivationService>();
@@ -79,8 +82,11 @@ public partial class App : Application
             services.AddTransient<ShellViewModel>();
             services.AddTransient<OrderDetailsPage>();
             services.AddTransient<OrderDetailsPageViewModel>();
+            services.AddTransient<ProductsPage>();
+            services.AddTransient<ProductsPageViewModel>();
 
             // Configuration
+            services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
         Build();
 

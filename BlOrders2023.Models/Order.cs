@@ -20,7 +20,7 @@ public class Order
     public DateTime PickupTime { get; set; }
     public ShippingType Shipping { get; set; }
     public byte Boxed { get; set; }
-    public short? Frozen { get; set; }
+    public bool? Frozen { get; set; }
     public bool? Shipped { get; set; }
     public short? Filled { get; set; }
     public short? FilledBox { get; set; }

@@ -17,6 +17,7 @@ public class PageService : IPageService
         Configure<OrdersPageViewModel, OrdersPage>();
         Configure<ReportsPageViewModel, ReportsPage>();
         Configure<OrderDetailsPageViewModel, OrderDetailsPage>();
+        Configure<ProductsPageViewModel, ProductsPage>();
     }
 
     public Type GetPageType(string key)

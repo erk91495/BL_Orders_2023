@@ -25,10 +25,18 @@ public class BLOrdersDBContext : DbContext
             .HasConversion(
                 v => (byte)v,
                 v => (ShippingType)v);
+        modelBuilder.Entity<Order>()
+            .Property(e => e.Frozen)
+            .HasConversion(
+            v => (bool)v ? (short)-1 : (short)0,
+            v => (bool)(v == -1)
+            );
     }
 
     public DbSet<InventoryItem> Inventory { get; set; }
     public DbSet<WholesaleCustomer> Customers { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+
+    public DbSet<Product> Products { get; set; }
 }

@@ -47,5 +47,13 @@ namespace BlOrders2023.Views
         {
 
         }
+
+        private void ProductEntryBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                ViewModel.UpdateProductSuggestions(sender.Text);
+            }
+        }
     }
 }

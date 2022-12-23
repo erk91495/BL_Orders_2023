@@ -24,5 +24,7 @@ namespace BlOrders2023.Core.Data.SQL
         public IOrderTable Orders => new OrderTable(new BLOrdersDBContext(_dbOptions));
 
         public IWholesaleCustomerTable Customers => new WholesaleCustomerTable(new BLOrdersDBContext(_dbOptions));
+
+        public IProductsTable Products => new ProductsTable(new BLOrdersDBContext(_dbOptions));
     }
 }

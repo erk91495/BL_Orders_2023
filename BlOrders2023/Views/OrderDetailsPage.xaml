@@ -9,6 +9,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:BlOrders2023.ViewModels"
+    xmlns:enums="using:BlOrders2023.Models.Enums"
+    xmlns:models="using:BlOrders2023.Models"
+    xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -57,7 +60,8 @@
             </TextBlock>
 
         </StackPanel>
-        <StackPanel Orientation="Vertical"
+        <StackPanel x:Name="OrderInfo"
+                    Orientation="Vertical"
                     RelativePanel.AlignRightWithPanel="True">
             <TextBlock Text="{x:Bind ViewModel.CurrentOrder.OrderStatus, Mode=OneWay}"
                                HorizontalTextAlignment="Center"
@@ -82,14 +86,97 @@
                                FontSize="{StaticResource MediumFontSize}"/>
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Vertical" 
-                    RelativePanel.Below="CustomerInfo">
-            <TextBlock Text="Memo:"/>
-            <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
-                <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Memo}"
-                                   TextWrapping="WrapWholeWords"
-                                   Margin="5,5,5,5"/>
-            </Border>
-        </StackPanel>
+        <RelativePanel x:Name="UserInputRanel"
+                       RelativePanel.Below="CustomerInfo">
+            <Grid x:Name="OrderInputGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="0"
+                            Grid.Column="0">
+                    <TextBlock Text="Taken By:"/>
+                    <TextBox Text="{x:Bind ViewModel.CurrentOrder.TakenBy, Mode=TwoWay}"/>
+                </StackPanel>
+                <!-- TODO: Incoperate Pickup Time as well -->
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="0"
+                            Grid.Column="1">
+                    <TextBlock Text="Pickup/Delivery Date:"/>
+                    <TextBox Text="{x:Bind ViewModel.CurrentOrder.PickupDate, Mode=TwoWay}"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="0"
+                            Grid.Column="2">
+                    <TextBlock Text="PO #"/>
+                    <TextBox Text="{x:Bind ViewModel.CurrentOrder.PO_Number, Mode=TwoWay}"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="1"
+                            Grid.Column="0">
+                    <TextBlock Text="Frozen:"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.CurrentOrder.Frozen}"/>
+                </StackPanel>
+                <RadioButtons Header="Shipping Type"
+                              
+                              Grid.Row="1"
+                              Grid.Column="1">
+
+                </RadioButtons>
+            </Grid>
+            <StackPanel x:Name="MemoStack"
+                        Orientation="Vertical" 
+                        RelativePanel.RightOf="OrderInputGrid">
+                <TextBlock Text="Memo:"/>
+                <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
+                    <TextBox Text="{x:Bind ViewModel.CurrentOrder.Memo, Mode=TwoWay}"
+                             TextWrapping="Wrap"
+                             Margin="5,5,5,5"
+                             MinHeight="75"
+                             MinWidth="500"
+                             AcceptsReturn="True"/>
+                </Border>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="Memo Total: $"/>
+                    <TextBox Text="{x:Bind ViewModel.CurrentOrder.Memo_Totl, Mode=TwoWay}"/>
+                </StackPanel>
+            </StackPanel>
+        </RelativePanel>
+        <sf:SfDataGrid x:Name="OrderedItems"
+                       ItemsSource="{x:Bind ViewModel.CurrentOrder.Items, Mode=TwoWay}"
+                       RelativePanel.Below="ProductEntryBox"
+                       GridLinesVisibility="Both"
+                       IsReadOnly="False"
+                       AutoGenerateColumns="False">
+            <sf:SfDataGrid.Columns>
+                <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
+                <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True"/>
+                <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity"/>
+                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd"/>
+            </sf:SfDataGrid.Columns>
+        </sf:SfDataGrid>
+
+        <AutoSuggestBox x:Name="ProductEntryBox"
+                        RelativePanel.Below="UserInputRanel"
+                        ItemsSource="{x:Bind ViewModel.AllProducts, Mode=OneWay}"
+                        MinWidth="500"
+                        TextChanged="ProductEntryBox_TextChanged">
+            <AutoSuggestBox.ItemTemplate>
+                <DataTemplate x:DataType="models:Product">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Text="{x:Bind ProductID}"/>
+                        <TextBox Text="{x:Bind ProductName}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </AutoSuggestBox.ItemTemplate>
+            
+        </AutoSuggestBox>
     </RelativePanel>
 </Page>

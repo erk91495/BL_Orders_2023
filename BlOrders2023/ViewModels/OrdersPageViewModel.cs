@@ -103,7 +103,6 @@ public class OrdersPageViewModel : ObservableRecipient
             IOrderTable table = App.BLDatabase.Orders;
 
             var results = await Task.Run(table.GetAsync);
-            //var results = await App.Repository.Orders.GetAsync(query);
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 foreach (Order o in results)

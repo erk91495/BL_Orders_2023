@@ -23,6 +23,7 @@
 //  ---------------------------------------------------------------------------------
 
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Data;
 
 namespace BlOrders2023.ViewModels
 {
@@ -58,5 +59,8 @@ namespace BlOrders2023.ViewModels
         /// </summary>s
         public static Visibility CollapsedIfNullOrEmpty(string? value) =>
             string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
+
+
+
     }
 }

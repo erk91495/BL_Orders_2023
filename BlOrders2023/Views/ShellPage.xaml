@@ -44,7 +44,8 @@
             ExpandedModeThresholdWidth="1280"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             PaneDisplayMode="Top"
-            Grid.Row="1">
+            Grid.Row="1"
+            >
             <NavigationView.MenuItems>
                 <!--
                 TODO: Update item titles by updating <x:Uid>.Content entries in Strings/en-us/Resources.resw.
