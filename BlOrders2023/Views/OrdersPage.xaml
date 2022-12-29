@@ -82,6 +82,7 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="F:"
                                        FontSize="{StaticResource MediumFontSize}"
+                                       Padding="0,0,5,0"
                                        Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
                             <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Fax, Mode=OneWay}"
                                        FontSize="{StaticResource MediumFontSize}"

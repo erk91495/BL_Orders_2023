@@ -156,11 +156,13 @@ public class OrdersPageViewModel : ObservableRecipient
             }
             else
             {
-                if (order.OrderID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase) ||
-                    order.CustID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase) ||
-                    order.Customer.CustomerName.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
-                    //order.PO_Number.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
-                    )
+                bool nullableChecks = order.PO_Number == null ? false : order.PO_Number.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase);
+                nullableChecks = nullableChecks || (order.Customer.Phone_2 == null ? false : order.Customer.Phone_2.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase));
+                if (order.OrderID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
+                    || order.CustID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
+                    || order.Customer.CustomerName.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
+                    || order.Customer.Phone.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
+                    || nullableChecks)
                 {
                     return true;
                 }
