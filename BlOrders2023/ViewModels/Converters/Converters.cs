@@ -24,6 +24,7 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
+using System;
 
 namespace BlOrders2023.ViewModels
 {
@@ -60,7 +61,25 @@ namespace BlOrders2023.ViewModels
         public static Visibility CollapsedIfNullOrEmpty(string? value) =>
             string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
 
+    }
 
+    public class DecimalToDoubleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value != null && value is decimal)
+            {
+                return Decimal.ToDouble((decimal)value);
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return System.Convert.ToDecimal(value);
+        }
     }
 }
