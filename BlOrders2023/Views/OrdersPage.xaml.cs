@@ -24,8 +24,14 @@ public sealed partial class OrdersPage : Page
     {
         ViewModel = App.GetService<OrdersPageViewModel>();
         InitializeComponent();
+        this.Loaded += OrdersPageLoaded;
+        
     }
 
+    private void OrdersPageLoaded(object sender, RoutedEventArgs e)
+    {
+        //OrdersGrid.View.Filter = ViewModel.FilterOrders;
+    }
 
     /// <summary>
     /// Retrieve the list of orders when the user navigates to the page. 
@@ -61,7 +67,8 @@ public sealed partial class OrdersPage : Page
         //    }
         //    await EmailManager.ShowComposeNewEmailAsync(emailMessage);
         //}
-        await Launcher.LaunchUriAsync( new Uri(String.Format("mailto:{0}", ViewModel.SelectedOrder.Customer.Email)));
+        if(ViewModel.SelectedOrder != null)
+            await Launcher.LaunchUriAsync( new Uri(String.Format("mailto:{0}", ViewModel.SelectedOrder.Customer.Email)));
     }
 
     private void Order_OrdersGrid_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)=>
@@ -74,4 +81,14 @@ public sealed partial class OrdersPage : Page
 
     private void MenuFlyoutViewDetails_Click(object sender, RoutedEventArgs e) =>
         Frame.Navigate(typeof(OrderDetailsPage), ViewModel.SelectedOrder);
+
+    private void SeachBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        TextBox? textBox = sender as TextBox;
+        if (textBox != null && textBox.Text != null)
+        {
+            ViewModel.FilterText = textBox.Text;
+            OrdersGrid.View.RefreshFilter(); 
+        }
+    }
 }

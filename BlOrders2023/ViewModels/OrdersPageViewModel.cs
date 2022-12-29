@@ -2,6 +2,7 @@
 using BlOrders2023.Core.Services;
 using Microsoft.EntityFrameworkCore;
 using BlOrders2023.Models;
+using System;
 using System.Linq;
 using BlOrders2023.Core.Data.SQL;
 using BlOrders2023.Core.Data;
@@ -12,31 +13,19 @@ using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 
 namespace BlOrders2023.ViewModels;
 
 public class OrdersPageViewModel : ObservableRecipient
 {
-    private DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
+    #region Properties
     /// <summary>
-    /// Initializes a new instance of the OrderListPageViewModel class.
+    /// Gets or sets the text for the Orders filter
     /// </summary>
-    public OrdersPageViewModel() => IsLoading = false;
-
-    /// <summary>
-    /// Gets the unfiltered collection of all orders. 
-    /// </summary>
-    private List<Order> MasterOrdersList { get; set; } = new List<Order>();
-
-    /// <summary>
-    /// Gets the orders to display.
-    /// </summary>
-    public ObservableCollection<Order> Orders { get; private set; } = new ObservableCollection<Order>();
-
-    private bool _isLoading;
-
-    private Order? _selectedOrder;
+    public string FilterText { get; set; } = "";
 
     /// <summary>
     /// Gets or sets the selected order.
@@ -63,7 +52,46 @@ public class OrdersPageViewModel : ObservableRecipient
             OnPropertyChanged(nameof(IsLoading));
         }
     }
+    #endregion Properties
 
+    #region Fields
+    /// <summary>
+    /// True if the page is loading orders from the database
+    /// </summary>
+    private bool _isLoading;
+
+    /// <summary>
+    /// Gets the currently selected order from the datagrid 
+    /// </summary>
+    private Order? _selectedOrder;
+
+    /// <summary>
+    /// Gets the unfiltered collection of all orders. 
+    /// </summary>
+    private List<Order> MasterOrdersList { get; set; } = new List<Order>();
+
+    /// <summary>
+    /// Gets the orders to display.
+    /// </summary>
+    public ObservableCollection<Order> Orders { get; private set; } = new ObservableCollection<Order>();
+
+    /// <summary>
+    /// Gets the dispatcher Queue for the current thread
+    /// </summary>
+    private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    #endregion Fields
+
+    #region Constructors
+    /// <summary>
+    /// Initializes a new instance of the OrderListPageViewModel class.
+    /// </summary>
+    public OrdersPageViewModel() => IsLoading = false;
+
+    #endregion Constructors
+
+    #region Methods
+
+    #region Queries
     /// <summary>
     /// Retrieves orders from the data source.
     /// </summary>
@@ -81,7 +109,7 @@ public class OrdersPageViewModel : ObservableRecipient
 
         await dispatcherQueue.EnqueueAsync(() =>
         {
-            foreach (var order in orders) 
+            foreach (var order in orders)
             {
                 Orders.Add(order);
                 MasterOrdersList.Add(order);
@@ -99,7 +127,7 @@ public class OrdersPageViewModel : ObservableRecipient
         {
             IsLoading = true;
             Orders.Clear();
-      
+
             IOrderTable table = App.BLDatabase.Orders;
 
             var results = await Task.Run(table.GetAsync);
@@ -113,4 +141,38 @@ public class OrdersPageViewModel : ObservableRecipient
             IsLoading = false;
         }
     }
+    #endregion Queries
+
+    #region Filtering
+    public bool FilterOrders(object o)
+    {
+        Order? order = o as Order;
+
+        if (order != null)
+        {
+            if (FilterText.IsNullOrEmpty())
+            {
+                return true;
+            }
+            else
+            {
+                if (order.OrderID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase) ||
+                    order.CustID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase) ||
+                    order.Customer.CustomerName.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
+                    //order.PO_Number.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
+                    )
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    #endregion Filtering
+
+    #endregion Methods
 }

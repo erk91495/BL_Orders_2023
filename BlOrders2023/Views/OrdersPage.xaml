@@ -15,7 +15,7 @@
             <MenuFlyoutItem
                 Click="MenuFlyoutViewDetails_Click"
                 Icon="OpenFile"
-                Text="View details" />
+                Text="View details"/>
         </MenuFlyout>
     </Page.Resources>
     <RelativePanel>
@@ -24,7 +24,10 @@
                 FontSize="{StaticResource TitleLargeTextBlockFontSize}"
                 Text="Orders" />
 
-        
+        <TextBox x:Name="SeachBox"
+                 RelativePanel.LeftOf="CommandBar"
+                 TextChanged="SeachBox_TextChanged"
+                 MinWidth="300"/>
         <CommandBar
             x:Name="CommandBar"
             HorizontalAlignment="Stretch"
@@ -33,6 +36,7 @@
             RelativePanel.AlignRightWithPanel="True">
             <AppBarButton Icon="More" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         </CommandBar>
+        
         <SplitView x:Name="ListSplitView"
                    DisplayMode="Inline"
                    IsPaneOpen="{x:Bind vm:Converters.IsNotNull(ViewModel.SelectedOrder), Mode=OneWay}"
@@ -195,7 +199,9 @@
                                    RightTapped="OrdersGrid_RightTapped"
                                    RelativePanel.AlignRightWithPanel="True"
                                    RelativePanel.AlignLeftWithPanel="True"
-                                   ContextFlyout="{StaticResource DataGridContextMenu}">
+                                   ContextFlyout="{StaticResource DataGridContextMenu}"
+                                   EnableDataVirtualization="True"
+                                   AllowFiltering="True">
 
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>
