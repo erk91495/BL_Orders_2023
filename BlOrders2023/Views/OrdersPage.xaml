@@ -24,16 +24,30 @@
                 FontSize="{StaticResource TitleLargeTextBlockFontSize}"
                 Text="Orders" />
 
-        <TextBox x:Name="SeachBox"
-                 RelativePanel.LeftOf="CommandBar"
-                 TextChanged="SeachBox_TextChanged"
-                 MinWidth="300"/>
+
         <CommandBar
             x:Name="CommandBar"
             HorizontalAlignment="Stretch"
             Background="Transparent"
             DefaultLabelPosition="Right"
             RelativePanel.AlignRightWithPanel="True">
+
+            <AppBarElementContainer VerticalContentAlignment="Center">
+                <TextBox x:Name="SeachBox"
+                         TextChanged="SeachBox_TextChanged"
+                         MinWidth="300"
+                         VerticalAlignment="Stretch"/>
+            </AppBarElementContainer>
+            <AppBarElementContainer>
+                <SplitButton ToolTipService.ToolTip="Create New Order" Content="New Order">
+                    <SplitButton.Flyout>
+                        <MenuFlyout Placement="RightEdgeAlignedTop">
+                            <MenuFlyoutItem Text="New Order"/>
+                            <MenuFlyoutItem Text="New Customer"/>
+                        </MenuFlyout>
+                    </SplitButton.Flyout>
+                </SplitButton>
+            </AppBarElementContainer>
             <AppBarButton Icon="More" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         </CommandBar>
         
@@ -185,8 +199,9 @@
             </SplitView.Pane>
 
             <SplitView.Content>
-                <RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch"
-                      Padding="0,0,0,20">
+                <RelativePanel x:Name="ContentArea" 
+                                   HorizontalAlignment="Stretch"
+                                   Padding="0,0,0,20">
                     <sf:SfDataGrid x:Name="OrdersGrid"
                                    ItemsSource="{x:Bind ViewModel.Orders}"
                                    AutoGenerateColumns="False"
@@ -213,17 +228,18 @@
                     </sf:SfDataGrid>
 
                     <muxc:ProgressBar
-                        x:Name="progressBar"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top"
-                        Height="10"
-                        IsIndeterminate="True"
-                        Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
-                        Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                        RelativePanel.AlignRightWithPanel="True"
-                        RelativePanel.AlignLeftWithPanel="True"
-                        RelativePanel.Below="OrdersGrid"/>
+                    x:Name="progressBar"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    Height="10"
+                    IsIndeterminate="True"
+                    Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                    Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                    RelativePanel.AlignRightWithPanel="True"
+                    RelativePanel.AlignLeftWithPanel="True"
+                    RelativePanel.Below="OrdersGrid"/>
                 </RelativePanel>
+                
             </SplitView.Content>
 
         </SplitView>

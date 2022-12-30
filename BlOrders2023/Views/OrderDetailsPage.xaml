@@ -13,6 +13,7 @@
     xmlns:models="using:BlOrders2023.Models"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
+    xmlns:calendar="using:Syncfusion.UI.Xaml.Calendar"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -119,7 +120,7 @@
                             Grid.Row="0"
                             Grid.Column="1">
                     <TextBlock Text="Pickup/Delivery Date:"/>
-                    <editors:SfDatePicker/>
+                    <calendar:SfCalendarDatePicker/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical"
                             Grid.Row="0"

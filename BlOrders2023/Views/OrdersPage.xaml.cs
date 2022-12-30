@@ -9,17 +9,28 @@ namespace BlOrders2023.Views;
 
 public sealed partial class OrdersPage : Page
 {
+    #region Properties
+    /// <summary>
+    /// Gets the view model for the Orders Page
+    /// </summary>
     public OrdersPageViewModel ViewModel
     {
         get;
     }
+    #endregion Properties
 
+    #region Constructors
+    /// <summary>
+    /// Initializes an instance of OrdersPage
+    /// </summary>
     public OrdersPage()
     {
         ViewModel = App.GetService<OrdersPageViewModel>();
         InitializeComponent();        
     }
+    #endregion Constructors
 
+    #region Methods
     /// <summary>
     /// Retrieve the list of orders when the user navigates to the page. 
     /// </summary>
@@ -40,10 +51,19 @@ public sealed partial class OrdersPage : Page
             await Launcher.LaunchUriAsync( new Uri(String.Format("mailto:{0}", ViewModel.SelectedOrder.Customer.Email)));
     }
 
+    /// <summary>
+    /// Handles doubleclick events for the orders datagrid 
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the doubletaped event</param>
     private void Order_OrdersGrid_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)=>
         Frame.Navigate(typeof(OrderDetailsPage), ViewModel.SelectedOrder);
 
-
+    /// <summary>
+    /// Handles right click events for the orders datagrid
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the righttapped event</param>>
     private void OrdersGrid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
     {
         var element = (e.OriginalSource as FrameworkElement);
@@ -53,9 +73,19 @@ public sealed partial class OrdersPage : Page
         }
     }
 
+    /// <summary>
+    /// Handles the click event for the details for the flyout menu
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
     private void MenuFlyoutViewDetails_Click(object sender, RoutedEventArgs e) =>
         Frame.Navigate(typeof(OrderDetailsPage), ViewModel.SelectedOrder);
 
+    /// <summary>
+    /// Handles TextChanged events for the search box. Updates the filter value for the view model and refreshes filter
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the textchanged event</param>
     private void SeachBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         TextBox? textBox = sender as TextBox;
@@ -69,4 +99,5 @@ public sealed partial class OrdersPage : Page
             OrdersGrid.View.RefreshFilter(); 
         }
     }
+    #endregion Methods
 }
