@@ -22,9 +22,11 @@
 //  THE SOFTWARE.
 //  ---------------------------------------------------------------------------------
 
+using BlOrders2023.Models.Enums;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlOrders2023.ViewModels
 {
@@ -67,9 +69,9 @@ namespace BlOrders2023.ViewModels
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value != null && value is decimal)
+            if (value != null && value is decimal @decimal)
             {
-                return Decimal.ToDouble((decimal)value);
+                return Decimal.ToDouble(@decimal);
             }
             else
             {
@@ -80,6 +82,51 @@ namespace BlOrders2023.ViewModels
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             return System.Convert.ToDecimal(value);
+        }
+    }
+
+    //TODO: support all enums
+    public class EnumToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (parameter is string enumString)
+            {
+                if (!Enum.IsDefined(typeof(ShippingType), value))
+                {
+                    throw new ArgumentException("ExceptionEnumToBooleanConverterValueMustBeAnEnum"/*.GetLocalized()*/);
+                }
+
+                var enumValue = Enum.Parse(typeof(ShippingType), enumString);
+
+                return enumValue.Equals(value);
+            }
+
+            throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName"/*.GetLocalized()*/);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            if (parameter is string enumString)
+            {
+                return Enum.Parse(typeof(ShippingType), enumString);
+            }
+
+            throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName"/*.GetLocalized()*/);
+        }
+    }
+
+    public class DateTimeToDateTimeOffsetConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            DateTimeOffset offset = new DateTimeOffset((DateTime)value);
+            return offset;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return ((DateTimeOffset)value).DateTime;
         }
     }
 }

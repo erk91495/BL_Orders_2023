@@ -106,6 +106,7 @@ public partial class App : Application
         var dbOptions = new DbContextOptionsBuilder<BLOrdersDBContext>();
             dbOptions
             .UseLazyLoadingProxies()
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
             .UseSqlServer(connectionString: "Data Source=.; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
         App.BLDatabase = new SqlBLOrdersDatabase(dbOptions);
 

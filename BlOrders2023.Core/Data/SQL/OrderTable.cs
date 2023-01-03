@@ -86,7 +86,8 @@ namespace BlOrders2023.Core.Data.SQL
                 //TODO: Concurrency checks maybe here
                 _db.Entry(exists).CurrentValues.SetValues(order);
             }
-            await _db.SaveChangesAsync();
+            
+            int res =  await _db.SaveChangesAsync();
             return order;
         }
         #endregion Methods

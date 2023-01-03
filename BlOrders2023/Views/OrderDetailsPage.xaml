@@ -19,6 +19,8 @@
 
     <Page.Resources>
         <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
+        <vm:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+        <vm:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -98,7 +100,8 @@
             <Grid x:Name="OrderInputGrid"
                   ColumnSpacing="20"
                   RowSpacing="20"
-                  MinWidth="500">
+                  MinWidth="500"
+                  Padding="0,0,0,20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -115,41 +118,56 @@
                     <TextBlock Text="Taken By:"/>
                     <TextBox Text="{x:Bind ViewModel.CurrentOrder.TakenBy, Mode=TwoWay}"/>
                 </StackPanel>
-                <!-- TODO: Incoperate Pickup Time as well -->
-                <StackPanel Orientation="Vertical"
-                            Grid.Row="0"
-                            Grid.Column="1">
-                    <TextBlock Text="Pickup/Delivery Date:"/>
-                    <calendar:SfCalendarDatePicker/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical"
-                            Grid.Row="0"
-                            Grid.Column="2">
-                    <TextBlock Text="Pickup Time:"/>
-                    <editors:SfTimePicker/>
-                </StackPanel>
+
+                <RadioButtons Header="Shipping Type"
+                              Grid.Row="0"
+                              Grid.Column="1">
+                    <RadioButton x:Name="RadioPickUp"  
+                                 Content="Pickup" 
+                                 IsChecked="{x:Bind ViewModel.CurrentOrder.Shipping,
+                                             Mode=TwoWay,
+                                             Converter={StaticResource EnumToBoolConverter},
+                                             ConverterParameter=Pickup}"/>
+                    <RadioButton x:Name="RadioDelivery" 
+                                 Content="Delivery" 
+                                 IsChecked="{x:Bind ViewModel.CurrentOrder.Shipping,
+                                             Mode=TwoWay,
+                                             Converter={StaticResource EnumToBoolConverter},
+                                             ConverterParameter=Shipping}"/>
+                </RadioButtons>
+
                 <StackPanel Orientation="Vertical"
                             Grid.Row="1"
                             Grid.Column="0">
                     <TextBlock Text="PO #"/>
                     <TextBox Text="{x:Bind ViewModel.CurrentOrder.PO_Number, Mode=TwoWay}"/>
                 </StackPanel>
+
+                <!-- TODO: Incoperate Pickup Time as well -->
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="0"
+                            Grid.Column="2">
+                    <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Pickup/Delivery Date:"/>
+                    <calendar:SfCalendarDatePicker x:Name="PickupDate"
+                                                   SelectedDate="{x:Bind ViewModel.CurrentOrder.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Pickup Time:"/>
+                        <editors:SfTimePicker x:Name="PickupTime"
+                                              SelectedTime="{x:Bind ViewModel.CurrentOrder.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+
                 <StackPanel Orientation="Horizontal"
                             Grid.Row="1"
                             Grid.Column="2">
                     <TextBlock Text="Frozen:" 
                                VerticalAlignment="Center"
                                Padding="0,0,10,0"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.CurrentOrder.Frozen}" 
+                    <CheckBox IsChecked="{x:Bind ViewModel.CurrentOrder.Frozen, Mode=TwoWay}" 
                               VerticalAlignment="Center"/>
                 </StackPanel>
-                <RadioButtons Header="Shipping Type"
-                              
-                              Grid.Row="1"
-                              Grid.Column="1">
-                    <RadioButton Content="Pick-up"/>
-                    <RadioButton Content="Delivery"/>
-                </RadioButtons>
             </Grid>
             <StackPanel x:Name="MemoStack"
                         Orientation="Vertical" 
@@ -195,7 +213,7 @@
 
         <AutoSuggestBox x:Name="ProductEntryBox"
                         RelativePanel.Below="UserInputRanel"
-                        ItemsSource="{x:Bind ViewModel.AllProducts, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.SuggestedProducts, Mode=OneWay}"
                         MinWidth="500"
                         TextChanged="ProductEntryBox_TextChanged"
                         PlaceholderText="Add a product...">

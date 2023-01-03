@@ -10,14 +10,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using BlOrders2023.Models.Enums;
 using Windows.Globalization.NumberFormatting;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -36,6 +29,7 @@ namespace BlOrders2023.Views
         {
             ViewModel = App.GetService<OrderDetailsPageViewModel>();
             this.InitializeComponent();
+            PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -53,17 +47,17 @@ namespace BlOrders2023.Views
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                ViewModel.UpdateProductSuggestions(sender.Text);
+                ViewModel.QueryProducts(sender.Text);
             }
         }
 
         private void SetMemoTotalFormatter()
         {
-            IncrementNumberRounder rounder = new IncrementNumberRounder();
+            IncrementNumberRounder rounder = new();
             rounder.Increment = 0.25;
             rounder.RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp;
 
-            DecimalFormatter formatter = new DecimalFormatter();
+            DecimalFormatter formatter = new();
             formatter.IntegerDigits = 1;
             formatter.FractionDigits = 2;
             formatter.NumberRounder = rounder;
