@@ -23,6 +23,7 @@
 //  ---------------------------------------------------------------------------------
 
 using BlOrders2023.Models.Enums;
+using Microsoft.Identity.Client;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using System;
@@ -85,19 +86,18 @@ namespace BlOrders2023.ViewModels
         }
     }
 
-    //TODO: support all enums
     public class EnumToBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (parameter is string enumString)
             {
-                if (!Enum.IsDefined(typeof(ShippingType), value))
+                if (!Enum.IsDefined(value.GetType(), value))
                 {
                     throw new ArgumentException("ExceptionEnumToBooleanConverterValueMustBeAnEnum"/*.GetLocalized()*/);
                 }
 
-                var enumValue = Enum.Parse(typeof(ShippingType), enumString);
+                var enumValue = Enum.Parse(value.GetType(), enumString);
 
                 return enumValue.Equals(value);
             }
@@ -109,7 +109,7 @@ namespace BlOrders2023.ViewModels
         {
             if (parameter is string enumString)
             {
-                return Enum.Parse(typeof(ShippingType), enumString);
+                return Enum.Parse(targetType, enumString);
             }
 
             throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName"/*.GetLocalized()*/);
