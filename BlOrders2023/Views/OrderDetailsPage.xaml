@@ -21,6 +21,7 @@
         <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
         <vm:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
         <vm:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
+        <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -121,7 +122,8 @@
 
                 <RadioButtons Header="Shipping Type"
                               Grid.Row="0"
-                              Grid.Column="1">
+                              Grid.Column="1"
+                              SelectionChanged="RadioButtons_SelectionChanged">
                     <RadioButton x:Name="RadioPickUp"  
                                  Content="Pickup" 
                                  IsChecked="{x:Bind ViewModel.CurrentOrder.Shipping,
@@ -143,7 +145,6 @@
                     <TextBox Text="{x:Bind ViewModel.CurrentOrder.PO_Number, Mode=TwoWay}"/>
                 </StackPanel>
 
-                <!-- TODO: Incoperate Pickup Time as well -->
                 <StackPanel Orientation="Vertical"
                             Grid.Row="0"
                             Grid.Column="2">
@@ -152,7 +153,7 @@
                     <calendar:SfCalendarDatePicker x:Name="PickupDate"
                                                    SelectedDate="{x:Bind ViewModel.CurrentOrder.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical">
+                    <StackPanel x:Name="PickupTimeStack"  Orientation="Vertical">
                         <TextBlock Text="Pickup Time:"/>
                         <editors:SfTimePicker x:Name="PickupTime"
                                               SelectedTime="{x:Bind ViewModel.CurrentOrder.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>

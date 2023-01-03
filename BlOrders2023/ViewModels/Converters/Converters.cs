@@ -116,6 +116,36 @@ namespace BlOrders2023.ViewModels
         }
     }
 
+    public class EnumToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (parameter is string enumString)
+            {
+                if (!Enum.IsDefined(value.GetType(), value))
+                {
+                    throw new ArgumentException("ExceptionEnumToVisibilityConverterValueMustBeAnEnum"/*.GetLocalized()*/);
+                }
+
+                var enumValue = Enum.Parse(value.GetType(), enumString);
+
+                return enumValue.Equals(value) ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            throw new ArgumentException("ExceptionEnumToVisibilityConverterValueMustBeAnEnum"/*.GetLocalized()*/);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            if (parameter is string enumString)
+            {
+                return Enum.Parse(targetType, enumString);
+            }
+
+            throw new ArgumentException("ExceptionEnumToVisibilityConverterValueMustBeAnEnum"/*.GetLocalized()*/);
+        }
+    }
+
     public class DateTimeToDateTimeOffsetConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
@@ -129,4 +159,5 @@ namespace BlOrders2023.ViewModels
             return ((DateTimeOffset)value).DateTime;
         }
     }
+
 }

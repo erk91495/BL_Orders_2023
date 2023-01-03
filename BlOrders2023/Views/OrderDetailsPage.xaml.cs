@@ -63,5 +63,18 @@ namespace BlOrders2023.Views
             formatter.NumberRounder = rounder;
             MemoTotal.NumberFormatter = formatter;
         }
+
+        private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            if(RadioPickUp.IsChecked == true)
+            {
+                PickupTimeStack.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PickupTimeStack.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }
