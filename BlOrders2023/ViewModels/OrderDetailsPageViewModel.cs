@@ -117,11 +117,6 @@ namespace BlOrders2023.ViewModels
            await App.BLDatabase.Orders.UpsertAsync(CurrentOrder);
         }
         #endregion Queries
-
-        public Visibility VisibleIfPickup()
-        {
-            return CurrentOrder.Shipping.Equals(ShippingType.Pickup) ? Visibility.Visible : Visibility.Collapsed;
-        }
         #endregion Methods
     }
 }
