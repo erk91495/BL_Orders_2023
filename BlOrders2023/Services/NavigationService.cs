@@ -89,11 +89,12 @@ public class NavigationService : INavigationService
         {
             _frame.Tag = clearNavigation;
             var vmBeforeNavigation = _frame.GetPageViewModel();
+            var navigationAware = vmBeforeNavigation as INavigationAware;
             var navigated = _frame.Navigate(pageType, parameter);
             if (navigated)
             {
                 _lastParameterUsed = parameter;
-                if (vmBeforeNavigation is INavigationAware navigationAware)
+                if (navigationAware != null)
                 {
                     navigationAware.OnNavigatedFrom();
                 }

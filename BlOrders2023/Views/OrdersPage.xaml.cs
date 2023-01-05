@@ -7,6 +7,9 @@ using Windows.System;
 
 namespace BlOrders2023.Views;
 
+/// <summary>
+///  A Page for viewing a list of orders
+/// </summary>
 public sealed partial class OrdersPage : Page
 {
     #region Properties
@@ -47,8 +50,8 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     private async void EmailButton_Click(object sender, RoutedEventArgs e)
     {
-        if(ViewModel.SelectedOrder != null)
-            await Launcher.LaunchUriAsync( new Uri(String.Format("mailto:{0}", ViewModel.SelectedOrder.Customer.Email)));
+        if (ViewModel.SelectedOrder != null)
+            await Helpers.Helpers.SendEmailAsync(ViewModel.SelectedOrder.Customer.Email);
     }
 
     /// <summary>

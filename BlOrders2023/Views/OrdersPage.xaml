@@ -217,7 +217,9 @@
                                    RelativePanel.AlignLeftWithPanel="True"
                                    ContextFlyout="{StaticResource DataGridContextMenu}"
                                    EnableDataVirtualization="True"
-                                   AllowFiltering="True">
+                                   AllowFiltering="True"
+                                   SelectionMode="Single"
+                                   NavigationMode="Row">
 
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>

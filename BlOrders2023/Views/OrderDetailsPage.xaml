@@ -31,7 +31,7 @@
             <TextBlock x:Uid="Order_OrderNumber" 
                                    FontSize="{StaticResource LargeFontSize}"
                                    FontWeight="SemiBold"/>
-            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.OrderID, Mode=OneWay}" 
+            <TextBlock Text="{x:Bind ViewModel.OrderID, Mode=OneWay}" 
                                    FontSize="{StaticResource LargeFontSize}"
                                    FontWeight="SemiBold"/>
         </StackPanel>
@@ -40,27 +40,27 @@
                     Orientation="Vertical"
                     RelativePanel.Below="OrderNumber"
                     RelativePanel.AlignLeftWithPanel="True">
-            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.CustomerName, Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModel.Customer.CustomerName, Mode=OneWay}"
                                FontSize="{StaticResource LargeFontSize}"/>
-            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.Address, Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModel.Customer.Address, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"/>
-            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.CityStateZip(), Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModel.Customer.CityStateZip(), Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"/>
-            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.Buyer, Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModel.Customer.Buyer, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
                                Padding="0,20,0,0"/>
-            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.PhoneString(), Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.CurrentOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
-            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Customer.Fax, Mode=OneWay}"
+                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+            <TextBlock Text="{x:Bind ViewModel.Customer.Fax, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.CurrentOrder.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
             <TextBlock>
                 <TextBlock.Inlines>
                     <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
                         <Hyperlink.Inlines>
                             <Span>
-                                <Run Text="{x:Bind ViewModel.CurrentOrder.Customer.Email, Mode=OneWay}"></Run>
+                                <Run Text="{x:Bind ViewModel.Customer.Email, Mode=OneWay}"></Run>
                             </Span>
                         </Hyperlink.Inlines>
                     </Hyperlink>
@@ -71,28 +71,12 @@
         <StackPanel x:Name="OrderInfo"
                     Orientation="Vertical"
                     RelativePanel.AlignRightWithPanel="True">
-            <TextBlock Text="{x:Bind ViewModel.CurrentOrder.OrderStatus, Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModel.OrderStatus, Mode=OneWay}"
                                HorizontalTextAlignment="Center"
                                HorizontalAlignment="Stretch"
                                Padding="0,10,0,5"
                                FontSize="50"
                                FontWeight="SemiBold"/>
-
-            <StackPanel Orientation="Horizontal">
-                <TextBlock x:Uid="Order_PONumber"  
-                                   FontSize="{StaticResource MediumFontSize}" 
-                                   Padding="0,0,10,0"
-                                   Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.CurrentOrder.PO_Number), Mode=OneWay, FallbackValue=Collapsed}"/>
-                <TextBlock Text="{x:Bind ViewModel.CurrentOrder.PO_Number, Mode=OneWay}"
-                                   FontSize="{StaticResource MediumFontSize}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock x:Uid="Order_ShippingType"  
-                                   FontSize="{StaticResource MediumFontSize}" 
-                                   Padding="0,0,10,0"/>
-                <TextBlock Text="{x:Bind ViewModel.CurrentOrder.Shipping, Mode=OneWay}"
-                               FontSize="{StaticResource MediumFontSize}"/>
-            </StackPanel>
         </StackPanel>
         <RelativePanel x:Name="UserInputRanel"
                        RelativePanel.Below="CustomerInfo"
@@ -112,12 +96,11 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                
                 <StackPanel Orientation="Vertical"
                             Grid.Row="0"
                             Grid.Column="0">
                     <TextBlock Text="Taken By:"/>
-                    <TextBox Text="{x:Bind ViewModel.CurrentOrder.TakenBy, Mode=TwoWay}"/>
+                    <TextBox Text="{x:Bind ViewModel.TakenBy, Mode=TwoWay}"/>
                 </StackPanel>
 
                 <RadioButtons Header="Shipping Type"
@@ -126,14 +109,14 @@
                               SelectionChanged="RadioButtons_SelectionChanged">
                     <RadioButton x:Name="RadioPickUp"  
                                  Content="Pickup" 
-                                 IsChecked="{x:Bind ViewModel.CurrentOrder.Shipping,
-                                             Mode=TwoWay,
+                                 IsChecked="{x:Bind ViewModel.Shipping,
+                                             Mode=OneWay,
                                              Converter={StaticResource EnumToBoolConverter},
                                              ConverterParameter=Pickup}"/>
                     <RadioButton x:Name="RadioDelivery" 
                                  Content="Delivery" 
-                                 IsChecked="{x:Bind ViewModel.CurrentOrder.Shipping,
-                                             Mode=TwoWay,
+                                 IsChecked="{x:Bind ViewModel.Shipping,
+                                             Mode=OneWay,
                                              Converter={StaticResource EnumToBoolConverter},
                                              ConverterParameter=Shipping}"/>
                 </RadioButtons>
@@ -142,7 +125,7 @@
                             Grid.Row="1"
                             Grid.Column="0">
                     <TextBlock Text="PO #"/>
-                    <TextBox Text="{x:Bind ViewModel.CurrentOrder.PO_Number, Mode=TwoWay}"/>
+                    <TextBox Text="{x:Bind ViewModel.PO_Number, Mode=TwoWay}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical"
@@ -151,12 +134,12 @@
                     <StackPanel Orientation="Vertical">
                     <TextBlock Text="Pickup/Delivery Date:"/>
                     <calendar:SfCalendarDatePicker x:Name="PickupDate"
-                                                   SelectedDate="{x:Bind ViewModel.CurrentOrder.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
+                                                   SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
                     </StackPanel>
                     <StackPanel x:Name="PickupTimeStack"  Orientation="Vertical">
                         <TextBlock Text="Pickup Time:"/>
                         <editors:SfTimePicker x:Name="PickupTime"
-                                              SelectedTime="{x:Bind ViewModel.CurrentOrder.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
+                                              SelectedTime="{x:Bind ViewModel.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -166,7 +149,7 @@
                     <TextBlock Text="Frozen:" 
                                VerticalAlignment="Center"
                                Padding="0,0,10,0"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.CurrentOrder.Frozen, Mode=TwoWay}" 
+                    <CheckBox IsChecked="{x:Bind ViewModel.Frozen, Mode=TwoWay}" 
                               VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
@@ -176,7 +159,7 @@
                         RelativePanel.RightOf="OrderInputGrid"
                         Padding="40,0,0,0">
                 <TextBlock Text="Memo:"/>
-                <TextBox Text="{x:Bind ViewModel.CurrentOrder.Memo, Mode=TwoWay}"
+                <TextBox Text="{x:Bind ViewModel.Memo, Mode=TwoWay}"
                          TextWrapping="Wrap"
                          Margin="5,5,5,5"
                          MinHeight="75"
@@ -190,25 +173,37 @@
                         Padding="0,10,0,0">
                 <TextBlock Text="Memo Total: $" VerticalAlignment="Center"/>
                 <NumberBox x:Name="MemoTotal"
-                           Value="{x:Bind ViewModel.CurrentOrder.Memo_Totl, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                           Value="{x:Bind ViewModel.Memo_Totl, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
                            Background="Transparent"
                            />
                 </StackPanel>
             </StackPanel>
         </RelativePanel>
         <sf:SfDataGrid x:Name="OrderedItems"
-                       ItemsSource="{x:Bind ViewModel.CurrentOrder.Items, Mode=TwoWay}"
+                       ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                        RelativePanel.Below="ProductEntryBox"
                        GridLinesVisibility="Both"
                        IsReadOnly="False"
                        AutoGenerateColumns="False"
                        RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignRightWithPanel="True">
+                       RelativePanel.AlignRightWithPanel="True"
+                       EditTrigger="OnTap"
+                       SelectionUnit="Row"
+                       PointerMoved="OrderedItems_PointerMoved">
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
-                <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity"/>
-                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd"/>
+                <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity" AllowEditing="True"/>
+                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True"/>
+                <sf:GridUnboundColumn HeaderText="" UseBindingValue="False" MappingName="UnboundColumn" ColumnWidthMode="SizeToCells">
+                    <sf:GridUnboundColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button x:Name="DeleteRow" Click="DeleteRow_Click">
+                                <SymbolIcon Symbol="Delete"/>
+                            </Button>
+                        </DataTemplate>
+                    </sf:GridUnboundColumn.CellTemplate>
+                </sf:GridUnboundColumn>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
 
