@@ -11,14 +11,29 @@ using Windows.System;
 
 namespace BlOrders2023.Views;
 
-// TODO: Update NavigationViewItem titles and icons in ShellPage.xaml.
+/// <summary>
+/// The shell page for navigation and holding other pages
+/// </summary>
 public sealed partial class ShellPage : Page
 {
+    #region Properties
+    /// <summary>
+    /// The viewmodel for the shell page
+    /// </summary>
     public ShellViewModel ViewModel
     {
         get;
     }
+    #endregion Properties
 
+    #region Fields
+    #endregion Fields
+
+    #region Constructors
+    /// <summary>
+    /// Initializes and instance of the ShellPage
+    /// </summary>
+    /// <param name="viewModel">A view model for the page</param>
     public ShellPage(ShellViewModel viewModel)
     {
         ViewModel = viewModel;
@@ -35,7 +50,14 @@ public sealed partial class ShellPage : Page
         App.MainWindow.Activated += MainWindow_Activated;
         AppTitleBarText.Text = "AppDisplayName".GetLocalized();
     }
+    #endregion Constructors
 
+    #region Methods
+    /// <summary>
+    /// Called when the page is loaded.
+    /// </summary>
+    /// <param name="sender">The page that was loaded</param>
+    /// <param name="e">The event args</param>
     private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         TitleBarHelper.UpdateTitleBar(RequestedTheme);
@@ -44,6 +66,11 @@ public sealed partial class ShellPage : Page
         KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
     }
 
+    /// <summary>
+    /// Called when the main window is activated
+    /// </summary>
+    /// <param name="sender">the main window</param>
+    /// <param name="args">the event args for the main window</param>
     private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
     {
         var resource = args.WindowActivationState == WindowActivationState.Deactivated ? "WindowCaptionForegroundDisabled" : "WindowCaptionForeground";
@@ -51,6 +78,11 @@ public sealed partial class ShellPage : Page
         AppTitleBarText.Foreground = (SolidColorBrush)App.Current.Resources[resource];
     }
 
+    /// <summary>
+    /// Called when 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
     {
         //AppTitleBar.Margin = new Thickness()
@@ -62,6 +94,12 @@ public sealed partial class ShellPage : Page
         //};
     }
 
+    /// <summary>
+    /// Created a new keyboard accelerator with the given key and modifiers
+    /// </summary>
+    /// <param name="key">The key to bind to</param>
+    /// <param name="modifiers">modifiers to bind to the key</param>
+    /// <returns></returns>
     private static KeyboardAccelerator BuildKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers? modifiers = null)
     {
         var keyboardAccelerator = new KeyboardAccelerator() { Key = key };
@@ -76,6 +114,11 @@ public sealed partial class ShellPage : Page
         return keyboardAccelerator;
     }
 
+    /// <summary>
+    /// Handles Keyboard acceleratiors
+    /// </summary>
+    /// <param name="sender">the accelerator  invoked</param>
+    /// <param name="args">The event args</param>
     private static void OnKeyboardAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
         var navigationService = App.GetService<INavigationService>();
@@ -84,4 +127,5 @@ public sealed partial class ShellPage : Page
 
         args.Handled = result;
     }
+    #endregion Methods
 }

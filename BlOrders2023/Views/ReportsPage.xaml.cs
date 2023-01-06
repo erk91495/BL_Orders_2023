@@ -25,8 +25,19 @@ namespace BlOrders2023.Views;
 /// </summary>
 public sealed partial class ReportsPage : Page
 {
+    #region Properties
+    #endregion Properties
+
+    #region Fields
+    #endregion Fields
+
+    #region Constructors
     public ReportsPage()
     {
         this.InitializeComponent();
     }
+    #endregion Constructors
+
+    #region Methods
+    #endregion Methods
 }

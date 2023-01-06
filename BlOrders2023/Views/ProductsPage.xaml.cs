@@ -22,7 +22,7 @@ using Microsoft.UI.Xaml.Navigation;
 namespace BlOrders2023.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// A page to display products
     /// </summary>
     public sealed partial class ProductsPage : Page
     {

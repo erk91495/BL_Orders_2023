@@ -21,7 +21,7 @@
               HorizontalAlignment="Left"
               Grid.Row="0"
               Margin="10,15,0,0">
-            <Image Source="/Assets/WindowIcon.ico"
+            <Image Source="/Assets/Square44x44logo.scale-200.png"
                    VerticalAlignment="Top"
                    HorizontalAlignment="Left"
                    Width="16"
