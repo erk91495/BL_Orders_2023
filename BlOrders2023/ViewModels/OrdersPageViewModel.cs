@@ -28,7 +28,7 @@ public class OrdersPageViewModel : ObservableRecipient
     public string FilterText { get; set; } = "";
 
     /// <summary>
-    /// Gets or sets the selected order.
+    /// Gets or sets the selected Order.
     /// </summary>
     public Order? SelectedOrder
     {
@@ -61,7 +61,7 @@ public class OrdersPageViewModel : ObservableRecipient
     private bool _isLoading;
 
     /// <summary>
-    /// Gets the currently selected order from the datagrid 
+    /// Gets the currently selected Order from the datagrid 
     /// </summary>
     private Order? _selectedOrder;
 

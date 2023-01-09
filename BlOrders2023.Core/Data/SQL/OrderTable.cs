@@ -31,9 +31,9 @@ namespace BlOrders2023.Core.Data.SQL
 
         #region Methods
         /// <summary>
-        /// Deletes the given order from the database
+        /// Deletes the given Order from the database
         /// </summary>
-        /// <param name="order">The order to be deleted</param>
+        /// <param name="order">The Order to be deleted</param>
         /// <returns></returns>
         public Task DeleteAsync(Order order)
         {
@@ -49,18 +49,18 @@ namespace BlOrders2023.Core.Data.SQL
                 .OrderByDescending(order => order.PickupDate)
                 .ThenBy(order => order.OrderID)
                 //.Take(5000)
-                //.Include(order => order.Items)
+                //.Include(Order => Order.Items)
                 .Include(order => order.Customer)
-                //.Include(order => order.ShippingItems)
+                //.Include(Order => Order.ShippingItems)
                 //.AsNoTracking()
                 .AsTracking(QueryTrackingBehavior.TrackAll)
                 .ToListAsync();
         
         /// <summary>
-        /// Gets the order matching the given OrderID
+        /// Gets the Order matching the given OrderID
         /// </summary>
-        /// <param name="orderID">The ID of the order to get</param>
-        /// <returns>An order with the given id</returns>
+        /// <param name="orderID">The ID of the Order to get</param>
+        /// <returns>An Order with the given id</returns>
         public async Task<IEnumerable<Order>> GetAsync(int orderID) =>
             await _db.Orders
                 .Include(order => order.Items)
@@ -70,10 +70,10 @@ namespace BlOrders2023.Core.Data.SQL
                 .ToListAsync();
 
         /// <summary>
-        /// Updates the database context with the given order. If the order does not exist it will be added to the db
+        /// Updates the database context with the given Order. If the Order does not exist it will be added to the db
         /// </summary>
-        /// <param name="order">The order to be added or updated</param>
-        /// <returns>the updated order</returns>
+        /// <param name="order">The Order to be added or updated</param>
+        /// <returns>the updated Order</returns>
         public async Task<Order> UpsertAsync(Order order)
         {
             var exists = await _db.Orders.FirstOrDefaultAsync(_order => order.OrderID == _order.OrderID);

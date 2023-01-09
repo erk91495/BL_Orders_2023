@@ -27,14 +27,14 @@ using System;
 namespace BlOrders2023.ViewModels
 {
     /// <summary>
-    /// Represents an exception that occurs when there's an error saving an order.
+    /// Represents an exception that occurs when there's an error saving an Order.
     /// </summary>
     public class OrderSavingException : Exception
     {
         /// <summary>
         /// Initializes a new instance of the OrderSavingException class with a default error message.
         /// </summary>
-        public OrderSavingException() : base("Error saving an order.")
+        public OrderSavingException() : base("Error saving an Order.")
         {
         }
 
@@ -55,14 +55,14 @@ namespace BlOrders2023.ViewModels
     }
 
     /// <summary>
-    /// Represents an exception that occurs when there's an error deleting an order.
+    /// Represents an exception that occurs when there's an error deleting an Order.
     /// </summary>
     public class OrderDeletionException : Exception
     {
         /// <summary>
         /// Initializes a new instance of the OrderDeletionException class with a default error message.
         /// </summary>
-        public OrderDeletionException() : base("Error deleting an order.")
+        public OrderDeletionException() : base("Error deleting an Order.")
         {
         }
 

@@ -37,6 +37,6 @@ public class BLOrdersDBContext : DbContext
     public DbSet<WholesaleCustomer> Customers { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-
     public DbSet<Product> Products { get; set; }
+    public DbSet<CustomerClass> CustomerClasses { get; set; }
 }

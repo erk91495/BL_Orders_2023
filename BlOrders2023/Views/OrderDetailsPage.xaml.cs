@@ -31,7 +31,7 @@ namespace BlOrders2023.Views
     {
         #region Properties
         /// <summary>
-        /// The viewmodel for the order details page
+        /// The viewmodel for the Order details page
         /// </summary>
         public OrderDetailsPageViewModel ViewModel { get; }
         #endregion Properties
@@ -190,6 +190,34 @@ namespace BlOrders2023.Views
                     _doomed = OrderedItems.View.Records[OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex)].Data as OrderItem;
                 }
 
+            }
+        }
+
+        /// <summary>
+        /// This event gets fired when:
+        ///     * a user presses Enter while focus is in the TextBox
+        ///     * a user clicks or tabs to and invokes the query button (defined using the QueryIcon API)
+        ///     * a user presses selects (clicks/taps/presses Enter) a suggestion
+        /// </summary>
+        /// <param name="sender">The AutoSuggestBox that fired the event.</param>
+        /// <param name="args">The args contain the QueryText, which is the text in the TextBox,
+        /// and also ChosenSuggestion, which is only non-null when a user selects an item in the list.</param>
+        private void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
+            {
+                //User selected an item, take an action
+                ViewModel.addItem(p);
+
+            }
+            else if (!string.IsNullOrEmpty(args.QueryText))
+            {
+                //Do a fuzzy search based on the text
+                //var suggestions = SearchControls(sender.Text);
+                //if (suggestions.Count > 0)
+                //{
+                //    SelectControl(suggestions.FirstOrDefault());
+                //}
             }
         }
     }

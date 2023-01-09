@@ -216,6 +216,12 @@ namespace BlOrders2023.ViewModels
             
         }
 
+        public void addItem(Product p)
+        {
+            OrderItem item = new OrderItem(p, _order);
+            Items.Add(item);
+        }
+
         private void OnAllPropertiesChanged()
         {
             OnPropertyChanged(nameof(Items));
@@ -279,13 +285,18 @@ namespace BlOrders2023.ViewModels
             });
         }
         /// <summary>
-        /// Saves changes to the current order
+        /// Saves changes to the current Order
         /// </summary>
         public async void SaveCurrentOrder()
         {
            await App.BLDatabase.Orders.UpsertAsync(_order);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <exception cref="NotImplementedException"></exception>
         public void BeforeNavigatedFrom(object? parameter)
         {
             throw new NotImplementedException();

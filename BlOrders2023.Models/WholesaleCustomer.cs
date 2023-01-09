@@ -25,14 +25,18 @@ namespace BlOrders2023.Models
         public string? Buyer { get; set; }
         public string? LastPurchase { get; set; }
         public string? Fax { get; set; }
-        public string? Class { get; set; }
+        //public string? Class { get; set; }
         public short Grocer { get; set; }
         public short Inactive { get; set; }
         public string? Email { get; set; }
         [Column("Gift-Grocer")]
         public string? Gift_Grocer { get; set; }
         public bool? SingleProdPerPallet { get; set; }
+        public int? CustomerClassID { get; set; }
         public virtual List<Order> orders { get; set; } = new List<Order>();
+
+        [ForeignKey("CustomerClassID")]
+        public virtual CustomerClass? CustomerClass { get; set; }
 
         public string CityStateZip()
         {
