@@ -18,6 +18,9 @@ using System.Reflection;
 using Syncfusion.UI.Xaml.Data;
 using WinUIEx;
 using Windows.UI.Core;
+using Syncfusion.UI.Xaml.Grids.ScrollAxis;
+using System.Windows.Forms.VisualStyles;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -212,13 +215,27 @@ namespace BlOrders2023.Views
             }
             else if (!string.IsNullOrEmpty(args.QueryText))
             {
-                //Do a fuzzy search based on the text
-                //var suggestions = SearchControls(sender.Text);
-                //if (suggestions.Count > 0)
-                //{
-                //    SelectControl(suggestions.FirstOrDefault());
-                //}
+                var id = sender.Text.Trim();
+                bool result = Int32.TryParse(id, out int prodcode);
+                var toAdd = ViewModel.SuggestedProducts.FirstOrDefault(prod => prod.ProductID == prodcode);
+
+                if (result && toAdd != null)
+                {
+                    int addNewRowIndex = OrderedItems.GetAddNewRowIndex();
+                    //The text matched a productcode
+                    ViewModel.addItem(toAdd);
+                }
+                ProductEntryBox.Text = null;
+                ProductEntryBox.IsSuggestionListOpen = false;
             }
+            var res  = OrderedItems.Focus(FocusState.Keyboard);
+            var rowIndex = OrderedItems.ResolveToRowIndex(ViewModel.Items.Last());
+            var columnIndex = OrderedItems.Columns.FirstOrDefault(c => c.HeaderText.ToString() == "Quantity Ordered");
+            var rowColumnIndex = new RowColumnIndex(rowIndex, 3);
+            OrderedItems.MoveCurrentCell(rowColumnIndex);
+            res =  OrderedItems.SelectionController.CurrentCellManager.BeginEdit();
         }
+        
+
     }
 }

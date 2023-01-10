@@ -289,7 +289,8 @@ namespace BlOrders2023.ViewModels
         /// </summary>
         public async void SaveCurrentOrder()
         {
-           await App.BLDatabase.Orders.UpsertAsync(_order);
+            _order.Items = Items.ToList();
+            await App.BLDatabase.Orders.UpsertAsync(_order);
         }
 
         /// <summary>

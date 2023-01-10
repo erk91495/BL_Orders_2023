@@ -39,13 +39,13 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
-    <PackageReference Include="Syncfusion.Grid.WinUI" Version="20.2.0.50" />
-    <PackageReference Include="Syncfusion.Licensing" Version="20.4.0.41" />
-    <PackageReference Include="WinUIEx" Version="2.0.0" />
+    <PackageReference Include="Syncfusion.Grid.WinUI" Version="20.4.0.43" />
+    <PackageReference Include="Syncfusion.Licensing" Version="20.4.0.43" />
+    <PackageReference Include="WinUIEx" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>

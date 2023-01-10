@@ -181,6 +181,7 @@
         </RelativePanel>
         <sf:SfDataGrid x:Name="OrderedItems"
                        ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
+                       SourceType="models:OrderItem"
                        RelativePanel.Below="ProductEntryBox"
                        GridLinesVisibility="Both"
                        IsReadOnly="False"
@@ -189,10 +190,12 @@
                        RelativePanel.AlignRightWithPanel="True"
                        EditTrigger="OnTap"
                        SelectionUnit="Row"
+                       EditorSelectionBehavior="MoveLast"
                        PointerMoved="OrderedItems_PointerMoved">
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
+                <sf:GridNumericColumn HeaderText="Customer Price" MappingName="ActualCustPrice"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity" AllowEditing="True"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True"/>
                 <sf:GridUnboundColumn HeaderText="" UseBindingValue="False" MappingName="UnboundColumn" ColumnWidthMode="SizeToCells">

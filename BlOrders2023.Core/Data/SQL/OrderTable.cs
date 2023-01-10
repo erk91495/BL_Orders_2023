@@ -52,8 +52,6 @@ namespace BlOrders2023.Core.Data.SQL
                 //.Include(Order => Order.Items)
                 //.Include(order => order.Customer)
                 //.Include(Order => Order.ShippingItems)
-                //.AsNoTracking()
-                .AsTracking(QueryTrackingBehavior.TrackAll)
                 .ToListAsync();
         
         /// <summary>
@@ -76,7 +74,7 @@ namespace BlOrders2023.Core.Data.SQL
         /// <returns>the updated Order</returns>
         public async Task<Order> UpsertAsync(Order order)
         {
-            var exists = await _db.Orders.FirstOrDefaultAsync(_order => order.OrderID == _order.OrderID);
+            var exists = await _db.Orders.Include(o => o.Items).FirstOrDefaultAsync(_order => order.OrderID == _order.OrderID);
             if(exists == null) 
             {
                 _db.Orders.Add(order); 
@@ -85,8 +83,8 @@ namespace BlOrders2023.Core.Data.SQL
             {
                 //TODO: Concurrency checks maybe here
                 _db.Entry(exists).CurrentValues.SetValues(order);
+
             }
-            
             int res =  await _db.SaveChangesAsync();
             return order;
         }

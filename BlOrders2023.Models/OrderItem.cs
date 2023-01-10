@@ -32,10 +32,11 @@ namespace BlOrders2023.Models
         [JsonIgnore]
         public virtual Order Order { get; set; } = new Order();
         public int ProductID { get; set; }
+        [ConcurrencyCheck]
         public float Quantity { get; set; }
         public float? PickWeight { get; set; }
         public decimal ActualCustPrice { get; set; }
-        public float? QuanRcvd { get; set; }
+        public float QuanRcvd { get; set; }
         [Key]
         public int OrdDtl_ID { get; set; }
         public DateTime? ProdEntryDate { get; set; }
