@@ -12,11 +12,10 @@ namespace BlOrders2023.Models
     public class CustomerClass
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         [Column("CustomerClass")]
         public string Class { get; set; }
         public decimal DiscountPercent { get; set; }
-
-
     }
 }

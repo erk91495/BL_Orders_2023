@@ -50,7 +50,7 @@ namespace BlOrders2023.Core.Data.SQL
                 .ThenBy(order => order.OrderID)
                 //.Take(5000)
                 //.Include(Order => Order.Items)
-                .Include(order => order.Customer)
+                //.Include(order => order.Customer)
                 //.Include(Order => Order.ShippingItems)
                 //.AsNoTracking()
                 .AsTracking(QueryTrackingBehavior.TrackAll)

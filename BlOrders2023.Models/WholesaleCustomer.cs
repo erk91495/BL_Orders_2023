@@ -32,11 +32,10 @@ namespace BlOrders2023.Models
         [Column("Gift-Grocer")]
         public string? Gift_Grocer { get; set; }
         public bool? SingleProdPerPallet { get; set; }
+        public virtual List<Order> orders { get; set; } = new();
         public int? CustomerClassID { get; set; }
-        public virtual List<Order> orders { get; set; } = new List<Order>();
-
         [ForeignKey("CustomerClassID")]
-        public virtual CustomerClass? CustomerClass { get; set; }
+        public virtual CustomerClass CustomerClass { get; set; }
 
         public string CityStateZip()
         {

@@ -23,7 +23,7 @@ namespace BlOrders2023.Models
             ProductID = product.ProductID;
             Quantity = 0;
             PickWeight = 0;
-            ActualCustPrice = product.WholesalePrice * (new Decimal(100)- order.Customer.CustomerClass.DiscountPercent) / new Decimal(100);
+            ActualCustPrice = product.WholesalePrice * (new Decimal(100) - order.Customer.CustomerClass.DiscountPercent) / new Decimal(100);
             QuanRcvd = 0;
             ProdEntryDate = DateTime.Now;
         }
