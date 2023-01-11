@@ -25,5 +25,9 @@ namespace BlOrders2023.Models
         public string? PackOrdered { get; set; }
         public string? KrogerDeptNo { get; set; }
 
+        public override string ToString()
+        {
+            return ProductName ?? string.Empty;
+        }
     }
 }

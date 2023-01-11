@@ -39,10 +39,11 @@
                          VerticalAlignment="Stretch"/>
             </AppBarElementContainer>
             <AppBarElementContainer>
-                <SplitButton ToolTipService.ToolTip="Create New Order" Content="New Order">
+                <SplitButton ToolTipService.ToolTip="Create New Order" Content="New Order"
+                             Click="CreateNewOrder">
                     <SplitButton.Flyout>
                         <MenuFlyout Placement="RightEdgeAlignedTop">
-                            <MenuFlyoutItem Text="New Order"/>
+                            <MenuFlyoutItem Text="New Order" Click="CreateNewOrder"/>
                             <MenuFlyoutItem Text="New Customer"/>
                         </MenuFlyout>
                     </SplitButton.Flyout>
@@ -190,7 +191,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Button x:Uid="Order_BtnFillOrder" Content="Fill Order" Grid.Column="0" HorizontalAlignment="Center"/>
-                        <Button x:Uid="Order_BtnEditOrder" Content="Edit Order" Grid.Column="1" HorizontalAlignment="Center"/>
+                        <Button x:Uid="Order_BtnEditOrder" Content="Edit Order" Grid.Column="1" HorizontalAlignment="Center" Click="EditOrder_Click"/>
                         <Button x:Uid="Order_BtnFillOrder" Content="Test Button" Grid.Column="2" HorizontalAlignment="Center"/>
                     </Grid>
 

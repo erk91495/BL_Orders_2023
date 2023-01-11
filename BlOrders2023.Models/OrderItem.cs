@@ -43,5 +43,10 @@ namespace BlOrders2023.Models
         public DateTime? ProdEntryDate { get; set; }
         [ForeignKey("ProductID")]
         public virtual Product Product { get; set; }
+
+        public override string ToString()
+        {
+            return Product.ToString();
+        }
     }
 }

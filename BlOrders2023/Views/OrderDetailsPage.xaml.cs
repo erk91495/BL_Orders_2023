@@ -69,8 +69,9 @@ namespace BlOrders2023.Views
         /// <param name="e">the navigation envent args</param>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
+            //change focus to write any changes
             OrderNumber.Focus(FocusState.Programmatic);
-            ViewModel.SaveCurrentOrder();
+            Task.Run(() => ViewModel.SaveCurrentOrder());
             base.OnNavigatingFrom(e);
         }
 

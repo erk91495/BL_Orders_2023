@@ -1,4 +1,5 @@
 ﻿using BlOrders2023.Models;
+using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -45,6 +46,10 @@ public sealed partial class OrdersPage : Page
         }
     }
 
+    private void NavigateToOrderDetailsPage()=>
+        Frame.Navigate(typeof(OrderDetailsPage), ViewModel.SelectedOrder);
+
+
     /// <summary>
     /// Creates an email about the currently selected invoice. 
     /// </summary>
@@ -60,7 +65,9 @@ public sealed partial class OrdersPage : Page
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the doubletaped event</param>
     private void Order_OrdersGrid_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)=>
-        Frame.Navigate(typeof(OrderDetailsPage), ViewModel.SelectedOrder);
+        NavigateToOrderDetailsPage();
+
+    private void EditOrder_Click(object sender, RoutedEventArgs e) => NavigateToOrderDetailsPage();
 
     /// <summary>
     /// Handles right click events for the orders datagrid
@@ -82,7 +89,7 @@ public sealed partial class OrdersPage : Page
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the click event</param>
     private void MenuFlyoutViewDetails_Click(object sender, RoutedEventArgs e) =>
-        Frame.Navigate(typeof(OrderDetailsPage), ViewModel.SelectedOrder);
+        NavigateToOrderDetailsPage();
 
     /// <summary>
     /// Handles TextChanged events for the search box. Updates the filter value for the view model and refreshes filter
@@ -102,5 +109,25 @@ public sealed partial class OrdersPage : Page
             OrdersGrid.View.RefreshFilter(); 
         }
     }
+    private void CreateNewOrder(SplitButton sender, SplitButtonClickEventArgs e)
+    {
+        CreateNewOrder(sender as object, new RoutedEventArgs() );
+    }
+
+    private void CreateNewOrder(object sender, RoutedEventArgs e)
+    {
+        CustomerSelectionControl dialog = new();
+        dialog.XamlRoot = XamlRoot;
+        dialog.Title = "Select A Customer";
+        dialog.Closed += Dialog_Closed;
+        _ = dialog.ShowAsync();
+    }
+
+    private void Dialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+    {
+        var res = args.Result;
+    }
     #endregion Methods
+
+
 }

@@ -49,5 +49,10 @@ namespace BlOrders2023.Models
             else
                 return Phone;
         }
+
+        public override string ToString()
+        {
+            return CustomerName;
+        }
     }
 }

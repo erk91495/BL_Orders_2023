@@ -1,5 +1,6 @@
 ﻿using BlOrders2023.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,17 +23,27 @@ namespace BlOrders2023.Core.Data.SQL
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<WholesaleCustomer>> GetAsync() =>
-            await _db.Customers
-                .Include(customer => customer.orders)
-                .AsNoTracking()
-                .ToListAsync();
-
-
-        public Task<IEnumerable<WholesaleCustomer>> GetAsync(int orderID)
+        public async Task<IEnumerable<WholesaleCustomer>> GetAsync(string query = null)
         {
-            throw new NotImplementedException();
+            if (query.IsNullOrEmpty())
+            {
+                return await _db.Customers
+                    .ToListAsync();
+            }
+            else
+            {
+                return await _db.Customers
+                    .Where(c => c.CustomerName.Contains(query) || 
+                                c.CustID.ToString().Contains(query)
+                                
+                            )
+                    .ToListAsync();
+            }
         }
+
+
+        public async Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID)=>
+            await _db.Customers.Include(c => c.orders).Where(c => c.CustID == customerID).ToListAsync();
 
         public Task<WholesaleCustomer> UpsertAsync(WholesaleCustomer order)
         {

@@ -15,6 +15,7 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="UserControls\CustomerSelectionControl.xaml" />
     <None Remove="Views\OrderDetailsPage.xaml" />
     <None Remove="Views\ProductsPage.xaml" />
     <None Remove="Views\ReportsPage.xaml" />
@@ -23,6 +24,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UserControls\CustomerSelectionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\ProductsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -62,10 +66,6 @@
     <Page Update="Views\OrderDetailsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UserControls\" />
   </ItemGroup>
   
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">

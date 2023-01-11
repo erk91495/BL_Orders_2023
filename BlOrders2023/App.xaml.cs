@@ -84,6 +84,7 @@ public partial class App : Application
             services.AddTransient<OrderDetailsPageViewModel>();
             services.AddTransient<ProductsPage>();
             services.AddTransient<ProductsPageViewModel>();
+            services.AddTransient<CustomerSelectionViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

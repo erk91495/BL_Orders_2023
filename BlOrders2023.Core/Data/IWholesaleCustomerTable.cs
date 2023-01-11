@@ -9,8 +9,8 @@ namespace BlOrders2023.Core.Data
 {
     public interface IWholesaleCustomerTable
     {
-        Task<IEnumerable<WholesaleCustomer>> GetAsync();
-        Task<IEnumerable<WholesaleCustomer>> GetAsync(int orderID);
+        Task<IEnumerable<WholesaleCustomer>> GetAsync(string query = null);
+        Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID);
         Task<WholesaleCustomer> UpsertAsync(WholesaleCustomer order);
         Task DeleteAsync(WholesaleCustomer order);
     }

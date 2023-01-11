@@ -48,7 +48,7 @@ namespace BlOrders2023.Core.Data.SQL
             await _db.Orders
                 .OrderByDescending(order => order.PickupDate)
                 .ThenBy(order => order.OrderID)
-                //.Take(100)
+                .Where(order => order.PickupDate.Year >= DateTime.Now.Year - 2)
                 //.Include(Order => Order.Items)
                 //.Include(order => order.Customer)
                 //.Include(Order => Order.ShippingItems)

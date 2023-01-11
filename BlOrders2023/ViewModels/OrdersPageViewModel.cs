@@ -52,6 +52,11 @@ public class OrdersPageViewModel : ObservableRecipient
             OnPropertyChanged(nameof(IsLoading));
         }
     }
+
+    /// <summary>
+    /// Gets the orders to display.
+    /// </summary>
+    public ObservableCollection<Order> Orders { get; private set; } = new ObservableCollection<Order>();
     #endregion Properties
 
     #region Fields
@@ -69,11 +74,6 @@ public class OrdersPageViewModel : ObservableRecipient
     /// Gets the unfiltered collection of all orders. 
     /// </summary>
     private List<Order> MasterOrdersList { get; set; } = new List<Order>();
-
-    /// <summary>
-    /// Gets the orders to display.
-    /// </summary>
-    public ObservableCollection<Order> Orders { get; private set; } = new ObservableCollection<Order>();
 
     /// <summary>
     /// Gets the dispatcher Queue for the current thread
