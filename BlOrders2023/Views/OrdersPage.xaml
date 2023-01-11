@@ -15,11 +15,15 @@
             <MenuFlyoutItem
                 Click="MenuFlyoutViewDetails_Click"
                 Icon="Edit"
-                Text="View details"/>
+                Text="Edit"/>
             <MenuFlyoutItem
                 Click="MenuFlyoutNewOrderClick"
                 Icon="Add"
-                Text="New order"/>
+                Text="New"/>
+            <MenuFlyoutItem
+                
+                Icon="List"
+                Text="Fill"/>
         </MenuFlyout>
     </Page.Resources>
     <RelativePanel>
