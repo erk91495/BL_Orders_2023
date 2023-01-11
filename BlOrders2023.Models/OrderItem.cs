@@ -38,6 +38,7 @@ namespace BlOrders2023.Models
         public decimal ActualCustPrice { get; set; }
         public float QuanRcvd { get; set; }
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrdDtl_ID { get; set; }
         public DateTime? ProdEntryDate { get; set; }
         [ForeignKey("ProductID")]

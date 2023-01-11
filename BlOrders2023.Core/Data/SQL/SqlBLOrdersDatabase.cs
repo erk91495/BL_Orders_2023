@@ -11,20 +11,20 @@ namespace BlOrders2023.Core.Data.SQL
     {
 
         private readonly DbContextOptions<BLOrdersDBContext> _dbOptions;
+        private readonly BLOrdersDBContext _dbContext;
 
         public SqlBLOrdersDatabase(DbContextOptionsBuilder<BLOrdersDBContext> dbOptionBuilder)
         {
             _dbOptions = dbOptionBuilder.Options;
-            using (var db = new BLOrdersDBContext(_dbOptions))
-            {
-                db.Database.EnsureCreated();
-            }
+            _dbContext = new BLOrdersDBContext(_dbOptions);
+            _dbContext.Database.EnsureCreated();
+
         }
 
-        public IOrderTable Orders => new OrderTable(new BLOrdersDBContext(_dbOptions));
+        public IOrderTable Orders => new OrderTable(_dbContext);
 
-        public IWholesaleCustomerTable Customers => new WholesaleCustomerTable(new BLOrdersDBContext(_dbOptions));
+        public IWholesaleCustomerTable Customers => new WholesaleCustomerTable(_dbContext);
 
-        public IProductsTable Products => new ProductsTable(new BLOrdersDBContext(_dbOptions));
+        public IProductsTable Products => new ProductsTable(_dbContext);
     }
 }

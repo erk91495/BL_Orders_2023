@@ -83,15 +83,6 @@ namespace BlOrders2023.Core.Data.SQL
             {
                 //TODO: Concurrency checks maybe here
                 _db.Entry(exists).CurrentValues.SetValues(order);
-                foreach(var item in order.Items)
-                {
-                    _db.Entry(item).CurrentValues.SetValues(item);
-                }
-
-            }
-            if(_db.ChangeTracker.HasChanges() == false)
-            {
-                var i = 0;
             }
             int res =  await _db.SaveChangesAsync();
             return order;

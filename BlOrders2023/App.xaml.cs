@@ -107,6 +107,7 @@ public partial class App : Application
             dbOptions
             .UseLazyLoadingProxies()
             .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
+            .EnableSensitiveDataLogging()
             .UseSqlServer(connectionString: "Data Source=.; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
         App.BLDatabase = new SqlBLOrdersDatabase(dbOptions);
 
