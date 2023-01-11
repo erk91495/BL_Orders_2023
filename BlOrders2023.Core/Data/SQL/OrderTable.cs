@@ -35,9 +35,14 @@ namespace BlOrders2023.Core.Data.SQL
         /// </summary>
         /// <param name="order">The Order to be deleted</param>
         /// <returns></returns>
-        public Task DeleteAsync(Order order)
+        public async Task DeleteAsync(Order order)
         {
-            throw new NotImplementedException();
+            var match = await _db.Orders.FirstOrDefaultAsync(_order => _order.OrderID == order.OrderID);
+            if (match != null)
+            {
+                _db.Orders.Remove(match);
+            }
+            await _db.SaveChangesAsync();
         }
 
         /// <summary>

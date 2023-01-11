@@ -14,8 +14,12 @@
         <MenuFlyout x:Key="DataGridContextMenu">
             <MenuFlyoutItem
                 Click="MenuFlyoutViewDetails_Click"
-                Icon="OpenFile"
+                Icon="Edit"
                 Text="View details"/>
+            <MenuFlyoutItem
+                Click="MenuFlyoutNewOrderClick"
+                Icon="Add"
+                Text="New order"/>
         </MenuFlyout>
     </Page.Resources>
     <RelativePanel>
@@ -49,7 +53,7 @@
                     </SplitButton.Flyout>
                 </SplitButton>
             </AppBarElementContainer>
-            <AppBarButton Icon="More" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <AppBarButton Icon="GlobalNavigationButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         </CommandBar>
         
         <SplitView x:Name="ListSplitView"

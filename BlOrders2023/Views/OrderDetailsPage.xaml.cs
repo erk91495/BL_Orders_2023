@@ -21,6 +21,9 @@ using Windows.UI.Core;
 using Syncfusion.UI.Xaml.Grids.ScrollAxis;
 using System.Windows.Forms.VisualStyles;
 using System.Collections.ObjectModel;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using BlOrders2023.Contracts.Services;
+using BlOrders2023.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,6 +44,7 @@ namespace BlOrders2023.Views
 
         #region Fields
         private OrderItem? _doomed;
+        private bool _deleteOrder;
         #endregion Fields
 
         #region Constructors
@@ -69,9 +73,16 @@ namespace BlOrders2023.Views
         /// <param name="e">the navigation envent args</param>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            //change focus to write any changes
-            OrderNumber.Focus(FocusState.Programmatic);
-            Task.Run(() => ViewModel.SaveCurrentOrder());
+            if (_deleteOrder)
+            {
+                ViewModel.DeleteCurrentOrder();
+            }
+            else 
+            { 
+                //change focus to write any changes
+                OrderNumber.Focus(FocusState.Programmatic);
+                Task.Run(() => ViewModel.SaveCurrentOrder());
+            }
             base.OnNavigatingFrom(e);
         }
 
@@ -148,9 +159,7 @@ namespace BlOrders2023.Views
         }
 
 
-        #endregion Event Handlers
 
-        #endregion Methods
 
 
         /// <summary>
@@ -226,17 +235,43 @@ namespace BlOrders2023.Views
                     //The text matched a productcode
                     ViewModel.addItem(toAdd);
                 }
+                else
+                {
+                    //Couldn't find a match so abort
+                    return;
+                }
                 ProductEntryBox.Text = null;
                 ProductEntryBox.IsSuggestionListOpen = false;
             }
             var res  = OrderedItems.Focus(FocusState.Keyboard);
+
+            //TODO: Handle Empty row
             var rowIndex = OrderedItems.ResolveToRowIndex(ViewModel.Items.Last());
             var columnIndex = OrderedItems.Columns.FirstOrDefault(c => c.HeaderText.ToString() == "Quantity Ordered");
             var rowColumnIndex = new RowColumnIndex(rowIndex, 3);
             OrderedItems.MoveCurrentCell(rowColumnIndex);
             res =  OrderedItems.SelectionController.CurrentCellManager.BeginEdit();
         }
-        
 
+        private void DeleteOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            _deleteOrder = true;
+            NavigationService nav = App.GetService<INavigationService>() as NavigationService;
+            if(nav != null)
+            {
+                if (nav.CanGoBack)
+                {
+                    nav.GoBack();
+                }
+                else
+                {
+                    Frame.Navigate(typeof(OrdersPage));
+                }
+            }
+        }
+
+        #endregion Event Handlers
+
+        #endregion Methods
     }
 }

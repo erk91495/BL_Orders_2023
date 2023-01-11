@@ -302,6 +302,11 @@ namespace BlOrders2023.ViewModels
         {
             throw new NotImplementedException();
         }
+
+        internal async void DeleteCurrentOrder()
+        {
+            await App.BLDatabase.Orders.DeleteAsync(_order);
+        }
         #endregion Queries
         #endregion Methods
     }

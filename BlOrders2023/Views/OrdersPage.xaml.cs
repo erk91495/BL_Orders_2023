@@ -92,6 +92,25 @@ public sealed partial class OrdersPage : Page
         NavigateToOrderDetailsPage();
 
     /// <summary>
+    /// Handles the click eventfor the New Order flyout item
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
+    private void MenuFlyoutNewOrderClick(object sender, RoutedEventArgs e)
+    {
+        Order order = new Order()
+        {
+            Customer = ViewModel.SelectedOrder.Customer,
+            CustID = ViewModel.SelectedOrder.CustID,
+            Memo_Totl = 0.0M,
+            OrderDate = DateTime.Now,
+            Frozen = false,
+        };
+        order.PickupTime = DateTime.Today;
+        ViewModel.Orders.Add(order);
+        Frame.Navigate(typeof(OrderDetailsPage),order);
+    }
+    /// <summary>
     /// Handles TextChanged events for the search box. Updates the filter value for the view model and refreshes filter
     /// </summary>
     /// <param name="sender">the object sending the event</param>

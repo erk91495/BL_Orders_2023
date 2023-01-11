@@ -71,12 +71,22 @@
         <StackPanel x:Name="OrderInfo"
                     Orientation="Vertical"
                     RelativePanel.AlignRightWithPanel="True">
+            <Button HorizontalAlignment="Right">
+                <SymbolIcon Symbol="GlobalNavigationButton"/>
+                <Button.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem Text="Delete Order" Icon="Delete" Click="DeleteOrderFlyoutItem_Click"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+
+
             <TextBlock Text="{x:Bind ViewModel.OrderStatus, Mode=OneWay}"
-                               HorizontalTextAlignment="Center"
-                               HorizontalAlignment="Stretch"
-                               Padding="0,10,0,5"
-                               FontSize="50"
-                               FontWeight="SemiBold"/>
+                            HorizontalTextAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            Padding="0,10,0,5"
+                            FontSize="50"
+                            FontWeight="SemiBold"/>
         </StackPanel>
         <RelativePanel x:Name="UserInputRanel"
                        RelativePanel.Below="CustomerInfo"

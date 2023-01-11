@@ -8,6 +8,7 @@ namespace BlOrders2023.Models;
 public class Order
 { 
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OrderID { get; set; }
     public DateTime OrderDate { get; set; }
     public int CustID { get; set; }

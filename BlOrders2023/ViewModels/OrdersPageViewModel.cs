@@ -141,6 +141,12 @@ public class OrdersPageViewModel : ObservableRecipient
             IsLoading = false;
         }
     }
+
+    public async void SaveOrder(Order order)
+    {
+        IOrderTable table = App.BLDatabase.Orders;
+        var res = await Task.Run(() => table.UpsertAsync(order));
+    }
     #endregion Queries
 
     #region Filtering
