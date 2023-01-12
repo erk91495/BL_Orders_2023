@@ -14,7 +14,7 @@ namespace BlOrders2023.ViewModels
         {
             get => _suggestedCustomers;
         }
-        public WholesaleCustomer SelectedCustomer { get; set; }
+        public WholesaleCustomer? SelectedCustomer { get; set; }
         #endregion Properties
 
         #region Fields

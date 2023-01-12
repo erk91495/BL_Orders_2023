@@ -48,10 +48,10 @@
             </AppBarElementContainer>
             <AppBarElementContainer>
                 <SplitButton ToolTipService.ToolTip="Create New Order" Content="New Order"
-                             Click="CreateNewOrder">
+                             Click="NewOrderBtn_Clicked">
                     <SplitButton.Flyout>
                         <MenuFlyout Placement="RightEdgeAlignedTop">
-                            <MenuFlyoutItem Text="New Order" Click="CreateNewOrder"/>
+                            <MenuFlyoutItem Text="New Order" Click="NewOrderBtn_Clicked"/>
                             <MenuFlyoutItem Text="New Customer"/>
                         </MenuFlyout>
                     </SplitButton.Flyout>

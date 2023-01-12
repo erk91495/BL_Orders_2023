@@ -98,18 +98,31 @@ public sealed partial class OrdersPage : Page
     /// <param name="e">event args for the click event</param>
     private void MenuFlyoutNewOrderClick(object sender, RoutedEventArgs e)
     {
-        Order order = new Order()
-        {
-            Customer = ViewModel.SelectedOrder.Customer,
-            CustID = ViewModel.SelectedOrder.CustID,
-            Memo_Totl = 0.0M,
-            OrderDate = DateTime.Now,
-            Frozen = false,
-        };
-        order.PickupTime = DateTime.Today;
-        ViewModel.Orders.Add(order);
-        Frame.Navigate(typeof(OrderDetailsPage),order);
+        CreateNewOrder(ViewModel?.SelectedOrder?.Customer);
     }
+
+    /// <summary>
+    /// Creates a new order for the given customer
+    /// </summary>
+    /// <param name="customer"></param>
+    private void CreateNewOrder(WholesaleCustomer customer)
+    {
+        if (customer != null)
+        {
+            Order order = new Order()
+            {
+                Customer = customer,
+                CustID = customer.CustID,
+                Memo_Totl = 0.0M,
+                OrderDate = DateTime.Now,
+                Frozen = false,
+            };
+            order.PickupTime = DateTime.Today;
+            ViewModel.Orders.Add(order);
+            Frame.Navigate(typeof(OrderDetailsPage), order);
+        }
+    }
+
     /// <summary>
     /// Handles TextChanged events for the search box. Updates the filter value for the view model and refreshes filter
     /// </summary>
@@ -128,23 +141,25 @@ public sealed partial class OrdersPage : Page
             OrdersGrid.View.RefreshFilter(); 
         }
     }
-    private void CreateNewOrder(SplitButton sender, SplitButtonClickEventArgs e)
+    private void NewOrderBtn_Clicked(SplitButton sender, SplitButtonClickEventArgs e)
     {
-        CreateNewOrder(sender as object, new RoutedEventArgs() );
+        NewOrderBtn_Clicked(sender as object, new RoutedEventArgs() );
     }
 
-    private void CreateNewOrder(object sender, RoutedEventArgs e)
+    private void NewOrderBtn_Clicked(object sender, RoutedEventArgs e)
     {
-        CustomerSelectionControl dialog = new();
-        dialog.XamlRoot = XamlRoot;
-        dialog.Title = "Select A Customer";
-        dialog.Closed += Dialog_Closed;
-        _ = dialog.ShowAsync();
+        CustomerSelectionControl dialog = new(XamlRoot);
+        dialog.SelectionChoose += CustomerSelectionControl_SelectionChoose;
+        dialog.showAsync();
+
     }
 
-    private void Dialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+    private void CustomerSelectionControl_SelectionChoose(object? o, EventArgs args)
     {
-        var res = args.Result;
+        if( o is CustomerSelectionControl control)
+        {
+            CreateNewOrder(control.ViewModel.SelectedCustomer);
+        } 
     }
     #endregion Methods
 
