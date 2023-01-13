@@ -55,6 +55,8 @@ namespace BlOrders2023.Views
         {
             ViewModel = App.GetService<OrderDetailsPageViewModel>();
             this.InitializeComponent();
+            SetMemoTotalFormatter();
+            SetMemoWeightFormatter();
             PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
         }
         #endregion Constructors
@@ -92,7 +94,7 @@ namespace BlOrders2023.Views
         private void SetMemoTotalFormatter()
         {
             IncrementNumberRounder rounder = new();
-            rounder.Increment = 0.25;
+            rounder.Increment = 0.01;
             rounder.RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp;
 
             DecimalFormatter formatter = new();
@@ -100,6 +102,22 @@ namespace BlOrders2023.Views
             formatter.FractionDigits = 2;
             formatter.NumberRounder = rounder;
             MemoTotal.NumberFormatter = formatter;
+        }
+
+        /// <summary>
+        /// Sets the Formatter for the MemoWeight field
+        /// </summary>
+        private void SetMemoWeightFormatter()
+        {
+            IncrementNumberRounder rounder = new();
+            rounder.Increment = 0.01;
+            rounder.RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp;
+
+            DecimalFormatter formatter = new();
+            formatter.IntegerDigits = 1;
+            formatter.FractionDigits = 2;
+            formatter.NumberRounder = rounder;
+            MemoWeight.NumberFormatter = formatter;
         }
 
         #region Events Handlers

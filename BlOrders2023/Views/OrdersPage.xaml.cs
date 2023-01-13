@@ -109,15 +109,7 @@ public sealed partial class OrdersPage : Page
     {
         if (customer != null)
         {
-            Order order = new Order()
-            {
-                Customer = customer,
-                CustID = customer.CustID,
-                Memo_Totl = 0.0M,
-                OrderDate = DateTime.Now,
-                Frozen = false,
-            };
-            order.PickupTime = DateTime.Today;
+            Order order = new Order(customer);
             ViewModel.Orders.Add(order);
             Frame.Navigate(typeof(OrderDetailsPage), order);
         }

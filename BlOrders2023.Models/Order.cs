@@ -7,6 +7,23 @@ namespace BlOrders2023.Models;
 [Table("tblOrdersWholesale")]
 public class Order
 { 
+    public Order() 
+    { 
+        Memo_Totl = 0M;
+        Memo_Weight = 0;
+        OrderDate = DateTime.Now;
+        Frozen = false;
+        //Set the date for today so that sql will accept the time
+        PickupTime = DateTime.Today;
+    }
+    
+    public Order(WholesaleCustomer customer)
+        : this()
+    {
+        Customer = customer;
+        CustID = customer.CustID;
+    }
+
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OrderID { get; set; }

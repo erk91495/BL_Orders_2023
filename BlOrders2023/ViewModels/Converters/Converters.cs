@@ -86,6 +86,26 @@ namespace BlOrders2023.ViewModels
         }
     }
 
+    public class FloatToDoubleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value != null && value is float f)
+            {
+                return (Double) f;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return System.Convert.ToSingle(value);
+        }
+    }
+
     public class EnumToBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

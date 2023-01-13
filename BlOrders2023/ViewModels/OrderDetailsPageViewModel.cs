@@ -167,9 +167,19 @@ namespace BlOrders2023.ViewModels
             }
         }
 
+        public float? Memo_Weight
+        {
+            get => _order.Memo_Weight;
+            set
+            {
+                _order.Memo_Weight = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         #endregion Properties
-        
+
         #region Fields
         private Order _order;
         private ObservableCollection<Product> _suggestedProducts;

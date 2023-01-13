@@ -19,6 +19,7 @@
 
     <Page.Resources>
         <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
+        <vm:FloatToDoubleConverter x:Key="FloatToDoubleConverter"/>
         <vm:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
         <vm:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
         <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
@@ -178,14 +179,24 @@
                          Background="Transparent"
                          BorderBrush="{ThemeResource TextFillColorPrimary}"
                          BorderThickness="1"/>
-                <StackPanel Orientation="Horizontal" 
-                        HorizontalAlignment="Right"
-                        Padding="0,10,0,0">
-                <TextBlock Text="Memo Total: $" VerticalAlignment="Center"/>
-                <NumberBox x:Name="MemoTotal"
-                           Value="{x:Bind ViewModel.Memo_Totl, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
-                           Background="Transparent"
-                           />
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Right"
+                            Padding="0,10,0,0">
+                        <TextBlock Text="Memo Weight: " VerticalAlignment="Center"/>
+                        <NumberBox x:Name="MemoWeight"
+                               Value="{x:Bind ViewModel.Memo_Weight, Mode=TwoWay, Converter={StaticResource FloatToDoubleConverter}}"
+                               Background="Transparent"
+                               />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+                        <TextBlock Text="Memo Total: $" VerticalAlignment="Center"/>
+                        <NumberBox x:Name="MemoTotal"
+                                   Value="{x:Bind ViewModel.Memo_Totl, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                   Background="Transparent"
+                                   />
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </RelativePanel>
