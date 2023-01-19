@@ -24,6 +24,7 @@ using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using BlOrders2023.Contracts.Services;
 using BlOrders2023.Services;
+using Microsoft.UI.Dispatching;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,6 +46,7 @@ namespace BlOrders2023.Views
         #region Fields
         private OrderItem? _doomed;
         private bool _deleteOrder;
+        private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         #endregion Fields
 
         #region Constructors
@@ -58,7 +60,9 @@ namespace BlOrders2023.Views
             SetMemoTotalFormatter();
             SetMemoWeightFormatter();
             PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
+            OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
         }
+
         #endregion Constructors
         #region Methods
         /// <summary>
@@ -86,6 +90,33 @@ namespace BlOrders2023.Views
                 Task.Run(() => ViewModel.SaveCurrentOrder());
             }
             base.OnNavigatingFrom(e);
+        }
+
+        /// <summary>
+        /// Triggers when the collection changes
+        /// </summary>
+        /// <param name="sender">the data grid</param>
+        /// <param name="e">event args</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void Records_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //If we added an item then enqueue a task to focus it and edit the quantity 
+            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                dispatcherQueue.TryEnqueue(() => FocusEditLastCell());
+            }
+        }
+
+        private void FocusEditLastCell()
+        {
+            var res = OrderedItems.Focus(FocusState.Keyboard);
+
+            //TODO: Handle Empty row
+            var rowIndex = OrderedItems.ResolveToRowIndex(ViewModel.Items.Last());
+            var columnIndex = OrderedItems.Columns.FirstOrDefault(c => c.HeaderText.ToString() == "Quantity Ordered");
+            var rowColumnIndex = new RowColumnIndex(rowIndex, 3);
+            OrderedItems.MoveCurrentCell(rowColumnIndex);
+            res = OrderedItems.SelectionController.CurrentCellManager.BeginEdit();
         }
 
         /// <summary>
@@ -187,40 +218,43 @@ namespace BlOrders2023.Views
         /// <param name="e"></param>
         private void OrderedItems_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            var visualcontainer = OrderedItems.GetType().GetProperty("VisualContainer", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(OrderedItems) as VisualContainer;
-            if (visualcontainer == null)
+            if (OrderedItems != null)
             {
-                return;
-            }
-                
-            var point = e.GetCurrentPoint(visualcontainer).Position;
-            var rowColumnIndex = visualcontainer.PointToCellRowColumnIndex(point);
-            var recordIndex = OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex);
-            if (recordIndex < 0)
-            {
-                return;
-            }
-
-            //When the rowindex is zero , the row will be header row
-            if (!rowColumnIndex.IsEmpty)
-            {
-                if (OrderedItems.View.TopLevelGroup != null)
+                var visualcontainer = OrderedItems.GetType().GetProperty("VisualContainer", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(OrderedItems) as VisualContainer;
+                if (visualcontainer == null)
                 {
-                    // Get the current row record while grouping
-                    var record = OrderedItems.View.TopLevelGroup.DisplayElements[recordIndex];
-                    if (record.GetType() == typeof(RecordEntry))
+                    return;
+                }
+
+                var point = e.GetCurrentPoint(visualcontainer).Position;
+                var rowColumnIndex = visualcontainer.PointToCellRowColumnIndex(point);
+                var recordIndex = OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex);
+                if (recordIndex < 0)
+                {
+                    return;
+                }
+
+                //When the rowindex is zero , the row will be header row
+                if (!rowColumnIndex.IsEmpty)
+                {
+                    if (OrderedItems.View.TopLevelGroup != null)
                     {
-                        _doomed = (record as RecordEntry).Data as OrderItem;
+                        // Get the current row record while grouping
+                        var record = OrderedItems.View.TopLevelGroup.DisplayElements[recordIndex];
+                        if (record is RecordEntry r)
+                        {
+                            _doomed = r.Data as OrderItem;
+                        }
                     }
-                }
-                else
-                {
-                    //Gets the column from ColumnsCollection by resolving the corresponding column index from  GridVisibleColumnIndex                      
-                    var gridColumn = OrderedItems.Columns[OrderedItems.ResolveToGridVisibleColumnIndex(rowColumnIndex.ColumnIndex)];
-                    //For getting the record, need to resolve the corresponding record index from row index                     
-                    _doomed = OrderedItems.View.Records[OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex)].Data as OrderItem;
-                }
+                    else
+                    {
+                        //Gets the column from ColumnsCollection by resolving the corresponding column index from  GridVisibleColumnIndex                      
+                        var gridColumn = OrderedItems.Columns[OrderedItems.ResolveToGridVisibleColumnIndex(rowColumnIndex.ColumnIndex)];
+                        //For getting the record, need to resolve the corresponding record index from row index                     
+                        _doomed = OrderedItems.View.Records[OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex)].Data as OrderItem;
+                    }
 
+                }
             }
         }
 
@@ -235,8 +269,10 @@ namespace BlOrders2023.Views
         /// and also ChosenSuggestion, which is only non-null when a user selects an item in the list.</param>
         private void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
+            ProductEntryBox.IsSuggestionListOpen = false;
             if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
             {
+                
                 //User selected an item, take an action
                 ViewModel.addItem(p);
 
@@ -249,7 +285,6 @@ namespace BlOrders2023.Views
 
                 if (result && toAdd != null)
                 {
-                    int addNewRowIndex = OrderedItems.GetAddNewRowIndex();
                     //The text matched a productcode
                     ViewModel.addItem(toAdd);
                 }
@@ -261,14 +296,6 @@ namespace BlOrders2023.Views
                 ProductEntryBox.Text = null;
                 ProductEntryBox.IsSuggestionListOpen = false;
             }
-            var res  = OrderedItems.Focus(FocusState.Keyboard);
-
-            //TODO: Handle Empty row
-            var rowIndex = OrderedItems.ResolveToRowIndex(ViewModel.Items.Last());
-            var columnIndex = OrderedItems.Columns.FirstOrDefault(c => c.HeaderText.ToString() == "Quantity Ordered");
-            var rowColumnIndex = new RowColumnIndex(rowIndex, 3);
-            OrderedItems.MoveCurrentCell(rowColumnIndex);
-            res =  OrderedItems.SelectionController.CurrentCellManager.BeginEdit();
         }
 
         private void DeleteOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -288,8 +315,46 @@ namespace BlOrders2023.Views
             }
         }
 
+        /// <summary>
+        /// Called when the ordereditems are loaded 
+        /// </summary>
+        /// <param name="sender">the sfdatagrid</param>
+        /// <param name="e">the event args</param>
+        private void OrderedItems_Loaded(object sender, RoutedEventArgs e)
+        {
+            OrderedItems.View.Records.CollectionChanged += Records_CollectionChanged;
+        }
+
+        //TODO: decide what to do here
+
+        /// <summary>
+        /// Called when a key is pressed down on the datagrid
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void OrderedItems_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if(e.Key == Windows.System.VirtualKey.Enter)
+            {
+                var rowindex = OrderedItems.SelectionController.CurrentCellManager.CurrentCell.RowIndex;
+                var columnIndex = OrderedItems.SelectionController.CurrentCellManager.CurrentCell.ColumnIndex;
+                if (columnIndex < OrderedItems.Columns.Count -1)
+                {
+                    var rowColumnIndex = new RowColumnIndex(rowindex, columnIndex + 1);
+                    //OrderedItems.MoveCurrentCell(rowColumnIndex);
+                    //Dont need Count -1 becuase there is a header row
+                }else if (rowindex < ViewModel.Items.Count)
+                {
+                    var rowColumnIndex = new RowColumnIndex(rowindex + 1, 2);
+                    //OrderedItems.MoveCurrentCell(rowColumnIndex);
+                }
+            }
+        }
         #endregion Event Handlers
 
         #endregion Methods
+
+
     }
 }
