@@ -202,6 +202,10 @@ namespace BlOrders2023.ViewModels
 
         #region Methods
 
+        public bool OrderItemsContains(int id)
+        {
+            return (_items.FirstOrDefault(  i => i.ProductID == id, null) != null);
+        }
         /// <summary>
         /// Notifies anyone listening to this object that a line item changed. 
         /// </summary>

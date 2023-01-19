@@ -25,6 +25,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using BlOrders2023.Contracts.Services;
 using BlOrders2023.Services;
 using Microsoft.UI.Dispatching;
+using System.Media;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -267,14 +268,16 @@ namespace BlOrders2023.Views
         /// <param name="sender">The AutoSuggestBox that fired the event.</param>
         /// <param name="args">The args contain the QueryText, which is the text in the TextBox,
         /// and also ChosenSuggestion, which is only non-null when a user selects an item in the list.</param>
-        private void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        private async void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
+            
             ProductEntryBox.IsSuggestionListOpen = false;
+            Product productToAdd = new();
             if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
             {
-                
+
                 //User selected an item, take an action
-                ViewModel.addItem(p);
+                productToAdd = p;
 
             }
             else if (!string.IsNullOrEmpty(args.QueryText))
@@ -286,12 +289,28 @@ namespace BlOrders2023.Views
                 if (result && toAdd != null)
                 {
                     //The text matched a productcode
-                    ViewModel.addItem(toAdd);
+                    productToAdd = toAdd;
                 }
                 else
                 {
-                    //Couldn't find a match so abort
+                    productToAdd = null;
                     return;
+                }
+                if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
+                {
+                    ViewModel.addItem(productToAdd);
+                }
+                else if (productToAdd != null)
+                {
+                    ContentDialog dialog = new ContentDialog
+                    {
+                        Title = "Duplicate Product",
+                        Content = String.Format("Product ID: {0} already exists on the Order \n", productToAdd.ProductID),
+                        CloseButtonText = "Ok",
+                        XamlRoot = XamlRoot,
+                    };
+                    SystemSounds.Exclamation.Play();
+                    await dialog.ShowAsync();
                 }
                 ProductEntryBox.Text = null;
                 ProductEntryBox.IsSuggestionListOpen = false;
@@ -351,10 +370,14 @@ namespace BlOrders2023.Views
                 }
             }
         }
+
         #endregion Event Handlers
 
         #endregion Methods
 
-
+        private void ProductEntryBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            ProductEntryBox.Text = null;
+        }
     }
 }
