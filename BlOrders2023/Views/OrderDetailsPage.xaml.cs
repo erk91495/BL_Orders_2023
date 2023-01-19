@@ -371,13 +371,17 @@ namespace BlOrders2023.Views
             }
         }
 
-        #endregion Event Handlers
-
-        #endregion Methods
-
+        /// <summary>
+        /// Resets the ProductEntryBox after an item is choosen
+        /// </summary>
+        /// <param name="sender">Product Entry Box</param>
+        /// <param name="args">event args</param>
         private void ProductEntryBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             ProductEntryBox.Text = null;
         }
+        #endregion Event Handlers
+
+        #endregion Methods
     }
 }
