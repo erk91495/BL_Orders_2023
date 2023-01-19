@@ -108,14 +108,17 @@ namespace BlOrders2023.Views
             }
         }
 
+        /// <summary>
+        /// Attempts to focus the last row and edit the Quantity ordered Column
+        /// </summary>
         private void FocusEditLastCell()
         {
             var res = OrderedItems.Focus(FocusState.Keyboard);
 
             //TODO: Handle Empty row
             var rowIndex = OrderedItems.ResolveToRowIndex(ViewModel.Items.Last());
-            var columnIndex = OrderedItems.Columns.FirstOrDefault(c => c.HeaderText.ToString() == "Quantity Ordered");
-            var rowColumnIndex = new RowColumnIndex(rowIndex, 3);
+            var columnIndex = OrderedItems.Columns.IndexOf(OrderedItems.Columns.FirstOrDefault(c => c.HeaderText.ToString() == "Quantity Ordered"));
+            var rowColumnIndex = new RowColumnIndex(rowIndex, columnIndex);
             OrderedItems.MoveCurrentCell(rowColumnIndex);
             res = OrderedItems.SelectionController.CurrentCellManager.BeginEdit();
         }

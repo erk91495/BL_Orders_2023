@@ -60,7 +60,8 @@ namespace BlOrders2023.UserControls
             }
             else if (result == ContentDialogResult.Secondary)
             {
-                throw new NotImplementedException();
+                CustomerDataInputControl control = new(XamlRoot);
+                await control.ShowAsync();
             }
             else
             {
@@ -79,7 +80,6 @@ namespace BlOrders2023.UserControls
             {
                 //User selected an item, take an action
                 ViewModel.SelectedCustomer = c;
-
             }
             else
             {
