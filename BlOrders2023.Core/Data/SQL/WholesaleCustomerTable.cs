@@ -45,6 +45,10 @@ namespace BlOrders2023.Core.Data.SQL
         public async Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID)=>
             await _db.Customers.Include(c => c.orders).Where(c => c.CustID == customerID).ToListAsync();
 
+        public async Task<CustomerClass> GetDefaultCustomerClassasync() =>
+           await _db.CustomerClasses.FirstAsync();
+        
+
         public Task<WholesaleCustomer> UpsertAsync(WholesaleCustomer order)
         {
             throw new NotImplementedException();

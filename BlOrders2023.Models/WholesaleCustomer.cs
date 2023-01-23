@@ -11,6 +11,7 @@ namespace BlOrders2023.Models
     [Table("tblCustomerWholesale")]
     public class WholesaleCustomer
     {
+        #region Properties
         [Key]
         public int CustID { get; set; }
         public string CustomerName { get; set; } = "";
@@ -25,18 +26,47 @@ namespace BlOrders2023.Models
         public string? Buyer { get; set; }
         public string? LastPurchase { get; set; }
         public string? Fax { get; set; }
-        //public string? Class { get; set; }
+        // -1 is grocer 0 is gift
         public short Grocer { get; set; }
         public short Inactive { get; set; }
         public string? Email { get; set; }
-        [Column("Gift-Grocer")]
-        public string? Gift_Grocer { get; set; }
+        //[Column("Gift-Grocer")]
+        //public string? Gift_Grocer { get; set; }
         public bool? SingleProdPerPallet { get; set; }
-        public virtual List<Order> orders { get; set; } = new();
         public int? CustomerClassID { get; set; }
+        
         [ForeignKey("CustomerClassID")]
-        public virtual CustomerClass CustomerClass { get; set; }
+        public virtual CustomerClass CustomerClass
+        {
+            get { return _customerClass; }
+            set
+            {
+                CustomerClassID = value.ID;
+                _customerClass = value;
+            }
+        }
 
+        public virtual List<Order> orders { get; set; } = new();
+        #endregion Properties
+
+        #region Fields
+        private CustomerClass _customerClass;
+        #endregion Fields
+
+        #region Constructors
+        public WholesaleCustomer()
+        {
+            CustomerName = "";
+            Phone = "";
+            Grocer = -1;
+            Inactive = 0;
+            SingleProdPerPallet = false;
+            CustomerClass = new();
+            
+        }
+        #endregion Constructors
+
+        #region Methods
         public string CityStateZip()
         {
             return String.Format("{0} {1}  {2}", City, State, ZipCode);
@@ -54,5 +84,6 @@ namespace BlOrders2023.Models
         {
             return CustomerName;
         }
+        #endregion Methods
     }
 }

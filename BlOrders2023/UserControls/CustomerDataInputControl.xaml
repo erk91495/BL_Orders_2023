@@ -10,71 +10,89 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Customer Name: " Margin="5" />
-            <TextBox x:Name="CustomerNameTextBox" Text="{x:Bind ViewModel.Customer.CustomerName, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Address: " Margin="5" />
-            <TextBox x:Name="AddressTextBox" Text="{x:Bind ViewModel.Customer.Address, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="City: " Margin="5" />
-            <TextBox x:Name="CityTextBox" Text="{x:Bind ViewModel.Customer.City, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="State: " Margin="5" />
-            <ComboBox x:Name="StateComboBox" SelectedItem="{x:Bind ViewModel.Customer.State, Mode=TwoWay}" Margin="5">
 
-            </ComboBox>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Zip Code: " Margin="5" />
-            <TextBox x:Name="ZipCodeTextBox" Text="{x:Bind ViewModel.Customer.ZipCode, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
+    <StackPanel Orientation="Vertical">
+        <Grid x:Name="AddressGrid" ColumnSpacing="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Phone: " Margin="5" />
-            <TextBox x:Name="PhoneTextBox" Text="{x:Bind ViewModel.Customer.Phone, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Phone Extension: " Margin="5" />
-            <TextBox x:Name="PhoneExtTextBox" Text="{x:Bind ViewModel.Customer.PhoneExt, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Phone 2: " Margin="5" />
-            <TextBox x:Name="Phone2TextBox" Text="{x:Bind ViewModel.Customer.Phone_2, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Phone 2 Extension: " Margin="5" />
-            <TextBox x:Name="Phone2ExtTextBox" Text="{x:Bind ViewModel.Customer.Phone2Ext, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Buyer: " Margin="5" />
-            <TextBox x:Name="BuyerTextBox" Text="{x:Bind ViewModel.Customer.Buyer, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Last Purchase: " Margin="5" />
-            <TextBox x:Name="LastPurchaseTextBox" Text="{x:Bind ViewModel.Customer.LastPurchase, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Fax: " Margin="5" />
-            <TextBox x:Name="FaxTextBox" Text="{x:Bind ViewModel.Customer.Fax, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Email: " Margin="5" />
-            <TextBox x:Name="EmailTextBox" Text="{x:Bind ViewModel.Customer.Email, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
+            <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+                <TextBlock Text="Customer Name: " />
+                <TextBox x:Name="CustomerNameTextBox" Text="{x:Bind ViewModel.Customer.CustomerName, Mode=TwoWay}" Width="200" />
+            </StackPanel>
 
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Gift Grocer: " Margin="5" />
-            <TextBox x:Name="GiftGrocerTextBox" Text="{x:Bind ViewModel.Customer.Gift_Grocer, Mode=TwoWay}" Margin="5" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <CheckBox x:Name="SingleProdPerPalletCheckBox" IsChecked="{x:Bind ViewModel.Customer.SingleProdPerPallet, Mode=TwoWay}" Margin="5" Content="Single Product Per Pallet"  />
-        </StackPanel>
+            <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0">
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Buyer: " />
+                <TextBox Grid.Row="4" Grid.Column="1" x:Name="BuyerTextBox" Text="{x:Bind ViewModel.Customer.Buyer, Mode=TwoWay}" Width="200" />
+            </StackPanel>
 
+            <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0">
+                <TextBlock Text="Address: " />
+                <TextBox x:Name="AddressTextBox" Text="{x:Bind ViewModel.Customer.Address, Mode=TwoWay}" Width="200" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="0">
+                <TextBlock Text="City: " />
+                <TextBox x:Name="CityTextBox" Text="{x:Bind ViewModel.Customer.City, Mode=TwoWay}" Width="200" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Grid.Row="4" Grid.Column="0">
+                <TextBlock Text="State: " />
+                <ComboBox x:Name="StateComboBox" SelectedItem="{x:Bind ViewModel.Customer.State, Mode=TwoWay}" Width="200">
+                </ComboBox> 
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Grid.Row="5" Grid.Column="0">
+                <TextBlock Text="Zip Code: " />
+                <TextBox x:Name="ZipCodeTextBox" Text="{x:Bind ViewModel.Customer.ZipCode, Mode=TwoWay}" Width="200" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1">
+                <TextBlock Text="Phone: " />
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="PhoneTextBox" Text="{x:Bind ViewModel.Customer.Phone, Mode=TwoWay}" Width="175" Margin="0,0,10,0" />
+                    <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
+                    <TextBox x:Name="PhoneExtTextBox" Text="{x:Bind ViewModel.Customer.PhoneExt, Mode=TwoWay}" Width="50" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="2">
+                <TextBlock Text="Phone: " />
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="Phone_2TextBox" Text="{x:Bind ViewModel.Customer.Phone_2, Mode=TwoWay}" Width="175" Margin="0,0,10,0" />
+                    <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
+                    <TextBox x:Name="Phone2ExtTextBox" Text="{x:Bind ViewModel.Customer.Phone2Ext, Mode=TwoWay}" Width="50" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Grid.Row="4" Grid.Column="1">
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Fax: " />
+                <TextBox Grid.Row="5" Grid.Column="1" x:Name="FaxTextBox" Text="{x:Bind ViewModel.Customer.Fax, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Grid.Row="5" Grid.Column="1">
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Email: " />
+                <TextBox Grid.Row="6" Grid.Column="1" x:Name="EmailTextBox" Text="{x:Bind ViewModel.Customer.Email, Mode=TwoWay}"/>
+            </StackPanel>
+        
+        </Grid>
+
+
+        <StackPanel x:Name="WarehouseStackPanel" Orientation="Horizontal" Margin="5" RelativePanel.Below="ContactInfoGrid" HorizontalAlignment="Center">
+            <CheckBox x:Name="SingleProdPerPalletCheckBox" IsChecked="{x:Bind ViewModel.Customer.SingleProdPerPallet, Mode=TwoWay}" Content="Warehouse Pallet Loading" />
+        </StackPanel>
 
     </StackPanel>
+
 </ContentControl>

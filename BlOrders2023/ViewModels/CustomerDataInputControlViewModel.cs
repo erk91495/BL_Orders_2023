@@ -15,6 +15,10 @@ namespace BlOrders2023.ViewModels
         public WholesaleCustomer Customer { get; set; } = new();
         #endregion Fields
         #region Constructors
+        public CustomerDataInputControlViewModel()
+        {
+            Customer = new WholesaleCustomer();
+        }
         #endregion Constructors
         #region Methods
         #endregion Methods

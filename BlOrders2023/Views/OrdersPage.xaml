@@ -52,7 +52,7 @@
                     <SplitButton.Flyout>
                         <MenuFlyout Placement="RightEdgeAlignedTop">
                             <MenuFlyoutItem Text="New Order" Click="NewOrderBtn_Clicked"/>
-                            <MenuFlyoutItem Text="New Customer"/>
+                            <MenuFlyoutItem Text="New Customer" Click="NewCustomerBtn_Click"/>
                         </MenuFlyout>
                     </SplitButton.Flyout>
                 </SplitButton>

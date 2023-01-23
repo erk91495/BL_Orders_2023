@@ -145,6 +145,11 @@ public sealed partial class OrdersPage : Page
         dialog.showAsync();
 
     }
+    private void NewCustomerBtn_Click(object sender, RoutedEventArgs e)
+    {
+        CustomerDataInputControl dialog = new(XamlRoot);
+        dialog.ShowAsync();
+    }
 
     private void CustomerSelectionControl_SelectionChoose(object? o, EventArgs args)
     {
@@ -153,7 +158,6 @@ public sealed partial class OrdersPage : Page
             CreateNewOrder(control.ViewModel.SelectedCustomer);
         } 
     }
+
     #endregion Methods
-
-
 }

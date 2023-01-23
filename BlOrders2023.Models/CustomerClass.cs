@@ -11,6 +11,13 @@ namespace BlOrders2023.Models
     [Table("tbl_CustomerClasses")]
     public class CustomerClass
     {
+        public CustomerClass() 
+        {
+            ID = 0;
+            Class = "Wholesale";
+            DiscountPercent = 0;
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
