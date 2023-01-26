@@ -57,8 +57,7 @@
                     </SplitButton.Flyout>
                 </SplitButton>
             </AppBarElementContainer>
-            <AppBarButton Icon="GlobalNavigationButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </CommandBar>
+            </CommandBar>
         
         <SplitView x:Name="ListSplitView"
                    DisplayMode="Inline"

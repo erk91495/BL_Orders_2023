@@ -179,5 +179,4 @@ namespace BlOrders2023.ViewModels
             return ((DateTimeOffset)value).DateTime;
         }
     }
-
 }

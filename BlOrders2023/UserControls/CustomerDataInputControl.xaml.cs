@@ -2,7 +2,9 @@
 // Licensed under the MIT License.
 
 using BlOrders2023.Models;
+using BlOrders2023.Models.Enums;
 using BlOrders2023.ViewModels;
+using CommunityToolkit.WinUI.UI.Converters;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -12,6 +14,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -43,8 +46,19 @@ namespace BlOrders2023.UserControls
             _dialog.PrimaryButtonText = "Create Customer";
             _dialog.CloseButtonText = "Cancel";
             _dialog.FlowDirection = FlowDirection.LeftToRight;
-            _dialog.IsPrimaryButtonEnabled = false;
+
             ViewModel = App.GetService<CustomerDataInputControlViewModel>();
+            Binding b = new()
+            {
+                Source = ViewModel,
+                Path = new PropertyPath("HasErrors"),
+                Converter = new BoolNegationConverter()
+            };
+            _dialog.SetBinding(ContentDialog.IsPrimaryButtonEnabledProperty, b);
+
+            var states = Enum.GetNames(typeof(States)).Cast<string>();
+            StateComboBox.ItemsSource = states.ToList();
+            
         }
         #endregion Constructors
 

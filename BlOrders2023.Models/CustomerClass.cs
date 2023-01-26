@@ -13,7 +13,7 @@ namespace BlOrders2023.Models
     {
         public CustomerClass() 
         {
-            ID = 0;
+            ID = 1;
             Class = "Wholesale";
             DiscountPercent = 0;
         }
@@ -24,5 +24,19 @@ namespace BlOrders2023.Models
         [Column("CustomerClass")]
         public string Class { get; set; }
         public decimal DiscountPercent { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if(obj is CustomerClass c)
+            {
+                return c.ID== ID;
+            }
+            return false;
+        }
+
+        public override string ToString()
+        {
+            return Class;
+        }
     }
 }

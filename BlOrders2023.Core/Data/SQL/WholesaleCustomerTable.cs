@@ -34,9 +34,7 @@ namespace BlOrders2023.Core.Data.SQL
             {
                 return await _db.Customers
                     .Where(c => c.CustomerName.Contains(query) || 
-                                c.CustID.ToString().Contains(query)
-                                
-                            )
+                                c.CustID.ToString().Contains(query))
                     .ToListAsync();
             }
         }
@@ -45,7 +43,10 @@ namespace BlOrders2023.Core.Data.SQL
         public async Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID)=>
             await _db.Customers.Include(c => c.orders).Where(c => c.CustID == customerID).ToListAsync();
 
-        public async Task<CustomerClass> GetDefaultCustomerClassasync() =>
+        public async Task<IEnumerable<CustomerClass>> GetCustomerClassesAsync() =>
+            await _db.CustomerClasses.ToListAsync();
+
+        public async Task<CustomerClass> GetDefaultCustomerClassAsync() =>
            await _db.CustomerClasses.FirstAsync();
         
 

@@ -40,13 +40,23 @@
             IsBackButtonVisible="Visible"
             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}"
-            IsSettingsVisible="False"
             ExpandedModeThresholdWidth="1280"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             PaneDisplayMode="Top"
             Grid.Row="1"
-            >
+            IsSettingsVisible="False">
+            
+            <NavigationView.PaneFooter>
+                <AppBarButton Icon="More">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Text="Products"/>
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+            </NavigationView.PaneFooter>
             <NavigationView.MenuItems>
+                
                 <!--
                 TODO: Update item titles by updating <x:Uid>.Content entries in Strings/en-us/Resources.resw.
                 https://docs.microsoft.com/windows/uwp/app-resources/localize-strings-ui-manifest#refer-to-a-string-resource-identifier-from-xaml
@@ -64,6 +74,7 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                
             </NavigationView.MenuItems>
             <i:Interaction.Behaviors>
 
