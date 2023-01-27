@@ -28,7 +28,7 @@ namespace BlOrders2023.Models
         public string? Fax { get; set; }
         // -1 is grocer 0 is gift
         //public short Grocer { get; set; }
-        public short Inactive { get; set; }
+        public bool Inactive { get; set; }
         public string? Email { get; set; }
         //[Column("Gift-Grocer")]
         //public string? Gift_Grocer { get; set; }
@@ -60,7 +60,7 @@ namespace BlOrders2023.Models
             CustomerName = "";
             Phone = "";
             isGrocer = true;
-            Inactive = 0;
+            Inactive = false;
             SingleProdPerPallet = false;
             CustomerClass = new();
         }

@@ -127,5 +127,17 @@ public sealed partial class ShellPage : Page
 
         args.Handled = result;
     }
+
+    private void NavigateToProducts()
+    {
+        var navigationService = App.GetService<INavigationService>();
+        navigationService?.Frame?.Navigate(typeof(ProductsPage));
+    }
     #endregion Methods
+
+    private void MenuFlyoutProducts_Click(object sender, RoutedEventArgs e)
+    {
+        NavigateToProducts();
+    }
 }
+ 

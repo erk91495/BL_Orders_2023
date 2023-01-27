@@ -100,10 +100,15 @@
             </StackPanel>
         </Grid>
 
-        <StackPanel x:Name="WarehouseStackPanel" Orientation="Horizontal" Margin="5" RelativePanel.Below="ContactInfoGrid" HorizontalAlignment="Center">
+        <StackPanel x:Name="WarehouseStackPanel" 
+                    Orientation="Horizontal" 
+                    Margin="5" 
+                    RelativePanel.Below="ContactInfoGrid" 
+                    HorizontalAlignment="Center"
+                    Spacing="10">
             <CheckBox x:Name="SingleProdPerPalletCheckBox" IsChecked="{x:Bind ViewModel.Customer.SingleProdPerPallet, Mode=TwoWay}" Content="Warehouse Pallet Loading" />
-            <CheckBox x:Name="GrocerCheckbox" IsChecked="{x:Bind ViewModel.Customer.isGrocer, Mode=TwoWay}" Content="Grocer"/>
-           
+            <CheckBox x:Name="GrocerCheckBox" IsChecked="{x:Bind ViewModel.Customer.isGrocer, Mode=TwoWay}" Content="Grocer"/>
+            <CheckBox x:Name="InactiveCheckBox" IsChecked="{x:Bind ViewModel.Customer.Inactive, Mode=TwoWay}" Content="Inactive"/>
         </StackPanel>
 
     </StackPanel>

@@ -50,7 +50,7 @@
                 <AppBarButton Icon="More">
                     <AppBarButton.Flyout>
                         <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Text="Products"/>
+                            <MenuFlyoutItem Text="Products" Click="MenuFlyoutProducts_Click"/>
                         </MenuFlyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>

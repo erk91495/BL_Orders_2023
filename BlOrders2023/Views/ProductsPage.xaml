@@ -9,9 +9,32 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <RelativePanel>
+        <muxc:ProgressBar
+                    x:Name="progressBar"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    Height="10"
+                    IsIndeterminate="True"
+                    Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                    Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                    RelativePanel.AlignRightWithPanel="True"
+                    RelativePanel.AlignLeftWithPanel="True"
+                    RelativePanel.AlignTopWithPanel="True"/>
 
-    </Grid>
+        <sf:SfDataGrid ItemsSource="{x:Bind ViewModel.Products, Mode=TwoWay}"
+                       AutoGenerateColumns="True"
+                       RelativePanel.Below="progressBar"
+                       AllowEditing="True"
+                       AllowDeleting="True">
+            <sf:SfDataGrid.Columns>
+                <sf:GridNumericColumn MappingName="ProductID"/>
+            </sf:SfDataGrid.Columns>
+        </sf:SfDataGrid>
+      
+    </RelativePanel>
 </Page>

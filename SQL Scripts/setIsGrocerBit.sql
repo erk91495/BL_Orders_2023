@@ -1,11 +1,13 @@
 USE [New_BL_Orders]
 GO
 
+ALTER TABLE [dbo].[tblCustomerWholesale] ADD [isGrocer] BIT
+
 UPDATE [dbo].[tblCustomerWholesale]
-   SET [IsGrocer] = 1
+   SET [isGrocer] = 1
  WHERE Grocer = -1
 GO
 UPDATE [dbo].[tblCustomerWholesale]
-   SET [IsGrocer] = 0
+   SET [isGrocer] = 0
  WHERE Grocer != -1
 GO
