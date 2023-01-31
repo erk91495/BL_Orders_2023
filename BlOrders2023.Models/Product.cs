@@ -19,11 +19,8 @@ namespace BlOrders2023.Models
         public decimal WholesalePrice { get; set; }
         public string? UPCCode { get; set; }
         public string? KPCCode { get; set; }
-        public bool? FixedWeight { get; set; }
-        public string? Packaged { get; set; }
-        public string? Package { get; set; }
-        public string? PackOrdered { get; set; }
-        public string? KrogerDeptNo { get; set; }
+        public bool? FixedPrice { get; set; }
+        //public string? KrogerDeptNo { get; set; }
 
         public override string ToString()
         {

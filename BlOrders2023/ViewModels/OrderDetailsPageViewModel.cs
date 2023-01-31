@@ -51,7 +51,7 @@ namespace BlOrders2023.ViewModels
         }
 
         /// <summary>
-        /// Gets a list of products for the auto suggest box
+        /// Gets a list of _products for the auto suggest box
         /// </summary>
         public ObservableCollection<Product> SuggestedProducts
         {
@@ -255,7 +255,7 @@ namespace BlOrders2023.ViewModels
 
         #region Queries
         /// <summary>
-        /// Queries the database for a list of all products and adds them to SuggestedProducts
+        /// Queries the database for a list of all _products and adds them to SuggestedProducts
         /// </summary>
         public async void LoadProducts()
         {
@@ -277,9 +277,9 @@ namespace BlOrders2023.ViewModels
         }
 
         /// <summary>
-        /// Queries the database for a list of products that match the given string
+        /// Queries the database for a list of _products that match the given string
         /// </summary>
-        /// <param name="query">A string for products to match</param>
+        /// <param name="query">A string for _products to match</param>
         public async void QueryProducts(string query)
         {
             await dispatcherQueue.EnqueueAsync(() =>

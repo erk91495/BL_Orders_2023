@@ -38,9 +38,20 @@ namespace BlOrders2023.Core.Data.SQL
                 product.ProductID.ToString().Contains(value))
                 .ToListAsync();
 
-        public Task<Product> UpsertAsync(Product product)
+        public async Task<Product> UpsertAsync(Product product)
         {
-            throw new NotImplementedException();
+            var exists = await _db.Products.FirstOrDefaultAsync(p => product.ProductID == p.ProductID);
+            if (exists == null)
+            {
+                _db.Products.Add(product);
+            }
+            else
+            {
+                //TODO: Concurrency checks maybe here
+                _db.Entry(exists).CurrentValues.SetValues(product);
+            }
+            int res = await _db.SaveChangesAsync();
+            return product;
         }
     }
 }

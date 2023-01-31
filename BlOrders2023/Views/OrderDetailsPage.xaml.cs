@@ -168,7 +168,7 @@ namespace BlOrders2023.Views
         }
 
         /// <summary>
-        /// Handles text changed events for the Product entry box. Requeries the database for products matching the given input
+        /// Handles text changed events for the Product entry box. Requeries the database for _products matching the given input
         /// </summary>
         /// <param name="sender">the product entry autosuggestbox</param>
         /// <param name="args">the text changed event args</param>
@@ -224,7 +224,7 @@ namespace BlOrders2023.Views
         {
             if (OrderedItems != null)
             {
-                var visualcontainer = OrderedItems.GetType().GetProperty("VisualContainer", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(OrderedItems) as VisualContainer;
+                var visualcontainer = OrderedItems.GetType()?.GetProperty("VisualContainer", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(OrderedItems) as VisualContainer;
                 if (visualcontainer == null)
                 {
                     return;
@@ -320,19 +320,33 @@ namespace BlOrders2023.Views
             }
         }
 
-        private void DeleteOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void DeleteOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            _deleteOrder = true;
-            NavigationService nav = App.GetService<INavigationService>() as NavigationService;
-            if(nav != null)
+            ContentDialog dialog = new ContentDialog()
             {
-                if (nav.CanGoBack)
+                Title = "Delete Order",
+                Content = "Are you sure you want to delete this entire order.\r\nThis action cannot be undone.",
+                CloseButtonText = "Cancel",
+                PrimaryButtonText = "Delete Order",
+                IsPrimaryButtonEnabled = true,
+                XamlRoot= XamlRoot,
+            };
+
+            var res = await dialog.ShowAsync();
+            if (res == ContentDialogResult.Primary)
+            {
+                _deleteOrder = true;
+                NavigationService nav = App.GetService<INavigationService>() as NavigationService;
+                if (nav != null)
                 {
-                    nav.GoBack();
-                }
-                else
-                {
-                    Frame.Navigate(typeof(OrdersPage));
+                    if (nav.CanGoBack)
+                    {
+                        nav.GoBack();
+                    }
+                    else
+                    {
+                        Frame.Navigate(typeof(OrdersPage));
+                    }
                 }
             }
         }

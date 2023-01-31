@@ -11,8 +11,13 @@
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
+    xmlns:vm="using:BlOrders2023.ViewModels"
+    xmlns:models="using:BlOrders2023.Models"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
+    </Page.Resources>
     <RelativePanel>
         <muxc:ProgressBar
                     x:Name="progressBar"
@@ -26,13 +31,32 @@
                     RelativePanel.AlignLeftWithPanel="True"
                     RelativePanel.AlignTopWithPanel="True"/>
 
-        <sf:SfDataGrid ItemsSource="{x:Bind ViewModel.Products, Mode=TwoWay}"
-                       AutoGenerateColumns="True"
+        <sf:SfDataGrid x:Name="ProductsGrid"
+                       ItemsSource="{x:Bind ViewModel.Products, Mode=TwoWay}"
+                       SourceType="models:Product"
                        RelativePanel.Below="progressBar"
-                       AllowEditing="True"
-                       AllowDeleting="True">
+                       GridLinesVisibility="Both"
+                       IsReadOnly="False"
+                       AutoGenerateColumns="False"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignRightWithPanel="True"
+                       SelectionUnit="Row"
+                       EditorSelectionBehavior="MoveLast"
+                       ColumnWidthMode="AutoWithLastColumnFill"
+                       RecordDeleted="ProductsGrid_RecordDeleted">
+            
             <sf:SfDataGrid.Columns>
-                <sf:GridNumericColumn MappingName="ProductID"/>
+                <sf:GridNumericColumn MappingName="ProductID" IsReadOnly="True"/>
+                <sf:GridTextColumn MappingName="ProductName" AllowEditing="True"/>
+                <sf:GridNumericColumn x:Name="ColumnWholesalePrice"
+                                      HeaderText="Wholesale Price" 
+                                      MappingName="WholesalePrice"
+                                      AllowEditing="True" 
+                                      DisplayNumberFormat="C" 
+                                      AllowNull="True"/>
+                <sf:GridCheckBoxColumn MappingName="FixedPrice" AllowEditing="True"/>
+                <sf:GridTextColumn MappingName="UPCCode" AllowEditing="True"/>
+                <sf:GridTextColumn MappingName="KPCCode" AllowEditing="True"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
       

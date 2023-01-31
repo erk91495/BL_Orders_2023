@@ -7,6 +7,7 @@ using Microsoft.UI.Dispatching;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,25 @@ namespace BlOrders2023.ViewModels
     public class ProductsPageViewModel : ObservableRecipient
     {
         #region Properties
-        public ObservableCollection<Product> Products { get; set; }
+        public ObservableCollection<Product> Products 
+        { 
+            get => _products;
+            set
+            {
+                if (_products != value)
+                {
+                    value.CollectionChanged += LineItems_Changed;
+                }
+
+                if (_products != null)
+                {
+                    _products.CollectionChanged -= LineItems_Changed;
+                }
+
+                _products = value;
+                OnPropertyChanged();
+            }
+        }
         /// <summary>
         /// Gets or sets a value that specifies whether orders are being loaded.
         /// </summary>
@@ -33,17 +52,15 @@ namespace BlOrders2023.ViewModels
         #endregion Properties
 
         #region Fields
-        /// <summary>
-        /// Gets the dispatcher Queue for the current thread
-        /// </summary>
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         private bool _isLoading;
+        private ObservableCollection<Product> _products;
         #endregion Fields
 
         #region Constructors
         public ProductsPageViewModel()
         {
-            Products = new ObservableCollection<Product>();
+            _products = new();
             _ = QueryProducts();
         }
         #endregion Constructors
@@ -66,7 +83,8 @@ namespace BlOrders2023.ViewModels
                 {
                     Products = new(products);
                     IsLoading = false;
-                });  
+                    OnPropertyChanged(nameof(Products));
+                });
             }
             else
             {
@@ -81,11 +99,25 @@ namespace BlOrders2023.ViewModels
 
                 await dispatcherQueue.EnqueueAsync(() =>
                 {
-                    Products =new (products);
+                    Products = new(products);
                     IsLoading = false;
                     OnPropertyChanged(nameof(Products));
                 });
             }
+        }
+
+        internal async void SaveItem(Product p)
+        {
+            IProductsTable table = App.BLDatabase.Products;
+            var products = await Task.Run(() => table.UpsertAsync(p));
+        }
+
+        /// <summary>
+        /// Notifies anyone listening to this object that a line item changed. 
+        /// </summary>
+        private void LineItems_Changed(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(Products));
         }
         #endregion Methods
     }

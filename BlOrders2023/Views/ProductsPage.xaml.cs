@@ -20,6 +20,8 @@ using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Dispatching;
+using Syncfusion.UI.Xaml.DataGrid;
+using Windows.Globalization.NumberFormatting;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,7 +29,7 @@ using Microsoft.UI.Dispatching;
 namespace BlOrders2023.Views
 {
     /// <summary>
-    /// A page to display products
+    /// A page to display _products
     /// </summary>
     public sealed partial class ProductsPage : Page
     {
@@ -43,11 +45,25 @@ namespace BlOrders2023.Views
         {
             this.InitializeComponent();
             ViewModel = App.GetService<ProductsPageViewModel>();
+            ColumnWholesalePrice.NumberFormatter = new DecimalFormatter();
         }
         #endregion Constructors
 
         #region Methods
 
         #endregion Methods
+
+        private void ProductsGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
+        {
+
+        }
+
+        private void ProductsGrid_CurrentCellValueChanged(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValueChangedEventArgs e)
+        {
+            if (e.Record is Product p) 
+            {
+                ViewModel.SaveItem(p);
+            }
+        }
     }
 }
