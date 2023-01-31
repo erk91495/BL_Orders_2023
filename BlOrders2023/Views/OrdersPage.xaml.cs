@@ -56,7 +56,7 @@ public sealed partial class OrdersPage : Page
     private async void EmailButton_Click(object sender, RoutedEventArgs e)
     {
         if (ViewModel.SelectedOrder != null)
-            await Helpers.Helpers.SendEmailAsync(ViewModel.SelectedOrder.Customer.Email);
+            await Helpers.Helpers.SendEmailAsync(ViewModel.SelectedOrder.Customer.Email ?? String.Empty);
     }
 
     /// <summary>
@@ -148,7 +148,7 @@ public sealed partial class OrdersPage : Page
     private void NewCustomerBtn_Click(object sender, RoutedEventArgs e)
     {
         CustomerDataInputControl dialog = new(XamlRoot);
-        dialog.ShowAsync();
+        _ = dialog.ShowAsync();
     }
 
     private void CustomerSelectionControl_SelectionChoose(object? o, EventArgs args)

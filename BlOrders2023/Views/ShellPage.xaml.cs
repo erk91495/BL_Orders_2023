@@ -139,5 +139,11 @@ public sealed partial class ShellPage : Page
     {
         NavigateToProducts();
     }
+
+    private void MenuFlyoutCustomerClasses_Click(object sender, RoutedEventArgs e)
+    {
+        var navigationService = App.GetService<INavigationService>();
+        navigationService?.Frame?.Navigate(typeof(ProductsPage));
+    }
 }
  

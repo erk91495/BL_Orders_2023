@@ -53,6 +53,11 @@ public class OrdersPageViewModel : ObservableRecipient
         }
     }
 
+    public bool IsLoaded
+    {
+        get => !_isLoading;
+    }
+
     /// <summary>
     /// Gets the orders to display.
     /// </summary>
