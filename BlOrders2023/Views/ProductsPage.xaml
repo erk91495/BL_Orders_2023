@@ -7,12 +7,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:BlOrders2023.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    d:DataContext="{d:DesignInstance Type=vm:ProductsPageViewModel}"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:vm="using:BlOrders2023.ViewModels"
-    xmlns:models="using:BlOrders2023.Models"
+    xmlns:models="using:BlOrders2023.Models" 
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
@@ -51,9 +52,7 @@
                 <sf:GridNumericColumn x:Name="ColumnWholesalePrice"
                                       HeaderText="Wholesale Price" 
                                       MappingName="WholesalePrice"
-                                      AllowEditing="True" 
-                                      DisplayNumberFormat="C" 
-                                      AllowNull="True"/>
+                                      AllowEditing="True"/>
                 <sf:GridCheckBoxColumn MappingName="FixedPrice" AllowEditing="True"/>
                 <sf:GridTextColumn MappingName="UPCCode" AllowEditing="True"/>
                 <sf:GridTextColumn MappingName="KPCCode" AllowEditing="True"/>
