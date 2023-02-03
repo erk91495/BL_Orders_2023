@@ -112,6 +112,11 @@ namespace BlOrders2023.ViewModels
             var products = await Task.Run(() => table.UpsertAsync(p));
         }
 
+        internal async Task DeleteItem(Product p) 
+        {
+            IProductsTable table = App.BLDatabase.Products;
+        }
+
         /// <summary>
         /// Notifies anyone listening to this object that a line item changed. 
         /// </summary>

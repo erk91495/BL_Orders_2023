@@ -42,9 +42,12 @@
                        RelativePanel.AlignLeftWithPanel="True"
                        RelativePanel.AlignRightWithPanel="True"
                        SelectionUnit="Row"
+                       EditTrigger="OnTap"
                        EditorSelectionBehavior="MoveLast"
                        ColumnWidthMode="AutoWithLastColumnFill"
-                       RecordDeleted="ProductsGrid_RecordDeleted">
+                       RecordDeleted="ProductsGrid_RecordDeleted"
+                       AllowEditing="True"
+                       AllowDeleting="True">
             
             <sf:SfDataGrid.Columns>
                 <sf:GridNumericColumn MappingName="ProductID" IsReadOnly="True"/>
@@ -52,7 +55,7 @@
                 <sf:GridNumericColumn x:Name="ColumnWholesalePrice"
                                       HeaderText="Wholesale Price" 
                                       MappingName="WholesalePrice"
-                                      AllowEditing="True"/>
+                                      ValueBinding="{Binding Path=WholesalePrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridCheckBoxColumn MappingName="FixedPrice" AllowEditing="True"/>
                 <sf:GridTextColumn MappingName="UPCCode" AllowEditing="True"/>
                 <sf:GridTextColumn MappingName="KPCCode" AllowEditing="True"/>

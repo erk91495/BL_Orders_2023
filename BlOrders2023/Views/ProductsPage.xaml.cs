@@ -55,7 +55,7 @@ namespace BlOrders2023.Views
 
         private void ProductsGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
         {
-
+            
         }
 
         private void ProductsGrid_CurrentCellValueChanged(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValueChangedEventArgs e)
