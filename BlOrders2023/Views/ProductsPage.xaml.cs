@@ -22,6 +22,7 @@ using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Dispatching;
 using Syncfusion.UI.Xaml.DataGrid;
 using Windows.Globalization.NumberFormatting;
+using Microsoft.IdentityModel.Tokens;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -55,14 +56,66 @@ namespace BlOrders2023.Views
 
         private void ProductsGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
         {
-            
+
         }
 
         private void ProductsGrid_CurrentCellValueChanged(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValueChangedEventArgs e)
         {
-            if (e.Record is Product p) 
+            if (e.Record is Product p)
             {
                 ViewModel.SaveItem(p);
+            }
+        }
+
+        private void ProductsGrid_AddNewRowInitiating(object sender, AddNewRowInitiatingEventArgs e)
+        {
+
+        }
+
+        private void ProductsGrid_RowValidating(object sender, RowValidatingEventArgs e)
+        {
+            //if (ProductsGrid.IsAddNewIndex(e.RowIndex))
+            //{
+            //    var productToAdd = e.RowData as Product;
+            //    if (await ViewModel.productIDExists(productToAdd.ProductID))
+            //    {
+            //        e.IsValid = false;
+            //        e.ErrorMessages.Add("ProductID", "Product ID must be unique");
+            //    }
+            //}
+        }
+
+        private void ProductsGrid_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
+        {
+            if (e.RowData is Product prod)
+            {
+
+                switch (e.Column.MappingName)
+                {
+                    case "ProductID":
+                        {
+                            Task<bool> dupCheck = Task.Run<bool>(async () => await ViewModel.productIDExists(prod.ProductID));
+                            if (dupCheck.Result)
+                            {
+                                e.IsValid = false;
+                                e.ErrorMessage = "Product ID must be unique";
+                            }
+                            break;
+                        }
+                    case "ProductName":
+                        {
+                            if (prod.ProductName.IsNullOrEmpty())
+                            {
+                                e.IsValid = false;
+                                e.ErrorMessage = "The Product Name cannot be empty";
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
             }
         }
     }

@@ -3,6 +3,7 @@ using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.UI.Controls;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Dispatching;
 using System;
 using System.Collections.Generic;
@@ -123,6 +124,11 @@ namespace BlOrders2023.ViewModels
         private void LineItems_Changed(object sender, NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(Products));
+        }
+
+        internal async Task<bool> productIDExists(int productId)
+        {
+            return await App.BLDatabase.Products.IdExists(productId);
         }
         #endregion Methods
     }

@@ -12,6 +12,7 @@ namespace BlOrders2023.Models
     public class Product
     {
         [Key]
+        [Required]
         public int ProductID { get; set; }
         public string? ProductName { get; set; }
         public short? NoPerCase { get; set; }

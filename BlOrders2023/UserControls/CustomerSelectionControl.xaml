@@ -13,7 +13,7 @@
 
     <RelativePanel>
         <AutoSuggestBox x:Name="CustomerSelection"
-                        ItemsSource="{x:Bind ViewModel.SuggestedCustomers}"
+                        ItemsSource="{x:Bind ViewModel.SuggestedCustomers, Mode=OneWay}"
                         TextChanged="CustomerSelection_TextChanged"
                         PlaceholderText="Select A Customer..."
                         QuerySubmitted="CustomerSelection_QuerySubmitted"                        

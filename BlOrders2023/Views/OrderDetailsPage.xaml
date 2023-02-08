@@ -170,7 +170,7 @@
                         RelativePanel.RightOf="OrderInputGrid"
                         Padding="40,0,0,0">
                 <TextBlock Text="Memo:"/>
-                <TextBox Text="{x:Bind ViewModel.Memo, Mode=TwoWay}"
+                <TextBox Text="{x:Bind ViewModel.Memo, Mode=TwoWay, TargetNullValue={x:Null}}"
                          TextWrapping="Wrap"
                          Margin="5,5,5,5"
                          MinHeight="75"

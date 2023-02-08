@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Core.Data.SQL
 {
@@ -37,6 +39,18 @@ namespace BlOrders2023.Core.Data.SQL
                 product.ProductName.Contains(value) ||
                 product.ProductID.ToString().Contains(value))
                 .ToListAsync();
+
+        public async Task<bool> IdExists(int productID)
+        {
+            var result = await _db.Products.FromSql<Product>($"[dbo].[usp_ProductIDExists] {productID}").ToListAsync();
+            if (result.IsNullOrEmpty()){
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         public async Task<Product> UpsertAsync(Product product)
         {

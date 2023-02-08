@@ -27,6 +27,7 @@ namespace BlOrders2023.ViewModels
         {
             _suggestedCustomers= new();
             SelectedCustomer = new();
+            _ = LoadCustomers();
         }
         #endregion Constructors
 
@@ -60,7 +61,7 @@ namespace BlOrders2023.ViewModels
         /// Queries the database for a list of Customers that match the given string
         /// </summary>
         /// <param name="query">A string for Customers to match</param>
-        public async void QueryCustomers(string query)
+        public async void QueryCustomers(string? query = null)
         {
             await dispatcherQueue.EnqueueAsync(() =>
             {

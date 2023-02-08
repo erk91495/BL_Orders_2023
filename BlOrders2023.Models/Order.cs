@@ -8,7 +8,7 @@ namespace BlOrders2023.Models;
 public class Order
 { 
     public Order() 
-    { 
+    {
         Memo_Totl = 0M;
         Memo_Weight = 0;
         OrderDate = DateTime.Now;
