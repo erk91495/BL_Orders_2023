@@ -29,7 +29,7 @@
             </Grid.RowDefinitions>
 
             <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
-                <TextBlock Text="Customer Name: " />
+                <TextBlock Text="Customer Name: * " />
                 <TextBox x:Name="CustomerNameTextBox" Text="{x:Bind ViewModel.CustomerName, Mode=TwoWay}" Width="200" />
             </StackPanel>
 
@@ -61,19 +61,23 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1">
-                <TextBlock Text="Phone: " />
+                <TextBlock Text="Phone: * " />
                 <StackPanel Orientation="Horizontal">
-                    <sf:SfMaskedTextBox Mask="+9(000) 000-0000" MaskType="Simple" ValueMaskFormat="ExcludePromptAndLiterals" 
-                                        Value="{x:Bind ViewModel.Phone,Mode=TwoWay}" Width="175" Margin="0,0,10,0"/>
+                    
+                    <sf:SfMaskedTextBox Mask="(000) 000-0000" MaskType="Simple" ValueMaskFormat="ExcludePromptAndLiterals" 
+                                        Value="{x:Bind ViewModel.Phone,Mode=TwoWay}" Width="175" Margin="0,0,10,0"
+                                        ValueChanged="SfMaskedTextBox_ValueChanged"/>
                     <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
                     <TextBox x:Name="PhoneExtTextBox" Text="{x:Bind ViewModel.Customer.PhoneExt, Mode=TwoWay}" Width="50" />
                 </StackPanel>
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="2">
-                <TextBlock Text="Phone: " />
+                <TextBlock Text="Phone 2: " />
                 <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="Phone_2TextBox" Text="{x:Bind ViewModel.Customer.Phone_2, Mode=TwoWay}" Width="175" Margin="0,0,10,0" />
+                    <sf:SfMaskedTextBox Mask="(000) 000-0000" MaskType="Simple" ValueMaskFormat="ExcludePromptAndLiterals" 
+                                        Value="{x:Bind ViewModel.Customer.Phone_2,Mode=TwoWay}" Width="175" Margin="0,0,10,0"/>
+                    <!--<TextBox x:Name="Phone_2TextBox" Text="{x:Bind ViewModel.Customer.Phone_2, Mode=TwoWay}" Width="175" Margin="0,0,10,0" />-->
                     <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
                     <TextBox x:Name="Phone2ExtTextBox" Text="{x:Bind ViewModel.Customer.Phone2Ext, Mode=TwoWay}" Width="50" />
                 </StackPanel>
@@ -90,12 +94,14 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="1">
-                <TextBlock Text="Customer Class:"/>
+                <TextBlock Text="Customer Class: *"/>
                 <ComboBox x:Name="ClassCustomerBox" 
                           ItemsSource="{x:Bind ViewModel.Classes, Mode=OneWay}" 
                           SelectedItem ="{x:Bind ViewModel.CustomerClass, Mode=TwoWay}"
                           HorizontalAlignment="Stretch"/>
+                <Button Click="Button_Click" Content="Break"/>
             </StackPanel>
+            
         </Grid>
 
         <StackPanel x:Name="WarehouseStackPanel" 
@@ -108,7 +114,7 @@
             <CheckBox x:Name="GrocerCheckBox" IsChecked="{x:Bind ViewModel.Customer.isGrocer, Mode=TwoWay}" Content="Grocer"/>
             <CheckBox x:Name="InactiveCheckBox" IsChecked="{x:Bind ViewModel.Customer.Inactive, Mode=TwoWay}" Content="Inactive"/>
         </StackPanel>
-
+        <TextBlock Text="* dennotes a required field" HorizontalAlignment="Right"/>
     </StackPanel>
 
 </ContentControl>

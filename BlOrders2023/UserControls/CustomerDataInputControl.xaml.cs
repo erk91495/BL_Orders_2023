@@ -70,5 +70,15 @@ namespace BlOrders2023.UserControls
             return 0;
         }
         #endregion Methods
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            int i = 0;
+        }
+
+        private void SfMaskedTextBox_ValueChanged(object sender, Syncfusion.UI.Xaml.Editors.MaskedTextBoxValueChangedEventArgs e)
+        {
+            int i = 0;
+        }
     }
 }
