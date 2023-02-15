@@ -404,11 +404,14 @@ namespace BlOrders2023.Views
             {
                 if(b == NextOrderButton && ViewModel.HasNextOrder)
                 {
-                    Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetNextOrder());
+                    var s = App.GetService<INavigationService>();
+                    s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetNextOrder());
                 }
                 if(b == PreviousOrderButton && ViewModel.HasPreviousOrder)
                 {
-                    Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetPreviousOrder());
+                    var s = App.GetService<INavigationService>();
+                    s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetPreviousOrder());
+                    //Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetPreviousOrder());
                 }
             }
         }

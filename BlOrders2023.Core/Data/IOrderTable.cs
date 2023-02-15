@@ -11,6 +11,7 @@ namespace BlOrders2023.Core.Data
     {
         Task<IEnumerable<Order>> GetAsync();
         Task<IEnumerable<Order>> GetAsync(int orderID);
+        IEnumerable<Order> Get(int orderID);
         Task<Order> UpsertAsync(Order order);
         Task DeleteAsync(Order order);
     }

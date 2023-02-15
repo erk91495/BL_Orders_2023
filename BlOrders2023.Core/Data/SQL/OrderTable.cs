@@ -45,6 +45,16 @@ namespace BlOrders2023.Core.Data.SQL
             await _db.SaveChangesAsync();
         }
 
+        public IEnumerable<Order> Get(int orderID)
+        {
+            return _db.Orders
+                .Include(order => order.Items)
+                .Include(order => order.Customer)
+                .Include(order => order.ShippingItems)
+                .Where(order => order.OrderID == orderID)
+                .ToList();
+        }
+
         /// <summary>
         /// Gets all of the Orders from the database
         /// </summary>

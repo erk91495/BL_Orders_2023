@@ -116,6 +116,7 @@ namespace BlOrders2023.ViewModels
         internal async Task DeleteItem(Product p) 
         {
             IProductsTable table = App.BLDatabase.Products;
+            throw new NotImplementedException();
         }
 
         /// <summary>
