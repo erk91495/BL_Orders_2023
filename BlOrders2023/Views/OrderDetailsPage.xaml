@@ -253,5 +253,23 @@
             </AutoSuggestBox.ItemTemplate>
 
         </AutoSuggestBox>
+        <Grid RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <AppBarButton x:Name="PreviousOrderButton" 
+                          Icon="Back" 
+                          Grid.Column="0" 
+                          HorizontalAlignment="Left" 
+                          IsEnabled="{x:Bind ViewModel.HasPreviousOrder}" 
+                          Click="OrderNavigation_Click"/>
+            <AppBarButton x:Name="NextOrderButton" 
+                          Icon="Forward" 
+                          Grid.Column="1" 
+                          HorizontalAlignment="Right" 
+                          IsEnabled="{x:Bind ViewModel.HasNextOrder}"
+                          Click="OrderNavigation_Click"/>
+        </Grid>
     </RelativePanel>
 </Page>

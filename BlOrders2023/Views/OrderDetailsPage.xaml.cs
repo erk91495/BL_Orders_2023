@@ -397,8 +397,25 @@ namespace BlOrders2023.Views
         {
             ProductEntryBox.Text = null;
         }
+        private void OrderNavigation_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: fix so you can naigate more than once
+            if(sender is AppBarButton b)
+            {
+                if(b == NextOrderButton && ViewModel.HasNextOrder)
+                {
+                    Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetNextOrder());
+                }
+                if(b == PreviousOrderButton && ViewModel.HasPreviousOrder)
+                {
+                    Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetPreviousOrder());
+                }
+            }
+        }
         #endregion Event Handlers
 
         #endregion Methods
+
+
     }
 }

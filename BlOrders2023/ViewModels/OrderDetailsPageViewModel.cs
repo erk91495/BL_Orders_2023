@@ -177,7 +177,8 @@ namespace BlOrders2023.ViewModels
             }
         }
 
-
+        public bool HasNextOrder { get; set; } = false;
+        public bool HasPreviousOrder { get; set; } = false;
         #endregion Properties
 
         #region Fields
@@ -185,6 +186,7 @@ namespace BlOrders2023.ViewModels
         private ObservableCollection<Product> _suggestedProducts;
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         private ObservableCollection<OrderItem> _items;
+        private int _currentOrderIndex;
         #endregion Fields
 
         #region Constructors
@@ -193,6 +195,7 @@ namespace BlOrders2023.ViewModels
         /// </summary>
         public OrderDetailsPageViewModel()
         {
+            _currentOrderIndex = 0;
             _order = new();
             _suggestedProducts = new();
             _items= new();
@@ -221,6 +224,9 @@ namespace BlOrders2023.ViewModels
             {
                 _order = order;
                 _items = new ObservableCollection<OrderItem>(_order.Items);
+                _currentOrderIndex = _order.Customer.orders.IndexOf(_order);
+                HasNextOrder = _currentOrderIndex > 0;
+                HasPreviousOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
                 OnAllPropertiesChanged();
             }
         }
@@ -251,6 +257,24 @@ namespace BlOrders2023.ViewModels
             OnPropertyChanged(nameof(Memo));
             OnPropertyChanged(nameof(Memo_Totl));
             OnPropertyChanged(nameof(Items));
+        }
+
+        public Order? GetNextOrder()
+        {
+            if (HasNextOrder)
+            {
+                return _order.Customer.orders[_currentOrderIndex - 1];
+            }
+            return null;
+        }
+
+        public Order? GetPreviousOrder()
+        {
+            if (HasPreviousOrder)
+            {
+                return _order.Customer.orders[_currentOrderIndex + 1];
+            }
+            return null;
         }
 
         #region Queries
