@@ -195,7 +195,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Uid="Order_BtnFillOrder" Content="Fill Order" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <Button x:Uid="Order_BtnFillOrder" Content="Fill Order" Grid.Column="0" HorizontalAlignment="Center" Click="FillOrder_Click"/>
                         <Button x:Uid="Order_BtnEditOrder" Content="Edit Order" Grid.Column="1" HorizontalAlignment="Center" Click="EditOrder_Click"/>
                         <Button x:Uid="Order_BtnFillOrder" Content="Test Button" Grid.Column="2" HorizontalAlignment="Center"/>
                     </Grid>

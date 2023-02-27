@@ -69,6 +69,13 @@ public sealed partial class OrdersPage : Page
 
     private void EditOrder_Click(object sender, RoutedEventArgs e) => NavigateToOrderDetailsPage();
 
+    private void FillOrder_Click(object sender, RoutedEventArgs e) => NavigateToFillOrdersPage();
+
+    private void NavigateToFillOrdersPage()
+    {
+        Frame.Navigate(typeof(FillOrdersPage), ViewModel.SelectedOrder.OrderID);
+    }
+
     /// <summary>
     /// Handles right click events for the orders datagrid
     /// </summary>
@@ -160,4 +167,5 @@ public sealed partial class OrdersPage : Page
     }
 
     #endregion Methods
+
 }

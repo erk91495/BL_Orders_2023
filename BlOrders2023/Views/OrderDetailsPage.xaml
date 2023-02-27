@@ -262,13 +262,13 @@
                           Icon="Back" 
                           Grid.Column="0" 
                           HorizontalAlignment="Left" 
-                          IsEnabled="{x:Bind ViewModel.HasPreviousOrder}" 
+                          IsEnabled="{x:Bind ViewModel.HasPreviousOrder, Mode=OneWay}" 
                           Click="OrderNavigation_Click"/>
             <AppBarButton x:Name="NextOrderButton" 
                           Icon="Forward" 
                           Grid.Column="1" 
                           HorizontalAlignment="Right" 
-                          IsEnabled="{x:Bind ViewModel.HasNextOrder}"
+                          IsEnabled="{x:Bind ViewModel.HasNextOrder, Mode=OneWay}"
                           Click="OrderNavigation_Click"/>
         </Grid>
     </RelativePanel>

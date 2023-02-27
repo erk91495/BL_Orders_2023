@@ -65,8 +65,7 @@
                 <StackPanel Orientation="Horizontal">
                     
                     <sf:SfMaskedTextBox Mask="(000) 000-0000" MaskType="Simple" ValueMaskFormat="ExcludePromptAndLiterals" 
-                                        Value="{x:Bind ViewModel.Phone,Mode=TwoWay}" Width="175" Margin="0,0,10,0"
-                                        ValueChanged="SfMaskedTextBox_ValueChanged"/>
+                                        Value="{x:Bind ViewModel.Phone,Mode=TwoWay}" Width="175" Margin="0,0,10,0"/>
                     <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
                     <TextBox x:Name="PhoneExtTextBox" Text="{x:Bind ViewModel.Customer.PhoneExt, Mode=TwoWay}" Width="50" />
                 </StackPanel>

@@ -52,7 +52,8 @@ namespace BlOrders2023.UserControls
             {
                 Source = ViewModel,
                 Path = new PropertyPath("HasErrors"),
-                Converter = new BoolNegationConverter()
+                Converter = new BoolNegationConverter(),
+                Mode = BindingMode.OneWay
             };
             _dialog.SetBinding(ContentDialog.IsPrimaryButtonEnabledProperty, b);
 
@@ -76,9 +77,9 @@ namespace BlOrders2023.UserControls
             int i = 0;
         }
 
-        private void SfMaskedTextBox_ValueChanged(object sender, Syncfusion.UI.Xaml.Editors.MaskedTextBoxValueChangedEventArgs e)
-        {
-            int i = 0;
-        }
+        //private void SfMaskedTextBox_ValueChanged(object sender, Syncfusion.UI.Xaml.Editors.MaskedTextBoxValueChangedEventArgs e)
+        //{
+        //    23int i = 0;
+        //}
     }
 }

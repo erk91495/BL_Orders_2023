@@ -77,7 +77,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
-                <NavigationViewItem x:Uid="Shell_FillOrders" helpers:NavigationHelper.NavigateTo="BlOrders2023.ViewModels.FillOrdersViewModel">
+                <NavigationViewItem x:Uid="Shell_FillOrders" helpers:NavigationHelper.NavigateTo="BlOrders2023.ViewModels.FillOrdersPageViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
                     </NavigationViewItem.Icon>

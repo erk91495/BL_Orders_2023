@@ -257,13 +257,32 @@ namespace BlOrders2023.ViewModels
             OnPropertyChanged(nameof(Memo));
             OnPropertyChanged(nameof(Memo_Totl));
             OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(HasNextOrder));
+            OnPropertyChanged(nameof(HasPreviousOrder));
         }
 
+        public int? GetNextOrderID()
+        {
+            if (HasNextOrder)
+            {
+                return _order.Customer.orders[_currentOrderIndex - 1].OrderID;
+            }
+            return null;
+        }
         public Order? GetNextOrder()
         {
             if (HasNextOrder)
             {
                 return _order.Customer.orders[_currentOrderIndex - 1];
+            }
+            return null;
+        }
+
+        public int? GetPreviousOrderID()
+        {
+            if (HasPreviousOrder)
+            {
+                return _order.Customer.orders[_currentOrderIndex + 1].OrderID;
             }
             return null;
         }
@@ -275,6 +294,22 @@ namespace BlOrders2023.ViewModels
                 return _order.Customer.orders[_currentOrderIndex + 1];
             }
             return null;
+        }
+        public void ChangeOrder(int? orderID)
+        {
+            if (orderID != null)
+            {
+                //_suggestedProducts = new();
+                //LoadProducts();
+
+                var changeOrder = App.BLDatabase.Orders.Get((int)orderID).First();
+                _order = changeOrder;
+                _items = new ObservableCollection<OrderItem>(_order.Items);
+                _currentOrderIndex = _order.Customer.orders.IndexOf(_order);
+                HasNextOrder = _currentOrderIndex > 0;
+                HasPreviousOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
+                OnAllPropertiesChanged();
+            }
         }
 
         #region Queries

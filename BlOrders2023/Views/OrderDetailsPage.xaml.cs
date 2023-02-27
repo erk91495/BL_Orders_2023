@@ -26,6 +26,7 @@ using BlOrders2023.Contracts.Services;
 using BlOrders2023.Services;
 using Microsoft.UI.Dispatching;
 using System.Media;
+using CommunityToolkit.Common;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -88,7 +89,8 @@ namespace BlOrders2023.Views
             { 
                 //change focus to write any changes
                 OrderNumber.Focus(FocusState.Programmatic);
-                Task.Run(() => ViewModel.SaveCurrentOrder());
+                //Task.Run(() => ViewModel.SaveCurrentOrder()).GetResultOrDefault();
+                
             }
             base.OnNavigatingFrom(e);
         }
@@ -397,7 +399,7 @@ namespace BlOrders2023.Views
         {
             ProductEntryBox.Text = null;
         }
-        private void OrderNavigation_Click(object sender, RoutedEventArgs e)
+        private async void OrderNavigation_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fix so you can naigate more than once
             if(sender is AppBarButton b)
@@ -406,12 +408,16 @@ namespace BlOrders2023.Views
                 {
                     var s = App.GetService<INavigationService>();
                     s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetNextOrder());
+                    //ViewModel.SaveCurrentOrder();
+                    //ViewModel.ChangeOrder(ViewModel.GetNextOrderID());
                 }
                 if(b == PreviousOrderButton && ViewModel.HasPreviousOrder)
                 {
                     var s = App.GetService<INavigationService>();
                     s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetPreviousOrder());
-                    //Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetPreviousOrder());
+                    //Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetPreviousOrderID());
+                    //ViewModel.SaveCurrentOrder();
+                    //ViewModel.ChangeOrder(ViewModel.GetPreviousOrderID());
                 }
             }
         }

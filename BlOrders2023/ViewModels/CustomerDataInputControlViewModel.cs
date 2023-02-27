@@ -31,10 +31,22 @@ namespace BlOrders2023.ViewModels
         public string? Phone
         {
             get => _phone;
-            set => SetProperty(ref _phone, value, true);
+            set
+            {
+                SetProperty(ref _phone, value, true);
+                ValidateProperty(value, nameof(Phone));
+            }
         }
 
-        public CustomerClass CustomerClass { get => _customerClass; set => SetProperty(ref _customerClass, value); }
+        public CustomerClass CustomerClass 
+        { 
+            get => _customerClass;
+            set
+            {
+                SetProperty(ref _customerClass, value);
+                ValidateProperty(value, nameof(CustomerClass));
+            }
+        }
 
         public ObservableCollection<CustomerClass> Classes { get; } = new();
 

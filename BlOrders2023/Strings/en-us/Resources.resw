@@ -193,6 +193,6 @@
     <value>Quantity Ordered</value>
   </data>
   <data name="Shell_FillOrders.Content" xml:space="preserve">
-    <value>FillOrders</value>
+    <value>Fill Orders</value>
   </data>
 </root>

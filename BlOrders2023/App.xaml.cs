@@ -77,7 +77,7 @@ public partial class App : Application
             services.AddSingleton<IFileService, FileService>();
 
             // Views and ViewModels
-            services.AddTransient<FillOrdersViewModel>();
+            services.AddTransient<FillOrdersPageViewModel>();
             services.AddTransient<FillOrdersPage>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<SettingsPage>();
@@ -91,6 +91,8 @@ public partial class App : Application
             services.AddTransient<ProductsPageViewModel>();
             services.AddTransient<CustomerSelectionViewModel>();
             services.AddTransient<CustomerDataInputControlViewModel>();
+
+            services.AddDbContext<BLOrdersDBContext>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

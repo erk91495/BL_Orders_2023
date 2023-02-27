@@ -4,9 +4,71 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:BlOrders2023.ViewModels"
+    xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     mc:Ignorable="d">
 
-    <Grid x:Name="ContentArea">
-        
-    </Grid>
+	<RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <SplitView x:Name="FillOrders"
+                   DisplayMode="Inline"
+                   IsPaneOpen="True"
+                   VerticalAlignment="Stretch"
+                   HorizontalAlignment="Stretch"
+                   OpenPaneLength="750"
+                   PanePlacement="Right"
+                   PaneBackground="Transparent"
+                   RelativePanel.AlignBottomWithPanel="True"
+                   RelativePanel.AlignLeftWithPanel="True"
+                   RelativePanel.AlignRightWithPanel="True"
+                   RelativePanel.AlignTopWithPanel="True"
+                   >
+            <SplitView.Pane>
+                <Button/>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <RelativePanel>
+                    <AutoSuggestBox x:Name="OrderLookup" 
+                                    RelativePanel.AlignTopWithPanel="True"
+                                    RelativePanel.AlignLeftWithPanel="True"/>
+
+                    <StackPanel x:Name="CustomerInfo"  
+                    Orientation="Vertical"
+                    RelativePanel.Below="OrderLookup"
+                    RelativePanel.AlignLeftWithPanel="True">
+                        <TextBlock Text="{x:Bind ViewModel.Customer.CustomerName, Mode=OneWay}"
+                               FontSize="{StaticResource LargeFontSize}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Customer.Address, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Customer.CityStateZip(), Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Customer.Buyer, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"
+                               Padding="0,20,0,0"/>
+                        <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"
+                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Customer.Fax, Mode=OneWay}"
+                               FontSize="{StaticResource MediumFontSize}"
+                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                        <!--<TextBlock>
+                            <TextBlock.Inlines>
+                                <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
+                                    <Hyperlink.Inlines>
+                                        <Span>
+                                            <Run Text="{x:Bind ViewModel.Customer.Email, Mode=OneWay}"></Run>
+                                        </Span>
+                                    </Hyperlink.Inlines>
+                                </Hyperlink>
+                            </TextBlock.Inlines>
+                        </TextBlock>-->
+
+                    </StackPanel>
+
+                    <TextBox x:Name="Scanline" 
+                             RelativePanel.Below="CustomerInfo"
+                             RelativePanel.AlignLeftWithPanel="True"/>
+                </RelativePanel>
+            </SplitView.Content>
+        </SplitView>
+	</RelativePanel>
 </Page>
