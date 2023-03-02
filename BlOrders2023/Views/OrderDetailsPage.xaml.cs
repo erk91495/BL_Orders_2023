@@ -27,6 +27,7 @@ using BlOrders2023.Services;
 using Microsoft.UI.Dispatching;
 using System.Media;
 using CommunityToolkit.Common;
+using Windows.Media.Devices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -96,21 +97,6 @@ namespace BlOrders2023.Views
         }
 
         /// <summary>
-        /// Triggers when the collection changes
-        /// </summary>
-        /// <param name="sender">the data grid</param>
-        /// <param name="e">event args</param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void Records_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            //If we added an item then enqueue a task to focus it and edit the quantity 
-            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-            {
-                dispatcherQueue.TryEnqueue(() => FocusEditLastCell());
-            }
-        }
-
-        /// <summary>
         /// Attempts to focus the last row and edit the Quantity ordered Column
         /// </summary>
         private void FocusEditLastCell()
@@ -158,6 +144,22 @@ namespace BlOrders2023.Views
         }
 
         #region Events Handlers
+
+        /// <summary>
+        /// Triggers when the collection changes
+        /// </summary>
+        /// <param name="sender">the data grid</param>
+        /// <param name="e">event args</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void Records_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //If we added an item then enqueue a task to focus it and edit the quantity 
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                dispatcherQueue.TryEnqueue(() => FocusEditLastCell());
+            }
+        }
+
         /// <summary>
         /// Handles click events for the email hyperlink button. Creates a mailto: event
         /// </summary>
@@ -179,6 +181,10 @@ namespace BlOrders2023.Views
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 ViewModel.QueryProducts(sender.Text);
+            }
+            else if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
+            {
+                ProductEntryBox.Text = null;
             }
         }
         /// <summary>
@@ -212,10 +218,6 @@ namespace BlOrders2023.Views
             }
             _doomed = null;
         }
-
-
-
-
 
         /// <summary>
         /// Tracks pointer movements so we know which item to delete from the datagrid
@@ -264,64 +266,6 @@ namespace BlOrders2023.Views
             }
         }
 
-        /// <summary>
-        /// This event gets fired when:
-        ///     * a user presses Enter while focus is in the TextBox
-        ///     * a user clicks or tabs to and invokes the query button (defined using the QueryIcon API)
-        ///     * a user presses selects (clicks/taps/presses Enter) a suggestion
-        /// </summary>
-        /// <param name="sender">The AutoSuggestBox that fired the event.</param>
-        /// <param name="args">The args contain the QueryText, which is the text in the TextBox,
-        /// and also ChosenSuggestion, which is only non-null when a user selects an item in the list.</param>
-        private async void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            
-            ProductEntryBox.IsSuggestionListOpen = false;
-            Product productToAdd = new();
-            if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
-            {
-
-                //User selected an item, take an action
-                productToAdd = p;
-
-            }
-            else if (!string.IsNullOrEmpty(args.QueryText))
-            {
-                var id = sender.Text.Trim();
-                bool result = Int32.TryParse(id, out int prodcode);
-                var toAdd = ViewModel.SuggestedProducts.FirstOrDefault(prod => prod.ProductID == prodcode);
-
-                if (result && toAdd != null)
-                {
-                    //The text matched a productcode
-                    productToAdd = toAdd;
-                }
-                else
-                {
-                    productToAdd = null;
-                    return;
-                }
-                if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
-                {
-                    ViewModel.addItem(productToAdd);
-                }
-                else if (productToAdd != null)
-                {
-                    ContentDialog dialog = new ContentDialog
-                    {
-                        Title = "Duplicate Product",
-                        Content = String.Format("Product ID: {0} already exists on the Order \n", productToAdd.ProductID),
-                        CloseButtonText = "Ok",
-                        XamlRoot = XamlRoot,
-                    };
-                    SystemSounds.Exclamation.Play();
-                    await dialog.ShowAsync();
-                }
-                ProductEntryBox.Text = null;
-                ProductEntryBox.IsSuggestionListOpen = false;
-            }
-        }
-
         private async void DeleteOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             ContentDialog dialog = new ContentDialog()
@@ -363,8 +307,6 @@ namespace BlOrders2023.Views
             OrderedItems.View.Records.CollectionChanged += Records_CollectionChanged;
         }
 
-        //TODO: decide what to do here
-
         /// <summary>
         /// Called when a key is pressed down on the datagrid
         /// </summary>
@@ -391,14 +333,79 @@ namespace BlOrders2023.Views
         }
 
         /// <summary>
+        /// This event gets fired when:
+        ///     * a user presses Enter while focus is in the TextBox
+        ///     * a user clicks or tabs to and invokes the query button (defined using the QueryIcon API)
+        ///     * a user presses selects (clicks/taps/presses Enter) a suggestion
+        /// </summary>
+        /// <param name="sender">The AutoSuggestBox that fired the event.</param>
+        /// <param name="args">The args contain the QueryText, which is the text in the TextBox,
+        /// and also ChosenSuggestion, which is only non-null when a user selects an item in the list.</param>
+        private async void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+
+            ProductEntryBox.IsSuggestionListOpen = false;
+            Product productToAdd = new();
+            if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
+            {
+
+                //User selected an item, take an action
+                productToAdd = p;
+                if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
+                {
+                    ViewModel.addItem(productToAdd);
+                }
+                ProductEntryBox.IsSuggestionListOpen = false;
+
+            }
+            else if (!string.IsNullOrEmpty(args.QueryText))
+            {
+                var id = sender.Text.Trim();
+                bool result = Int32.TryParse(id, out int prodcode);
+                var toAdd = ViewModel.SuggestedProducts.FirstOrDefault(prod => prod.ProductID == prodcode);
+
+                if (result && toAdd != null)
+                {
+                    //The text matched a productcode
+                    productToAdd = toAdd;
+                }
+                else
+                {
+                    productToAdd = null;
+                    return;
+                }
+                if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
+                {
+                    ViewModel.addItem(productToAdd);
+                }
+                else if (productToAdd != null)
+                {
+                    ContentDialog dialog = new ContentDialog
+                    {
+                        Title = "Duplicate Product",
+                        Content = String.Format("Product ID: {0} already exists on the Order \n", productToAdd.ProductID),
+                        CloseButtonText = "Ok",
+                        XamlRoot = XamlRoot,
+                    };
+                    SystemSounds.Exclamation.Play();
+                    await dialog.ShowAsync();
+                }
+                ProductEntryBox.Text = null;
+                ProductEntryBox.IsSuggestionListOpen = false;
+            }
+        }
+
+
+        /// <summary>
         /// Resets the ProductEntryBox after an item is choosen
         /// </summary>
         /// <param name="sender">Product Entry Box</param>
         /// <param name="args">event args</param>
         private void ProductEntryBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            ProductEntryBox.Text = null;
+            //ProductEntryBox.Text = null;
         }
+
         private async void OrderNavigation_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fix so you can naigate more than once
@@ -421,10 +428,9 @@ namespace BlOrders2023.Views
                 }
             }
         }
+
         #endregion Event Handlers
 
         #endregion Methods
-
-
     }
 }
