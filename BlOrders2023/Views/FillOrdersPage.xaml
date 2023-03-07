@@ -9,6 +9,8 @@
     mc:Ignorable="d">
     <Page.Resources>
         <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+        <vm:DateFormatConverter x:Key="DateFormatConverter"/>
+        <vm:TimeFormatConverter x:Key="TimeFormatConverter"/>
     </Page.Resources>
 
     <RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -57,11 +59,11 @@
                             <TextBlock Text="Pickup Date:" 
                                        Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup}"/>
                             <TextBlock Text="Delivery Date:" 
-                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Shipping}"/>
-                            <TextBlock Text="{x:Bind ViewModel.Order.PickupDate.ToShortDateString()}"
+                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Shipping, Mode=OneWay}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Order.PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}"
                                        Padding="10,0,10,0"/>
-                            <TextBlock Text="{x:Bind ViewModel.Order.PickupTime.ToShortTimeString()}"
-                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Order.PickupTime, Converter={StaticResource TimeFormatConverter}, Mode=OneWay}"
+                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup, Mode=OneWay}"/>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel x:Name="CustomerInfo"  
