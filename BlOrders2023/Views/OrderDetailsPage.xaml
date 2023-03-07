@@ -213,8 +213,8 @@
                        SelectionUnit="Row"
                        EditorSelectionBehavior="MoveLast"
                        PointerMoved="OrderedItems_PointerMoved"
-                       Loaded="OrderedItems_Loaded"
-                       ItemsSourceChanged="OrderedItems_ItemsSourceChanged">
+                       Loaded="OrderedItems_Loaded">
+            
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>

@@ -4,6 +4,7 @@ using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
+using Newtonsoft.Json.Bson;
 using System.Collections.ObjectModel;
 
 namespace BlOrders2023.ViewModels;
@@ -43,14 +44,21 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     public async Task LoadOrder(int orderID)
     {
         IOrderTable table = App.BLDatabase.Orders;
-        var order = await Task.Run(table.GetAsync);
+        var order = await Task.Run(() => table.GetAsync(orderID));
 
         await dispatcherQueue.EnqueueAsync(() =>
         {
             _order = order.First();
             Customer = _order.Customer;
+            OnAllPropertiesChanged();  
         });
 
+    }
+
+    private void OnAllPropertiesChanged()
+    {
+        OnPropertyChanged(nameof(Customer));
+        OnPropertyChanged(nameof(Order));
     }
 
     public void OnNavigatedFrom()
