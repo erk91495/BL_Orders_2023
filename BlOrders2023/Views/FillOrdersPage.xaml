@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:BlOrders2023.ViewModels"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
+    xmlns:models="using:BlOrders2023.Models"
     mc:Ignorable="d">
     <Page.Resources>
         <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
@@ -114,6 +115,26 @@
                              RelativePanel.AlignLeftWith="CustomerInfo"
                              Margin="10,10,0,0"
                              MinWidth="300"/>
+
+                    <sf:SfDataGrid x:Name="OrderedItems"
+                       ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
+                       SourceType="models:ShippingItem"
+                       RelativePanel.Below="Scanline"
+                       GridLinesVisibility="Both"
+                       IsReadOnly="False"
+                       AutoGenerateColumns="False"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignRightWithPanel="True"
+                       SelectionUnit="Row"
+                       EditorSelectionBehavior="MoveLast">
+
+                        <sf:SfDataGrid.Columns>
+                            <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
+                            <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
+                            <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" IsReadOnly="True"/>
+                            <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True"/>
+                        </sf:SfDataGrid.Columns>
+                    </sf:SfDataGrid>
                 </RelativePanel>
             </SplitView.Content>
         </SplitView>

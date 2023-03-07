@@ -14,6 +14,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     #region Properties
     public WholesaleCustomer Customer { get; set; }
     public Order Order { get => _order; set => _order = value; }
+    public ObservableCollection<ShippingItem> Items { get; set; }
     #endregion Properties
 
     #region Fields
@@ -26,6 +27,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     {
         Customer = new();
         _order = new();
+        Items = new();
 
     }
     #endregion Constructors
@@ -50,6 +52,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         {
             _order = order.First();
             Customer = _order.Customer;
+            Items = new ObservableCollection<ShippingItem>( _order.ShippingItems);
             OnAllPropertiesChanged();  
         });
 
@@ -59,6 +62,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     {
         OnPropertyChanged(nameof(Customer));
         OnPropertyChanged(nameof(Order));
+        OnPropertyChanged(nameof(Items));
     }
 
     public void OnNavigatedFrom()
