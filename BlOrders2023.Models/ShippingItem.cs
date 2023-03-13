@@ -12,6 +12,7 @@ namespace BlOrders2023.Models
     [Table("tbl_ShipDetails")]
     public class ShippingItem
     {
+
         [Key]
         public int SD_ID { get; set; }
         public int OrderID { get; set; }

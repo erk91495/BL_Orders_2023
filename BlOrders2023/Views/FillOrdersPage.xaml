@@ -114,7 +114,10 @@
                              RelativePanel.Below="CustomerInfo"
                              RelativePanel.AlignLeftWith="CustomerInfo"
                              Margin="10,10,0,0"
-                             MinWidth="300"/>
+                             MinWidth="300"
+                             AcceptsReturn="True"
+                             TextWrapping="NoWrap"
+                             TextChanged="Scanline_TextChanged"/>
 
                     <sf:SfDataGrid x:Name="OrderedItems"
                        ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"

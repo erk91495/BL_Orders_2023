@@ -119,7 +119,6 @@ public partial class App : Application
             .EnableSensitiveDataLogging()
             .UseSqlServer(connectionString: "Data Source=BL4; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
         App.BLDatabase = new SqlBLOrdersDatabase(dbOptions);
-
         await App.GetService<IActivationService>().ActivateAsync(args);
 
     }
