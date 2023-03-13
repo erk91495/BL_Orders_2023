@@ -24,14 +24,14 @@ namespace BlOrders2023.Core.Services
             {"320",new Regex("^320(\\d)(\\d{6})")},                                                                          //NET WEIGHT (LBS.)
         };
 
-        public const char FNC1 = (char)0x1D; //GS char
+        public const char FNC1 = (char)0x1D; //Group Seperator char
 
         public static bool ParseBarcode(IBarcode barcode, ref ShippingItem item)
         {
             bool success = true;
-            if (barcode is GS1_128Barcode code)
+            if (barcode is GS1_128Barcode gs1Barcode)
             {
-                String scanline = new (code.Scanline);
+                String scanline = new (gs1Barcode.Scanline);
                 while(scanline != "\r")
                 {
                     Regex? re = null;
@@ -51,18 +51,24 @@ namespace BlOrders2023.Core.Services
                             var groups = matches.Groups;
                             var match = matches.Value;
                             var data = groups[groups.Count-1];
+                            var ai = match.Substring(0, match.Length - data.Length);
                             scanline = scanline.Substring(match.Length);
+                            PopulateAI(ai, data.Value, ref item);
                         }
                         
                     }
                     else
                     {
-                        Debug.WriteLine(String.Format("UnsupportedAI {0} {1}",code.Scanline, scanline));
+                        Debug.WriteLine(String.Format("UnsupportedAI {0} {1}",gs1Barcode.Scanline, scanline));
                         success = false;
                         break;
                     }
                 }
                 return success;
+            }
+            else if(barcode is Code128Barcode)
+            {
+                throw new NotImplementedException();
             }
             else
             {
@@ -75,6 +81,60 @@ namespace BlOrders2023.Core.Services
             return SupportedAIRegex.ContainsKey(key);
         }
 
-
+        private static bool PopulateAI(String ai, String data, ref ShippingItem item)
+        {
+            bool success = false;
+            //Is the Ai Supported
+            if(SupportedAIRegex.ContainsKey(ai))
+            {
+                //Serial Shipping Container Code (SSCC)
+                if (ai.Equals("00"))
+                {
+                    throw new NotImplementedException(); 
+                }
+                //Global Trade Item Number(GTIN)
+                else if (ai.Equals("01"))
+                {
+                    //TODO: need to validate ids and add product ties
+                    // Product code is 5 digits
+                    var prodCode = int.Parse(data.Substring(8, 5));
+                    item.ProductID = prodCode;
+                }
+                //Global Trade Item Number (GTIN) of contained trade items
+                else if (ai.Equals("02"))
+                {
+                    throw new NotImplementedException();
+                }
+                //Batch or lot number
+                else if (ai.Equals("10"))
+                {
+                    var lotCode = data;
+                }
+                //Packaging data (YYMMDD)
+                else if (ai.Equals("13"))
+                {
+                    item.PackDate = DateTime.ParseExact(data,"yyMMdd",null);
+                }
+                //Serial Number
+                else if (ai.Equals("21"))
+                {
+                    //TODO: GS1 Supports non numeric characters
+                    item.PackageSerialNumber = int.Parse(data);
+                    success = true;
+                }
+                //Net Weight in lbs. 
+                else if (ai.StartsWith("320"))
+                {
+                    float netWt = float.Parse(data);
+                    //The fourth digit of this AI indicates the number of decimal places (see GS1 General Specifications for details).
+                    double power = float.Parse(ai.Substring(ai.Length - 2));
+                    float multiplier = (float)Math.Pow(10, power);
+                    netWt /= multiplier;
+                    item.PickWeight = netWt;
+                    success = true;
+                }
+            }
+            return success;
+        }
     }
 }

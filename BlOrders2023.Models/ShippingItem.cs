@@ -12,7 +12,6 @@ namespace BlOrders2023.Models
     [Table("tbl_ShipDetails")]
     public class ShippingItem
     {
-
         [Key]
         public int SD_ID { get; set; }
         public int OrderID { get; set; }
@@ -27,9 +26,9 @@ namespace BlOrders2023.Models
         public string? Scanline { get; set; }
         public int? PackageSerialNumber { get; set; }
         [Column("OrderDate")]
-        DateTime? ScanDate { get; set; }
+        public DateTime? ScanDate { get; set; }
         [Column("PackageDate")]
-        DateTime? PackDate { get; set; }
+        public DateTime? PackDate { get; set; }
         [ForeignKey("ProductID")]
         public virtual Product Product { get; set; }
 
