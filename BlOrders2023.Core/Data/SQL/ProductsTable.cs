@@ -23,6 +23,18 @@ namespace BlOrders2023.Core.Data.SQL
             throw new NotImplementedException();
         }
 
+        public IEnumerable<Product> Get(int? productID = null)
+        {
+            if (productID == null)
+            {
+                return _db.Products.ToList();
+            }
+            else
+            {
+                return _db.Products.Where(product => product.ProductID == productID).ToList();
+            }
+        }
+
         public async Task<IEnumerable<Product>> GetAsync() =>
                 await _db.Products
                 .OrderBy(product => product.ProductID)

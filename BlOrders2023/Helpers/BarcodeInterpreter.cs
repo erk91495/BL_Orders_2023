@@ -95,10 +95,18 @@ namespace BlOrders2023.Core.Services
                 //Global Trade Item Number(GTIN)
                 else if (ai.Equals("01"))
                 {
-                    //TODO: need to validate ids and add product ties
                     // Product code is 5 digits
-                    var prodCode = int.Parse(data.Substring(8, 5));
-                    item.ProductID = prodCode;
+                    var prodCode = int.Parse(data.Substring(8, 5));                    
+                    var product = App.BLDatabase.Products.Get(prodCode).FirstOrDefault();
+                    if (product != null)
+                    {
+                        item.Product = product;
+                        item.ProductID = prodCode;
+                    }
+                    else
+                    {
+                        throw new Exception("Product Not Found");
+                    }
                 }
                 //Global Trade Item Number (GTIN) of contained trade items
                 else if (ai.Equals("02"))
