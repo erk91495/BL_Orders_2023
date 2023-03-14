@@ -6,15 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BlOrders2023.Core.Exceptions;
 
-namespace BlOrders2023.Core.Services
+namespace BlOrders2023.Helpers
 {
 
     public static class BarcodeInterpreter
     {
         //Keep In mind as we add fields here we will also need to support them when we parse the fields into product data
-        public readonly static Dictionary<String, Regex> SupportedAIRegex = new()
+        private readonly static Dictionary<String, Regex> SupportedAIRegex = new()
         {
+            //Keep In mind as we add fields here we will also need to support them when we parse the fields into product data
             {"00", new Regex("^00(\\d{18})$")},                                                                               //SSCC
             {"01", new Regex("^01(\\d{14})")},                                                                               //GTIN
             {"02", new Regex("^02(\\d{14})$ ")},                                                                             //GTIN OF CONTAINED ITEMS
@@ -26,6 +28,13 @@ namespace BlOrders2023.Core.Services
 
         public const char FNC1 = (char)0x1D; //Group Seperator char
 
+        /// <summary>
+        /// Populates the properties of the given shipping item with the data from the given barcode
+        /// </summary>
+        /// <param name="barcode">The barcode of the product to be converted</param>
+        /// <param name="item">The item to parse the barcode into</param>
+        /// <returns>true if the barcode was succesfully parsed</returns>
+        /// <exception cref="ProductNotFoundException">If the parsed barcodes product is not in the database</exception>
         public static bool ParseBarcode(IBarcode barcode, ref ShippingItem item)
         {
             bool success = true;
@@ -53,7 +62,10 @@ namespace BlOrders2023.Core.Services
                             var data = groups[groups.Count-1];
                             var ai = match.Substring(0, match.Length - data.Length);
                             scanline = scanline.Substring(match.Length);
-                            PopulateAI(ai, data.Value, ref item);
+                            if(!PopulateAI(ai, data.Value, ref item))
+                            {
+                                success = false;
+                            }
                         }
                         
                     }
@@ -76,11 +88,24 @@ namespace BlOrders2023.Core.Services
             }
         }
 
+        /// <summary>
+        /// Check if the given AI is supported by the interpreter
+        /// </summary>
+        /// <param name="key">The AI to be checked</param>
+        /// <returns>True if the AI is supported</returns>
         private static bool IsSupportedAI(String key)
         {
             return SupportedAIRegex.ContainsKey(key);
         }
 
+        /// <summary>
+        /// Populates a ShippingItem with the given ai and data
+        /// </summary>
+        /// <param name="ai">The AI to populate</param>
+        /// <param name="data">The data for the given AI</param>
+        /// <param name="item">The ShippingItem to populate</param>
+        /// <returns>True if the population was successful</returns>
+        /// <exception cref="ProductNotFoundException">Thrown when the given Product Code AI (01) is not in the database</exception>
         private static bool PopulateAI(String ai, String data, ref ShippingItem item)
         {
             bool success = false;
@@ -105,7 +130,7 @@ namespace BlOrders2023.Core.Services
                     }
                     else
                     {
-                        throw new Exception("Product Not Found");
+                        throw new ProductNotFoundException(String.Format("Product {0} Not Found", prodCode), prodCode);
                     }
                 }
                 //Global Trade Item Number (GTIN) of contained trade items
