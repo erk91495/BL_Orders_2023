@@ -35,9 +35,8 @@ namespace BlOrders2023.Helpers
         /// <param name="item">The item to parse the barcode into</param>
         /// <returns>true if the barcode was succesfully parsed</returns>
         /// <exception cref="ProductNotFoundException">If the parsed barcodes product is not in the database</exception>
-        public static bool ParseBarcode(IBarcode barcode, ref ShippingItem item)
+        public static void ParseBarcode(IBarcode barcode, ref ShippingItem item)
         {
-            bool success = true;
             if (barcode is GS1_128Barcode gs1Barcode)
             {
                 String scanline = new (gs1Barcode.Scanline);
@@ -46,7 +45,7 @@ namespace BlOrders2023.Helpers
                     Regex? re = null;
                     if (IsSupportedAI(scanline.Substring(0, 2)))
                     {
-                        re = SupportedAIRegex.GetValueOrDefault(scanline.Substring(0,2));
+                        re = SupportedAIRegex.GetValueOrDefault(scanline.Substring(0, 2));
                     }
                     else if (IsSupportedAI(scanline.Substring(0, 3)))
                     {
@@ -64,19 +63,16 @@ namespace BlOrders2023.Helpers
                             scanline = scanline.Substring(match.Length);
                             if(!PopulateAI(ai, data.Value, ref item))
                             {
-                                success = false;
+                                throw new InvalidBarcodeExcption("Invalid Barcode", ai, barcode.Scanline, scanline);
                             }
-                        }
-                        
+                        } 
                     }
                     else
                     {
-                        Debug.WriteLine(String.Format("UnsupportedAI {0} {1}",gs1Barcode.Scanline, scanline));
-                        success = false;
-                        break;
+                        Debug.WriteLine(String.Format("UnsupportedAI {0} at {1}", gs1Barcode.Scanline, scanline));
+                        throw new InvalidBarcodeExcption("Invalid Barcode", null , barcode.Scanline, scanline);
                     }
                 }
-                return success;
             }
             else if(barcode is Code128Barcode)
             {
@@ -95,7 +91,18 @@ namespace BlOrders2023.Helpers
         /// <returns>True if the AI is supported</returns>
         private static bool IsSupportedAI(String key)
         {
-            return SupportedAIRegex.ContainsKey(key);
+            if (key.Length == 2)
+            {
+                return SupportedAIRegex.ContainsKey(key);
+            }
+            else if (key.Length == 4 || key.Length == 3)
+            {
+                return SupportedAIRegex.ContainsKey(key.Substring(0,3));
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -110,7 +117,7 @@ namespace BlOrders2023.Helpers
         {
             bool success = false;
             //Is the Ai Supported
-            if(SupportedAIRegex.ContainsKey(ai))
+            if(IsSupportedAI(ai))
             {
                 //Serial Shipping Container Code (SSCC)
                 if (ai.Equals("00"))
@@ -127,6 +134,7 @@ namespace BlOrders2023.Helpers
                     {
                         item.Product = product;
                         item.ProductID = prodCode;
+                        success = true;
                     }
                     else
                     {
@@ -142,11 +150,13 @@ namespace BlOrders2023.Helpers
                 else if (ai.Equals("10"))
                 {
                     var lotCode = data;
+                    success = true;
                 }
                 //Packaging data (YYMMDD)
                 else if (ai.Equals("13"))
                 {
                     item.PackDate = DateTime.ParseExact(data,"yyMMdd",null);
+                    success = true;
                 }
                 //Serial Number
                 else if (ai.Equals("21"))

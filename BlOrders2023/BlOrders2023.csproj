@@ -62,6 +62,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlOrders2023.Core\BlOrders2023.Core.csproj" />
+    <ProjectReference Include="..\BlOrders2023.Models\BlOrders2023.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>
