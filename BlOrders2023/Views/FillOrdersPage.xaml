@@ -31,7 +31,11 @@
             <SplitView.Pane>
                 <RelativePanel Background="{ThemeResource SystemAltMediumLowColor}"
                                CornerRadius="20,0,0,20">
-                    <TextBlock Text="This is the Pane"/>
+                    <sf:SfDataGrid IsReadOnly="True"
+                                   AutoGenerateColumns="True"
+                                   ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=OneWay}">
+                        
+                    </sf:SfDataGrid>
                 </RelativePanel>
                 
             </SplitView.Pane>
@@ -43,7 +47,27 @@
                                         PlaceholderText="Lookup an order..."
                                         RelativePanel.AlignTopWithPanel="True"
                                         RelativePanel.AlignLeftWithPanel="True"
-                                        MinWidth="400"/>
+                                        MinWidth="400"
+                                        ItemsSource="{x:Bind ViewModel.FillableOrders}"
+                                        TextChanged="OrderLookup_TextChanged"
+                                        QuerySubmitted="OrderLookup_QuerySubmitted"
+                                        >
+                            <AutoSuggestBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:Order">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <TextBlock Text="{x:Bind OrderID}" Grid.Column="0" Margin="0,0,10,0"/>
+                                        <TextBlock Text="{x:Bind Customer.CustomerName}" Grid.Column="1" HorizontalAlignment="Left"/>
+                                        <TextBlock Text="{x:Bind PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}" Grid.Column="2" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </AutoSuggestBox.ItemTemplate>
+                        </AutoSuggestBox>
                     </StackPanel>
 
                     <StackPanel x:Name="DateStack" 
@@ -60,7 +84,7 @@
                             <TextBlock Text="Pickup Date:" 
                                        Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup}"/>
                             <TextBlock Text="Delivery Date:" 
-                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Shipping, Mode=OneWay}"/>
+                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Shipping, FallbackValue=Collapsed, Mode=OneWay}"/>
                             <TextBlock Text="{x:Bind ViewModel.Order.PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}"
                                        Padding="10,0,10,0"/>
                             <TextBlock Text="{x:Bind ViewModel.Order.PickupTime, Converter={StaticResource TimeFormatConverter}, Mode=OneWay}"
@@ -117,7 +141,8 @@
                              MinWidth="300"
                              AcceptsReturn="True"
                              TextWrapping="NoWrap"
-                             TextChanged="Scanline_TextChanged"/>
+                             TextChanged="Scanline_TextChanged"
+                             IsEnabled="{x:Bind ViewModel.hasOrder, Mode=OneWay}"/>
 
                     <sf:SfDataGrid x:Name="OrderedItems"
                        ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
