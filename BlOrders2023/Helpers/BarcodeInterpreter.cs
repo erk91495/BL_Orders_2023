@@ -40,6 +40,7 @@ namespace BlOrders2023.Helpers
             if (barcode is GS1_128Barcode gs1Barcode)
             {
                 String scanline = new (gs1Barcode.Scanline);
+                item.Scanline = scanline.Trim('\r', '\n');
                 while(scanline != "\r")
                 {
                     Regex? re = null;

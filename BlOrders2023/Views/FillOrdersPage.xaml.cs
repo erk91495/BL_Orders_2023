@@ -55,7 +55,7 @@ public sealed partial class FillOrdersPage : Page
                 try
                 {
                     BarcodeInterpreter.ParseBarcode(bc, ref item);
-                    ViewModel.ReceiveItem(item);
+                    await ViewModel.ReceiveItemAsync(item);
                 }catch (ProductNotFoundException e)
                 {
                     Debug.WriteLine(e.ToString());
@@ -70,6 +70,13 @@ public sealed partial class FillOrdersPage : Page
                     var location = e.Data["Location"];
                     await ShowLockedoutDialog(e.Message,
                         String.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
+                }
+                catch (DuplicateBarcodeException e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    var s = e.Data["Scanline"];
+                    await ShowLockedoutDialog(e.Message,
+                        String.Format("Duplicate Scanline {0}", s));
                 }
             }
         }

@@ -1,15 +1,52 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BlOrders2023.Models
 {
-    public class OrderedVsReceivedItem
+    public class OrderedVsReceivedItem : INotifyPropertyChanged
     {
-        public int ProductID { get; set; }
-        public int Ordered {  get; set; }
-        public int Received { get; set; }
+        private int productID;
+        private int ordered;
+        private int received;
+
+        public int ProductID
+        {
+            get => productID;
+            set
+            {
+                productID = value;
+                OnPropertyChanged(nameof(ProductID));
+            }
+        }
+        public int Ordered
+        {
+            get => ordered;
+            set
+            {
+                ordered = value;
+                OnPropertyChanged(nameof(ordered));
+            }
+        }
+        public int Received 
+        { 
+            get => received; 
+            set 
+            { 
+                received = value;
+                OnPropertyChanged(nameof(Received));
+            } 
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

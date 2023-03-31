@@ -1,5 +1,6 @@
 ﻿using BlOrders2023.Contracts.ViewModels;
 using BlOrders2023.Core.Data;
+using BlOrders2023.Core.Exceptions;
 using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
@@ -20,7 +21,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     public ObservableCollection<Order> FillableOrders { get; set; }
     public ObservableCollection<Order> FillableOrdersMasterList { get; set; }
 
-    public Dictionary<int,OrderedVsReceivedItem> OrderedVsReceivedItems { get; set; }
+    public ObservableCollection<OrderedVsReceivedItem> OrderedVsReceivedItems { get; set; }
     #endregion Properties
 
     #region Fields
@@ -92,21 +93,27 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
         foreach(var item in _order!.Items)
         {
-            if (!OrderedVsReceivedItems.ContainsKey(item.ProductID))
+            //If i would just build an observable dictionary i wouldnt have to do this 
+            if (OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault() != null)
+            {
+                OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Ordered += (int)item.QuanRcvd;
+            }
+            else
             {
                 OrderedVsReceivedItem ovsr = new()
                 {
                     ProductID = item.ProductID,
-                    Ordered = int.Parse(item.Quantity.ToString())
+                    Ordered = (int)item.Quantity,
+                    Received = 0
                 };
-                OrderedVsReceivedItems.Add(item.ProductID, ovsr);
+                OrderedVsReceivedItems.Add(ovsr);
             }
         }
         foreach(var item in _order.ShippingItems)
         {
-            if (OrderedVsReceivedItems.ContainsKey(item.ProductID))
+            if (OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault() != null)
             {
-                OrderedVsReceivedItems[item.ProductID].Received += (int)item.QuanRcvd;
+                OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Received += (int)(item.QuanRcvd ?? 0);
             }
             else
             {
@@ -114,9 +121,9 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
                 {
                     ProductID = item.ProductID,
                     Ordered = 0,
-                    Received = (int)item.QuanRcvd
+                    Received = (int)(item.QuanRcvd ?? 0)
                 };
-                OrderedVsReceivedItems.Add(item.ProductID, ovsr);
+                OrderedVsReceivedItems.Add(ovsr);
             }
         }
         OnPropertyChanged(nameof(OrderedVsReceivedItems));
@@ -124,9 +131,9 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     private void IncrementReceivedItem(ShippingItem item)
     {
-        if (OrderedVsReceivedItems.ContainsKey(item.ProductID))
+        if (OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault() != null)
         {
-            OrderedVsReceivedItems[item.ProductID].Received += (int)item.QuanRcvd;
+            OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Received += (int)(item.QuanRcvd ?? 0);
         }
         else
         {
@@ -134,10 +141,12 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
             {
                 ProductID = item.ProductID,
                 Ordered = 0,
-                Received = (int)item.QuanRcvd
+                Received = (int)(item.QuanRcvd ?? 0)
             };
-            OrderedVsReceivedItems.Add(item.ProductID, ovsr);
+            OrderedVsReceivedItems.Add(ovsr);
         }
+        OnPropertyChanged(nameof(OrderedVsReceivedItems));
+        
     }
 
     private void OnAllPropertiesChanged()
@@ -162,10 +171,18 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    internal void ReceiveItem(ShippingItem item)
+    internal async Task ReceiveItemAsync(ShippingItem item)
     {
-        Items.Add(item);
-        IncrementReceivedItem(item);
+        bool duplicate = await App.BLDatabase.ShipDetails.IsDuplicateScanline(item.Scanline);
+        if (!duplicate)
+        {
+            Items.Add(item);
+            IncrementReceivedItem(item);
+        }
+        else
+        {
+            throw new DuplicateBarcodeException("Duplicate Scanline", item.Scanline);
+        }
     }
     #endregion Methods
 
