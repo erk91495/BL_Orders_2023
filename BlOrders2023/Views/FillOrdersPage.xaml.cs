@@ -51,6 +51,7 @@ public sealed partial class FillOrdersPage : Page
                 ShippingItem item = new()
                 {
                     QuanRcvd = 1,
+                    ScanDate = DateTime.Now,
                 };
                 try
                 {
@@ -116,15 +117,26 @@ public sealed partial class FillOrdersPage : Page
         }
     }
 
-    private void OrderLookup_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    private async void OrderLookup_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         var input = args.QueryText;
         if (!ViewModel.FillableOrders.Where(e => e.OrderID.ToString().Equals(input)).IsNullOrEmpty())
         {
-            _ = ViewModel.LoadOrder(int.Parse(input));
+            await ViewModel.LoadOrder(int.Parse(input));
         }else if (args.ChosenSuggestion is Order o)
         {
-            _ = ViewModel.LoadOrder(o.OrderID);
+            await ViewModel.LoadOrder(o.OrderID);
+        }
+    }
+
+    private async void OrderedItems_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
+    {
+        if (e.Items.FirstOrDefault() is ShippingItem)
+        {
+            foreach (ShippingItem item in e.Items)
+            {
+                await ViewModel.DeleteShippingItemAsync(item);
+            }
         }
     }
 }

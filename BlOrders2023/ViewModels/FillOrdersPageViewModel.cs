@@ -4,9 +4,11 @@ using BlOrders2023.Core.Exceptions;
 using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Newtonsoft.Json.Bson;
 using System.Collections.ObjectModel;
+using Windows.UI.Text;
 
 namespace BlOrders2023.ViewModels;
 
@@ -43,13 +45,13 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     #region Methods
 
-    public void OnNavigatedTo(object parameter)
+    public async void OnNavigatedTo(object parameter)
     {
         var orderID = parameter as int?;
-        _ = LoadFillableOrders();
+        await LoadFillableOrders();
         if (orderID != null)
         {
-            _ = LoadOrder((int)orderID);
+            await LoadOrder((int)orderID);
             
         }
     }
@@ -111,20 +113,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         }
         foreach(var item in _order.ShippingItems)
         {
-            if (OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault() != null)
-            {
-                OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Received += (int)(item.QuanRcvd ?? 0);
-            }
-            else
-            {
-                OrderedVsReceivedItem ovsr = new()
-                {
-                    ProductID = item.ProductID,
-                    Ordered = 0,
-                    Received = (int)(item.QuanRcvd ?? 0)
-                };
-                OrderedVsReceivedItems.Add(ovsr);
-            }
+           IncrementReceivedItem(item);
         }
         OnPropertyChanged(nameof(OrderedVsReceivedItems));
     }
@@ -134,6 +123,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         if (OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault() != null)
         {
             OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Received += (int)(item.QuanRcvd ?? 0);
+            OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Weight += item.PickWeight ?? 0;
         }
         else
         {
@@ -141,12 +131,30 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
             {
                 ProductID = item.ProductID,
                 Ordered = 0,
-                Received = (int)(item.QuanRcvd ?? 0)
+                Received = (int)(item.QuanRcvd ?? 0),
+                Weight = item.PickWeight ?? 0,
             };
             OrderedVsReceivedItems.Add(ovsr);
         }
         OnPropertyChanged(nameof(OrderedVsReceivedItems));
         
+    }
+    private void DecrementReceivedItem(ShippingItem item)
+    {
+        var foundItem = OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
+        if (foundItem != null)
+        {
+            // pre-decrement should make this so that when i get to zero the item is removed from the list
+            if(--foundItem.Received <= 0 && foundItem.Ordered <= 0)
+            {
+                OrderedVsReceivedItems.Remove(foundItem);
+            }
+            else
+            {
+                foundItem.Weight -= item.PickWeight ?? 0;
+            }
+        }
+        OnPropertyChanged(nameof(OrderedVsReceivedItems));
     }
 
     private void OnAllPropertiesChanged()
@@ -165,9 +173,12 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         FillableOrders.Clear();
         var orders = FillableOrdersMasterList.Where(o => o.OrderID.ToString().Contains(text) || 
                                                     o.Customer.CustomerName.Contains(text, StringComparison.CurrentCultureIgnoreCase)).ToList();
-        foreach (var order in orders)
+        if (!orders.IsNullOrEmpty())
         {
-            FillableOrders.Add(order);
+            foreach (var order in orders)
+            {
+                FillableOrders.Add(order);
+            }
         }
     }
 
@@ -177,12 +188,26 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         if (!duplicate)
         {
             Items.Add(item);
+            _order?.ShippingItems.Add(item);
+            await App.BLDatabase.Orders.UpsertAsync(_order);
             IncrementReceivedItem(item);
+            
         }
         else
         {
             throw new DuplicateBarcodeException("Duplicate Scanline", item.Scanline);
         }
+    }
+
+    internal async Task DeleteShippingItemAsync(ShippingItem item)
+    {
+        if (!_order.ShippingItems.Remove(item))
+        {
+            throw new Exception();
+        }
+        await App.BLDatabase.Orders.UpsertAsync(_order);
+        DecrementReceivedItem(item);
+
     }
     #endregion Methods
 

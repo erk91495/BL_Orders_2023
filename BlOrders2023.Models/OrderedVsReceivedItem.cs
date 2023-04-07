@@ -13,6 +13,7 @@ namespace BlOrders2023.Models
         private int productID;
         private int ordered;
         private int received;
+        private float weight;
 
         public int ProductID
         {
@@ -40,6 +41,16 @@ namespace BlOrders2023.Models
                 received = value;
                 OnPropertyChanged(nameof(Received));
             } 
+        }
+
+        public float Weight
+        {
+            get => weight;
+            set
+            {
+                weight = value;
+                OnPropertyChanged(nameof(Weight));
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

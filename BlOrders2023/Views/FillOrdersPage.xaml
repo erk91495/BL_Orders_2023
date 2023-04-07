@@ -48,6 +48,7 @@
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                             <sf:GridNumericColumn HeaderText="Ordered" MappingName="Ordered"/>
                             <sf:GridNumericColumn HeaderText="Received" MappingName="Received"/>
+                            <sf:GridNumericColumn HeaderText="Total Weight" MappingName="Weight" DisplayNumberFormat="N2"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
                     <!--<controls:DataGrid ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=OneWay}"
@@ -167,24 +168,35 @@
                              IsEnabled="{x:Bind ViewModel.hasOrder, Mode=OneWay}"/>
 
                     <sf:SfDataGrid x:Name="OrderedItems"
-                       ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
-                       SourceType="models:ShippingItem"
-                       RelativePanel.Below="Scanline"
-                       GridLinesVisibility="Both"
-                       IsReadOnly="False"
-                       AutoGenerateColumns="False"
-                       RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignRightWithPanel="True"
-                       SelectionUnit="Row"
-                       EditorSelectionBehavior="MoveLast">
+                                   ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
+                                   SourceType="models:ShippingItem"
+                                   RelativePanel.Below="Scanline"
+                                   GridLinesVisibility="Both"
+                                   IsReadOnly="False"
+                                   AutoGenerateColumns="False"
+                                   RelativePanel.AlignLeftWithPanel="True"
+                                   RelativePanel.AlignRightWithPanel="True"
+                                   SelectionUnit="Row"
+                                   EditorSelectionBehavior="MoveLast"
+                                   AllowDeleting="True"
+                                   RecordDeleted="OrderedItems_RecordDeleted">
 
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
-                            <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" IsReadOnly="True"/>
-                            <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True"/>
+                            <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" IsReadOnly="True" DisplayNumberFormat="N2"/>
+                            <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True" DisplayNumberFormat="N0"/>
+                            <sf:GridTextColumn HeaderText="Serial" MappingName="PackageSerialNumber"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
+                    <!--<controls:DataGrid
+                        ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
+                        AutoGenerateColumns="False"
+                        >
+                        <controls:DataGrid.Columns>
+                            <controls:DataGridTextColumn Header="Product ID" Binding="{x:Bind ProductID}"/>
+                        </controls:DataGrid.Columns>
+                    </controls:DataGrid>-->
                 </RelativePanel>
             </SplitView.Content>
         </SplitView>
