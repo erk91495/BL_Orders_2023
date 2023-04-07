@@ -167,7 +167,7 @@
                              TextChanged="Scanline_TextChanged"
                              IsEnabled="{x:Bind ViewModel.hasOrder, Mode=OneWay}"/>
 
-                    <sf:SfDataGrid x:Name="OrderedItems"
+                    <!--<sf:SfDataGrid x:Name="OrderedItems"
                                    ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                                    SourceType="models:ShippingItem"
                                    RelativePanel.Below="Scanline"
@@ -188,15 +188,49 @@
                             <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True" DisplayNumberFormat="N0"/>
                             <sf:GridTextColumn HeaderText="Serial" MappingName="PackageSerialNumber"/>
                         </sf:SfDataGrid.Columns>
-                    </sf:SfDataGrid>
-                    <!--<controls:DataGrid
+                    </sf:SfDataGrid>-->
+                    <controls:DataGrid
                         ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                         AutoGenerateColumns="False"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.Below="Scanline"
                         >
                         <controls:DataGrid.Columns>
-                            <controls:DataGridTextColumn Header="Product ID" Binding="{x:Bind ProductID}"/>
+                            <controls:DataGridTemplateColumn Header="Product ID">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind ProductID}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                            <controls:DataGridTemplateColumn Header="Product Name">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind Product.ProductName}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                            <controls:DataGridTemplateColumn Header="Pick Weight">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind PickWeight}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                            <controls:DataGridTemplateColumn Header="Quantity Received">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind QuanRcvd}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            
                         </controls:DataGrid.Columns>
-                    </controls:DataGrid>-->
+                    </controls:DataGrid>
                 </RelativePanel>
             </SplitView.Content>
         </SplitView>
