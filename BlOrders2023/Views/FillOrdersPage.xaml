@@ -13,6 +13,7 @@
         <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
         <vm:DateFormatConverter x:Key="DateFormatConverter"/>
         <vm:TimeFormatConverter x:Key="TimeFormatConverter"/>
+        <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
     </Page.Resources>
 
     <RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -21,7 +22,7 @@
                    IsPaneOpen="True"
                    VerticalAlignment="Stretch"
                    HorizontalAlignment="Stretch"
-                   OpenPaneLength="300"
+                   OpenPaneLength="370"
                    PanePlacement="Right"
                    PaneBackground="Transparent"
                    RelativePanel.AlignBottomWithPanel="True"
@@ -32,18 +33,21 @@
             <SplitView.Pane>
                 <RelativePanel Background="{ThemeResource SystemAltMediumLowColor}"
                                CornerRadius="20,0,0,20" VerticalAlignment="Stretch">
+
                     <sf:SfDataGrid IsReadOnly="True"
-                                   AutoGenerateColumns="False"
-                                   ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=TwoWay}"
-                                   RelativePanel.AlignLeftWithPanel="True"
-                                   RelativePanel.AlignRightWithPanel="True"
-                                   RelativePanel.AlignTopWithPanel="True"
-                                   RelativePanel.AlignBottomWithPanel="True"
-                                   SelectionMode="None"
-                                   SelectionUnit="Cell"
-                                   AllowSorting="False"
-                                   AllowEditing="False"
-                                   ColumnWidthMode="Star">
+                                       AutoGenerateColumns="False"
+                                       ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=TwoWay}"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.AlignTopWithPanel="True"
+                                       RelativePanel.AlignBottomWithPanel="True"
+                                       SelectionMode="None"
+                                       SelectionUnit="Cell"
+                                       AllowSorting="False"
+                                       AllowEditing="False"
+                                       ColumnWidthMode="Star"
+                                       Margin="0,10,0,0"
+                                       BorderThickness="0">
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                             <sf:GridNumericColumn HeaderText="Ordered" MappingName="Ordered"/>
@@ -114,6 +118,19 @@
                                        Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup, Mode=OneWay}"/>
                         </StackPanel>
                     </StackPanel>
+
+                    <StackPanel x:Name="MemoStack" Orientation="Vertical" RelativePanel.Below="DateStack" RelativePanel.AlignRightWithPanel="True"
+                                VerticalAlignment="Bottom">
+                        <TextBlock Text="Memo:"/>
+                        <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
+                            <TextBlock Text="{x:Bind ViewModel.Order.Memo, Mode=OneWay}"
+                                       TextWrapping="WrapWholeWords"
+                                       Margin="5,5,5,5"
+                                       MinHeight="50"
+                                       MinWidth="300"/>
+                        </Border>
+                    </StackPanel>
+
                     <StackPanel x:Name="CustomerInfo"  
                                 Orientation="Vertical"
                                 RelativePanel.Below="OrderLookupStack"
@@ -167,6 +184,13 @@
                              TextChanged="Scanline_TextChanged"
                              IsEnabled="{x:Bind ViewModel.hasOrder, Mode=OneWay}"/>
 
+                    <Button x:Name="ManualProductAdd" RelativePanel.RightOf="Scanline" RelativePanel.AlignBottomWith="Scanline"
+                            Margin="10,0,0,0" Click="ManualProductAdd_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Add A Product Manually" Padding="0,0,10,0"/>
+                            <SymbolIcon Symbol="Add"/>
+                        </StackPanel>
+                    </Button>
                     <!--<sf:SfDataGrid x:Name="OrderedItems"
                                    ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                                    SourceType="models:ShippingItem"
@@ -196,8 +220,9 @@
                         RelativePanel.AlignRightWithPanel="True"
                         RelativePanel.Below="Scanline"
                         >
+
                         <controls:DataGrid.Columns>
-                            <controls:DataGridTemplateColumn Header="Product ID">
+                            <controls:DataGridTemplateColumn Header="Product ID" Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:ShippingItem">
                                         <TextBlock Text="{x:Bind ProductID}"/>
@@ -205,7 +230,7 @@
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
 
-                            <controls:DataGridTemplateColumn Header="Product Name">
+                            <controls:DataGridTemplateColumn Header="Product Name" Width="*">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:ShippingItem">
                                         <TextBlock Text="{x:Bind Product.ProductName}"/>
@@ -213,15 +238,23 @@
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
 
-                            <controls:DataGridTemplateColumn Header="Pick Weight">
+                            <controls:DataGridTemplateColumn Header="Pick Weight" Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:ShippingItem">
-                                        <TextBlock Text="{x:Bind PickWeight}"/>
+                                        <TextBlock Text="{x:Bind PickWeight, Converter={StaticResource WeightFormatConverter}}"/>
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
 
-                            <controls:DataGridTemplateColumn Header="Quantity Received">
+                            <controls:DataGridTemplateColumn Header="Serial Number" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind PackageSerialNumber}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                            <controls:DataGridTemplateColumn Header="Quantity Received" Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:ShippingItem">
                                         <TextBlock Text="{x:Bind QuanRcvd}"/>

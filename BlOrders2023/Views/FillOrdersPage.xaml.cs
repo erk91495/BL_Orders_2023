@@ -10,6 +10,8 @@ using System.Media;
 using BlOrders2023.Contracts.ViewModels;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.IdentityModel.Tokens;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using BlOrders2023.UserControls;
 
 namespace BlOrders2023.Views;
 
@@ -138,5 +140,11 @@ public sealed partial class FillOrdersPage : Page
                 await ViewModel.DeleteShippingItemAsync(item);
             }
         }
+    }
+
+    private async void ManualProductAdd_Click(object sender, RoutedEventArgs e)
+    {
+        ShippingItemDataInputControl dialog = new(XamlRoot);
+        var result = await dialog.ShowAsync();
     }
 }

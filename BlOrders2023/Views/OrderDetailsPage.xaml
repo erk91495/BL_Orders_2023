@@ -240,8 +240,7 @@
                         TextChanged="ProductEntryBox_TextChanged"
                         PlaceholderText="Add a product..."
                         Padding="0,0,0,10"
-                        QuerySubmitted="ProductEntryBox_QuerySubmitted"
-                        SuggestionChosen="ProductEntryBox_SuggestionChosen">
+                        QuerySubmitted="ProductEntryBox_QuerySubmitted">
             <AutoSuggestBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Product">
                     <StackPanel Orientation="Horizontal"

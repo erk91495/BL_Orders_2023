@@ -395,17 +395,6 @@ namespace BlOrders2023.Views
             }
         }
 
-
-        /// <summary>
-        /// Resets the ProductEntryBox after an item is choosen
-        /// </summary>
-        /// <param name="sender">Product Entry Box</param>
-        /// <param name="args">event args</param>
-        private void ProductEntryBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-        {
-            //ProductEntryBox.Text = null;
-        }
-
         private async void OrderNavigation_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fix so you can naigate more than once

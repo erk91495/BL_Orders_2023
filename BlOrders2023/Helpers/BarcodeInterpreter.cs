@@ -180,5 +180,14 @@ namespace BlOrders2023.Helpers
             }
             return success;
         }
+
+        public static bool SynthesizeBarcode(ref ShippingItem item)
+        {
+            //Assumes b&L company code 
+            var scanline = "0190605375" + item.ProductID.ToString("N5") + "7" +
+                "3202" + ((int)(item.PickWeight ?? 0 * 100)).ToString("N6") + "13" + item.PackDate?.ToString("YYMMdd") +
+                "21" + item.PackageSerialNumber;
+            return true;
+        }
     }
 }
