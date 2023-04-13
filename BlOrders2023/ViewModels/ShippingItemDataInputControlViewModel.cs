@@ -43,7 +43,7 @@ namespace BlOrders2023.ViewModels
             }
         }
         [Required]
-        [MinLength(8)]
+        [MinLength(6)]
         public string? SerialNumber
         {
             get => _serialNumber;
@@ -163,7 +163,8 @@ namespace BlOrders2023.ViewModels
                 PackDate = DateTime.ParseExact(PackDate , "yy/MM/dd", null),
                 ProductID = (int)ProductID,
                 PickWeight = PickWeight,
-
+                ScanDate = DateTime.Now,
+                QuanRcvd = 1,
             };
             BarcodeInterpreter.SynthesizeBarcode(ref item);
             return item;
