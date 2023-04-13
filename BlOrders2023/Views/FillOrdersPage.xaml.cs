@@ -74,14 +74,24 @@ public sealed partial class FillOrdersPage : Page
                     await ShowLockedoutDialog(e.Message,
                         String.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
                 }
-                catch (DuplicateBarcodeException e)
-                {
-                    Debug.WriteLine(e.ToString());
-                    var s = e.Data["Scanline"];
-                    await ShowLockedoutDialog(e.Message,
-                        String.Format("Duplicate Scanline {0}", s));
-                }
+
+                await AddShippingItemAsync(item);
             }
+        }
+    }
+
+    private async Task AddShippingItemAsync(ShippingItem item)
+    {
+        try
+        {
+            await ViewModel.ReceiveItemAsync(item);
+        }
+        catch (DuplicateBarcodeException e)
+        {
+            Debug.WriteLine(e.ToString());
+            var s = e.Data["Scanline"];
+            await ShowLockedoutDialog(e.Message,
+                String.Format("Duplicate Scanline {0}", s));
         }
     }
 
@@ -146,5 +156,9 @@ public sealed partial class FillOrdersPage : Page
     {
         ShippingItemDataInputControl dialog = new(XamlRoot);
         var result = await dialog.ShowAsync();
+        if (result != null)
+        {
+            await ViewModel.ReceiveItemAsync(result);
+        }
     }
 }

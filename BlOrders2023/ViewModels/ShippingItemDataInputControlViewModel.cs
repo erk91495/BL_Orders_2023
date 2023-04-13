@@ -160,7 +160,7 @@ namespace BlOrders2023.ViewModels
             {
                 Product = _selectedProduct,
                 PackageSerialNumber = SerialNumber,
-                PackDate = DateTime.Parse(PackDate),
+                PackDate = DateTime.ParseExact(PackDate , "yy/MM/dd", null),
                 ProductID = (int)ProductID,
                 PickWeight = PickWeight,
 
