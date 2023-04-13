@@ -151,6 +151,16 @@ namespace BlOrders2023.ViewModels
             OnPropertyChanged(nameof(PickWeight));
             
         }
+
+        public ShippingItem GetShippingItem()
+        {
+            return new ShippingItem()
+            {
+                Product = _selectedProduct,
+                PackageSerialNumber = SerialNumber,
+
+            };
+        }
         #endregion Methods
 
     }

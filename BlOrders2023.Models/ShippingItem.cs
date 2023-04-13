@@ -24,7 +24,7 @@ namespace BlOrders2023.Models
         public float? PickWeight { get; set; }
         public bool? Consolidated { get; set; }
         public string? Scanline { get; set; }
-        public int? PackageSerialNumber { get; set; }
+        public string? PackageSerialNumber { get; set; }
         [Column("OrderDate")]
         public DateTime? ScanDate { get; set; }
         [Column("PackageDate")]

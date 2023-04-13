@@ -112,10 +112,14 @@ namespace BlOrders2023.UserControls
 
         }
 
-        public async Task<int?> ShowAsync()
+        public async Task<ShippingItem?> ShowAsync()
         {
-            await _dialog.ShowAsync();
-            return 0;
+            var res = await _dialog.ShowAsync();
+            if(res == ContentDialogResult.Primary)
+            {
+                return ViewModel.GetShippingItem();
+            }
+            return null;
         }
     }
 }
