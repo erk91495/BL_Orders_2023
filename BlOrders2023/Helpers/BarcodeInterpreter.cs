@@ -163,7 +163,7 @@ namespace BlOrders2023.Helpers
                 else if (ai.Equals("21"))
                 {
                     //TODO: GS1 Supports non numeric characters
-                    item.PackageSerialNumber = int.Parse(data);
+                    item.PackageSerialNumber = data;
                     success = true;
                 }
                 //Net Weight in lbs. 

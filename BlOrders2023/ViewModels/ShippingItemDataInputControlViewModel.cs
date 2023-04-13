@@ -1,4 +1,5 @@
 ﻿using BlOrders2023.Core.Data;
+using BlOrders2023.Helpers;
 using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.Design.Behavior;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BlOrders2023.ViewModels
@@ -154,12 +156,17 @@ namespace BlOrders2023.ViewModels
 
         public ShippingItem GetShippingItem()
         {
-            return new ShippingItem()
+            var item = new ShippingItem()
             {
                 Product = _selectedProduct,
                 PackageSerialNumber = SerialNumber,
+                PackDate = DateTime.Parse(PackDate),
+                ProductID = (int)ProductID,
+                PickWeight = PickWeight,
 
             };
+            BarcodeInterpreter.SynthesizeBarcode(ref item);
+            return item;
         }
         #endregion Methods
 
