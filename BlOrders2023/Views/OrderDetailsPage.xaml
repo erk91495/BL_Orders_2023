@@ -145,6 +145,7 @@
                     <StackPanel Orientation="Vertical">
                     <TextBlock Text="Pickup/Delivery Date:"/>
                     <calendar:SfCalendarDatePicker x:Name="PickupDate"
+                                                   AllowNull="False"
                                                    SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
                     </StackPanel>
                     <StackPanel x:Name="PickupTimeStack"  Orientation="Vertical">

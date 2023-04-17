@@ -90,7 +90,7 @@ namespace BlOrders2023.Views
             { 
                 //change focus to write any changes
                 OrderNumber.Focus(FocusState.Programmatic);
-                //Task.Run(() => ViewModel.SaveCurrentOrder()).GetResultOrDefault();
+                Task.Run(() => ViewModel.SaveCurrentOrder()).GetResultOrDefault();
                 
             }
             base.OnNavigatingFrom(e);

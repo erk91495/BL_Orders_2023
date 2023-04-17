@@ -14,7 +14,51 @@
         <vm:DateFormatConverter x:Key="DateFormatConverter"/>
         <vm:TimeFormatConverter x:Key="TimeFormatConverter"/>
         <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
+
+        <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
+            <Grid BorderThickness="1"
+                  BorderBrush="{StaticResource SystemBaseMediumColor}"
+                  CornerRadius="5"
+                  Margin="0,0,0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="4*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{x:Bind ProductID}"
+                           Grid.Row="0"
+                           Grid.Column="0"/>
+                <TextBlock Text="{x:Bind Product.ProductName}"
+                           Grid.Row="0"
+                           Grid.Column="1"/>
+                <TextBlock Text="{x:Bind PickWeight, Converter={StaticResource WeightFormatConverter}}"
+                           Grid.Row="0"
+                           Grid.Column="2"/>
+                <TextBlock Text="{x:Bind PackageSerialNumber}"
+                           Grid.Row="0"
+                           Grid.Column="3"/>
+                <TextBlock Text="{x:Bind QuanRcvd}"
+                           Grid.Row="0"
+                           Grid.Column="4"/>
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="5">
+                    <TextBlock Text="Scanline:" VerticalAlignment="Center"/>
+                    <TextBox Text="{x:Bind Scanline}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
     </Page.Resources>
+
+
 
     <RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <SplitView x:Name="FillOrders"
@@ -191,12 +235,21 @@
                             <SymbolIcon Symbol="Add"/>
                         </StackPanel>
                     </Button>
-                    <!--<sf:SfDataGrid x:Name="OrderedItems"
+
+                    <!--<ListView ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
+                              RelativePanel.Below="Scanline"
+                              RelativePanel.AlignLeftWithPanel="True"
+                              RelativePanel.AlignRightWithPanel="True"
+                              ItemTemplate="{StaticResource ShippingItemsViewTemplate}"
+                              >
+                    </ListView>-->
+
+                    <sf:SfDataGrid x:Name="OrderedItems"
                                    ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                                    SourceType="models:ShippingItem"
                                    RelativePanel.Below="Scanline"
                                    GridLinesVisibility="Both"
-                                   IsReadOnly="False"
+                                   AllowResizingColumns="True"
                                    AutoGenerateColumns="False"
                                    RelativePanel.AlignLeftWithPanel="True"
                                    RelativePanel.AlignRightWithPanel="True"
@@ -208,12 +261,14 @@
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
+                            <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline" ColumnWidthMode="SizeToCells" IsReadOnly="False"/>
                             <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" IsReadOnly="True" DisplayNumberFormat="N2"/>
                             <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True" DisplayNumberFormat="N0"/>
                             <sf:GridTextColumn HeaderText="Serial" MappingName="PackageSerialNumber"/>
                         </sf:SfDataGrid.Columns>
-                    </sf:SfDataGrid>-->
-                    <controls:DataGrid
+                    </sf:SfDataGrid>
+                    
+                    <!--<controls:DataGrid
                         ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                         AutoGenerateColumns="False"
                         RelativePanel.AlignLeftWithPanel="True"
@@ -263,7 +318,8 @@
                             </controls:DataGridTemplateColumn>
                             
                         </controls:DataGrid.Columns>
-                    </controls:DataGrid>
+                    </controls:DataGrid>-->
+                    
                 </RelativePanel>
             </SplitView.Content>
         </SplitView>
