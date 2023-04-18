@@ -4,6 +4,7 @@ using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using System.Collections.ObjectModel;
@@ -92,7 +93,14 @@ namespace BlOrders2023.ViewModels
             get => _order.PO_Number;
             set
             {
-                _order.PO_Number = value;
+                if (value.IsNullOrEmpty())
+                {
+                    _order.PO_Number = null;
+                }
+                else
+                {
+                    _order.PO_Number = value;
+                }
                 OnPropertyChanged();
             }
         }
@@ -152,7 +160,14 @@ namespace BlOrders2023.ViewModels
             get => _order.Memo;
             set
             {
-                _order.Memo = value;
+                if (value.IsNullOrEmpty())
+                {
+                    _order.Memo = null;
+                }
+                else
+                {
+                    _order.Memo = value;
+                }
                 OnPropertyChanged();
             }
         }
