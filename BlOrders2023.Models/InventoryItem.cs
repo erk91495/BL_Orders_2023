@@ -11,6 +11,7 @@ namespace BlOrders2023.Models;
 [Table("tbl_Inventory_(Boxed)")]
 public class InventoryItem
 {
+
     [Key]
     [Required]
     public int ProductID

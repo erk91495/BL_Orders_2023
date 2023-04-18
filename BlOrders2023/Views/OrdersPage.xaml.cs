@@ -46,9 +46,22 @@ public sealed partial class OrdersPage : Page
         }
     }
 
+    #region Navigation
+    /// <summary>
+    /// Navigates to the OrderDetailsPage passing in the currently selected order as a parameter
+    /// </summary>
     private void NavigateToOrderDetailsPage()=>
         Frame.Navigate(typeof(OrderDetailsPage), ViewModel.SelectedOrder);
 
+    /// <summary>
+    /// Navigates to the FillOrdersPage passing in the current selected order id as a parameter
+    /// </summary>
+    private void NavigateToFillOrdersPage() =>
+        Frame.Navigate(typeof(FillOrdersPage), ViewModel.SelectedOrder!.OrderID);
+
+    #endregion Navigation
+
+    #region Event Handlers
 
     /// <summary>
     /// Creates an email about the currently selected invoice. 
@@ -59,6 +72,14 @@ public sealed partial class OrdersPage : Page
             await Helpers.Helpers.SendEmailAsync(ViewModel.SelectedOrder.Customer.Email ?? String.Empty);
     }
 
+    #region Pane Buttons
+    private void EditOrder_Click(object sender, RoutedEventArgs e) => NavigateToOrderDetailsPage();
+
+    private void FillOrder_Click(object sender, RoutedEventArgs e) => NavigateToFillOrdersPage();
+
+    #endregion Pane Buttons
+
+    #region Orders Grid
     /// <summary>
     /// Handles doubleclick events for the orders datagrid 
     /// </summary>
@@ -66,15 +87,6 @@ public sealed partial class OrdersPage : Page
     /// <param name="e">event args for the doubletaped event</param>
     private void Order_OrdersGrid_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)=>
         NavigateToOrderDetailsPage();
-
-    private void EditOrder_Click(object sender, RoutedEventArgs e) => NavigateToOrderDetailsPage();
-
-    private void FillOrder_Click(object sender, RoutedEventArgs e) => NavigateToFillOrdersPage();
-
-    private void NavigateToFillOrdersPage()
-    {
-        Frame.Navigate(typeof(FillOrdersPage), ViewModel.SelectedOrder.OrderID);
-    }
 
     /// <summary>
     /// Handles right click events for the orders datagrid
@@ -90,6 +102,7 @@ public sealed partial class OrdersPage : Page
         }
     }
 
+    #region Menu Flyouts
     /// <summary>
     /// Handles the click event for the details for the flyout menu
     /// </summary>
@@ -99,7 +112,7 @@ public sealed partial class OrdersPage : Page
         NavigateToOrderDetailsPage();
 
     /// <summary>
-    /// Handles the click eventfor the New Order flyout item
+    /// Handles the click event for the New Order flyout item
     /// </summary>
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the click event</param>
@@ -109,18 +122,14 @@ public sealed partial class OrdersPage : Page
     }
 
     /// <summary>
-    /// Creates a new order for the given customer
+    /// Handles the click event for the Fill Order flyout item
     /// </summary>
-    /// <param name="customer"></param>
-    private void CreateNewOrder(WholesaleCustomer customer)
-    {
-        if (customer != null)
-        {
-            Order order = new Order(customer);
-            ViewModel.Orders.Add(order);
-            Frame.Navigate(typeof(OrderDetailsPage), order);
-        }
-    }
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
+    private void MenuFlyoutFillOrderClick(object sender, RoutedEventArgs e) =>
+        NavigateToFillOrdersPage();
+    #endregion Menu Flyouts
+    #endregion Orders Grid
 
     /// <summary>
     /// Handles TextChanged events for the search box. Updates the filter value for the view model and refreshes filter
@@ -137,14 +146,25 @@ public sealed partial class OrdersPage : Page
         if (textBox != null && textBox.Text != null)
         {
             ViewModel.FilterText = textBox.Text;
-            OrdersGrid.View.RefreshFilter(); 
+            OrdersGrid.View.RefreshFilter();
         }
     }
+
+    /// <summary>
+    /// Handles the New Order button clicked by prompting the user to select a customer. Triggered by the split button
+    /// </summary>
+    /// <param name="sender">the sender of the event</param>
+    /// <param name="e">the event args</param>
     private void NewOrderBtn_Clicked(SplitButton sender, SplitButtonClickEventArgs e)
     {
-        NewOrderBtn_Clicked(sender as object, new RoutedEventArgs() );
+        NewOrderBtn_Clicked(sender as object, new RoutedEventArgs());
     }
 
+    /// <summary>
+    /// Handles the New Order button clicked by prompting the user to select a customer. called from the split button flyout
+    /// </summary>
+    /// <param name="sender">the sender of the event</param>
+    /// <param name="e">the event args</param>
     private void NewOrderBtn_Clicked(object sender, RoutedEventArgs e)
     {
         CustomerSelectionControl dialog = new(XamlRoot);
@@ -152,19 +172,50 @@ public sealed partial class OrdersPage : Page
         dialog.showAsync();
 
     }
+
+    /// <summary>
+    /// Handles the New Customer button clicked by prompting the user to create a customer. called from the split button flyout
+    /// </summary>
+    /// <param name="sender">the sender of the event</param>
+    /// <param name="e">the event args</param>
     private void NewCustomerBtn_Click(object sender, RoutedEventArgs e)
     {
         CustomerDataInputControl dialog = new(XamlRoot);
         _ = dialog.ShowAsync();
     }
 
+    /// <summary>
+    /// The callback for the customer selection dialog. Gets the customer from the dialog and then create a new order for the customer
+    /// </summary>
+    /// <param name="o">The CustomerSelectionControl</param>
+    /// <param name="args">the event args</param>
     private void CustomerSelectionControl_SelectionChoose(object? o, EventArgs args)
     {
-        if( o is CustomerSelectionControl control)
+        if (o is CustomerSelectionControl control 
+            && control.ViewModel != null 
+            && control.ViewModel.SelectedCustomer != null)
         {
             CreateNewOrder(control.ViewModel.SelectedCustomer);
-        } 
+        }
     }
+
+    #endregion Event Handlers
+
+    /// <summary>
+    /// Creates a new order for the given customer
+    /// </summary>
+    /// <param name="customer"></param>
+    private void CreateNewOrder(WholesaleCustomer customer)
+    {
+        if (customer != null)
+        {
+            Order order = new Order(customer);
+            ViewModel.Orders.Add(order);
+            Frame.Navigate(typeof(OrderDetailsPage), order);
+        }
+    }
+
+
 
     #endregion Methods
 

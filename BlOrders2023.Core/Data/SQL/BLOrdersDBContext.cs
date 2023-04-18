@@ -39,4 +39,5 @@ public class BLOrdersDBContext : DbContext
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<CustomerClass> CustomerClasses { get; set; }
+    public DbSet<ShippingItem> ShippingItems { get; set; }
 }

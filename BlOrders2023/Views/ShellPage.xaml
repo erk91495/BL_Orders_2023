@@ -86,7 +86,7 @@
             <i:Interaction.Behaviors>
 
             </i:Interaction.Behaviors>
-            <Grid Margin="{StaticResource NavigationViewPageContentMargin}">
+            <Grid Margin="10,10,10,10">
                 <Frame x:Name="NavigationFrame" />
             </Grid>
         </NavigationView>
