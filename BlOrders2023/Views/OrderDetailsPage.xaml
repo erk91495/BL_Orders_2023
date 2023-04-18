@@ -151,6 +151,7 @@
                     <StackPanel x:Name="PickupTimeStack"  Orientation="Vertical">
                         <TextBlock Text="Pickup Time:"/>
                         <editors:SfTimePicker x:Name="PickupTime"
+                                              AllowNull="False"
                                               SelectedTime="{x:Bind ViewModel.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
                     </StackPanel>
                 </StackPanel>

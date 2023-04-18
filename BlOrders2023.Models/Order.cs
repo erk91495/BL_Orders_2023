@@ -14,6 +14,7 @@ public class Order
         OrderDate = DateTime.Now;
         Frozen = false;
         //Set the date for today so that sql will accept the time
+        PickupDate = DateTime.Now;
         PickupTime = DateTime.Today;
     }
     
