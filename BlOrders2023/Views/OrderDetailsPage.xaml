@@ -145,11 +145,13 @@
                     <StackPanel Orientation="Vertical">
                     <TextBlock Text="Pickup/Delivery Date:"/>
                     <calendar:SfCalendarDatePicker x:Name="PickupDate"
+                                                   AllowNull="False"
                                                    SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
                     </StackPanel>
                     <StackPanel x:Name="PickupTimeStack"  Orientation="Vertical">
                         <TextBlock Text="Pickup Time:"/>
                         <editors:SfTimePicker x:Name="PickupTime"
+                                              AllowNull="False"
                                               SelectedTime="{x:Bind ViewModel.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
                     </StackPanel>
                 </StackPanel>
@@ -214,7 +216,7 @@
                        EditorSelectionBehavior="MoveLast"
                        PointerMoved="OrderedItems_PointerMoved"
                        Loaded="OrderedItems_Loaded"
-                       ItemsSourceChanged="OrderedItems_ItemsSourceChanged">
+                       >
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
