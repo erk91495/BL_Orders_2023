@@ -64,6 +64,7 @@
                 <sf:GridCheckBoxColumn MappingName="FixedPrice" AllowEditing="True"/>
                 <sf:GridTextColumn MappingName="UPCCode" AllowEditing="True"/>
                 <sf:GridTextColumn MappingName="KPCCode" AllowEditing="True"/>
+                <sf:GridTextColumn MappingName="CompanyCode" AllowEditing="True"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
       

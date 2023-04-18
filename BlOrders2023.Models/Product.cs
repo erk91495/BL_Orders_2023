@@ -22,7 +22,8 @@ namespace BlOrders2023.Models
         public string? KPCCode { get; set; }
         public bool? FixedPrice { get; set; }
         //public string? KrogerDeptNo { get; set; }
-
+        [StringLength(8)]
+        public string? CompanyCode { get; set; }
         public override string ToString()
         {
             return ProductName ?? string.Empty;
