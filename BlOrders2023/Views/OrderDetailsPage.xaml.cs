@@ -90,7 +90,7 @@ namespace BlOrders2023.Views
             { 
                 //change focus to write any changes
                 OrderNumber.Focus(FocusState.Programmatic);
-                //Task.Run(() => ViewModel.SaveCurrentOrder()).GetResultOrDefault();
+                Task.Run(() => ViewModel.SaveCurrentOrder()).GetResultOrDefault();
                 
             }
             base.OnNavigatingFrom(e);
@@ -393,17 +393,6 @@ namespace BlOrders2023.Views
                 ProductEntryBox.Text = null;
                 ProductEntryBox.IsSuggestionListOpen = false;
             }
-        }
-
-
-        /// <summary>
-        /// Resets the ProductEntryBox after an item is choosen
-        /// </summary>
-        /// <param name="sender">Product Entry Box</param>
-        /// <param name="args">event args</param>
-        private void ProductEntryBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-        {
-            //ProductEntryBox.Text = null;
         }
 
         private async void OrderNavigation_Click(object sender, RoutedEventArgs e)

@@ -145,6 +145,7 @@
                     <StackPanel Orientation="Vertical">
                     <TextBlock Text="Pickup/Delivery Date:"/>
                     <calendar:SfCalendarDatePicker x:Name="PickupDate"
+                                                   AllowNull="False"
                                                    SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
                     </StackPanel>
                     <StackPanel x:Name="PickupTimeStack"  Orientation="Vertical">
@@ -213,8 +214,8 @@
                        SelectionUnit="Row"
                        EditorSelectionBehavior="MoveLast"
                        PointerMoved="OrderedItems_PointerMoved"
-                       Loaded="OrderedItems_Loaded"
-                       ItemsSourceChanged="OrderedItems_ItemsSourceChanged">
+                       Loaded="OrderedItems_Loaded">
+            
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
@@ -240,8 +241,7 @@
                         TextChanged="ProductEntryBox_TextChanged"
                         PlaceholderText="Add a product..."
                         Padding="0,0,0,10"
-                        QuerySubmitted="ProductEntryBox_QuerySubmitted"
-                        SuggestionChosen="ProductEntryBox_SuggestionChosen">
+                        QuerySubmitted="ProductEntryBox_QuerySubmitted">
             <AutoSuggestBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Product">
                     <StackPanel Orientation="Horizontal"

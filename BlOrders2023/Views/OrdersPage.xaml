@@ -20,6 +20,7 @@
                 Icon="Add"
                 Text="New"/>
             <MenuFlyoutItem
+                Click="MenuFlyoutFillOrderClick"
                 Icon="List"
                 Text="Fill"/>
         </MenuFlyout>

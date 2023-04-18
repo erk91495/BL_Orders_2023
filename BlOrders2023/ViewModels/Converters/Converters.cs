@@ -179,4 +179,57 @@ namespace BlOrders2023.ViewModels
             return ((DateTimeOffset)value).DateTime;
         }
     }
+
+    public class DateFormatConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if(value is DateTime date)
+            {
+                return date.ToString("MM/dd/yyyy");
+            }
+            else
+            {
+                return String.Empty;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public class TimeFormatConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value is DateTime date)
+            {
+                return date.ToString("hh:mm tt");
+            }
+            else
+            {
+                return String.Empty;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public class WeightFormatConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return ((float)value).ToString("N2");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotSupportedException();
+        }
+    }
 }

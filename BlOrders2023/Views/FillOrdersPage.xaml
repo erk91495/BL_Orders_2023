@@ -6,15 +6,67 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:BlOrders2023.ViewModels"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
+    xmlns:models="using:BlOrders2023.Models"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d">
+    <Page.Resources>
+        <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+        <vm:DateFormatConverter x:Key="DateFormatConverter"/>
+        <vm:TimeFormatConverter x:Key="TimeFormatConverter"/>
+        <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
 
-	<RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
+            <Grid BorderThickness="1"
+                  BorderBrush="{StaticResource SystemBaseMediumColor}"
+                  CornerRadius="5"
+                  Margin="0,0,0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="4*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{x:Bind ProductID}"
+                           Grid.Row="0"
+                           Grid.Column="0"/>
+                <TextBlock Text="{x:Bind Product.ProductName}"
+                           Grid.Row="0"
+                           Grid.Column="1"/>
+                <TextBlock Text="{x:Bind PickWeight, Converter={StaticResource WeightFormatConverter}}"
+                           Grid.Row="0"
+                           Grid.Column="2"/>
+                <TextBlock Text="{x:Bind PackageSerialNumber}"
+                           Grid.Row="0"
+                           Grid.Column="3"/>
+                <TextBlock Text="{x:Bind QuanRcvd}"
+                           Grid.Row="0"
+                           Grid.Column="4"/>
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="5">
+                    <TextBlock Text="Scanline:" VerticalAlignment="Center"/>
+                    <TextBox Text="{x:Bind Scanline}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+    </Page.Resources>
+
+
+
+    <RelativePanel x:Name="ContentArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <SplitView x:Name="FillOrders"
                    DisplayMode="Inline"
                    IsPaneOpen="True"
                    VerticalAlignment="Stretch"
                    HorizontalAlignment="Stretch"
-                   OpenPaneLength="750"
+                   OpenPaneLength="370"
                    PanePlacement="Right"
                    PaneBackground="Transparent"
                    RelativePanel.AlignBottomWithPanel="True"
@@ -23,27 +75,128 @@
                    RelativePanel.AlignTopWithPanel="True"
                    >
             <SplitView.Pane>
-                <Button/>
+                <RelativePanel Background="{ThemeResource SystemAltMediumLowColor}"
+                               CornerRadius="20,0,0,20" VerticalAlignment="Stretch">
+
+                    <sf:SfDataGrid IsReadOnly="True"
+                                       AutoGenerateColumns="False"
+                                       ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=TwoWay}"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.AlignTopWithPanel="True"
+                                       RelativePanel.AlignBottomWithPanel="True"
+                                       SelectionMode="None"
+                                       SelectionUnit="Cell"
+                                       AllowSorting="False"
+                                       AllowEditing="False"
+                                       ColumnWidthMode="Star"
+                                       Margin="0,10,0,0"
+                                       BorderThickness="0">
+                        <sf:SfDataGrid.Columns>
+                            <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
+                            <sf:GridNumericColumn HeaderText="Ordered" MappingName="Ordered"/>
+                            <sf:GridNumericColumn HeaderText="Received" MappingName="Received"/>
+                            <sf:GridNumericColumn HeaderText="Total Weight" MappingName="Weight" DisplayNumberFormat="N2"/>
+                        </sf:SfDataGrid.Columns>
+                    </sf:SfDataGrid>
+                    <!--<controls:DataGrid ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=OneWay}"
+                                       AutoGenerateColumns="True"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.AlignTopWithPanel="True"
+                                       RelativePanel.AlignBottomWithPanel="True">
+
+                    </controls:DataGrid>-->
+                </RelativePanel>
+                
             </SplitView.Pane>
             <SplitView.Content>
                 <RelativePanel>
-                    <AutoSuggestBox x:Name="OrderLookup" 
-                                    RelativePanel.AlignTopWithPanel="True"
-                                    RelativePanel.AlignLeftWithPanel="True"/>
+                    <StackPanel x:Name="OrderLookupStack" Orientation="Vertical">
+                        <!--<TextBlock Text="Lookup An Order:"/>-->
+                        <AutoSuggestBox x:Name="OrderLookup"
+                                        PlaceholderText="Lookup an order..."
+                                        RelativePanel.AlignTopWithPanel="True"
+                                        RelativePanel.AlignLeftWithPanel="True"
+                                        MinWidth="400"
+                                        ItemsSource="{x:Bind ViewModel.FillableOrders}"
+                                        TextChanged="OrderLookup_TextChanged"
+                                        QuerySubmitted="OrderLookup_QuerySubmitted"
+                                        >
+                            <AutoSuggestBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:Order">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <TextBlock Text="{x:Bind OrderID}" Grid.Column="0" Margin="0,0,10,0"/>
+                                        <TextBlock Text="{x:Bind Customer.CustomerName}" Grid.Column="1" HorizontalAlignment="Left"/>
+                                        <TextBlock Text="{x:Bind PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}" Grid.Column="2" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </AutoSuggestBox.ItemTemplate>
+                        </AutoSuggestBox>
+                    </StackPanel>
+
+                    <StackPanel x:Name="DateStack" 
+                                Orientation="Vertical"
+                                RelativePanel.Below="OrderLookupStack"
+                                RelativePanel.AlignRightWithPanel="True"
+                                Padding="0,20,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Order Date:"/>
+                            <TextBlock Text="{x:Bind ViewModel.Order.OrderDate}"
+                                       Padding="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Pickup Date:" 
+                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup,  FallbackValue=Collapsed, Mode=OneWay}"/>
+                            <TextBlock Text="Delivery Date:" 
+                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Shipping, FallbackValue=Collapsed, Mode=OneWay}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Order.PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}"
+                                       Padding="10,0,10,0"/>
+                            <TextBlock Text="{x:Bind ViewModel.Order.PickupTime, Converter={StaticResource TimeFormatConverter}, Mode=OneWay}"
+                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup, Mode=OneWay}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel x:Name="MemoStack" Orientation="Vertical" RelativePanel.Below="DateStack" RelativePanel.AlignRightWithPanel="True"
+                                VerticalAlignment="Bottom">
+                        <TextBlock Text="Memo:"/>
+                        <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
+                            <TextBlock Text="{x:Bind ViewModel.Order.Memo, Mode=OneWay}"
+                                       TextWrapping="WrapWholeWords"
+                                       Margin="5,5,5,5"
+                                       MinHeight="50"
+                                       MinWidth="300"/>
+                        </Border>
+                    </StackPanel>
 
                     <StackPanel x:Name="CustomerInfo"  
-                    Orientation="Vertical"
-                    RelativePanel.Below="OrderLookup"
-                    RelativePanel.AlignLeftWithPanel="True">
+                                Orientation="Vertical"
+                                RelativePanel.Below="OrderLookupStack"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                Padding="10,20,0,0">
+                        <StackPanel x:Name="OrderIdStack" Orientation="Horizontal">
+                            <TextBlock Text="Order #"
+                                       FontSize="{StaticResource LargeFontSize}"
+                                       FontWeight="Bold"/>
+                            <TextBlock Text="{x:Bind ViewModel.Order.OrderID, Mode=OneWay}"
+                                       FontSize="{StaticResource LargeFontSize}"
+                                       FontWeight="Bold"/>
+                        </StackPanel>
                         <TextBlock Text="{x:Bind ViewModel.Customer.CustomerName, Mode=OneWay}"
-                               FontSize="{StaticResource LargeFontSize}"/>
+                               FontSize="{StaticResource MediumFontSize}"/>
                         <TextBlock Text="{x:Bind ViewModel.Customer.Address, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"/>
                         <TextBlock Text="{x:Bind ViewModel.Customer.CityStateZip(), Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"/>
                         <TextBlock Text="{x:Bind ViewModel.Customer.Buyer, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
-                               Padding="0,20,0,0"/>
+                               Padding="0,0,0,0"/>
                         <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
                                Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
@@ -64,9 +217,109 @@
 
                     </StackPanel>
 
-                    <TextBox x:Name="Scanline" 
+                    <TextBox x:Name="Scanline"
+                             PlaceholderText="Scan a product..."
                              RelativePanel.Below="CustomerInfo"
-                             RelativePanel.AlignLeftWithPanel="True"/>
+                             RelativePanel.AlignLeftWith="CustomerInfo"
+                             Margin="10,10,0,0"
+                             MinWidth="300"
+                             AcceptsReturn="True"
+                             TextWrapping="NoWrap"
+                             TextChanged="Scanline_TextChanged"
+                             IsEnabled="{x:Bind ViewModel.hasOrder, Mode=OneWay}"/>
+
+                    <Button x:Name="ManualProductAdd" RelativePanel.RightOf="Scanline" RelativePanel.AlignBottomWith="Scanline"
+                            Margin="10,0,0,0" Click="ManualProductAdd_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Add A Product Manually" Padding="0,0,10,0"/>
+                            <SymbolIcon Symbol="Add"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!--<ListView ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
+                              RelativePanel.Below="Scanline"
+                              RelativePanel.AlignLeftWithPanel="True"
+                              RelativePanel.AlignRightWithPanel="True"
+                              ItemTemplate="{StaticResource ShippingItemsViewTemplate}"
+                              >
+                    </ListView>-->
+
+                    <sf:SfDataGrid x:Name="OrderedItems"
+                                   ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
+                                   SourceType="models:ShippingItem"
+                                   RelativePanel.Below="Scanline"
+                                   GridLinesVisibility="Both"
+                                   AllowResizingColumns="True"
+                                   AutoGenerateColumns="False"
+                                   RelativePanel.AlignLeftWithPanel="True"
+                                   RelativePanel.AlignRightWithPanel="True"
+                                   SelectionUnit="Row"
+                                   EditorSelectionBehavior="MoveLast"
+                                   AllowDeleting="True"
+                                   RecordDeleted="OrderedItems_RecordDeleted">
+
+                        <sf:SfDataGrid.Columns>
+                            <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
+                            <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
+                            <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline" ColumnWidthMode="SizeToCells" IsReadOnly="False"/>
+                            <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" IsReadOnly="True" DisplayNumberFormat="N2"/>
+                            <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True" DisplayNumberFormat="N0"/>
+                            <sf:GridTextColumn HeaderText="Serial" MappingName="PackageSerialNumber"/>
+                        </sf:SfDataGrid.Columns>
+                    </sf:SfDataGrid>
+                    
+                    <!--<controls:DataGrid
+                        ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
+                        AutoGenerateColumns="False"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.Below="Scanline"
+                        >
+
+                        <controls:DataGrid.Columns>
+                            <controls:DataGridTemplateColumn Header="Product ID" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind ProductID}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                            <controls:DataGridTemplateColumn Header="Product Name" Width="*">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind Product.ProductName}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                            <controls:DataGridTemplateColumn Header="Pick Weight" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind PickWeight, Converter={StaticResource WeightFormatConverter}}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                            <controls:DataGridTemplateColumn Header="Serial Number" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind PackageSerialNumber}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                            <controls:DataGridTemplateColumn Header="Quantity Received" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ShippingItem">
+                                        <TextBlock Text="{x:Bind QuanRcvd}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            
+                        </controls:DataGrid.Columns>
+                    </controls:DataGrid>-->
+                    
                 </RelativePanel>
             </SplitView.Content>
         </SplitView>

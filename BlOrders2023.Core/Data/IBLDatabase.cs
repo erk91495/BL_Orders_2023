@@ -11,5 +11,6 @@ namespace BlOrders2023.Core.Data
         public IOrderTable Orders { get; }
         public IWholesaleCustomerTable Customers { get; }
         public IProductsTable Products { get; }
+        public IShipDetailsTable ShipDetails { get; }
     }
 }
