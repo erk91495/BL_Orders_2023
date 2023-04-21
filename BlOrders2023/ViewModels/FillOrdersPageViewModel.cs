@@ -201,12 +201,22 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     internal async Task DeleteShippingItemAsync(ShippingItem item)
     {
+        Items.Remove(item);
         if (!_order.ShippingItems.Remove(item))
         {
             throw new Exception();
         }
         await App.BLDatabase.Orders.UpsertAsync(_order);
         DecrementReceivedItem(item);
+
+    }
+
+    internal async Task DeleteAllShippingItemsAsync()
+    {
+        Items.Clear();
+        _order.ShippingItems.Clear();
+        await App.BLDatabase.Orders.UpsertAsync(_order);
+        ReCalculateOrderdVsReceived();
 
     }
     #endregion Methods
