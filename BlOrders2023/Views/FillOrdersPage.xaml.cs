@@ -61,7 +61,9 @@ public sealed partial class FillOrdersPage : Page
                 try
                 {
                     BarcodeInterpreter.ParseBarcode(bc, ref item);
-                }catch (ProductNotFoundException e)
+                    await AddShippingItemAsync(item);
+                }
+                catch (ProductNotFoundException e)
                 {
                     Debug.WriteLine(e.ToString());
                     var prodCode = e.Data["ProductID"];
@@ -77,7 +79,7 @@ public sealed partial class FillOrdersPage : Page
                         String.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
                 }
 
-                await AddShippingItemAsync(item);
+                
             }
         }
     }

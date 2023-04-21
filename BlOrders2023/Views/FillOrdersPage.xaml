@@ -1,13 +1,12 @@
 ﻿<Page
     x:Class="BlOrders2023.Views.FillOrdersPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:BlOrders2023.Models"
     xmlns:vm="using:BlOrders2023.ViewModels"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
-    xmlns:models="using:BlOrders2023.Models"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d">
     <Page.Resources>
         <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
@@ -16,44 +15,28 @@
         <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
 
         <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
-            <Grid BorderThickness="1"
-                  BorderBrush="{StaticResource SystemBaseMediumColor}"
-                  CornerRadius="5"
-                  Margin="0,0,0,5">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="8*"/>
-                    <ColumnDefinition Width="4*"/>
-                    <ColumnDefinition Width="4*"/>
-                    <ColumnDefinition Width="4*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{x:Bind ProductID}"
-                           Grid.Row="0"
-                           Grid.Column="0"/>
-                <TextBlock Text="{x:Bind Product.ProductName}"
-                           Grid.Row="0"
-                           Grid.Column="1"/>
-                <TextBlock Text="{x:Bind PickWeight, Converter={StaticResource WeightFormatConverter}}"
-                           Grid.Row="0"
-                           Grid.Column="2"/>
-                <TextBlock Text="{x:Bind PackageSerialNumber}"
-                           Grid.Row="0"
-                           Grid.Column="3"/>
-                <TextBlock Text="{x:Bind QuanRcvd}"
-                           Grid.Row="0"
-                           Grid.Column="4"/>
-                <StackPanel Orientation="Horizontal"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="5">
-                    <TextBlock Text="Scanline:" VerticalAlignment="Center"/>
-                    <TextBox Text="{x:Bind Scanline}"/>
-                </StackPanel>
-            </Grid>
+            <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="20">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="ID:" Padding="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Bind ProductID}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBox Text="{x:Bind Product.ProductName}" IsReadOnly="True" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind PickWeight}" Padding="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="lbs." VerticalAlignment="Center"/>
+                        </StackPanel>
+                        
+                    </StackPanel>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind Scanline}"/>
+                        <TextBlock Text="{x:Bind QuanRcvd}"/>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
         </DataTemplate>
 
     </Page.Resources>
@@ -131,7 +114,6 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        
                                         <TextBlock Text="{x:Bind OrderID}" Grid.Column="0" Margin="0,0,10,0"/>
                                         <TextBlock Text="{x:Bind Customer.CustomerName}" Grid.Column="1" HorizontalAlignment="Left"/>
                                         <TextBlock Text="{x:Bind PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}" Grid.Column="2" HorizontalAlignment="Right"/>
@@ -237,7 +219,7 @@
                     </Button>
 
                     <!--<ListView ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
-                              RelativePanel.Below="Scanline"
+                              RelativePanel.Below="OrderedItems"
                               RelativePanel.AlignLeftWithPanel="True"
                               RelativePanel.AlignRightWithPanel="True"
                               ItemTemplate="{StaticResource ShippingItemsViewTemplate}"

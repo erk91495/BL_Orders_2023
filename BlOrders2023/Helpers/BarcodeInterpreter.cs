@@ -14,7 +14,7 @@ namespace BlOrders2023.Helpers
     public static class BarcodeInterpreter
     {
         //Keep In mind as we add fields here we will also need to support them when we parse the fields into product data
-        private readonly static Dictionary<String, Regex> SupportedAIRegex = new()
+        private readonly static Dictionary<string, Regex> SupportedAIRegex = new()
         {
             //Keep In mind as we add fields here we will also need to support them when we parse the fields into product data
             {"00", new Regex("^00(\\d{18})$")},                                                                               //SSCC
@@ -41,6 +41,7 @@ namespace BlOrders2023.Helpers
             {
                 String scanline = new (gs1Barcode.Scanline);
                 item.Scanline = scanline.Trim('\r', '\n');
+                //TODO: break if no matches found
                 while(scanline != "\r")
                 {
                     Regex? re = null;
@@ -135,7 +136,7 @@ namespace BlOrders2023.Helpers
                 else if (ai.Equals("01"))
                 {
                     // Product code is 5 digits
-                    var prodCode = int.Parse(data[8..5]);
+                    var prodCode = int.Parse(data[8..^1]);
                     var product = App.BLDatabase.Products.Get(prodCode).FirstOrDefault();
                     if (product != null)
                     {
