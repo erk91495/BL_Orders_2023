@@ -73,7 +73,7 @@
                     Orientation="Vertical"
                     RelativePanel.AlignRightWithPanel="True">
             <Button HorizontalAlignment="Right">
-                <SymbolIcon Symbol="GlobalNavigationButton"/>
+                <SymbolIcon Symbol="More"/>
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
                         <MenuFlyoutItem Text="Delete Order" Icon="Delete" Click="DeleteOrderFlyoutItem_Click"/>

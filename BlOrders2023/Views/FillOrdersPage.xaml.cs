@@ -167,4 +167,8 @@ public sealed partial class FillOrdersPage : Page
         }
     }
 
+    private async void DeleteAll_Click(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.DeleteAllShippingItemsAsync();
+    }
 }

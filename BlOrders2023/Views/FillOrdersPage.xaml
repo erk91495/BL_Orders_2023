@@ -95,37 +95,47 @@
             </SplitView.Pane>
             <SplitView.Content>
                 <RelativePanel>
-                    <StackPanel x:Name="OrderLookupStack" Orientation="Vertical">
-                        <!--<TextBlock Text="Lookup An Order:"/>-->
-                        <AutoSuggestBox x:Name="OrderLookup"
-                                        PlaceholderText="Lookup an order..."
-                                        RelativePanel.AlignTopWithPanel="True"
-                                        RelativePanel.AlignLeftWithPanel="True"
-                                        MinWidth="400"
-                                        ItemsSource="{x:Bind ViewModel.FillableOrders}"
-                                        TextChanged="OrderLookup_TextChanged"
-                                        QuerySubmitted="OrderLookup_QuerySubmitted"
-                                        >
-                            <AutoSuggestBox.ItemTemplate>
-                                <DataTemplate x:DataType="models:Order">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{x:Bind OrderID}" Grid.Column="0" Margin="0,0,10,0"/>
-                                        <TextBlock Text="{x:Bind Customer.CustomerName}" Grid.Column="1" HorizontalAlignment="Left"/>
-                                        <TextBlock Text="{x:Bind PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}" Grid.Column="2" HorizontalAlignment="Right"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </AutoSuggestBox.ItemTemplate>
-                        </AutoSuggestBox>
-                    </StackPanel>
+                    <AutoSuggestBox x:Name="OrderLookup"
+                                    PlaceholderText="Lookup an order..."
+                                    RelativePanel.AlignTopWithPanel="True"
+                                    RelativePanel.AlignLeftWithPanel="True"
+                                    MinWidth="400"
+                                    ItemsSource="{x:Bind ViewModel.FillableOrders}"
+                                    TextChanged="OrderLookup_TextChanged"
+                                    QuerySubmitted="OrderLookup_QuerySubmitted"
+                                    >
+                        <AutoSuggestBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:Order">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Bind OrderID}" Grid.Column="0" Margin="0,0,10,0"/>
+                                    <TextBlock Text="{x:Bind Customer.CustomerName}" Grid.Column="1" HorizontalAlignment="Left"/>
+                                    <TextBlock Text="{x:Bind PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}" Grid.Column="2" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </DataTemplate>
+                        </AutoSuggestBox.ItemTemplate>
+                    </AutoSuggestBox>
+
+
+                    <Button RelativePanel.AlignRightWithPanel="True"
+                            RelativePanel.AlignTopWith="OrderLookup"
+                             RelativePanel.AlignBottomWith="OrderLookup">
+                        <SymbolIcon Symbol="More"/>
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem x:Name="DeleteAll" Text="Remove All Items" Icon="Delete" Click="DeleteAll_Click"/>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+
 
                     <StackPanel x:Name="DateStack" 
                                 Orientation="Vertical"
-                                RelativePanel.Below="OrderLookupStack"
+                                RelativePanel.Below="OrderLookup"
                                 RelativePanel.AlignRightWithPanel="True"
                                 Padding="0,20,10,0">
                         <StackPanel Orientation="Horizontal">
@@ -159,7 +169,7 @@
 
                     <StackPanel x:Name="CustomerInfo"  
                                 Orientation="Vertical"
-                                RelativePanel.Below="OrderLookupStack"
+                                RelativePanel.Below="OrderLookup"
                                 RelativePanel.AlignLeftWithPanel="True"
                                 Padding="10,20,0,0">
                         <StackPanel x:Name="OrderIdStack" Orientation="Horizontal">
@@ -236,6 +246,7 @@
                                    RelativePanel.AlignLeftWithPanel="True"
                                    RelativePanel.AlignRightWithPanel="True"
                                    SelectionUnit="Row"
+                                   SelectionMode="Extended"
                                    EditorSelectionBehavior="MoveLast"
                                    AllowDeleting="True"
                                    RecordDeleted="OrderedItems_RecordDeleted">

@@ -80,7 +80,7 @@ namespace BlOrders2023.Views
         /// Handles NavigatingFrom events
         /// </summary>
         /// <param name="e">the navigation envent args</param>
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        protected override async void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             if (_deleteOrder)
             {
@@ -90,7 +90,7 @@ namespace BlOrders2023.Views
             { 
                 //change focus to write any changes
                 OrderNumber.Focus(FocusState.Programmatic);
-                Task.Run(() => ViewModel.SaveCurrentOrder()).GetResultOrDefault();
+                await ViewModel.SaveCurrentOrder();
                 
             }
             base.OnNavigatingFrom(e);
