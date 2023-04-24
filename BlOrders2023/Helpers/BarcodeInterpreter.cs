@@ -203,7 +203,7 @@ namespace BlOrders2023.Helpers
             // if we want to get real fancy allow the user to select ai's and order them then throw errors if values arent populated 
             if (item.PackDate != null && item.Product != null ) {
                 //Assumes b&L company code 
-                string gtin = item.Product.CompanyCode ?? "90605375" + item.ProductID.ToString("D5");
+                string gtin = (item.Product.CompanyCode ?? "90605375") + item.ProductID.ToString("D5");
                 AppendG10CheckDigit(ref gtin);
                 var scanline = "01" + gtin +
                     "3202" + ((int)((item.PickWeight ?? 0) * 100)).ToString("D6") + "13" + item.PackDate?.ToString("yyMMdd") +
@@ -238,7 +238,7 @@ namespace BlOrders2023.Helpers
         /// </summary>
         /// <param name="gtin">the GTIN to calculate</param>
         /// <returns>The check digit for the GTIN</returns>
-        private static char CalculateG10CheckDigit(in string gtin)
+        private static string CalculateG10CheckDigit(in string gtin)
         {
             int sum = 0;
             //SSCC cheksum is 18 digits
@@ -257,7 +257,7 @@ namespace BlOrders2023.Helpers
                 j++;
             }
             int checkDigit = 10 - (sum % 10);
-            return (char)checkDigit;
+            return checkDigit.ToString();
         }
     }
 }
