@@ -14,7 +14,7 @@ namespace BlOrders2023.Helpers
     public static class BarcodeInterpreter
     {
         //Keep In mind as we add fields here we will also need to support them when we parse the fields into product data
-        private readonly static Dictionary<String, Regex> SupportedAIRegex = new()
+        private readonly static Dictionary<string, Regex> SupportedAIRegex = new()
         {
             //Keep In mind as we add fields here we will also need to support them when we parse the fields into product data
             {"00", new Regex("^00(\\d{18})$")},                                                                               //SSCC
@@ -41,16 +41,17 @@ namespace BlOrders2023.Helpers
             {
                 String scanline = new (gs1Barcode.Scanline);
                 item.Scanline = scanline.Trim('\r', '\n');
+                //TODO: break if no matches found
                 while(scanline != "\r")
                 {
                     Regex? re = null;
-                    if (IsSupportedAI(scanline.Substring(0, 2)))
+                    if (IsSupportedAI(scanline[..2]))
                     {
-                        re = SupportedAIRegex.GetValueOrDefault(scanline.Substring(0, 2));
+                        re = SupportedAIRegex.GetValueOrDefault(scanline[..2]);
                     }
-                    else if (IsSupportedAI(scanline.Substring(0, 3)))
+                    else if (IsSupportedAI(scanline[..3]))
                     {
-                        re = SupportedAIRegex.GetValueOrDefault(scanline.Substring(0, 3));
+                        re = SupportedAIRegex.GetValueOrDefault(scanline[..3]);
                     }
                     if(re != null)
                     {
@@ -60,8 +61,8 @@ namespace BlOrders2023.Helpers
                             var groups = matches.Groups;
                             var match = matches.Value;
                             var data = groups[groups.Count-1];
-                            var ai = match.Substring(0, match.Length - data.Length);
-                            scanline = scanline.Substring(match.Length);
+                            var ai = match[..^data.Length];
+                            scanline = scanline[match.Length..];
                             if(!PopulateAI(ai, data.Value, ref item))
                             {
                                 throw new InvalidBarcodeExcption("Invalid Barcode", ai, barcode.Scanline, scanline);
@@ -72,6 +73,12 @@ namespace BlOrders2023.Helpers
                     {
                         Debug.WriteLine(String.Format("UnsupportedAI {0} at {1}", gs1Barcode.Scanline, scanline));
                         throw new InvalidBarcodeExcption("Invalid Barcode", null , barcode.Scanline, scanline);
+                    }
+
+                    //todo check if this works. need to find fnc1 and remove it 
+                    if (scanline.StartsWith(FNC1))
+                    {
+                        scanline = scanline[1..];
                     }
                 }
             }
@@ -129,7 +136,7 @@ namespace BlOrders2023.Helpers
                 else if (ai.Equals("01"))
                 {
                     // Product code is 5 digits
-                    var prodCode = int.Parse(data.Substring(8, 5));                    
+                    var prodCode = int.Parse(data[8..^1]);
                     var product = App.BLDatabase.Products.Get(prodCode).FirstOrDefault();
                     if (product != null)
                     {
@@ -181,14 +188,76 @@ namespace BlOrders2023.Helpers
             return success;
         }
 
+
+        /// <summary>
+        /// Creates a scanline for the given ShippingItem. Overwrites the scanline property. The ShippingItem's
+        /// properties must be set
+        /// </summary>
+        /// <param name="item">The given Shipping Item to create a barcodes from</param>
+        /// <returns>true if the barcode is created</returns>
         public static bool SynthesizeBarcode(ref ShippingItem item)
         {
-            //Assumes b&L company code 
-            var scanline = "0190605375" + item.ProductID.ToString("D5") + "7" +
-                "3202" + ((int)((item.PickWeight ?? 0) * 100)).ToString("D6") + "13" + item.PackDate?.ToString("yyMMdd") +
-                "21" + item.PackageSerialNumber;
-            item.Scanline = scanline;
-            return true;
+
+            //TODO: rewrite this to check if properties are null and create a scanline based on the give properties
+            // if(Pickweight != 0) { append 3202 + pickweight}
+            // if we want to get real fancy allow the user to select ai's and order them then throw errors if values arent populated 
+            if (item.PackDate != null && item.Product != null ) {
+                //Assumes b&L company code 
+                string gtin = item.Product.CompanyCode ?? "90605375" + item.ProductID.ToString("D5");
+                AppendG10CheckDigit(ref gtin);
+                var scanline = "01" + gtin +
+                    "3202" + ((int)((item.PickWeight ?? 0) * 100)).ToString("D6") + "13" + item.PackDate?.ToString("yyMMdd") +
+                    "21" + item.PackageSerialNumber;
+                item.Scanline = scanline;
+                return true;
+            }
+            return false;
+        }
+
+
+        /// <summary>
+        /// This method caluculates and appends the check digit for the given gtin in accordance with the gs1 standard
+        /// see 
+        /// </summary>
+        /// <param name="gtin">The gtin to calgulate</param>
+        /// <returns> True if the calculation is successful</returns>
+        private static bool AppendG10CheckDigit(ref string gtin)
+        {
+            bool success = false;
+            
+            if ( gtin.Length <= 13)
+            { 
+                gtin += CalculateG10CheckDigit(in gtin);
+            }            
+            return success;
+        }
+
+        /// <summary>
+        /// Calculates and returns the check digit for the given GTIN 
+        /// see https://www.gs1.org/services/how-calculate-check-digit-manually
+        /// </summary>
+        /// <param name="gtin">the GTIN to calculate</param>
+        /// <returns>The check digit for the GTIN</returns>
+        private static char CalculateG10CheckDigit(in string gtin)
+        {
+            int sum = 0;
+            //SSCC cheksum is 18 digits
+            int j = 0;
+            for (int i = gtin.Length - 1; i >= 0; i--)
+            {
+                char c = gtin[i];
+                if (j % 2 == 0)
+                {
+                    sum += int.Parse(c.ToString()) * 3;
+                }
+                else
+                {
+                    sum += int.Parse(c.ToString()) * 1;
+                }
+                j++;
+            }
+            int checkDigit = 10 - (sum % 10);
+            return (char)checkDigit;
         }
     }
 }
