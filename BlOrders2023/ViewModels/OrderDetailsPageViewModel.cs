@@ -375,7 +375,7 @@ namespace BlOrders2023.ViewModels
         /// <summary>
         /// Saves changes to the current Order
         /// </summary>
-        public async void SaveCurrentOrder()
+        public async Task SaveCurrentOrder()
         {
             _order.Items = Items.ToList();
             await App.BLDatabase.Orders.UpsertAsync(_order);

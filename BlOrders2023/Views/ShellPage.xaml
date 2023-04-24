@@ -47,7 +47,7 @@
             IsSettingsVisible="False">
             
             <NavigationView.PaneFooter>
-                <AppBarButton Icon="More">
+                <AppBarButton Icon="GlobalNavigationButton">
                     <AppBarButton.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyoutItem Icon="Setting" Text="Products" Click="MenuFlyoutProducts_Click"/>
