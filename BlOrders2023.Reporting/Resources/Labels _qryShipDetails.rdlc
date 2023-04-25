@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Warning: The report data source could not be imported properly.-->
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+  <Width>0.77917in</Width>
+  <Body>
+    <Height>1in</Height>
+    <Columns>3</Columns>
+    <ReportItems>
+      <Rectangle Name="Detail">
+        <Left>0in</Left>
+        <Top>0in</Top>
+        <Width>0.77917in</Width>
+        <Height>1.in</Height>
+        <Style>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BackgroundColor>#ffffff</BackgroundColor>
+        </Style>
+        <ReportItems>
+          <Textbox Name="Text2">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Arial</FontFamily>
+              <FontSize>8pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>300</FontWeight>
+              <TextAlign>Left</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>13pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>1</ZIndex>
+            <CanShrink>true</CanShrink>
+            <CanGrow>true</CanGrow>
+            <Left>0.1in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1666in</Height>
+            <Width>2.1375in</Width>
+            <Value>=Trim(Parameters!ProdID.Value &amp; "  " &amp; Parameters!QuanRcvd.Value &amp; "  " &amp; Parameters!PickWeight.Value)</Value>
+          </Textbox>
+        </ReportItems>
+      </Rectangle>
+    </ReportItems>
+  </Body>
+  <ReportParameters>
+    <ReportParameter Name="QuanRcvd">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>QuanRcvd</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ProdID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>ProdID</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="PickWeight">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>PickWeight</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+</Report>

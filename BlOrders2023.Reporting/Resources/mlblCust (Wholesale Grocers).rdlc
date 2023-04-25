@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Warning: Modules are not supported.-->
+<!--Warning: The object mlblCust_x0020__x0028_Wholesale_x0020_Grocers_x0029_ is associated with the ON-NO-DATA event. Events are not supported.-->
+<!--Warning: The report property PictureAlignment has an unsupported value.-->
+<!--Warning: The function FormatZipCode is not supported.-->
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+  <ReportParameters>
+    <ReportParameter Name="True">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>True</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="False">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>False</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <DataSources>
+    <DataSource Name="DataSource1">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString><![CDATA[INTEGRATED SECURITY=SSPI;INITIAL CATALOG=BL_Orders;DATA SOURCE=ERIC-PC;]]></ConnectString>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Fields>
+        <Field Name="CustomerName">
+          <DataField>CustomerName</DataField>
+        </Field>
+        <Field Name="Address">
+          <DataField>Address</DataField>
+        </Field>
+        <Field Name="City">
+          <DataField>City</DataField>
+        </Field>
+        <Field Name="State">
+          <DataField>State</DataField>
+        </Field>
+        <Field Name="ZipCode">
+          <DataField>ZipCode</DataField>
+        </Field>
+        <Field Name="Grocer">
+          <DataField>Grocer</DataField>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>DataSource1</DataSourceName>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>dbo.uspMailLabelsGrocerGet</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@True">
+            <Value>=Parameters!True.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@False">
+            <Value>=Parameters!False.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+    </DataSet>
+  </DataSets>
+  <Width>3in</Width>
+  <Body>
+    <Height>0.5104in</Height>
+    <Columns>1</Columns>
+    <ReportItems>
+      <List Name="Detail1">
+        <Left>0in</Left>
+        <Top>0in</Top>
+        <Width>3in</Width>
+        <Height>0.5104in</Height>
+        <Sorting>
+          <SortBy>
+            <SortExpression>=Fields!CustomerName.Value</SortExpression>
+            <Direction>Ascending</Direction>
+          </SortBy>
+        </Sorting>
+        <Style>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BackgroundColor>#ffffff</BackgroundColor>
+        </Style>
+        <ReportItems>
+          <Textbox Name="Field2">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Arial</FontFamily>
+              <FontSize>10pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Left</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>15pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>1</ZIndex>
+            <CanShrink>true</CanShrink>
+            <CanGrow>true</CanGrow>
+            <Left>0.1in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>2.9in</Width>
+            <Value>=Trim(Fields!CustomerName.Value)</Value>
+          </Textbox>
+          <Textbox Name="Field3">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Arial</FontFamily>
+              <FontSize>10pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Left</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>15pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>2</ZIndex>
+            <CanShrink>true</CanShrink>
+            <CanGrow>true</CanGrow>
+            <Left>0.1in</Left>
+            <Top>0.1701in</Top>
+            <Height>0.1701in</Height>
+            <Width>2.9in</Width>
+            <Value>=Trim(Fields!Address.Value)</Value>
+          </Textbox>
+          <Textbox Name="Field4">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Arial</FontFamily>
+              <FontSize>10pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Left</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>15pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>3</ZIndex>
+            <CanShrink>true</CanShrink>
+            <CanGrow>true</CanGrow>
+            <Left>0.1in</Left>
+            <Top>0.3333in</Top>
+            <Height>0.1701in</Height>
+            <Width>2.9in</Width>
+            <Value>=Trim(Fields!City.Value &amp; ", " &amp; Fields!State.Value &amp; " " &amp; strFormatZipCode(Fields!ZipCode.Value))</Value>
+          </Textbox>
+        </ReportItems>
+      </List>
+    </ReportItems>
+  </Body>
+</Report>

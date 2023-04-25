@@ -6,13 +6,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:BlOrders2023.Models"
     xmlns:vm="using:BlOrders2023.ViewModels"
+    xmlns:converters="using:BlOrders2023.ViewModels.Converters"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     mc:Ignorable="d">
     <Page.Resources>
-        <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
-        <vm:DateFormatConverter x:Key="DateFormatConverter"/>
-        <vm:TimeFormatConverter x:Key="TimeFormatConverter"/>
-        <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
+        <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+        <converters:DateFormatConverter x:Key="DateFormatConverter"/>
+        <converters:TimeFormatConverter x:Key="TimeFormatConverter"/>
+        <converters:WeightFormatConverter x:Key="WeightFormatConverter"/>
 
         <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
             <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
@@ -191,10 +192,10 @@
                                Padding="0,0,0,0"/>
                         <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                               Visibility="{x:Bind converters:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
                         <TextBlock Text="{x:Bind ViewModel.Customer.Fax, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                               Visibility="{x:Bind converters:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
                         <!--<TextBlock>
                             <TextBlock.Inlines>
                                 <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">

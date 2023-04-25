@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:vm="using:BlOrders2023.ViewModels"
+    xmlns:vm="using:BlOrders2023.ViewModels.Converters"
     mc:Ignorable="d">
 
     <Page.Resources>

@@ -29,7 +29,7 @@ using Microsoft.UI.Xaml.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace BlOrders2023.ViewModels
+namespace BlOrders2023.ViewModels.Converters
 {
     /// <summary>
     /// Provides static methods for use in x:Bind function binding to convert bound values to the required value.
@@ -72,7 +72,7 @@ namespace BlOrders2023.ViewModels
         {
             if (value != null && value is decimal @decimal)
             {
-                return Decimal.ToDouble(@decimal);
+                return decimal.ToDouble(@decimal);
             }
             else
             {
@@ -92,7 +92,7 @@ namespace BlOrders2023.ViewModels
         {
             if (value != null && value is float f)
             {
-                return (Double) f;
+                return (double)f;
             }
             else
             {
@@ -184,13 +184,13 @@ namespace BlOrders2023.ViewModels
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if(value is DateTime date)
+            if (value is DateTime date)
             {
                 return date.ToString("MM/dd/yyyy");
             }
             else
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -210,7 +210,7 @@ namespace BlOrders2023.ViewModels
             }
             else
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
