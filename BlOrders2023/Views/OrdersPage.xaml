@@ -56,8 +56,8 @@
                     </SplitButton.Flyout>
                 </SplitButton>
             </AppBarElementContainer>
-            </CommandBar>
-        
+        </CommandBar>
+
         <SplitView x:Name="ListSplitView"
                    DisplayMode="Inline"
                    IsPaneOpen="{x:Bind vm:Converters.IsNotNull(ViewModel.SelectedOrder), Mode=OneWay}"
@@ -248,7 +248,7 @@
                     RelativePanel.AlignLeftWithPanel="True"
                     RelativePanel.Below="OrdersGrid"/>
                 </RelativePanel>
-                
+
             </SplitView.Content>
 
         </SplitView>
