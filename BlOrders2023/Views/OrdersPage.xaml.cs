@@ -1,10 +1,15 @@
 ﻿using BlOrders2023.Models;
 using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
+using BlOrders2023.Reporting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.System;
+using QuestPDF.Previewer;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Views;
 
@@ -76,6 +81,43 @@ public sealed partial class OrdersPage : Page
     private void EditOrder_Click(object sender, RoutedEventArgs e) => NavigateToOrderDetailsPage();
 
     private void FillOrder_Click(object sender, RoutedEventArgs e) => NavigateToFillOrdersPage();
+
+    private void PrintInvoice_Click(object sender, RoutedEventArgs e)
+    {
+        Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(2, Unit.Centimetre);
+                page.PageColor(Colors.White);
+                page.DefaultTextStyle(x => x.FontSize(20));
+
+                page.Header()
+                    .Text("Hello PDF!")
+                    .SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
+
+                page.Content()
+                    .PaddingVertical(1, Unit.Centimetre)
+                    .Column(x =>
+                    {
+                        x.Spacing(20);
+
+                        x.Item().Text(Placeholders.LoremIpsum());
+                        x.Item().Image(Placeholders.Image(200, 100));
+                    });
+
+                page.Footer()
+                    .AlignCenter()
+                    .Text(x =>
+                    {
+                        x.Span("Page ");
+                        x.CurrentPageNumber();
+                    });
+            });
+        }).ShowInPreviewer(12500);
+            //.GeneratePdf("C:\\Users\\Eric.BL2016\\Documents\\Git\\BlOrders2023\\Pdf.pdf");
+    }
 
     #endregion Pane Buttons
 
@@ -218,5 +260,4 @@ public sealed partial class OrdersPage : Page
 
 
     #endregion Methods
-
 }
