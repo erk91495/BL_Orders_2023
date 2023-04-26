@@ -87,7 +87,8 @@ public sealed partial class OrdersPage : Page
     {
         ReportGenerator g = new();
         var pdf = g.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
-        var filePath = Path.GetTempPath() + ViewModel.SelectedOrder.OrderID + ".pdf";
+        Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+        var filePath = Path.GetTempPath() + "BLOrders2023\\" + ViewModel.SelectedOrder.OrderID + "_"+  DateTime.Now.ToFileTime() + ".pdf";
         pdf.GeneratePdf(filePath);
         var options = new LauncherOptions();
         options.ContentType = "application/pdf";

@@ -20,7 +20,7 @@ namespace BlOrders2023.Reporting
     {
         public IDocument GenerateWholesaleInvoice(Order order)
         {
-            return new WholesaleInvoice();
+            return new WholesaleInvoice(order);
         }
     }
 }
