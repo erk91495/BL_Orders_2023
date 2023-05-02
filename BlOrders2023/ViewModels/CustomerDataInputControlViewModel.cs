@@ -69,7 +69,7 @@ namespace BlOrders2023.ViewModels
 
         public async Task GetClassesAsync()
         {
-            var classes = await Task.Run(() => App.BLDatabase.Customers.GetCustomerClassesAsync());
+            var classes = await Task.Run(() => App.GetNewDatabase().Customers.GetCustomerClassesAsync());
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 foreach (var custClass in classes)

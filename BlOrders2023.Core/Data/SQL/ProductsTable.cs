@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
+using System.ComponentModel;
 
 namespace BlOrders2023.Core.Data.SQL
 {
@@ -46,11 +48,21 @@ namespace BlOrders2023.Core.Data.SQL
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<Product>> GetAsync(string value) =>
-            await _db.Products.Where(product =>
-                product.ProductName.Contains(value) ||
-                product.ProductID.ToString().Contains(value))
-                .ToListAsync();
+        public async Task<IEnumerable<Product>> GetAsync(string value) 
+        {
+            if (value.IsNullOrEmpty())
+            {
+                return await _db.Products.ToListAsync();
+            }
+            else
+            {
+                return await _db.Products.Where(product =>
+                    product.ProductName.Contains(value) ||
+                    product.ProductID.ToString().Contains(value))
+                    .ToListAsync();
+            }
+        }
+
 
         public async Task<bool> IdExists(int productID)
         {

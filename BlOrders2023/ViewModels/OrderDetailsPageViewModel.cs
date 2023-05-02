@@ -253,7 +253,10 @@ namespace BlOrders2023.ViewModels
 
         public void addItem(Product p)
         {
-            OrderItem item = new OrderItem(p, _order);
+            OrderItem item = new(p, _order)
+            {
+                ActualCustPrice = Models.Helpers.Helpers.CalculateCustomerPrice(p, Customer),
+            };
             Items.Add(item);
         }
 
@@ -317,7 +320,7 @@ namespace BlOrders2023.ViewModels
                 //_suggestedProducts = new();
                 //LoadProducts();
 
-                var changeOrder = App.BLDatabase.Orders.Get((int)orderID).First();
+                var changeOrder = App.GetNewDatabase().Orders.Get((int)orderID).First();
                 _order = changeOrder;
                 _items = new ObservableCollection<OrderItem>(_order.Items);
                 _currentOrderIndex = _order.Customer.orders.IndexOf(_order);
@@ -338,7 +341,7 @@ namespace BlOrders2023.ViewModels
                 SuggestedProducts.Clear();
             });
 
-            IProductsTable table = App.BLDatabase.Products;
+            IProductsTable table = App.GetNewDatabase().Products;
             var products = await Task.Run(table.GetAsync);
 
             await dispatcherQueue.EnqueueAsync(() =>
@@ -361,7 +364,7 @@ namespace BlOrders2023.ViewModels
                 SuggestedProducts.Clear();
             });
 
-            IProductsTable table = App.BLDatabase.Products;
+            IProductsTable table = App.GetNewDatabase().Products;
             var products = await Task.Run(() => table.GetAsync(query));
 
             await dispatcherQueue.EnqueueAsync(() =>
@@ -375,10 +378,19 @@ namespace BlOrders2023.ViewModels
         /// <summary>
         /// Saves changes to the current Order
         /// </summary>
-        public async Task SaveCurrentOrder()
+        public async Task SaveCurrentOrderAsync()
         {
             _order.Items = Items.ToList();
-            await App.BLDatabase.Orders.UpsertAsync(_order);
+            await App.GetNewDatabase().Orders.UpsertAsync(_order);
+        }
+
+        /// <summary>
+        /// Saves changes to the current Order
+        /// </summary>
+        public void SaveCurrentOrder()
+        {
+            _order.Items = Items.ToList();
+            App.GetNewDatabase().Orders.Upsert(_order);
         }
 
         /// <summary>
@@ -391,9 +403,14 @@ namespace BlOrders2023.ViewModels
             throw new NotImplementedException();
         }
 
-        internal async void DeleteCurrentOrder()
+        internal async Task DeleteCurrentOrderAsync()
         {
-            await App.BLDatabase.Orders.DeleteAsync(_order);
+            await App.GetNewDatabase().Orders.DeleteAsync(_order);
+        }
+
+        internal void DeleteCurrentOrder()
+        {
+             App.GetNewDatabase().Orders.Delete(_order);
         }
         #endregion Queries
         #endregion Methods

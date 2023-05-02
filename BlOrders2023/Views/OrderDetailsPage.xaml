@@ -120,16 +120,10 @@
                               SelectionChanged="RadioButtons_SelectionChanged">
                     <RadioButton x:Name="RadioPickUp"  
                                  Content="Pickup" 
-                                 IsChecked="{x:Bind ViewModel.Shipping,
-                                             Mode=OneWay,
-                                             Converter={StaticResource EnumToBoolConverter},
-                                             ConverterParameter=Pickup}"/>
+                                    />
                     <RadioButton x:Name="RadioDelivery" 
                                  Content="Delivery" 
-                                 IsChecked="{x:Bind ViewModel.Shipping,
-                                             Mode=OneWay,
-                                             Converter={StaticResource EnumToBoolConverter},
-                                             ConverterParameter=Shipping}"/>
+                                 />
                 </RadioButtons>
 
                 <StackPanel Orientation="Vertical"

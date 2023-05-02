@@ -35,5 +35,15 @@ namespace BlOrders2023.Core.Data.SQL
             var item = await _db.ShippingItems.Where(item => item.Scanline == scanline).FirstOrDefaultAsync();
             return item != null;
         }
+
+        public async Task UpsertAsync(List<ShippingItem> items)
+        {
+            if (items.Count > 0)
+            {
+                var orderId = items.FirstOrDefault().OrderID;
+                _db.UpdateRange(items);
+                await _db.SaveChangesAsync();
+            }
+        }
     }
 }

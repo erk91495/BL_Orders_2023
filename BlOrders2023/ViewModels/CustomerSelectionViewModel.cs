@@ -44,7 +44,7 @@ namespace BlOrders2023.ViewModels
                 SuggestedCustomers.Clear();
             });
 
-            IWholesaleCustomerTable table = App.BLDatabase.Customers;
+            IWholesaleCustomerTable table = App.GetNewDatabase().Customers;
             var customers = await Task.Run(() => table.GetAsync());
 
             await dispatcherQueue.EnqueueAsync(() =>
@@ -68,7 +68,7 @@ namespace BlOrders2023.ViewModels
                 SuggestedCustomers.Clear();
             });
 
-            IWholesaleCustomerTable table = App.BLDatabase.Customers;
+            IWholesaleCustomerTable table = App.GetNewDatabase().Customers;
             var products = await Task.Run(() => table.GetAsync(query));
 
             await dispatcherQueue.EnqueueAsync(() =>

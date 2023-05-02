@@ -13,9 +13,9 @@ namespace BlOrders2023.Core.Data.SQL
         private readonly DbContextOptions<BLOrdersDBContext> _dbOptions;
         private readonly BLOrdersDBContext _dbContext;
 
-        public SqlBLOrdersDatabase(DbContextOptionsBuilder<BLOrdersDBContext> dbOptionBuilder)
+        public SqlBLOrdersDatabase(DbContextOptions<BLOrdersDBContext> dbOptionBuilder)
         {
-            _dbOptions = dbOptionBuilder.Options;
+            _dbOptions = (DbContextOptions<BLOrdersDBContext>)dbOptionBuilder;
             _dbContext = new BLOrdersDBContext(_dbOptions);
             _dbContext.Database.EnsureCreated();
 

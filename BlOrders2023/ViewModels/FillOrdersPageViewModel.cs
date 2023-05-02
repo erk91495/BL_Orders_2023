@@ -60,7 +60,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     private async Task LoadFillableOrders()
     {
-        IOrderTable table = App.BLDatabase.Orders;
+        IOrderTable table = App.GetNewDatabase().Orders;
         var orders = await Task.Run(() => table.GetAsync());
         FillableOrders.Clear();
         FillableOrdersMasterList.Clear();
@@ -74,7 +74,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     public async Task LoadOrder(int orderID)
     {
-        IOrderTable table = App.BLDatabase.Orders;
+        IOrderTable table = App.GetNewDatabase().Orders;
         var order = await Task.Run(() => table.GetAsync(orderID));
 
         await dispatcherQueue.EnqueueAsync(() =>
@@ -184,13 +184,17 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     internal async Task ReceiveItemAsync(ShippingItem item)
     {
-        bool duplicate = await App.BLDatabase.ShipDetails.IsDuplicateScanline(item.Scanline);
+        bool duplicate = await App.GetNewDatabase().ShipDetails.IsDuplicateScanline(item.Scanline);
         if (!duplicate)
         {
             Items.Add(item);
             _order?.ShippingItems.Add(item);
-            await App.BLDatabase.Orders.UpsertAsync(_order);
+            //TODO:
+            //This item will not be a castle proxy need to fix that so the app doesnt crash
+            IncremantOrderedItem(item);
+            await App.GetNewDatabase().Orders.UpsertAsync(_order);
             IncrementReceivedItem(item);
+            
             
         }
         else
@@ -206,16 +210,59 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         {
             throw new Exception();
         }
-        await App.BLDatabase.Orders.UpsertAsync(_order);
+        
+        DecrementOrderedItem(item);
+        await App.GetNewDatabase().Orders.UpsertAsync(_order);
         DecrementReceivedItem(item);
 
+
     }
+
+
+    private void IncremantOrderedItem(ShippingItem item)
+    {
+        var ordered = _order.Items.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
+        if (ordered == null)
+        {
+            OrderItem orderItem = new OrderItem(item.Product, _order)
+            {
+                Quantity = 0,
+                QuanRcvd = 1,
+                PickWeight = item.PickWeight,
+            };
+            _order.Items.Add(orderItem);
+        }
+        else
+        {
+            ordered.QuanRcvd += 1;
+            ordered.PickWeight += item.PickWeight;
+        }
+    }
+
+    private void DecrementOrderedItem(ShippingItem item)
+    {
+        var ordered = _order.Items.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
+        if (ordered == null)
+        {
+            throw new Exception("Cannot Delete Item. Item does not exist");
+        }
+        else
+        {
+            ordered.QuanRcvd -= 1;
+            ordered.PickWeight -= item.PickWeight;
+            if(ordered.QuanRcvd <= 0 && ordered.Quantity <=0)
+            {
+                _order.Items.Remove(ordered);
+            }
+        }
+    }
+
 
     internal async Task DeleteAllShippingItemsAsync()
     {
         Items.Clear();
         _order.ShippingItems.Clear();
-        await App.BLDatabase.Orders.UpsertAsync(_order);
+        await App.GetNewDatabase().ShipDetails.UpsertAsync(_order.ShippingItems);
         ReCalculateOrderdVsReceived();
 
     }

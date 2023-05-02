@@ -80,17 +80,17 @@ namespace BlOrders2023.Views
         /// Handles NavigatingFrom events
         /// </summary>
         /// <param name="e">the navigation envent args</param>
-        protected override async void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {              
             if (_deleteOrder)
             {
-                ViewModel.DeleteCurrentOrder();
+                 ViewModel.DeleteCurrentOrder();
             }
             else 
             { 
                 //change focus to write any changes
                 OrderNumber.Focus(FocusState.Programmatic);
-                await ViewModel.SaveCurrentOrder();
+                ViewModel.SaveCurrentOrder();
                 
             }
             base.OnNavigatingFrom(e);
@@ -197,10 +197,12 @@ namespace BlOrders2023.Views
 
             if (RadioPickUp.IsChecked == true)
             {
+                ViewModel.Shipping = ShippingType.Pickup;
                 PickupTimeStack.Visibility = Visibility.Visible;
             }
             else
             {
+                ViewModel.Shipping = ShippingType.Shipping;
                 PickupTimeStack.Visibility = Visibility.Collapsed;
             }
         }
@@ -404,7 +406,7 @@ namespace BlOrders2023.Views
                 {
                     var s = App.GetService<INavigationService>();
                     s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetNextOrder());
-                    //ViewModel.SaveCurrentOrder();
+                    //ViewModel.SaveCurrentOrderAsync();
                     //ViewModel.ChangeOrder(ViewModel.GetNextOrderID());
                 }
                 if(b == PreviousOrderButton && ViewModel.HasPreviousOrder)
@@ -412,7 +414,7 @@ namespace BlOrders2023.Views
                     var s = App.GetService<INavigationService>();
                     s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetPreviousOrder());
                     //Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetPreviousOrderID());
-                    //ViewModel.SaveCurrentOrder();
+                    //ViewModel.SaveCurrentOrderAsync();
                     //ViewModel.ChangeOrder(ViewModel.GetPreviousOrderID());
                 }
             }

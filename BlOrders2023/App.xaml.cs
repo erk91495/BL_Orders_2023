@@ -44,7 +44,8 @@ public partial class App : Application
 
     public static WindowEx MainWindow { get; } = new MainWindow();
 
-    public static IBLDatabase BLDatabase { get; private set; }
+    private static IBLDatabase BLDatabase { get;  set; }
+    public static DbContextOptions<BLOrdersDBContext> DBOptions { get; private set; }
 
     public App()
     {
@@ -59,10 +60,7 @@ public partial class App : Application
             services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
 
             // Other Activation Handlers
-
-            // Database
-            //services.AddDbContext<BLOrdersDBContext>();
-            
+           
 
             // Services
             services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
@@ -93,8 +91,6 @@ public partial class App : Application
             services.AddTransient<CustomerDataInputControlViewModel>();
             services.AddTransient<ShippingItemDataInputControlViewModel>();
 
-            services.AddDbContext<BLOrdersDBContext>();
-
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
@@ -114,13 +110,18 @@ public partial class App : Application
         base.OnLaunched(args);
 
         var dbOptions = new DbContextOptionsBuilder<BLOrdersDBContext>();
-            dbOptions
-            .UseLazyLoadingProxies()
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
-            .EnableSensitiveDataLogging()
-            .UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
-        App.BLDatabase = new SqlBLOrdersDatabase(dbOptions);
+        dbOptions.UseLazyLoadingProxies()
+               .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
+               .EnableSensitiveDataLogging()
+               .UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
+
+
+        App.DBOptions = dbOptions.Options;
         await App.GetService<IActivationService>().ActivateAsync(args);
 
+    }
+    public static IBLDatabase GetNewDatabase()
+    {
+        return new SqlBLOrdersDatabase(App.DBOptions);
     }
 }

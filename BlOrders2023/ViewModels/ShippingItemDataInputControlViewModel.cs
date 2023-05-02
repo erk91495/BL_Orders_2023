@@ -113,7 +113,7 @@ namespace BlOrders2023.ViewModels
                 SuggestedProducts.Clear();
             });
 
-            IProductsTable table = App.BLDatabase.Products;
+            IProductsTable table = App.GetNewDatabase().Products;
             var products = await Task.Run(table.GetAsync);
 
             await dispatcherQueue.EnqueueAsync(() =>
@@ -132,7 +132,7 @@ namespace BlOrders2023.ViewModels
                 _suggestedProducts.Clear();
             });
 
-            IProductsTable table = App.BLDatabase.Products;
+            IProductsTable table = App.GetNewDatabase().Products;
             var products = await Task.Run(() => table.GetAsync(text));
 
             await dispatcherQueue.EnqueueAsync(() =>

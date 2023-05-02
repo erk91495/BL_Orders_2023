@@ -46,10 +46,9 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        if (ViewModel.Orders.Count < 1)
-        {
-            ViewModel.LoadOrders();
-        }
+        ViewModel.Orders.Clear();
+        ViewModel.LoadOrders();
+        
     }
 
     #region Navigation

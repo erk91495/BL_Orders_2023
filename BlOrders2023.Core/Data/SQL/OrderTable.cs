@@ -27,6 +27,16 @@ namespace BlOrders2023.Core.Data.SQL
         {
             _db = db;
         }
+
+        public void Delete(Order order)
+        {
+            var match = _db.Orders.FirstOrDefault(_order => _order.OrderID == order.OrderID);
+            if (match != null)
+            {
+                _db.Orders.Remove(match);
+            }
+            _db.SaveChanges();
+        }
         #endregion Constructors
 
         #region Methods
@@ -81,6 +91,22 @@ namespace BlOrders2023.Core.Data.SQL
                 .Include(order => order.ShippingItems)
                 .Where(order => order.OrderID == orderID)
                 .ToListAsync();
+
+        public Order Upsert(Order order)
+        {
+            var exists =  _db.Orders.Include(o => o.Items).FirstOrDefault(_order => order.OrderID == _order.OrderID);
+            if (exists == null)
+            {
+                _db.Orders.Add(order);
+            }
+            else
+            {
+                //TODO: Concurrency checks maybe here
+                _db.Entry(exists).CurrentValues.SetValues(order);
+            }
+            int res =  _db.SaveChanges();
+            return order;
+        }
 
         /// <summary>
         /// Updates the database context with the given Order. If the Order does not exist it will be added to the db
