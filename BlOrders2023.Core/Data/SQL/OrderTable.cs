@@ -103,6 +103,7 @@ namespace BlOrders2023.Core.Data.SQL
             {
                 //TODO: Concurrency checks maybe here
                 _db.Entry(exists).CurrentValues.SetValues(order);
+                _db.Entry(exists).State = EntityState.Modified;
             }
             int res =  _db.SaveChanges();
             return order;
@@ -115,16 +116,8 @@ namespace BlOrders2023.Core.Data.SQL
         /// <returns>the updated Order</returns>
         public async Task<Order> UpsertAsync(Order order)
         {
-            var exists = await _db.Orders.Include(o => o.Items).FirstOrDefaultAsync(_order => order.OrderID == _order.OrderID);
-            if(exists == null) 
-            {
-                _db.Orders.Add(order); 
-            }
-            else
-            {
-                //TODO: Concurrency checks maybe here
-                _db.Entry(exists).CurrentValues.SetValues(order);
-            }
+            _db.Update(order);
+            
             int res =  await _db.SaveChangesAsync();
             return order;
         }

@@ -11,7 +11,8 @@ namespace BlOrders2023.Core.Data
     {
         public Task<IEnumerable<ShippingItem>> GetAsync();
         public Task<bool> IsDuplicateScanline(string scanline);
-
         public Task UpsertAsync(List<ShippingItem> items);
+        public Task UpsertAsync(ShippingItem item);
+        public Task DeleteAsync(ShippingItem item);
     }
 }

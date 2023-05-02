@@ -212,7 +212,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         }
         
         DecrementOrderedItem(item);
-        await App.GetNewDatabase().Orders.UpsertAsync(_order);
+        await App.GetNewDatabase().ShipDetails.DeleteAsync(item);
         DecrementReceivedItem(item);
 
 

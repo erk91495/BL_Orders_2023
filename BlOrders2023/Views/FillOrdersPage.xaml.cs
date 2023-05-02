@@ -89,6 +89,8 @@ public sealed partial class FillOrdersPage : Page
         try
         {
             await ViewModel.ReceiveItemAsync(item);
+            OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
+            OrderedItems.ColumnSizer.Refresh();
         }
         catch (DuplicateBarcodeException e)
         {
