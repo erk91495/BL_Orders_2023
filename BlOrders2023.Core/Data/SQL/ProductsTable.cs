@@ -37,6 +37,18 @@ namespace BlOrders2023.Core.Data.SQL
             }
         }
 
+        public IEnumerable<Product> GetNoTracking(int? productID = null)
+        {
+            if (productID == null)
+            {
+                return _db.Products.AsNoTracking().ToList();
+            }
+            else
+            {
+                return _db.Products.Where(product => product.ProductID == productID).AsNoTracking().ToList();
+            }
+        }
+
         public async Task<IEnumerable<Product>> GetAsync() =>
                 await _db.Products
                 .OrderBy(product => product.ProductID)

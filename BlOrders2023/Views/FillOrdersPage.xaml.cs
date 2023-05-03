@@ -60,8 +60,19 @@ public sealed partial class FillOrdersPage : Page
                 };
                 try
                 {
+                    //interpreter has no concept of dbcontext and cannot track items
                     BarcodeInterpreter.ParseBarcode(bc, ref item);
-                    await AddShippingItemAsync(item);
+                    var product = App.GetNewDatabase().Products.GetNoTracking(item.ProductID).FirstOrDefault();
+                    if (product != null)
+                    {
+                        //item.Product = product;
+                        await AddShippingItemAsync(item);
+                    }
+                    else
+                    {
+                        throw new ProductNotFoundException(String.Format("Product {0} Not Found", item.ProductID), item.ProductID);
+                    }
+                    
                 }
                 catch (ProductNotFoundException e)
                 {

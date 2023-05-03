@@ -260,6 +260,8 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     internal async Task DeleteAllShippingItemsAsync()
     {
+        throw new NotImplementedException();
+        //need to handle order items
         Items.Clear();
         _order.ShippingItems.Clear();
         await App.GetNewDatabase().ShipDetails.UpsertAsync(_order.ShippingItems);

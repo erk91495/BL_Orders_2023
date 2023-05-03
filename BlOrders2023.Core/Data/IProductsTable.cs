@@ -7,6 +7,7 @@ namespace BlOrders2023.Core.Data
         Task<IEnumerable<Product>> GetAsync();
         Task<IEnumerable<Product>> GetAsync(int productID);
         IEnumerable<Product> Get(int? productID);
+        IEnumerable<Product> GetNoTracking(int? productID);
         Task<IEnumerable<Product>> GetAsync(string value);
         Task<Product> UpsertAsync(Product product);
         Task DeleteAsync(Product product);

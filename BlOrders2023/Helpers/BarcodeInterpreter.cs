@@ -138,17 +138,8 @@ namespace BlOrders2023.Helpers
                 {
                     // Product code is 5 digits
                     var prodCode = int.Parse(data[8..^1]);
-                    var product = App.GetNewDatabase().Products.Get(prodCode).FirstOrDefault();
-                    if (product != null)
-                    {
-                        item.Product = product;
-                        item.ProductID = prodCode;
-                        success = true;
-                    }
-                    else
-                    {
-                        throw new ProductNotFoundException(String.Format("Product {0} Not Found", prodCode), prodCode);
-                    }
+                    item.ProductID = prodCode;
+                    success = true;
                 }
                 //Global Trade Item Number (GTIN) of contained trade items
                 else if (ai.Equals("02"))
