@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using BlOrders2023.Models.Enums;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Models;
 [Table("tblOrdersWholesale")]
@@ -54,4 +56,18 @@ public class Order
     public OrderStatus OrderStatus { get; set; }
     public virtual List<OrderItem> Items { get; set; } = new();
     public virtual List<ShippingItem> ShippingItems { get; set; } = new();
+
+    public decimal GetInvoiceTotal()
+    {
+        decimal total = 0;
+        if (!Items.IsNullOrEmpty())
+        {
+            foreach(var item in Items)
+            {
+                total += item.GetTotalPrice();
+            }
+        }
+        total += Memo_Totl ?? 0;
+        return total;
+    }
 }

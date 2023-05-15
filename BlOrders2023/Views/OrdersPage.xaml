@@ -169,7 +169,7 @@
                             <sf:GridTextColumn HeaderText="Product  #" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" TextWrapping="WrapWholeWords"/>
                             <sf:GridTextColumn HeaderText="Ordered" MappingName="Quantity"/>
-                            <sf:GridTextColumn HeaderText="Received" MappingName="QuanRcvd"/>
+                            <sf:GridTextColumn HeaderText="Received" MappingName="QuantityReceived"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
 

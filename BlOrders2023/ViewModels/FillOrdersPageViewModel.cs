@@ -93,12 +93,13 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     {
         OrderedVsReceivedItems.Clear();
 
+        //Calculate ordered
         foreach(var item in _order!.Items)
         {
             //If i would just build an observable dictionary i wouldnt have to do this 
             if (OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault() != null)
             {
-                OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Ordered += (int)item.QuanRcvd;
+                OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Ordered += (int)item.Quantity;
             }
             else
             {
@@ -111,6 +112,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
                 OrderedVsReceivedItems.Add(ovsr);
             }
         }
+        //Calculate Received
         foreach(var item in _order.ShippingItems)
         {
            IncrementReceivedItem(item);
@@ -227,14 +229,12 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
             OrderItem orderItem = new OrderItem(item.Product, _order)
             {
                 Quantity = 0,
-                QuanRcvd = 1,
                 PickWeight = item.PickWeight,
             };
             _order.Items.Add(orderItem);
         }
         else
         {
-            ordered.QuanRcvd += 1;
             ordered.PickWeight += item.PickWeight;
         }
     }
@@ -248,9 +248,8 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         }
         else
         {
-            ordered.QuanRcvd -= 1;
             ordered.PickWeight -= item.PickWeight;
-            if(ordered.QuanRcvd <= 0 && ordered.Quantity <=0)
+            if(ordered.QuantityReceived <= 0 && ordered.Quantity <=0)
             {
                 _order.Items.Remove(ordered);
             }

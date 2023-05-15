@@ -22,6 +22,7 @@ namespace BlOrders2023.Reporting.ReportClasses
         private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
         private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
         private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
+        private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
         public WholesaleInvoice (Order order)
         {
@@ -41,18 +42,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                         page.Content().Element(ComposeContent);
 
                         page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-                        page.Footer().AlignBottom().AlignRight().Text(x =>
-                        {
-                            x.Span("Printed on: ").Style(subTitleStyle);
-                            x.Span($"{DateTime.Now.ToString():d}").FontSize(12);
-
-                            x.Span("page");
-                            x.CurrentPageNumber();
-                            x.Span(" of ");
-                            x.TotalPages();
-
-
-                        });
+                        page.Footer().Element(ComposeFooter);
 
                     });
         }
@@ -81,10 +71,10 @@ namespace BlOrders2023.Reporting.ReportClasses
                     row.RelativeItem(1).AlignMiddle().AlignRight().Column(column =>
                     {   //Invoice Number
                         column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
-                        if (!_order.PO_Number.IsNullOrEmpty())
-                        {
-                            column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
-                        }
+                        //if (!_order.PO_Number.IsNullOrEmpty())
+                        //{
+                        //    column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
+                        //}
                     });
 
                 });
@@ -97,7 +87,7 @@ namespace BlOrders2023.Reporting.ReportClasses
             
             container.Column(column => {
 
-                //Bill To Shup To
+                //Bill To Ship To
                 column.Item().MinimalBox().AlignBottom().PaddingBottom(5).Row(row =>
                 {
                     //Padding 
@@ -146,51 +136,85 @@ namespace BlOrders2023.Reporting.ReportClasses
 
                 });
 
-                //Pickup Date & PO#
-                column.Item().Column(column =>
+
+                // | Order Date | Pickup Date | PO |
+                column.Item().Row(row =>
                 {
-                    if (_order.Shipping == Models.Enums.ShippingType.Pickup)
+                    //Order Date
+                    row.RelativeItem().Border(1).Column(orderDateCol => 
                     {
-                        column.Item().Text(text =>
-                        {
-                            text.Span("Pickup: ").Style(subTitleStyle);
-                            text.Span($"{_order.PickupDate.ToShortDateString():d} {_order.PickupTime.ToShortTimeString():d}").FontSize(12);
-                        });
-                    }
-                    else
+                        orderDateCol.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("Order Date").Style(tableHeaderStyle);
+                        orderDateCol.Item().AlignCenter().Text($"{_order.OrderDate.ToShortDateString()}").Style(tableTextStyle);
+                    }) ;
+
+                    //Pickup Date
+                    row.RelativeItem().Border(1).Column(column =>
                     {
-                        column.Item().Text(text =>
+                        if (_order.Shipping == Models.Enums.ShippingType.Pickup)
                         {
-                            text.Span("Deliver By: ").Style(subTitleStyle);
-                            text.Span($"{_order.PickupDate.ToShortDateString():d}").FontSize(12);
-                        });
-                    }
+                            column.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("Pickup ").Style(tableHeaderStyle);
+                            column.Item().AlignCenter().Text($"{_order.PickupDate.ToShortDateString():d} {_order.PickupTime.ToShortTimeString():d}").Style(tableTextStyle);
+                        }
+                        else
+                        {
+                            column.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("Deliver By ").Style(tableHeaderStyle);
+                            column.Item().AlignCenter().Text($"{_order.PickupDate.ToShortDateString():d}").Style(tableTextStyle);
+                        }
+                    });
+
+                    //PO Number
+                    row.RelativeItem().Border(1).Column(orderDateCol =>
+                    {
+                        orderDateCol.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("PO").Style(tableHeaderStyle);
+                        orderDateCol.Item().AlignCenter().Text($"{_order.PO_Number}").Style(tableTextStyle);
+                    });
+
+                    //Terms
+                    row.RelativeItem().Border(1).Column(orderDateCol =>
+                    {
+                        orderDateCol.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("Terms").Style(tableHeaderStyle);
+                        orderDateCol.Item().AlignCenter().Text($"Net 10 Days").Style(tableTextStyle);
+                    });
+
+
                 });
 
+                //Memo Box
 
+                column.Item().PaddingBottom(5).Column(memoCol =>
+                {
+                    memoCol.Item().Text("Memo:").Style(tableHeaderStyle);
+                    memoCol.Item().Border(1).PaddingLeft(4).PaddingRight(4).ExtendHorizontal().Text($"{_order.Memo}").FontSize(11);
+                });
+
+                //Items
                 column.Item().Table(table =>
                 {
                     table.ColumnsDefinition(column =>
                     {
                         column.RelativeColumn(1);
                         column.RelativeColumn(2);
-                        column.RelativeColumn(4);
-                        column.RelativeColumn(1);
-                        column.RelativeColumn(1);
-                        column.RelativeColumn(1);
-                        column.RelativeColumn(1);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(8);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
                     });
 
                     table.Header(header =>
                     {
-                        header.Cell().Element(CellStyle).Text("#").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Description").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Line").Style(tableHeaderStyle);
 
-                        header.Cell().Element(CellStyle).Text("Weight").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).Text("Ordered").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).Text("Received").Style(tableHeaderStyle);
+
+                        header.Cell().Element(CellStyle).Text("Description").Style(tableHeaderStyle);
+
+                        header.Cell().Element(CellStyle).Text("Net Weight").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).AlignRight().Text("Unit Price").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).AlignRight().Text("Total Price").Style(tableHeaderStyle);
 
                         static IContainer CellStyle(IContainer container)
                         {
@@ -202,13 +226,16 @@ namespace BlOrders2023.Reporting.ReportClasses
                     foreach (var item in _order.Items)
                     {
                         table.Cell().Element(CellStyle).Text($"{_order.Items.IndexOf(item) + 1}").Style(tableTextStyle);
+
                         table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{item.Quantity}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{item.QuantityReceived}").Style(tableTextStyle);
+
                         table.Cell().Element(CellStyle).Text(item.Product.ProductName).Style(tableTextStyle);
 
-                        table.Cell().Element(CellStyle).Text($"{item.PickWeight}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{item.Quantity}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{item.QuanRcvd}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).AlignRight().Text($"{item.ActualCustPrice.ToString("C")}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{item.PickWeight:N2}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).AlignRight().Text($"{item.ActualCustPrice:C}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).AlignRight().Text($"{item.GetTotalPrice():C}").Style(tableTextStyle);
 
                         static IContainer CellStyle(IContainer container)
                         {
@@ -220,5 +247,35 @@ namespace BlOrders2023.Reporting.ReportClasses
             });
         }
 
+        private void ComposeFooter(IContainer container)
+        {
+            container.AlignBottom().Column(column =>
+            {
+                if (!(_order.Memo_Totl == null || _order.Memo_Totl == 0))
+                {
+                    column.Item().AlignRight().Text($"{_order.Memo_Totl:C}");
+                }
+                column.Item().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Balance Due: {_order.GetInvoiceTotal():C}").Bold();
+
+                column.Item().AlignBottom().AlignRight().Row(footer =>
+                {
+                    footer.RelativeItem().AlignLeft().Text(time =>
+                    {
+                        time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
+                        time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
+                    });
+
+                    footer.RelativeItem().AlignRight().Text(page =>
+                    {
+                        page.Span("pg. ").Style(smallFooterStyle);
+                        page.CurrentPageNumber().Style(smallFooterStyle);
+                        page.Span(" of ").Style(smallFooterStyle);
+                        page.TotalPages().Style(smallFooterStyle);
+                    });
+                });
+
+            });
+            
+        }
     }
 }
