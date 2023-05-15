@@ -113,7 +113,7 @@ public partial class App : Application
         dbOptions.UseLazyLoadingProxies()
                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                .EnableSensitiveDataLogging()
-               .UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
+               .UseSqlServer(connectionString: "Data Source=Eric-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
 
 
         App.DBOptions = dbOptions.Options;

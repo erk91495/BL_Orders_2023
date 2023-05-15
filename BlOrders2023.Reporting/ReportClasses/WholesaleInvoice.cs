@@ -255,7 +255,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                 {
                     column.Item().AlignRight().Text($"{_order.Memo_Totl:C}");
                 }
-                column.Item().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Balance Due: {_order.GetInvoiceTotal():C}").Bold();
+                column.Item().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Invoice Total: {_order.GetInvoiceTotal():C}").Bold();
 
                 column.Item().AlignBottom().AlignRight().Row(footer =>
                 {
