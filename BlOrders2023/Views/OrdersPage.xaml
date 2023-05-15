@@ -162,9 +162,10 @@
                                    AutoGenerateColumns="False"
                                    IsReadOnly="True"
                                    RelativePanel.Below="CustomerStack"
-                                   ColumnWidthMode="Auto"
+                                   ColumnWidthMode="AutoLastColumnFill"
                                    AllowResizingColumns="True"
-                                   RelativePanel.AlignHorizontalCenterWithPanel="True">
+                                   RelativePanel.AlignRightWithPanel="True"
+                                   RelativePanel.AlignLeftWithPanel="True">
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product  #" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" TextWrapping="WrapWholeWords"/>
