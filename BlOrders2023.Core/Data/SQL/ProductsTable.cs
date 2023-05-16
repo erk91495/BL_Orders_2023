@@ -115,7 +115,7 @@ namespace BlOrders2023.Core.Data.SQL
 
         public async Task<bool> IdExists(int productID)
         {
-            var result = await _db.Products.FromSql<Product>($"[dbo].[usp_ProductIDExists] {productID}").ToListAsync();
+            var result = await _db.Products.FromSql<Product>($"[dbo].[usp_ProductIDExists] {productID}").AsNoTracking().ToListAsync();
             if (result.IsNullOrEmpty()){
                 return false;
             }

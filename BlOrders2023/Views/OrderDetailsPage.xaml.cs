@@ -347,7 +347,7 @@ namespace BlOrders2023.Views
         {
 
             ProductEntryBox.IsSuggestionListOpen = false;
-            Product productToAdd = new();
+            Product productToAdd;
             if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
             {
 

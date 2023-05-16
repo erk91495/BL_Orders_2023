@@ -94,10 +94,13 @@ namespace BlOrders2023.Core.Data.SQL
 
         public Order Upsert(Order order)
         {
-            var exists =  _db.Orders.Include(o => o.Items).FirstOrDefault(_order => order.OrderID == _order.OrderID);
+            var exists =  _db.Orders.FirstOrDefault(_order => order.OrderID == _order.OrderID);
             if (exists == null)
             {
-                _db.Orders.Add(order);
+                //var entry = _db.Entry(order);
+                //var entry = _db.Orders.Entry(order);
+                //Not Usiing Add(order) because it trys to add all related data
+                _db.Orders.Entry(order).State = EntityState.Added;
             }
             else
             {

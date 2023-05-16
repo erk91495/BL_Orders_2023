@@ -45,6 +45,7 @@ namespace BlOrders2023.Models
         }
         public OrderItem(Product product, Order order)
         {
+            
             Product = product;
             Order = order;
             ProductID = product.ProductID;
@@ -73,6 +74,7 @@ namespace BlOrders2023.Models
         {
             return ActualCustPrice * (decimal)(PickWeight ?? 0);
         }
+
         public override string ToString()
         {
             return Product.ToString();

@@ -254,10 +254,8 @@ namespace BlOrders2023.ViewModels
 
         public void addItem(Product p)
         {
-            OrderItem item = new(p, _order)
-            {
-                ActualCustPrice = Models.Helpers.Helpers.CalculateCustomerPrice(p, Customer),
-            };
+            var tracked = _db.Products.Get(p.ProductID, false).First();
+            OrderItem item = new(tracked,_order);
             Items.Add(item);
         }
 

@@ -119,10 +119,12 @@
                               Grid.Column="1"
                               SelectionChanged="RadioButtons_SelectionChanged">
                     <RadioButton x:Name="RadioPickUp"  
-                                 Content="Pickup" 
-                                    />
+                                 Content="Pickup"
+                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Pickup}"
+                                 />
                     <RadioButton x:Name="RadioDelivery" 
-                                 Content="Delivery" 
+                                 Content="Delivery"
+                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Shipping}"
                                  />
                 </RadioButtons>
 
