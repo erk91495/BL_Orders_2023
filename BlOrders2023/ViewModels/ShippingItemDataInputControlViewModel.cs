@@ -114,7 +114,7 @@ namespace BlOrders2023.ViewModels
             });
 
             IProductsTable table = App.GetNewDatabase().Products;
-            var products = await Task.Run(table.GetAsync);
+            var products = await Task.Run(() => table.GetAsync());
 
             await dispatcherQueue.EnqueueAsync(() =>
             {

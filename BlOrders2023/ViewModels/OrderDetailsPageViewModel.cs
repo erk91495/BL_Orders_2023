@@ -202,6 +202,7 @@ namespace BlOrders2023.ViewModels
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         private ObservableCollection<OrderItem> _items;
         private int _currentOrderIndex;
+        private IBLDatabase _db = App.GetNewDatabase();
         #endregion Fields
 
         #region Constructors
@@ -222,7 +223,7 @@ namespace BlOrders2023.ViewModels
 
         public bool OrderItemsContains(int id)
         {
-            return (_items.FirstOrDefault(  i => i.ProductID == id, null) != null);
+            return (_items.FirstOrDefault(i => i.ProductID == id, null) != null);
         }
         /// <summary>
         /// Notifies anyone listening to this object that a line item changed. 
@@ -320,7 +321,7 @@ namespace BlOrders2023.ViewModels
                 //_suggestedProducts = new();
                 //LoadProducts();
 
-                var changeOrder = App.GetNewDatabase().Orders.Get((int)orderID).First();
+                var changeOrder = _db.Orders.Get((int)orderID).First();
                 _order = changeOrder;
                 _items = new ObservableCollection<OrderItem>(_order.Items);
                 _currentOrderIndex = _order.Customer.orders.IndexOf(_order);
@@ -341,8 +342,8 @@ namespace BlOrders2023.ViewModels
                 SuggestedProducts.Clear();
             });
 
-            IProductsTable table = App.GetNewDatabase().Products;
-            var products = await Task.Run(table.GetAsync);
+            IProductsTable table = _db.Products;
+            var products = await Task.Run(() => table.GetAsync((int?)null,false));
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
@@ -364,8 +365,8 @@ namespace BlOrders2023.ViewModels
                 SuggestedProducts.Clear();
             });
 
-            IProductsTable table = App.GetNewDatabase().Products;
-            var products = await Task.Run(() => table.GetAsync(query));
+            IProductsTable table = _db.Products;
+            var products = await Task.Run(() => table.GetAsync(query, false));
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
@@ -381,7 +382,7 @@ namespace BlOrders2023.ViewModels
         public async Task SaveCurrentOrderAsync()
         {
             _order.Items = Items.ToList();
-            await App.GetNewDatabase().Orders.UpsertAsync(_order);
+            await _db.Orders.UpsertAsync(_order);
         }
 
         /// <summary>
@@ -390,7 +391,7 @@ namespace BlOrders2023.ViewModels
         public void SaveCurrentOrder()
         {
             _order.Items = Items.ToList();
-            App.GetNewDatabase().Orders.Upsert(_order);
+            _db.Orders.Upsert(_order);
         }
 
         /// <summary>
@@ -405,12 +406,12 @@ namespace BlOrders2023.ViewModels
 
         internal async Task DeleteCurrentOrderAsync()
         {
-            await App.GetNewDatabase().Orders.DeleteAsync(_order);
+            await _db.Orders.DeleteAsync(_order);
         }
 
         internal void DeleteCurrentOrder()
         {
-             App.GetNewDatabase().Orders.Delete(_order);
+             _db.Orders.Delete(_order);
         }
         #endregion Queries
         #endregion Methods

@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace BlOrders2023.Core.Data.SQL
 {
@@ -25,53 +26,89 @@ namespace BlOrders2023.Core.Data.SQL
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Product> Get(int? productID = null)
+        public IEnumerable<Product> Get(int? productID = null, bool tracking = true)
         {
-            if (productID == null)
+            if (tracking)
             {
-                return _db.Products.ToList();
+                if (productID == null)
+                {
+                    return _db.Products.ToList();
+                }
+                else
+                {
+                    return _db.Products.Where(product => product.ProductID == productID).ToList();
+                }
             }
             else
             {
-                return _db.Products.Where(product => product.ProductID == productID).ToList();
+                if (productID == null)
+                {
+                    return _db.Products.AsNoTracking().ToList();
+                }
+                else
+                {
+                    return _db.Products.Where(product => product.ProductID == productID).AsNoTracking().ToList();
+                }
             }
         }
 
-        public IEnumerable<Product> GetNoTracking(int? productID = null)
+        public async Task<IEnumerable<Product>> GetAsync(int? ProductID = null, bool tracking = true)
         {
-            if (productID == null)
+            if (tracking)
             {
-                return _db.Products.AsNoTracking().ToList();
+                if(ProductID == null)
+                {
+                    return await _db.Products.OrderBy(product => product.ProductID).ToListAsync();
+                }
+                else
+                {
+                    return await _db.Products.Where(p => p.ProductID == ProductID).ToListAsync();
+                }
             }
             else
             {
-                return _db.Products.Where(product => product.ProductID == productID).AsNoTracking().ToList();
+                if (ProductID == null)
+                {
+                    return await _db.Products.OrderBy(product => product.ProductID).AsNoTracking().ToListAsync();
+                }
+                else
+                {
+                    return await _db.Products.Where(p => p.ProductID == ProductID).AsNoTracking().ToListAsync();
+                }
             }
+            
         }
 
-        public async Task<IEnumerable<Product>> GetAsync() =>
-                await _db.Products
-                .OrderBy(product => product.ProductID)
-                .ToListAsync();
-
-
-        public Task<IEnumerable<Product>> GetAsync(int productID)
+        public async Task<IEnumerable<Product>> GetAsync(string value, bool tracking) 
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<Product>> GetAsync(string value) 
-        {
-            if (value.IsNullOrEmpty())
+            if (tracking)
             {
-                return await _db.Products.ToListAsync();
+                if (value.IsNullOrEmpty())
+                {
+                    return await _db.Products.ToListAsync();
+                }
+                else
+                {
+                    return await _db.Products.Where(product =>
+                        product.ProductName.Contains(value) ||
+                        product.ProductID.ToString().Contains(value))
+                        .ToListAsync();
+                }
             }
             else
             {
-                return await _db.Products.Where(product =>
-                    product.ProductName.Contains(value) ||
-                    product.ProductID.ToString().Contains(value))
-                    .ToListAsync();
+                if (value.IsNullOrEmpty())
+                {
+                    return await _db.Products.AsNoTracking().ToListAsync();
+                }
+                else
+                {
+                    return await _db.Products.Where(product =>
+                        product.ProductName.Contains(value) ||
+                        product.ProductID.ToString().Contains(value))
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
             }
         }
 

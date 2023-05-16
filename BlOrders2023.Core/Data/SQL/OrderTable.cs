@@ -103,6 +103,7 @@ namespace BlOrders2023.Core.Data.SQL
             {
                 //TODO: Concurrency checks maybe here
                 _db.Entry(exists).CurrentValues.SetValues(order);
+                _db.Entry(exists).Entity.Items = order.Items;
                 _db.Entry(exists).State = EntityState.Modified;
             }
             int res =  _db.SaveChanges();

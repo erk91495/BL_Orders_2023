@@ -62,7 +62,7 @@ public sealed partial class FillOrdersPage : Page
                 {
                     //interpreter has no concept of dbcontext and cannot track items
                     BarcodeInterpreter.ParseBarcode(bc, ref item);
-                    var product = App.GetNewDatabase().Products.GetNoTracking(item.ProductID).FirstOrDefault();
+                    var product = App.GetNewDatabase().Products.Get(item.ProductID, false).FirstOrDefault();
                     if (product != null)
                     {
                         //item.Product = product;
