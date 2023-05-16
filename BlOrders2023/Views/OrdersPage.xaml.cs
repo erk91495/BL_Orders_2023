@@ -1,10 +1,16 @@
 ﻿using BlOrders2023.Models;
 using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
+using BlOrders2023.Reporting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.System;
+using QuestPDF.Previewer;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using Windows.Storage;
 
 namespace BlOrders2023.Views;
 
@@ -40,10 +46,9 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        if (ViewModel.Orders.Count < 1)
-        {
-            ViewModel.LoadOrders();
-        }
+        ViewModel.Orders.Clear();
+        ViewModel.LoadOrders();
+        
     }
 
     #region Navigation
@@ -76,6 +81,18 @@ public sealed partial class OrdersPage : Page
     private void EditOrder_Click(object sender, RoutedEventArgs e) => NavigateToOrderDetailsPage();
 
     private void FillOrder_Click(object sender, RoutedEventArgs e) => NavigateToFillOrdersPage();
+
+    private void PrintInvoice_Click(object sender, RoutedEventArgs e)
+    {
+        ReportGenerator g = new();
+        var pdf = g.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
+        Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+        var filePath = Path.GetTempPath() + "BLOrders2023\\" + ViewModel.SelectedOrder.OrderID + "_"+  DateTime.Now.ToFileTime() + ".pdf";
+        pdf.GeneratePdf(filePath);
+        var options = new LauncherOptions();
+        options.ContentType = "application/pdf";
+        _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+    }
 
     #endregion Pane Buttons
 
@@ -218,5 +235,4 @@ public sealed partial class OrdersPage : Page
 
 
     #endregion Methods
-
 }

@@ -1,0 +1,647 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Warning: Modules are not supported.-->
+<!--Warning: The object rptOutstandingBalances is associated with the ON-CLOSE event. Events are not supported.-->
+<!--Warning: The object rptOutstandingBalances is associated with the ON-OPEN event. Events are not supported.-->
+<!--Warning: The object rptOutstandingBalances is associated with the ON-NO-DATA event. Events are not supported.-->
+<!--Warning: The object Detail is associated with the ON-FORMAT event. Events are not supported.-->
+<!--Warning: The object ReportFooter is associated with the ON-FORMAT event. Events are not supported.-->
+<!--Warning: The function GetInvoiceTotal is not supported.-->
+<!--Warning: The function GetTotalPayments is not supported.-->
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+  <ReportParameters>
+    <ReportParameter Name="True">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>True</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="False">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>False</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <DataSources>
+    <DataSource Name="DataSource1">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString><![CDATA[INTEGRATED SECURITY=SSPI;INITIAL CATALOG=BL_Orders;DATA SOURCE=ERIC-PC;]]></ConnectString>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Fields>
+        <Field Name="CustomerName">
+          <DataField>CustomerName</DataField>
+        </Field>
+        <Field Name="PickupDate">
+          <DataField>PickupDate</DataField>
+        </Field>
+        <Field Name="OrderID">
+          <DataField>OrderID</DataField>
+        </Field>
+        <Field Name="Memo_Totl">
+          <DataField>Memo_Totl</DataField>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>DataSource1</DataSourceName>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>uspOutstandingBalanceGet</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@True">
+            <Value>=Parameters!True.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@False">
+            <Value>=Parameters!False.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+    </DataSet>
+  </DataSets>
+  <Width>6.5312in</Width>
+  <PageHeader>
+    <Height>1.2187in</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <Style>
+      <BorderStyle>
+        <Default>None</Default>
+      </BorderStyle>
+      <BackgroundColor>#ffffff</BackgroundColor>
+    </Style>
+    <ReportItems>
+      <Textbox Name="Pickup_Date_Label">
+        <Style>
+          <BorderColor>
+            <Default>#000000</Default>
+          </BorderColor>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BorderWidth>
+            <Default>1pt</Default>
+          </BorderWidth>
+          <FontStyle>Normal</FontStyle>
+          <FontFamily>Times New Roman</FontFamily>
+          <FontSize>11pt</FontSize>
+          <TextDecoration>None</TextDecoration>
+          <FontWeight>400</FontWeight>
+          <TextAlign>Left</TextAlign>
+          <Color>#000000</Color>
+          <Direction>LTR</Direction>
+          <PaddingLeft>0.in</PaddingLeft>
+          <PaddingTop>0.in</PaddingTop>
+          <LineHeight>16pt</LineHeight>
+          <PaddingRight>0.in</PaddingRight>
+          <PaddingBottom>0.in</PaddingBottom>
+        </Style>
+        <ZIndex>1</ZIndex>
+        <Left>0.in</Left>
+        <Top>0.9895in</Top>
+        <Height>0.2083in</Height>
+        <Width>0.8333in</Width>
+        <Value>Pickup Date</Value>
+      </Textbox>
+      <Textbox Name="Order_ID_Label">
+        <Style>
+          <BorderColor>
+            <Default>#000000</Default>
+          </BorderColor>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BorderWidth>
+            <Default>1pt</Default>
+          </BorderWidth>
+          <FontStyle>Normal</FontStyle>
+          <FontFamily>Times New Roman</FontFamily>
+          <FontSize>11pt</FontSize>
+          <TextDecoration>None</TextDecoration>
+          <FontWeight>400</FontWeight>
+          <TextAlign>Left</TextAlign>
+          <Color>#000000</Color>
+          <Direction>LTR</Direction>
+          <PaddingLeft>0.in</PaddingLeft>
+          <PaddingTop>0.in</PaddingTop>
+          <LineHeight>16pt</LineHeight>
+          <PaddingRight>0.in</PaddingRight>
+          <PaddingBottom>0.in</PaddingBottom>
+        </Style>
+        <ZIndex>2</ZIndex>
+        <Left>1.in</Left>
+        <Top>0.9895in</Top>
+        <Height>0.2083in</Height>
+        <Width>0.8125in</Width>
+        <Value>Order ID</Value>
+      </Textbox>
+      <Textbox Name="Customer_Name_Label">
+        <Style>
+          <BorderColor>
+            <Default>#000000</Default>
+          </BorderColor>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BorderWidth>
+            <Default>1pt</Default>
+          </BorderWidth>
+          <FontStyle>Normal</FontStyle>
+          <FontFamily>Times New Roman</FontFamily>
+          <FontSize>11pt</FontSize>
+          <TextDecoration>None</TextDecoration>
+          <FontWeight>400</FontWeight>
+          <TextAlign>Left</TextAlign>
+          <Color>#000000</Color>
+          <Direction>LTR</Direction>
+          <PaddingLeft>0.in</PaddingLeft>
+          <PaddingTop>0.in</PaddingTop>
+          <LineHeight>16pt</LineHeight>
+          <PaddingRight>0.in</PaddingRight>
+          <PaddingBottom>0.in</PaddingBottom>
+        </Style>
+        <ZIndex>3</ZIndex>
+        <Left>2.0208in</Left>
+        <Top>0.9895in</Top>
+        <Height>0.2083in</Height>
+        <Width>3.4791in</Width>
+        <Value>Customer Name</Value>
+      </Textbox>
+      <Line Name="Line9">
+        <Style>
+          <BorderColor>
+            <Default>#404040</Default>
+          </BorderColor>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderWidth>
+            <Default>1pt</Default>
+          </BorderWidth>
+        </Style>
+        <ZIndex>4</ZIndex>
+        <Left>0.in</Left>
+        <Top>1.1979in</Top>
+        <Height>0.in</Height>
+        <Width>6.5in</Width>
+      </Line>
+      <Textbox Name="Label12">
+        <Style>
+          <BorderColor>
+            <Default>#000000</Default>
+          </BorderColor>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BorderWidth>
+            <Default>1pt</Default>
+          </BorderWidth>
+          <FontStyle>Normal</FontStyle>
+          <FontFamily>Times New Roman</FontFamily>
+          <FontSize>11pt</FontSize>
+          <TextDecoration>None</TextDecoration>
+          <FontWeight>400</FontWeight>
+          <TextAlign>Right</TextAlign>
+          <Color>#000000</Color>
+          <Direction>LTR</Direction>
+          <PaddingLeft>0.in</PaddingLeft>
+          <PaddingTop>0.in</PaddingTop>
+          <LineHeight>16pt</LineHeight>
+          <PaddingRight>0.in</PaddingRight>
+          <PaddingBottom>0.in</PaddingBottom>
+        </Style>
+        <ZIndex>5</ZIndex>
+        <Left>5.6562in</Left>
+        <Top>0.9895in</Top>
+        <Height>0.2083in</Height>
+        <Width>0.8125in</Width>
+        <Value>Bal Due</Value>
+      </Textbox>
+      <Textbox Name="Label6">
+        <Style>
+          <BorderColor>
+            <Default>#000000</Default>
+          </BorderColor>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BorderWidth>
+            <Default>1pt</Default>
+          </BorderWidth>
+          <BackgroundColor>#ffffff</BackgroundColor>
+          <FontStyle>Normal</FontStyle>
+          <FontFamily>Times New Roman</FontFamily>
+          <FontSize>20pt</FontSize>
+          <TextDecoration>None</TextDecoration>
+          <FontWeight>400</FontWeight>
+          <TextAlign>Center</TextAlign>
+          <Color>#000000</Color>
+          <Direction>LTR</Direction>
+          <PaddingLeft>0.in</PaddingLeft>
+          <PaddingTop>0.in</PaddingTop>
+          <LineHeight>26pt</LineHeight>
+          <PaddingRight>0.in</PaddingRight>
+          <PaddingBottom>0.in</PaddingBottom>
+        </Style>
+        <ZIndex>6</ZIndex>
+        <Left>0.in</Left>
+        <Top>0.3541in</Top>
+        <Height>0.3541in</Height>
+        <Width>6.5312in</Width>
+        <Value>Outstanding Balances</Value>
+      </Textbox>
+      <Textbox Name="Text7">
+        <Style>
+          <BorderColor>
+            <Default>#000000</Default>
+          </BorderColor>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BorderWidth>
+            <Default>1pt</Default>
+          </BorderWidth>
+          <FontStyle>Normal</FontStyle>
+          <FontFamily>Times New Roman</FontFamily>
+          <FontSize>9pt</FontSize>
+          <TextDecoration>None</TextDecoration>
+          <FontWeight>400</FontWeight>
+          <TextAlign>Left</TextAlign>
+          <Color>#000000</Color>
+          <Direction>LTR</Direction>
+          <PaddingLeft>0.in</PaddingLeft>
+          <PaddingTop>0.in</PaddingTop>
+          <LineHeight>14pt</LineHeight>
+          <PaddingRight>0.in</PaddingRight>
+          <PaddingBottom>0.in</PaddingBottom>
+          <Format>G</Format>
+        </Style>
+        <ZIndex>7</ZIndex>
+        <Left>0.1875in</Left>
+        <Top>0.7083in</Top>
+        <Height>0.2083in</Height>
+        <Width>1.3437in</Width>
+        <Value>=Now()</Value>
+      </Textbox>
+      <Textbox Name="Text8">
+        <Style>
+          <BorderColor>
+            <Default>#000000</Default>
+          </BorderColor>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BorderWidth>
+            <Default>1pt</Default>
+          </BorderWidth>
+          <FontStyle>Normal</FontStyle>
+          <FontFamily>Times New Roman</FontFamily>
+          <FontSize>9pt</FontSize>
+          <TextDecoration>None</TextDecoration>
+          <FontWeight>400</FontWeight>
+          <TextAlign>Right</TextAlign>
+          <Color>#000000</Color>
+          <Direction>LTR</Direction>
+          <PaddingLeft>0.in</PaddingLeft>
+          <PaddingTop>0.in</PaddingTop>
+          <LineHeight>14pt</LineHeight>
+          <PaddingRight>0.in</PaddingRight>
+          <PaddingBottom>0.in</PaddingBottom>
+        </Style>
+        <ZIndex>8</ZIndex>
+        <Left>4.4583in</Left>
+        <Top>0.7083in</Top>
+        <Height>0.2083in</Height>
+        <Width>1.9791in</Width>
+        <Value>="Page " &amp; Globals.PageNumber &amp; " of " &amp; Globals.TotalPages</Value>
+      </Textbox>
+      <Textbox Name="Label17">
+        <Style>
+          <BorderColor>
+            <Default>#000000</Default>
+          </BorderColor>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BorderWidth>
+            <Default>1pt</Default>
+          </BorderWidth>
+          <BackgroundColor>#ffffff</BackgroundColor>
+          <FontStyle>Normal</FontStyle>
+          <FontFamily>Times New Roman</FontFamily>
+          <FontSize>20pt</FontSize>
+          <TextDecoration>None</TextDecoration>
+          <FontWeight>400</FontWeight>
+          <TextAlign>Center</TextAlign>
+          <Color>#000000</Color>
+          <Direction>LTR</Direction>
+          <PaddingLeft>0.in</PaddingLeft>
+          <PaddingTop>0.in</PaddingTop>
+          <LineHeight>26pt</LineHeight>
+          <PaddingRight>0.in</PaddingRight>
+          <PaddingBottom>0.in</PaddingBottom>
+        </Style>
+        <ZIndex>9</ZIndex>
+        <Left>0.in</Left>
+        <Top>0.in</Top>
+        <Height>0.3541in</Height>
+        <Width>6.5312in</Width>
+        <Value>Bowman &amp; Landes Turkeys</Value>
+      </Textbox>
+    </ReportItems>
+  </PageHeader>
+  <PageFooter>
+    <Height>0.in</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <Style>
+      <BorderStyle>
+        <Default>None</Default>
+      </BorderStyle>
+      <BackgroundColor>#ffffff</BackgroundColor>
+    </Style>
+  </PageFooter>
+  <Body>
+    <Height>0.5in</Height>
+    <Columns>1</Columns>
+    <ReportItems>
+      <Rectangle Name="ReportFooter">
+        <Left>0in</Left>
+        <Top>0.1875in</Top>
+        <Width>6.5312in</Width>
+        <Height>0.3125in</Height>
+        <Style>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BackgroundColor>#ffffff</BackgroundColor>
+        </Style>
+        <ReportItems>
+          <Textbox Name="txtBalDueTotal">
+            <Value />
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N2</Format>
+            </Style>
+            <ZIndex>1</ZIndex>
+            <Left>5.5833in</Left>
+            <Top>0.125in</Top>
+            <Height>0.1875in</Height>
+            <Width>0.927in</Width>
+          </Textbox>
+          <Line Name="Line14">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>Solid</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+            </Style>
+            <ZIndex>2</ZIndex>
+            <Left>4.7291in</Left>
+            <Top>0.0833in</Top>
+            <Height>0.in</Height>
+            <Width>1.7798in</Width>
+          </Line>
+          <Line Name="Line15">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>Solid</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+            </Style>
+            <ZIndex>3</ZIndex>
+            <Left>4.7291in</Left>
+            <Top>0.1041in</Top>
+            <Height>0.in</Height>
+            <Width>1.7798in</Width>
+          </Line>
+          <Textbox Name="Label16">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>4</ZIndex>
+            <Left>4.7291in</Left>
+            <Top>0.125in</Top>
+            <Height>0.1875in</Height>
+            <Width>0.8333in</Width>
+            <Value>Report total:</Value>
+          </Textbox>
+        </ReportItems>
+      </Rectangle>
+      <List Name="Detail">
+        <Left>0in</Left>
+        <Top>0in</Top>
+        <Width>6.5312in</Width>
+        <Height>0.1875in</Height>
+        <Sorting>
+          <SortBy>
+            <SortExpression>=Fields!PickupDate.Value</SortExpression>
+            <Direction>Ascending</Direction>
+          </SortBy>
+          <SortBy>
+            <SortExpression>=Fields!OrderID.Value</SortExpression>
+            <Direction>Ascending</Direction>
+          </SortBy>
+        </Sorting>
+        <Style>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BackgroundColor>#ffffff</BackgroundColor>
+        </Style>
+        <ReportItems>
+          <Textbox Name="txtPickupDate">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Left</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>d</Format>
+            </Style>
+            <ZIndex>1</ZIndex>
+            <CanShrink>true</CanShrink>
+            <CanGrow>true</CanGrow>
+            <Left>0.1458in</Left>
+            <Top>0.in</Top>
+            <Height>0.1875in</Height>
+            <Width>0.8333in</Width>
+            <Value>=Fields!PickupDate.Value</Value>
+          </Textbox>
+          <Textbox Name="txtOrderID">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Left</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>2</ZIndex>
+            <CanShrink>true</CanShrink>
+            <CanGrow>true</CanGrow>
+            <Left>1.1354in</Left>
+            <Top>0.in</Top>
+            <Height>0.1875in</Height>
+            <Width>0.7291in</Width>
+            <Value>=Fields!OrderID.Value</Value>
+          </Textbox>
+          <Textbox Name="txtCustomerName">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>General</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>3</ZIndex>
+            <CanShrink>true</CanShrink>
+            <CanGrow>true</CanGrow>
+            <Left>2.0729in</Left>
+            <Top>0.in</Top>
+            <Height>0.1875in</Height>
+            <Width>3.4791in</Width>
+            <Value>=Fields!CustomerName.Value</Value>
+          </Textbox>
+          <Textbox Name="txtBalDue">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>General</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N2</Format>
+            </Style>
+            <ZIndex>4</ZIndex>
+            <CanShrink>true</CanShrink>
+            <CanGrow>true</CanGrow>
+            <Left>5.7083in</Left>
+            <Top>0.in</Top>
+            <Height>0.1875in</Height>
+            <Width>0.8125in</Width>
+            <Value>=GetInvoiceTotal(Fields!OrderID.Value)-GetTotalPayments(Fields!OrderID.Value)</Value>
+          </Textbox>
+        </ReportItems>
+      </List>
+    </ReportItems>
+  </Body>
+</Report>

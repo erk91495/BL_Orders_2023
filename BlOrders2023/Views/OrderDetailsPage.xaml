@@ -8,7 +8,7 @@
     xmlns:local="using:BlOrders2023.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:BlOrders2023.ViewModels"
+    xmlns:vm="using:BlOrders2023.ViewModels.Converters"
     xmlns:enums="using:BlOrders2023.Models.Enums"
     xmlns:models="using:BlOrders2023.Models"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
@@ -119,17 +119,13 @@
                               Grid.Column="1"
                               SelectionChanged="RadioButtons_SelectionChanged">
                     <RadioButton x:Name="RadioPickUp"  
-                                 Content="Pickup" 
-                                 IsChecked="{x:Bind ViewModel.Shipping,
-                                             Mode=OneWay,
-                                             Converter={StaticResource EnumToBoolConverter},
-                                             ConverterParameter=Pickup}"/>
+                                 Content="Pickup"
+                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Pickup}"
+                                 />
                     <RadioButton x:Name="RadioDelivery" 
-                                 Content="Delivery" 
-                                 IsChecked="{x:Bind ViewModel.Shipping,
-                                             Mode=OneWay,
-                                             Converter={StaticResource EnumToBoolConverter},
-                                             ConverterParameter=Shipping}"/>
+                                 Content="Delivery"
+                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Shipping}"
+                                 />
                 </RadioButtons>
 
                 <StackPanel Orientation="Vertical"
@@ -220,9 +216,10 @@
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
+                <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" AllowEditing="False"/>
                 <sf:GridNumericColumn HeaderText="Customer Price" MappingName="ActualCustPrice" AllowEditing="True"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity" AllowEditing="True"/>
-                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True"/>
+                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuantityReceived"/>
                 <sf:GridUnboundColumn HeaderText="" UseBindingValue="False" MappingName="UnboundColumn" ColumnWidthMode="SizeToCells">
                     <sf:GridUnboundColumn.CellTemplate>
                         <DataTemplate>

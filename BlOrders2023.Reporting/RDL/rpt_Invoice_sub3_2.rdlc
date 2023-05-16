@@ -1,0 +1,930 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Warning: Modules are not supported.-->
+<!--Warning: The report property PictureAlignment has an unsupported value.-->
+<!--Warning: The object Detail1 is associated with the ON-FORMAT event. Events are not supported.-->
+<!--Warning: The function UsesSP is not supported.-->
+<!--Warning: The function UsesSP is not supported.-->
+<!--Warning: The function UsesSP is not supported.-->
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+  <ReportParameters>
+    <ReportParameter Name="OrderID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Forms</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <DataSources>
+    <DataSource Name="DataSource1">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString><![CDATA[INTEGRATED SECURITY=SSPI;INITIAL CATALOG=BL_Orders;DATA SOURCE=ERIC-PC;]]></ConnectString>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Fields>
+        <Field Name="CustID">
+          <DataField>CustID</DataField>
+        </Field>
+        <Field Name="OrderID">
+          <DataField>OrderID</DataField>
+        </Field>
+        <Field Name="ProductID">
+          <DataField>ProductID</DataField>
+        </Field>
+        <Field Name="ProductName">
+          <DataField>ProductName</DataField>
+        </Field>
+        <Field Name="NoPerCase">
+          <DataField>NoPerCase</DataField>
+        </Field>
+        <Field Name="Price__Co_op_">
+          <DataField>Price_(Co-op)</DataField>
+        </Field>
+        <Field Name="Price__Wholesale_">
+          <DataField>Price_(Wholesale)</DataField>
+        </Field>
+        <Field Name="Price__DutchCreek_">
+          <DataField>Price_(DutchCreek)</DataField>
+        </Field>
+        <Field Name="Price__Distributor_">
+          <DataField>Price_(Distributor)</DataField>
+        </Field>
+        <Field Name="Price__Retail_">
+          <DataField>Price_(Retail)</DataField>
+        </Field>
+        <Field Name="Price__Other_">
+          <DataField>Price_(Other)</DataField>
+        </Field>
+        <Field Name="Quantity">
+          <DataField>Quantity</DataField>
+        </Field>
+        <Field Name="QuanRcvd">
+          <DataField>QuanRcvd</DataField>
+        </Field>
+        <Field Name="PickWeight">
+          <DataField>PickWeight</DataField>
+        </Field>
+        <Field Name="Boxed">
+          <DataField>Boxed</DataField>
+        </Field>
+        <Field Name="Filled">
+          <DataField>Filled</DataField>
+        </Field>
+        <Field Name="Frozen">
+          <DataField>Frozen</DataField>
+        </Field>
+        <Field Name="Net">
+          <DataField>Net</DataField>
+        </Field>
+        <Field Name="Class">
+          <DataField>Class</DataField>
+        </Field>
+        <Field Name="ActualCustPrice">
+          <DataField>ActualCustPrice</DataField>
+        </Field>
+        <Field Name="UPCCode">
+          <DataField>UPCCode</DataField>
+        </Field>
+        <Field Name="KPCCode">
+          <DataField>KPCCode</DataField>
+        </Field>
+        <Field Name="MultiPacks">
+          <DataField>MultiPacks</DataField>
+        </Field>
+        <Field Name="Breast_MPacks">
+          <DataField>Breast_MPacks</DataField>
+        </Field>
+        <Field Name="Roast_MPacks">
+          <DataField>Roast_MPacks</DataField>
+        </Field>
+        <Field Name="Memo_Weight">
+          <DataField>Memo_Weight</DataField>
+        </Field>
+        <Field Name="FixedWeight">
+          <DataField>FixedWeight</DataField>
+        </Field>
+        <Field Name="Packaged">
+          <DataField>Packaged</DataField>
+        </Field>
+        <Field Name="PackOrdered">
+          <DataField>PackOrdered</DataField>
+        </Field>
+        <Field Name="KrogerDeptNo">
+          <DataField>KrogerDeptNo</DataField>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>DataSource1</DataSourceName>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>uspOrderDetailsWholesale_rptInvoiceSub3Get</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@OrderID">
+            <Value>=Parameters!OrderID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+    </DataSet>
+  </DataSets>
+  <Width>7.9791in</Width>
+  <PageHeader>
+    <Height>0.in</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <Style>
+      <BorderStyle>
+        <Default>None</Default>
+      </BorderStyle>
+      <BackgroundColor>#ffffff</BackgroundColor>
+    </Style>
+  </PageHeader>
+  <PageFooter>
+    <Height>0.in</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <Style>
+      <BorderStyle>
+        <Default>None</Default>
+      </BorderStyle>
+      <BackgroundColor>#ffffff</BackgroundColor>
+    </Style>
+  </PageFooter>
+  <Body>
+    <Height>0.3368in</Height>
+    <Columns>1</Columns>
+    <ReportItems>
+      <List Name="Detail1">
+        <Left>0in</Left>
+        <Top>0in</Top>
+        <Width>7.9791in</Width>
+        <Height>0.3368in</Height>
+        <Sorting>
+          <SortBy>
+            <SortExpression>=Fields!CustID.Value</SortExpression>
+            <Direction>Ascending</Direction>
+          </SortBy>
+          <SortBy>
+            <SortExpression>=Fields!OrderID.Value</SortExpression>
+            <Direction>Ascending</Direction>
+          </SortBy>
+          <SortBy>
+            <SortExpression>=Fields!ProductID.Value</SortExpression>
+            <Direction>Ascending</Direction>
+          </SortBy>
+        </Sorting>
+        <Style>
+          <BorderStyle>
+            <Default>None</Default>
+          </BorderStyle>
+          <BackgroundColor>#ffffff</BackgroundColor>
+        </Style>
+        <ReportItems>
+          <Textbox Name="txtProductName">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>General</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>1</ZIndex>
+            <Left>0.6562in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>3.052in</Width>
+            <Value>=Fields!ProductName.Value</Value>
+          </Textbox>
+          <Textbox Name="txtQuantity">
+            <Value />
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>2</ZIndex>
+            <Left>0.0104in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.6166in</Width>
+          </Textbox>
+          <Textbox Name="txtCustPrice">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N</Format>
+            </Style>
+            <ZIndex>3</ZIndex>
+            <Left>6.1979in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.5625in</Width>
+            <Value>=CalcCustPrice_UsesSP(Parameters!OrderID.Value,Fields!ProductID.Value)</Value>
+          </Textbox>
+          <Textbox Name="txtExtendedPrice">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N</Format>
+            </Style>
+            <ZIndex>4</ZIndex>
+            <Left>6.927in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.7395in</Width>
+            <Value>=IIf(IsDbNull(Fields!ProductID.Value),0,CalcExtendedPrice_UsesSP(Parameters!OrderID.Value,Fields!ProductID.Value))</Value>
+          </Textbox>
+          <Textbox Name="txtNetWeight_View">
+            <Value />
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N</Format>
+            </Style>
+            <ZIndex>5</ZIndex>
+            <Left>5.3437in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.75in</Width>
+          </Textbox>
+          <Textbox Name="txtProductID">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>#</Format>
+            </Style>
+            <ZIndex>6</ZIndex>
+            <Left>5.0104in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.2937in</Width>
+            <Value>=Fields!ProductID.Value</Value>
+          </Textbox>
+          <Textbox Name="txtUPC_Code">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Value />
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Left</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N</Format>
+            </Style>
+            <ZIndex>7</ZIndex>
+            <CanShrink>true</CanShrink>
+            <Left>0.85in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1701in</Height>
+            <Width>1.5729in</Width>
+          </Textbox>
+          <Textbox Name="txtCust_ID">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>8</ZIndex>
+            <CanShrink>true</CanShrink>
+            <Left>7.7083in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.1041in</Width>
+            <Value>=Fields!CustID.Value</Value>
+          </Textbox>
+          <Textbox Name="txtUPC_CodeSource">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Left</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N</Format>
+            </Style>
+            <ZIndex>9</ZIndex>
+            <CanShrink>true</CanShrink>
+            <Left>2.427in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.6979in</Width>
+            <Value>=Fields!UPCCode.Value</Value>
+          </Textbox>
+          <Textbox Name="txtKPC">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Value />
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Left</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N</Format>
+            </Style>
+            <ZIndex>10</ZIndex>
+            <CanShrink>true</CanShrink>
+            <Left>3.1354in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.6979in</Width>
+          </Textbox>
+          <Textbox Name="txtQuantity_1">
+            <Value />
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N1</Format>
+            </Style>
+            <ZIndex>11</ZIndex>
+            <Left>4.3125in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.4291in</Width>
+          </Textbox>
+          <Textbox Name="txtQuan_1">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N0</Format>
+            </Style>
+            <ZIndex>12</ZIndex>
+            <Left>4.3125in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.4291in</Width>
+            <Value>=Fields!QuanRcvd.Value</Value>
+          </Textbox>
+          <Textbox Name="txtNoPerCase">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N0</Format>
+            </Style>
+            <ZIndex>13</ZIndex>
+            <Left>4.802in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.4187in</Width>
+            <Value>=Fields!NoPerCase.Value</Value>
+          </Textbox>
+          <Textbox Name="txtNetWeight">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N</Format>
+            </Style>
+            <ZIndex>14</ZIndex>
+            <Left>5.3437in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.75in</Width>
+            <Value>=IIf(IsDbNull(Fields!PickWeight.Value),0,dGetNetWeight_UsesSP(Parameters!OrderID.Value,Fields!ProductID.Value,Fields!Quantity.Value,Fields!PickWeight.Value))</Value>
+          </Textbox>
+          <Textbox Name="Packaged">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>10pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>General</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>15pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>15</ZIndex>
+            <Left>4.75in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.2937in</Width>
+            <Value>=Fields!Packaged.Value</Value>
+          </Textbox>
+          <Textbox Name="txtKPC_CodeSource">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>10pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>General</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>15pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>16</ZIndex>
+            <Left>6.7708in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.2291in</Width>
+            <Value>=Fields!KPCCode.Value</Value>
+          </Textbox>
+          <Textbox Name="txtQuanOrdered">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N1</Format>
+            </Style>
+            <ZIndex>17</ZIndex>
+            <Left>3.7083in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.4291in</Width>
+            <Value>=Fields!Quantity.Value</Value>
+          </Textbox>
+          <Textbox Name="PackOrdered">
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>10pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>General</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>15pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>18</ZIndex>
+            <Left>4.1458in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.1562in</Width>
+            <Value>=Fields!PackOrdered.Value</Value>
+          </Textbox>
+          <Textbox Name="txtDeptNo">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Value />
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Center</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+              <Format>N0</Format>
+            </Style>
+            <ZIndex>19</ZIndex>
+            <Left>0.5083in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.2416in</Width>
+          </Textbox>
+          <Textbox Name="lblDeptNo">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>11pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>Right</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>16pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>20</ZIndex>
+            <Left>0.1145in</Left>
+            <Top>0.1666in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.3854in</Width>
+            <Value>Dept:</Value>
+          </Textbox>
+          <Textbox Name="KrogerDeptNo">
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Style>
+              <BorderColor>
+                <Default>#000000</Default>
+              </BorderColor>
+              <BorderStyle>
+                <Default>None</Default>
+              </BorderStyle>
+              <BorderWidth>
+                <Default>1pt</Default>
+              </BorderWidth>
+              <BackgroundColor>#ffffff</BackgroundColor>
+              <FontStyle>Normal</FontStyle>
+              <FontFamily>Times New Roman</FontFamily>
+              <FontSize>10pt</FontSize>
+              <TextDecoration>None</TextDecoration>
+              <FontWeight>400</FontWeight>
+              <TextAlign>General</TextAlign>
+              <Color>#000000</Color>
+              <Direction>LTR</Direction>
+              <PaddingLeft>0.in</PaddingLeft>
+              <PaddingTop>0.in</PaddingTop>
+              <LineHeight>15pt</LineHeight>
+              <PaddingRight>0.in</PaddingRight>
+              <PaddingBottom>0.in</PaddingBottom>
+            </Style>
+            <ZIndex>21</ZIndex>
+            <Left>7.8333in</Left>
+            <Top>0.in</Top>
+            <Height>0.1701in</Height>
+            <Width>0.1041in</Width>
+            <Value>=Fields!KrogerDeptNo.Value</Value>
+          </Textbox>
+        </ReportItems>
+      </List>
+    </ReportItems>
+  </Body>
+</Report>

@@ -202,6 +202,7 @@ namespace BlOrders2023.ViewModels
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         private ObservableCollection<OrderItem> _items;
         private int _currentOrderIndex;
+        private IBLDatabase _db = App.GetNewDatabase();
         #endregion Fields
 
         #region Constructors
@@ -222,7 +223,7 @@ namespace BlOrders2023.ViewModels
 
         public bool OrderItemsContains(int id)
         {
-            return (_items.FirstOrDefault(  i => i.ProductID == id, null) != null);
+            return (_items.FirstOrDefault(i => i.ProductID == id, null) != null);
         }
         /// <summary>
         /// Notifies anyone listening to this object that a line item changed. 
@@ -253,7 +254,8 @@ namespace BlOrders2023.ViewModels
 
         public void addItem(Product p)
         {
-            OrderItem item = new OrderItem(p, _order);
+            var tracked = _db.Products.Get(p.ProductID, false).First();
+            OrderItem item = new(tracked,_order);
             Items.Add(item);
         }
 
@@ -317,7 +319,7 @@ namespace BlOrders2023.ViewModels
                 //_suggestedProducts = new();
                 //LoadProducts();
 
-                var changeOrder = App.BLDatabase.Orders.Get((int)orderID).First();
+                var changeOrder = _db.Orders.Get((int)orderID).First();
                 _order = changeOrder;
                 _items = new ObservableCollection<OrderItem>(_order.Items);
                 _currentOrderIndex = _order.Customer.orders.IndexOf(_order);
@@ -338,8 +340,8 @@ namespace BlOrders2023.ViewModels
                 SuggestedProducts.Clear();
             });
 
-            IProductsTable table = App.BLDatabase.Products;
-            var products = await Task.Run(table.GetAsync);
+            IProductsTable table = _db.Products;
+            var products = await Task.Run(() => table.GetAsync((int?)null,false));
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
@@ -361,8 +363,8 @@ namespace BlOrders2023.ViewModels
                 SuggestedProducts.Clear();
             });
 
-            IProductsTable table = App.BLDatabase.Products;
-            var products = await Task.Run(() => table.GetAsync(query));
+            IProductsTable table = _db.Products;
+            var products = await Task.Run(() => table.GetAsync(query, false));
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
@@ -375,10 +377,19 @@ namespace BlOrders2023.ViewModels
         /// <summary>
         /// Saves changes to the current Order
         /// </summary>
-        public async Task SaveCurrentOrder()
+        public async Task SaveCurrentOrderAsync()
         {
             _order.Items = Items.ToList();
-            await App.BLDatabase.Orders.UpsertAsync(_order);
+            await _db.Orders.UpsertAsync(_order);
+        }
+
+        /// <summary>
+        /// Saves changes to the current Order
+        /// </summary>
+        public void SaveCurrentOrder()
+        {
+            _order.Items = Items.ToList();
+            _db.Orders.Upsert(_order);
         }
 
         /// <summary>
@@ -391,9 +402,14 @@ namespace BlOrders2023.ViewModels
             throw new NotImplementedException();
         }
 
-        internal async void DeleteCurrentOrder()
+        internal async Task DeleteCurrentOrderAsync()
         {
-            await App.BLDatabase.Orders.DeleteAsync(_order);
+            await _db.Orders.DeleteAsync(_order);
+        }
+
+        internal void DeleteCurrentOrder()
+        {
+             _db.Orders.Delete(_order);
         }
         #endregion Queries
         #endregion Methods

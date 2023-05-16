@@ -77,9 +77,9 @@ namespace BlOrders2023.ViewModels
                     Products.Clear();
                 });
 
-                IProductsTable table = App.BLDatabase.Products;
+                IProductsTable table = App.GetNewDatabase().Products;
 
-                var products = await Task.Run(table.GetAsync);
+                var products = await Task.Run(() => table.GetAsync());
                 await dispatcherQueue.EnqueueAsync(() =>
                 {
                     Products = new(products);
@@ -95,8 +95,8 @@ namespace BlOrders2023.ViewModels
                     Products.Clear();
                 });
 
-                IProductsTable table = App.BLDatabase.Products;
-                var products = await Task.Run(table.GetAsync);
+                IProductsTable table = App.GetNewDatabase().Products;
+                var products = await Task.Run(() => table.GetAsync());
 
                 await dispatcherQueue.EnqueueAsync(() =>
                 {
@@ -109,13 +109,13 @@ namespace BlOrders2023.ViewModels
 
         internal async void SaveItem(Product p)
         {
-            IProductsTable table = App.BLDatabase.Products;
+            IProductsTable table = App.GetNewDatabase().Products;
             var products = await Task.Run(() => table.UpsertAsync(p));
         }
 
         internal async Task DeleteItem(Product p) 
         {
-            IProductsTable table = App.BLDatabase.Products;
+            IProductsTable table = App.GetNewDatabase().Products;
             throw new NotImplementedException();
         }
 
@@ -129,7 +129,7 @@ namespace BlOrders2023.ViewModels
 
         internal async Task<bool> productIDExists(int productId)
         {
-            return await App.BLDatabase.Products.IdExists(productId);
+            return await App.GetNewDatabase().Products.IdExists(productId);
         }
         #endregion Methods
     }

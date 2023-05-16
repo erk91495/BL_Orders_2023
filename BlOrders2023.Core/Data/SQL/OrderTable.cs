@@ -27,6 +27,16 @@ namespace BlOrders2023.Core.Data.SQL
         {
             _db = db;
         }
+
+        public void Delete(Order order)
+        {
+            var match = _db.Orders.FirstOrDefault(_order => _order.OrderID == order.OrderID);
+            if (match != null)
+            {
+                _db.Orders.Remove(match);
+            }
+            _db.SaveChanges();
+        }
         #endregion Constructors
 
         #region Methods
@@ -82,6 +92,27 @@ namespace BlOrders2023.Core.Data.SQL
                 .Where(order => order.OrderID == orderID)
                 .ToListAsync();
 
+        public Order Upsert(Order order)
+        {
+            var exists =  _db.Orders.FirstOrDefault(_order => order.OrderID == _order.OrderID);
+            if (exists == null)
+            {
+                //var entry = _db.Entry(order);
+                //var entry = _db.Orders.Entry(order);
+                //Not Usiing Add(order) because it trys to add all related data
+                _db.Orders.Entry(order).State = EntityState.Added;
+            }
+            else
+            {
+                //TODO: Concurrency checks maybe here
+                _db.Entry(exists).CurrentValues.SetValues(order);
+                _db.Entry(exists).Entity.Items = order.Items;
+                _db.Entry(exists).State = EntityState.Modified;
+            }
+            int res =  _db.SaveChanges();
+            return order;
+        }
+
         /// <summary>
         /// Updates the database context with the given Order. If the Order does not exist it will be added to the db
         /// </summary>
@@ -89,16 +120,8 @@ namespace BlOrders2023.Core.Data.SQL
         /// <returns>the updated Order</returns>
         public async Task<Order> UpsertAsync(Order order)
         {
-            var exists = await _db.Orders.Include(o => o.Items).FirstOrDefaultAsync(_order => order.OrderID == _order.OrderID);
-            if(exists == null) 
-            {
-                _db.Orders.Add(order); 
-            }
-            else
-            {
-                //TODO: Concurrency checks maybe here
-                _db.Entry(exists).CurrentValues.SetValues(order);
-            }
+            _db.Update(order);
+            
             int res =  await _db.SaveChangesAsync();
             return order;
         }

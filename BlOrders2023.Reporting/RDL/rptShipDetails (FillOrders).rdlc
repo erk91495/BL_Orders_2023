@@ -1,0 +1,1801 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DataSource1">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>INTEGRATED SECURITY=SSPI;INITIAL CATALOG=BL_Orders;DATA SOURCE=ERIC-PC;</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>867c337b-6263-44c6-90c6-2e7e7f5e67c9</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Query>
+        <DataSourceName>DataSource1</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@OrderID">
+            <Value>=Parameters!OrderID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>uspShipDetailsJoinGet</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="OrderID">
+          <DataField>OrderID</DataField>
+        </Field>
+        <Field Name="ProdID">
+          <DataField>ProdID</DataField>
+        </Field>
+        <Field Name="QuanRcvd">
+          <DataField>QuanRcvd</DataField>
+        </Field>
+        <Field Name="PickWeight">
+          <DataField>PickWeight</DataField>
+        </Field>
+        <Field Name="CustomerName">
+          <DataField>CustomerName</DataField>
+        </Field>
+        <Field Name="PickupDate">
+          <DataField>PickupDate</DataField>
+        </Field>
+        <Field Name="PO_Number">
+          <DataField>PO_Number</DataField>
+        </Field>
+        <Field Name="ProductName">
+          <DataField>ProductName</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="GroupLevel0">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>6.8853in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>1.2498in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="GroupLevel0_Contents">
+                          <ReportItems>
+                            <Rectangle Name="GroupHeader0">
+                              <ReportItems>
+                                <Textbox Name="Customer_Name">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=Fields!CustomerName.Value</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Left</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Height>0.1458in</Height>
+                                  <Width>2.3333in</Width>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Label60">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Pickup Date:</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Left</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.1458in</Top>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.6666in</Width>
+                                  <ZIndex>1</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Pickup_Date">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=Fields!PickupDate.Value</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <Format>d</Format>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Left</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.1458in</Top>
+                                  <Left>0.6979in</Left>
+                                  <Height>0.1458in</Height>
+                                  <Width>1.3125in</Width>
+                                  <ZIndex>2</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="lblWholeTurkes">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Turkeys:</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Left</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.2916in</Top>
+                                  <Left>0.0104in</Left>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.5416in</Width>
+                                  <ZIndex>3</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtNumTurkeys">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value />
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <Format>N0</Format>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Right</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.2916in</Top>
+                                  <Left>0.552in</Left>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.5104in</Width>
+                                  <ZIndex>4</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Label48">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Roasts:</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Left</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.4375in</Top>
+                                  <Left>0.0104in</Left>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.5416in</Width>
+                                  <ZIndex>5</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtNumRoasts">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value />
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <Format>N0</Format>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Right</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.4375in</Top>
+                                  <Left>0.552in</Left>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.5104in</Width>
+                                  <ZIndex>6</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Label61">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Breasts:</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Left</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.5833in</Top>
+                                  <Left>0.0104in</Left>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.5416in</Width>
+                                  <ZIndex>7</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtNumBreasts">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value />
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <Format>N0</Format>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Right</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.5833in</Top>
+                                  <Left>0.552in</Left>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.5104in</Width>
+                                  <ZIndex>8</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="lbl_Message">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Only items that were scanned into the order will appear on
+this report.</Value>
+                                          <Style>
+                                            <FontStyle>Italic</FontStyle>
+                                            <FontFamily>Times New Roman</FontFamily>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000080</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Left</TextAlign>
+                                        <LineHeight>16pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.177in</Top>
+                                  <Left>2.5833in</Left>
+                                  <Height>0.4166in</Height>
+                                  <Width>4.302in</Width>
+                                  <ZIndex>9</ZIndex>
+                                  <Visibility>
+                                    <Hidden>true</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="lblPO_Number">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>PO_Number:</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Right</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Left>2.5208in</Left>
+                                  <Height>0.1562in</Height>
+                                  <Width>0.7083in</Width>
+                                  <ZIndex>10</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtPO_Number">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=Fields!PO_Number.Value</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>General</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Left>3.2395in</Left>
+                                  <Height>0.1562in</Height>
+                                  <Width>1in</Width>
+                                  <ZIndex>11</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                              </ReportItems>
+                              <DataElementOutput>ContentsOnly</DataElementOutput>
+                              <Height>0.7291in</Height>
+                              <Width>6.8853in</Width>
+                              <Style>
+                                <BackgroundColor>#ffffff</BackgroundColor>
+                                <FontFamily />
+                              </Style>
+                            </Rectangle>
+                            <Tablix Name="GroupLevel1">
+                              <TablixBody>
+                                <TablixColumns>
+                                  <TablixColumn>
+                                    <Width>2.5in</Width>
+                                  </TablixColumn>
+                                </TablixColumns>
+                                <TablixRows>
+                                  <TablixRow>
+                                    <Height>0.3541in</Height>
+                                    <TablixCells>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Rectangle Name="GroupLevel1_Contents">
+                                            <ReportItems>
+                                              <Tablix Name="Detail">
+                                                <TablixBody>
+                                                  <TablixColumns>
+                                                    <TablixColumn>
+                                                      <Width>2.5in</Width>
+                                                    </TablixColumn>
+                                                  </TablixColumns>
+                                                  <TablixRows>
+                                                    <TablixRow>
+                                                      <Height>0.1458in</Height>
+                                                      <TablixCells>
+                                                        <TablixCell>
+                                                          <CellContents>
+                                                            <Rectangle Name="Detail_Contents">
+                                                              <ReportItems>
+                                                                <Textbox Name="QuanRcvd">
+                                                                  <KeepTogether>true</KeepTogether>
+                                                                  <Paragraphs>
+                                                                    <Paragraph>
+                                                                      <TextRuns>
+                                                                        <TextRun>
+                                                                          <Value>=Fields!QuanRcvd.Value</Value>
+                                                                          <Style>
+                                                                            <FontStyle>Normal</FontStyle>
+                                                                            <FontSize>8pt</FontSize>
+                                                                            <FontWeight>Normal</FontWeight>
+                                                                            <TextDecoration>None</TextDecoration>
+                                                                            <Color>#000000</Color>
+                                                                          </Style>
+                                                                        </TextRun>
+                                                                      </TextRuns>
+                                                                      <Style>
+                                                                        <FontFamily />
+                                                                        <TextAlign>Right</TextAlign>
+                                                                        <LineHeight>13pt</LineHeight>
+                                                                      </Style>
+                                                                    </Paragraph>
+                                                                  </Paragraphs>
+                                                                  <Left>0.9062in</Left>
+                                                                  <Height>0.1458in</Height>
+                                                                  <Width>0.5625in</Width>
+                                                                  <Style>
+                                                                    <Border>
+                                                                      <Color>#000000</Color>
+                                                                    </Border>
+                                                                    <Direction>LTR</Direction>
+                                                                  </Style>
+                                                                </Textbox>
+                                                                <Textbox Name="PickWeight">
+                                                                  <KeepTogether>true</KeepTogether>
+                                                                  <Paragraphs>
+                                                                    <Paragraph>
+                                                                      <TextRuns>
+                                                                        <TextRun>
+                                                                          <Value>=Fields!PickWeight.Value</Value>
+                                                                          <Style>
+                                                                            <FontStyle>Normal</FontStyle>
+                                                                            <FontSize>8pt</FontSize>
+                                                                            <FontWeight>Normal</FontWeight>
+                                                                            <Format>N2</Format>
+                                                                            <TextDecoration>None</TextDecoration>
+                                                                            <Color>#000000</Color>
+                                                                          </Style>
+                                                                        </TextRun>
+                                                                      </TextRuns>
+                                                                      <Style>
+                                                                        <FontFamily />
+                                                                        <TextAlign>Right</TextAlign>
+                                                                        <LineHeight>13pt</LineHeight>
+                                                                      </Style>
+                                                                    </Paragraph>
+                                                                  </Paragraphs>
+                                                                  <Left>1.7187in</Left>
+                                                                  <Height>0.1458in</Height>
+                                                                  <Width>0.625in</Width>
+                                                                  <ZIndex>1</ZIndex>
+                                                                  <Style>
+                                                                    <Border>
+                                                                      <Color>#000000</Color>
+                                                                    </Border>
+                                                                    <Direction>LTR</Direction>
+                                                                  </Style>
+                                                                </Textbox>
+                                                                <Textbox Name="ProdID">
+                                                                  <KeepTogether>true</KeepTogether>
+                                                                  <Paragraphs>
+                                                                    <Paragraph>
+                                                                      <TextRuns>
+                                                                        <TextRun>
+                                                                          <Value>=Fields!ProdID.Value</Value>
+                                                                          <Style>
+                                                                            <FontStyle>Normal</FontStyle>
+                                                                            <FontSize>8pt</FontSize>
+                                                                            <FontWeight>Normal</FontWeight>
+                                                                            <TextDecoration>None</TextDecoration>
+                                                                            <Color>#000000</Color>
+                                                                          </Style>
+                                                                        </TextRun>
+                                                                      </TextRuns>
+                                                                      <Style>
+                                                                        <FontFamily />
+                                                                        <TextAlign>Right</TextAlign>
+                                                                        <LineHeight>13pt</LineHeight>
+                                                                      </Style>
+                                                                    </Paragraph>
+                                                                  </Paragraphs>
+                                                                  <Left>0.1145in</Left>
+                                                                  <Height>0.1458in</Height>
+                                                                  <Width>0.5416in</Width>
+                                                                  <ZIndex>2</ZIndex>
+                                                                  <Style>
+                                                                    <Border>
+                                                                      <Color>#000000</Color>
+                                                                    </Border>
+                                                                    <Direction>LTR</Direction>
+                                                                  </Style>
+                                                                </Textbox>
+                                                              </ReportItems>
+                                                              <KeepTogether>true</KeepTogether>
+                                                              <Style />
+                                                            </Rectangle>
+                                                          </CellContents>
+                                                        </TablixCell>
+                                                      </TablixCells>
+                                                    </TablixRow>
+                                                  </TablixRows>
+                                                </TablixBody>
+                                                <TablixColumnHierarchy>
+                                                  <TablixMembers>
+                                                    <TablixMember />
+                                                  </TablixMembers>
+                                                </TablixColumnHierarchy>
+                                                <TablixRowHierarchy>
+                                                  <TablixMembers>
+                                                    <TablixMember>
+                                                      <Group Name="Detail_Details_Group">
+                                                        <DataElementName>Item</DataElementName>
+                                                      </Group>
+                                                      <DataElementName>Item_Collection</DataElementName>
+                                                      <DataElementOutput>Output</DataElementOutput>
+                                                      <KeepTogether>true</KeepTogether>
+                                                    </TablixMember>
+                                                  </TablixMembers>
+                                                </TablixRowHierarchy>
+                                                <Height>0.1458in</Height>
+                                                <Width>2.5in</Width>
+                                                <Style>
+                                                  <BackgroundColor>#ffffff</BackgroundColor>
+                                                  <FontFamily />
+                                                </Style>
+                                              </Tablix>
+                                              <Rectangle Name="GroupFooter0">
+                                                <ReportItems>
+                                                  <Textbox Name="Text25">
+                                                    <KeepTogether>true</KeepTogether>
+                                                    <Paragraphs>
+                                                      <Paragraph>
+                                                        <TextRuns>
+                                                          <TextRun>
+                                                            <Value>=Sum(Fields!QuanRcvd.Value)</Value>
+                                                            <Style>
+                                                              <FontStyle>Normal</FontStyle>
+                                                              <FontSize>8pt</FontSize>
+                                                              <FontWeight>Normal</FontWeight>
+                                                              <TextDecoration>None</TextDecoration>
+                                                              <Color>#000000</Color>
+                                                            </Style>
+                                                          </TextRun>
+                                                        </TextRuns>
+                                                        <Style>
+                                                          <FontFamily />
+                                                          <TextAlign>Right</TextAlign>
+                                                          <LineHeight>13pt</LineHeight>
+                                                        </Style>
+                                                      </Paragraph>
+                                                    </Paragraphs>
+                                                    <Left>0.9062in</Left>
+                                                    <Height>0.1458in</Height>
+                                                    <Width>0.5625in</Width>
+                                                    <Style>
+                                                      <Border>
+                                                        <Color>#000000</Color>
+                                                      </Border>
+                                                      <Direction>LTR</Direction>
+                                                    </Style>
+                                                  </Textbox>
+                                                  <Textbox Name="Text26">
+                                                    <KeepTogether>true</KeepTogether>
+                                                    <Paragraphs>
+                                                      <Paragraph>
+                                                        <TextRuns>
+                                                          <TextRun>
+                                                            <Value>=Sum(Fields!PickWeight.Value)</Value>
+                                                            <Style>
+                                                              <FontStyle>Normal</FontStyle>
+                                                              <FontSize>8pt</FontSize>
+                                                              <FontWeight>Normal</FontWeight>
+                                                              <Format>N2</Format>
+                                                              <TextDecoration>None</TextDecoration>
+                                                              <Color>#000000</Color>
+                                                            </Style>
+                                                          </TextRun>
+                                                        </TextRuns>
+                                                        <Style>
+                                                          <FontFamily />
+                                                          <TextAlign>Right</TextAlign>
+                                                          <LineHeight>13pt</LineHeight>
+                                                        </Style>
+                                                      </Paragraph>
+                                                    </Paragraphs>
+                                                    <Left>1.7187in</Left>
+                                                    <Height>0.1458in</Height>
+                                                    <Width>0.625in</Width>
+                                                    <ZIndex>1</ZIndex>
+                                                    <Style>
+                                                      <Border>
+                                                        <Color>#000000</Color>
+                                                      </Border>
+                                                      <Direction>LTR</Direction>
+                                                    </Style>
+                                                  </Textbox>
+                                                  <Line Name="Line28">
+                                                    <Left>0.9062in</Left>
+                                                    <Height>0in</Height>
+                                                    <Width>0.5625in</Width>
+                                                    <ZIndex>2</ZIndex>
+                                                    <Style>
+                                                      <Border>
+                                                        <Color>#000080</Color>
+                                                        <Style>Solid</Style>
+                                                      </Border>
+                                                      <FontFamily />
+                                                    </Style>
+                                                  </Line>
+                                                  <Line Name="Line42">
+                                                    <Left>1.7812in</Left>
+                                                    <Height>0in</Height>
+                                                    <Width>0.5625in</Width>
+                                                    <ZIndex>3</ZIndex>
+                                                    <Style>
+                                                      <Border>
+                                                        <Color>#000080</Color>
+                                                        <Style>Solid</Style>
+                                                      </Border>
+                                                      <FontFamily />
+                                                    </Style>
+                                                  </Line>
+                                                </ReportItems>
+                                                <DataElementOutput>ContentsOnly</DataElementOutput>
+                                                <Top>0.1458in</Top>
+                                                <Height>0.2083in</Height>
+                                                <Width>2.5in</Width>
+                                                <ZIndex>1</ZIndex>
+                                                <Style>
+                                                  <BackgroundColor>#ffffff</BackgroundColor>
+                                                  <FontFamily />
+                                                </Style>
+                                              </Rectangle>
+                                            </ReportItems>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Style />
+                                          </Rectangle>
+                                        </CellContents>
+                                      </TablixCell>
+                                    </TablixCells>
+                                  </TablixRow>
+                                </TablixRows>
+                              </TablixBody>
+                              <TablixColumnHierarchy>
+                                <TablixMembers>
+                                  <TablixMember />
+                                </TablixMembers>
+                              </TablixColumnHierarchy>
+                              <TablixRowHierarchy>
+                                <TablixMembers>
+                                  <TablixMember>
+                                    <Group Name="GroupLevel1_Grouping">
+                                      <GroupExpressions>
+                                        <GroupExpression>=Fields!ProdID.Value</GroupExpression>
+                                      </GroupExpressions>
+                                    </Group>
+                                    <SortExpressions>
+                                      <SortExpression>
+                                        <Value>=Fields!ProdID.Value</Value>
+                                      </SortExpression>
+                                    </SortExpressions>
+                                    <DataElementOutput>Output</DataElementOutput>
+                                    <KeepTogether>true</KeepTogether>
+                                  </TablixMember>
+                                </TablixMembers>
+                              </TablixRowHierarchy>
+                              <Top>0.7291in</Top>
+                              <Height>0.3541in</Height>
+                              <Width>2.5in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Tablix>
+                            <Rectangle Name="GroupFooter1">
+                              <ReportItems>
+                                <Textbox Name="Text53">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=Sum(Fields!QuanRcvd.Value)</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Right</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.0208in</Top>
+                                  <Left>0.9062in</Left>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.5625in</Width>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Text54">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=Sum(Fields!PickWeight.Value)</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <Format>N2</Format>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Right</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.0208in</Top>
+                                  <Left>1.7187in</Left>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.625in</Width>
+                                  <ZIndex>1</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                                <Line Name="Line55">
+                                  <Top>0.0208in</Top>
+                                  <Left>0.9062in</Left>
+                                  <Height>0in</Height>
+                                  <Width>0.5625in</Width>
+                                  <ZIndex>2</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <FontFamily />
+                                  </Style>
+                                </Line>
+                                <Line Name="Line56">
+                                  <Top>0.0208in</Top>
+                                  <Left>1.7812in</Left>
+                                  <Height>0in</Height>
+                                  <Width>0.5625in</Width>
+                                  <ZIndex>3</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <FontFamily />
+                                  </Style>
+                                </Line>
+                                <Line Name="Line57">
+                                  <Left>0.9062in</Left>
+                                  <Height>0in</Height>
+                                  <Width>0.5625in</Width>
+                                  <ZIndex>4</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <FontFamily />
+                                  </Style>
+                                </Line>
+                                <Line Name="Line58">
+                                  <Left>1.7812in</Left>
+                                  <Height>0in</Height>
+                                  <Width>0.5625in</Width>
+                                  <ZIndex>5</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <FontFamily />
+                                  </Style>
+                                </Line>
+                                <Textbox Name="Label41">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Order Totals:</Value>
+                                          <Style>
+                                            <FontStyle>Normal</FontStyle>
+                                            <FontSize>8pt</FontSize>
+                                            <FontWeight>Normal</FontWeight>
+                                            <TextDecoration>None</TextDecoration>
+                                            <Color>#000000</Color>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <FontFamily />
+                                        <TextAlign>Right</TextAlign>
+                                        <LineHeight>13pt</LineHeight>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.0208in</Top>
+                                  <Height>0.1458in</Height>
+                                  <Width>0.8645in</Width>
+                                  <ZIndex>6</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Color>#000000</Color>
+                                    </Border>
+                                    <Direction>LTR</Direction>
+                                  </Style>
+                                </Textbox>
+                              </ReportItems>
+                              <DataElementOutput>ContentsOnly</DataElementOutput>
+                              <Top>1.0832in</Top>
+                              <Height>0.1666in</Height>
+                              <Width>2.5in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style>
+                                <BackgroundColor>#ffffff</BackgroundColor>
+                                <FontFamily />
+                              </Style>
+                            </Rectangle>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <Style />
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="GroupLevel0_Grouping">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!OrderID.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!OrderID.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <DataElementOutput>Output</DataElementOutput>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <Height>1.2498in</Height>
+            <Width>6.8853in</Width>
+            <Style />
+          </Tablix>
+        </ReportItems>
+        <Height>1.2498in</Height>
+        <Style />
+      </Body>
+      <Width>6.8853in</Width>
+      <Page>
+        <PageHeader>
+          <Height>1.2916in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="QuanRcvd_Label">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Quan</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.0312in</Top>
+              <Left>1.125in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.3854in</Width>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="PickWeight_Label">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Net Weight</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.0312in</Top>
+              <Left>1.5416in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.8125in</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Line Name="Line20">
+              <Top>1.0312in</Top>
+              <Height>0in</Height>
+              <Width>7.5in</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                  <Style>Solid</Style>
+                </Border>
+              </Style>
+            </Line>
+            <Line Name="Line21">
+              <Top>1.2395in</Top>
+              <Height>0in</Height>
+              <Width>7.5in</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                  <Style>Solid</Style>
+                </Border>
+              </Style>
+            </Line>
+            <Textbox Name="Label16">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Bowman &amp; Landes Turkeys, Inc.</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontSize>16pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                    <LineHeight>22pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Height>0.2916in</Height>
+              <Width>7.4687in</Width>
+              <ZIndex>4</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <BackgroundColor>#ffffff</BackgroundColor>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Text17">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Now()</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                        <Format>G</Format>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                    <LineHeight>14pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.7916in</Top>
+              <Height>0.1666in</Height>
+              <Width>1.625in</Width>
+              <ZIndex>5</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label24">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Shipping List</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontSize>12pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                    <LineHeight>17pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.7916in</Top>
+              <Left>2.427in</Left>
+              <Height>0.1979in</Height>
+              <Width>2.6145in</Width>
+              <ZIndex>6</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <BackgroundColor>#ffffff</BackgroundColor>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="OrderID_Label">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Invoice No:</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontSize>11pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>16pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.3333in</Top>
+              <Height>0.2083in</Height>
+              <Width>0.8333in</Width>
+              <ZIndex>7</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="OrderID">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Fields!OrderID.Value</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontSize>11pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>16pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.3333in</Top>
+              <Left>0.8333in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.4895in</Width>
+              <ZIndex>8</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label43">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Prod ID</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.0312in</Top>
+              <Left>0.2083in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.5416in</Width>
+              <ZIndex>9</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label44">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Quan</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.0312in</Top>
+              <Left>3.7083in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.3854in</Width>
+              <ZIndex>10</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label45">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Net Weight</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.0312in</Top>
+              <Left>4.125in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.8125in</Width>
+              <ZIndex>11</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label46">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Prod ID</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.0312in</Top>
+              <Left>2.7604in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.5416in</Width>
+              <ZIndex>12</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label50">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Quan</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.0312in</Top>
+              <Left>6.2708in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.3854in</Width>
+              <ZIndex>13</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label51">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Net Weight</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.0312in</Top>
+              <Left>6.6875in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.8125in</Width>
+              <ZIndex>14</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label52">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Prod ID</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.0312in</Top>
+              <Left>5.3333in</Left>
+              <Height>0.2083in</Height>
+              <Width>0.5416in</Width>
+              <ZIndex>15</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Text18">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Page " &amp; Globals.PageNumber &amp; " of " &amp; Globals.TotalPages</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>14pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.7916in</Top>
+              <Left>5.5104in</Left>
+              <Height>0.1666in</Height>
+              <Width>1.9583in</Width>
+              <ZIndex>16</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label63">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>6490 Ross Rd. New Carlisle, Oh 45344</Value>
+                      <Style>
+                        <FontStyle>Italic</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Bold</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.3333in</Top>
+              <Left>2.4166in</Left>
+              <Height>0.2083in</Height>
+              <Width>2.625in</Width>
+              <ZIndex>17</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label64">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>(937) 845-9466</Value>
+                      <Style>
+                        <FontStyle>Italic</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontWeight>Bold</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                    <LineHeight>15pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.5416in</Top>
+              <Left>2.4062in</Left>
+              <Height>0.2083in</Height>
+              <Width>2.6354in</Width>
+              <ZIndex>18</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Label67">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>PO Number:</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontSize>11pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                    <LineHeight>16pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.5416in</Top>
+              <Height>0.2083in</Height>
+              <Width>0.9166in</Width>
+              <ZIndex>19</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Textbox Name="Text68">
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Fields!PO_Number.Value</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontSize>11pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                    <LineHeight>16pt</LineHeight>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.5416in</Top>
+              <Left>0.9166in</Left>
+              <Height>0.2083in</Height>
+              <Width>1.25in</Width>
+              <ZIndex>20</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+                <Direction>LTR</Direction>
+              </Style>
+            </Textbox>
+            <Image Name="Auto_Logo0">
+              <Source>Embedded</Source>
+              <Value>Auto_Logo0</Value>
+              <Sizing>Fit</Sizing>
+              <Top>0.0208in</Top>
+              <Left>6.6666in</Left>
+              <Height>0.75in</Height>
+              <Width>0.75in</Width>
+              <ZIndex>21</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#000000</Color>
+                </Border>
+              </Style>
+            </Image>
+          </ReportItems>
+          <Style>
+            <BackgroundColor>#ffffff</BackgroundColor>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>0in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <Style>
+            <BackgroundColor>#ffffff</BackgroundColor>
+          </Style>
+        </PageFooter>
+        <Columns>3</Columns>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="OrderID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <Prompt>frmOrders_FillAll</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>1</NumberOfColumns>
+      <NumberOfRows>1</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>OrderID</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <EmbeddedImages>
+    <EmbeddedImage Name="Auto_Logo0">
+      <MIMEType>image/bmp</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>b1295592-0af2-4301-b7f2-c42865d296b9</rd:ReportID>
+</Report>

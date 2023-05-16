@@ -6,13 +6,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:BlOrders2023.Models"
     xmlns:vm="using:BlOrders2023.ViewModels"
+    xmlns:converters="using:BlOrders2023.ViewModels.Converters"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     mc:Ignorable="d">
     <Page.Resources>
-        <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
-        <vm:DateFormatConverter x:Key="DateFormatConverter"/>
-        <vm:TimeFormatConverter x:Key="TimeFormatConverter"/>
-        <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
+        <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+        <converters:DateFormatConverter x:Key="DateFormatConverter"/>
+        <converters:TimeFormatConverter x:Key="TimeFormatConverter"/>
+        <converters:WeightFormatConverter x:Key="WeightFormatConverter"/>
 
         <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
             <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
@@ -155,8 +156,14 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel x:Name="MemoStack" Orientation="Vertical" RelativePanel.Below="DateStack" RelativePanel.AlignRightWithPanel="True"
-                                VerticalAlignment="Bottom">
+                    <StackPanel x:Name="MemoStack" 
+                                Orientation="Vertical" 
+                                RelativePanel.Below="DateStack" 
+                                RelativePanel.RightOf="CustomerInfo" 
+                                RelativePanel.AlignRightWithPanel="True"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Right"
+                                MaxWidth="1000">
                         <TextBlock Text="Memo:"/>
                         <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
                             <TextBlock Text="{x:Bind ViewModel.Order.Memo, Mode=OneWay}"
@@ -191,10 +198,10 @@
                                Padding="0,0,0,0"/>
                         <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                               Visibility="{x:Bind converters:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
                         <TextBlock Text="{x:Bind ViewModel.Customer.Fax, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                               Visibility="{x:Bind converters:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
                         <!--<TextBlock>
                             <TextBlock.Inlines>
                                 <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
@@ -249,11 +256,12 @@
                                    SelectionMode="Extended"
                                    EditorSelectionBehavior="MoveLast"
                                    AllowDeleting="True"
-                                   RecordDeleted="OrderedItems_RecordDeleted">
+                                   RecordDeleted="OrderedItems_RecordDeleted"
+                                   ColumnWidthMode="AutoWithLastColumnFill">
 
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
-                            <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
+                            <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="SizeToCells"/>
                             <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline" ColumnWidthMode="SizeToCells" IsReadOnly="False"/>
                             <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" IsReadOnly="True" DisplayNumberFormat="N2"/>
                             <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True" DisplayNumberFormat="N0"/>

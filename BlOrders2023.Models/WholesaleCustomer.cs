@@ -19,6 +19,10 @@ namespace BlOrders2023.Models
         public string? City { get; set; }
         public string? State { get; set; }
         public string? ZipCode { get; set; }
+        public string? BillingAddress { get; set; }
+        public string? BillingCity { get; set; }
+        public string? BillingState { get; set; }
+        public string? BillingZipCode { get; set; }
         public string Phone { get; set; }
         public string? PhoneExt { get; set; }
         public string? Phone_2 { get; set; }
@@ -70,6 +74,11 @@ namespace BlOrders2023.Models
         public string CityStateZip()
         {
             return String.Format("{0} {1}  {2}", City, State, ZipCode);
+        }
+
+        public string BillingCityStateZip()
+        {
+            return String.Format("{0} {1}  {2}", BillingCity, BillingState, BillingZipCode);
         }
 
         public string PhoneString()

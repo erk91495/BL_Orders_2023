@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:vm="using:BlOrders2023.ViewModels"
+    xmlns:vm="using:BlOrders2023.ViewModels.Converters"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -56,8 +56,8 @@
                     </SplitButton.Flyout>
                 </SplitButton>
             </AppBarElementContainer>
-            </CommandBar>
-        
+        </CommandBar>
+
         <SplitView x:Name="ListSplitView"
                    DisplayMode="Inline"
                    IsPaneOpen="{x:Bind vm:Converters.IsNotNull(ViewModel.SelectedOrder), Mode=OneWay}"
@@ -162,14 +162,15 @@
                                    AutoGenerateColumns="False"
                                    IsReadOnly="True"
                                    RelativePanel.Below="CustomerStack"
-                                   ColumnWidthMode="Auto"
+                                   ColumnWidthMode="AutoLastColumnFill"
                                    AllowResizingColumns="True"
-                                   RelativePanel.AlignHorizontalCenterWithPanel="True">
+                                   RelativePanel.AlignRightWithPanel="True"
+                                   RelativePanel.AlignLeftWithPanel="True">
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product  #" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" TextWrapping="WrapWholeWords"/>
                             <sf:GridTextColumn HeaderText="Ordered" MappingName="Quantity"/>
-                            <sf:GridTextColumn HeaderText="Received" MappingName="QuanRcvd"/>
+                            <sf:GridTextColumn HeaderText="Received" MappingName="QuantityReceived"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
 
@@ -198,7 +199,7 @@
                         </Grid.ColumnDefinitions>
                         <Button x:Uid="Order_BtnFillOrder" Content="Fill Order" Grid.Column="0" HorizontalAlignment="Center" Click="FillOrder_Click"/>
                         <Button x:Uid="Order_BtnEditOrder" Content="Edit Order" Grid.Column="1" HorizontalAlignment="Center" Click="EditOrder_Click"/>
-                        <Button x:Uid="Order_BtnFillOrder" Content="Test Button" Grid.Column="2" HorizontalAlignment="Center"/>
+                        <Button x:Uid="Order_BtnPrintInvoice" Content="Print Invoice" Grid.Column="2" HorizontalAlignment="Center" Click="PrintInvoice_Click"/>
                     </Grid>
 
 
@@ -248,7 +249,7 @@
                     RelativePanel.AlignLeftWithPanel="True"
                     RelativePanel.Below="OrdersGrid"/>
                 </RelativePanel>
-                
+
             </SplitView.Content>
 
         </SplitView>

@@ -109,7 +109,7 @@ public class OrdersPageViewModel : ObservableRecipient
             MasterOrdersList.Clear();
         });
 
-        IOrderTable table = App.BLDatabase.Orders;
+        IOrderTable table = App.GetNewDatabase().Orders;
         var orders = await Task.Run(table.GetAsync);
 
         await dispatcherQueue.EnqueueAsync(() =>
@@ -133,7 +133,7 @@ public class OrdersPageViewModel : ObservableRecipient
             IsLoading = true;
             Orders.Clear();
 
-            IOrderTable table = App.BLDatabase.Orders;
+            IOrderTable table = App.GetNewDatabase().Orders;
 
             var results = await Task.Run(table.GetAsync);
             await dispatcherQueue.EnqueueAsync(() =>
@@ -149,7 +149,7 @@ public class OrdersPageViewModel : ObservableRecipient
 
     public async void SaveOrder(Order order)
     {
-        IOrderTable table = App.BLDatabase.Orders;
+        IOrderTable table = App.GetNewDatabase().Orders;
         var res = await Task.Run(() => table.UpsertAsync(order));
     }
     #endregion Queries

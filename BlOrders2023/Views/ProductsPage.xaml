@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
-    xmlns:vm="using:BlOrders2023.ViewModels"
+    xmlns:vm="using:BlOrders2023.ViewModels.Converters"
     xmlns:models="using:BlOrders2023.Models" 
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 

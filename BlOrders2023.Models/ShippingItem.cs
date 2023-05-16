@@ -32,5 +32,39 @@ namespace BlOrders2023.Models
         [ForeignKey("ProductID")]
         public virtual Product Product { get; set; }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is ShippingItem item &&
+                   SD_ID == item.SD_ID &&
+                   OrderID == item.OrderID &&
+                   EqualityComparer<Order>.Default.Equals(order, item.order) &&
+                   ProductID == item.ProductID &&
+                   QuanRcvd == item.QuanRcvd &&
+                   PickWeight == item.PickWeight &&
+                   Consolidated == item.Consolidated &&
+                   Scanline == item.Scanline &&
+                   PackageSerialNumber == item.PackageSerialNumber &&
+                   ScanDate == item.ScanDate &&
+                   PackDate == item.PackDate &&
+                   EqualityComparer<Product>.Default.Equals(Product, item.Product);
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(SD_ID);
+            hash.Add(OrderID);
+            hash.Add(order);
+            hash.Add(ProductID);
+            hash.Add(QuanRcvd);
+            hash.Add(PickWeight);
+            hash.Add(Consolidated);
+            hash.Add(Scanline);
+            hash.Add(PackageSerialNumber);
+            hash.Add(ScanDate);
+            hash.Add(PackDate);
+            hash.Add(Product);
+            return hash.ToHashCode();
+        }
     }
 }
