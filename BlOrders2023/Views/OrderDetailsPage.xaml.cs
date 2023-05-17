@@ -16,18 +16,15 @@ using BlOrders2023.Helpers;
 using Syncfusion.UI.Xaml.DataGrid;
 using System.Reflection;
 using Syncfusion.UI.Xaml.Data;
-using WinUIEx;
-using Windows.UI.Core;
 using Syncfusion.UI.Xaml.Grids.ScrollAxis;
-using System.Windows.Forms.VisualStyles;
-using System.Collections.ObjectModel;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using BlOrders2023.Contracts.Services;
 using BlOrders2023.Services;
 using Microsoft.UI.Dispatching;
 using System.Media;
 using CommunityToolkit.Common;
 using Windows.Media.Devices;
+using Microsoft.EntityFrameworkCore;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,6 +46,7 @@ namespace BlOrders2023.Views
         #region Fields
         private OrderItem? _doomed;
         private bool _deleteOrder;
+        private bool _canLeave = false;
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         #endregion Fields
 
@@ -80,19 +78,57 @@ namespace BlOrders2023.Views
         /// Handles NavigatingFrom events
         /// </summary>
         /// <param name="e">the navigation envent args</param>
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {              
-            if (_deleteOrder)
+        protected override async void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if (!_canLeave)
             {
-                 ViewModel.DeleteCurrentOrder();
+                e.Cancel = true;
+                if (_deleteOrder)
+                {
+                    ViewModel.DeleteCurrentOrder();
+                }
+                else
+                {
+
+                    //change focus to write any changes
+                    OrderNumber.Focus(FocusState.Programmatic);
+                    try
+                    {
+                        ViewModel.SaveCurrentOrder();
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+
+                        ContentDialog dialog = new ContentDialog()
+                        {
+                            Title = "Concurrency Exception",
+                            Content = $"The order was modified by another user. \r\n {ex.Message} \r\n" +
+                            $"Would you like to Overwrite with your changes or discard the changes?",
+                            XamlRoot = this.XamlRoot,
+                            PrimaryButtonText = "Overwrite",
+                            SecondaryButtonText = "Discard"
+                        };
+                        var result = await dialog.ShowAsync();
+                        if (result == ContentDialogResult.Primary)
+                        {
+                            ViewModel.SaveCurrentOrder(true);
+                            _canLeave = true;
+                            var current = Window.Current;
+                            Frame.Navigate(e.SourcePageType, e.Parameter);
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+
+                    }
+
+                }
             }
-            else 
-            { 
-                //change focus to write any changes
-                OrderNumber.Focus(FocusState.Programmatic);
-                ViewModel.SaveCurrentOrder();
-                
-            }
+
             base.OnNavigatingFrom(e);
         }
 

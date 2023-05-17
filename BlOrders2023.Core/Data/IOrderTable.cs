@@ -14,7 +14,7 @@ namespace BlOrders2023.Core.Data
         IEnumerable<Order> Get(int orderID);
         Task<Order> UpsertAsync(Order order);
         Task DeleteAsync(Order order);
-        Order Upsert(Order order);
+        Order Upsert(Order order, bool overwrite=false);
         void Delete(Order order);
     }
 }

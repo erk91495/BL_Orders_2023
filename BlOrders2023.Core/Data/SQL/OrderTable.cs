@@ -92,7 +92,7 @@ namespace BlOrders2023.Core.Data.SQL
                 .Where(order => order.OrderID == orderID)
                 .ToListAsync();
 
-        public Order Upsert(Order order)
+        public Order Upsert(Order order, bool overwrite = false)
         {
             var exists =  _db.Orders.FirstOrDefault(_order => order.OrderID == _order.OrderID);
             if (exists == null)
@@ -104,12 +104,15 @@ namespace BlOrders2023.Core.Data.SQL
             }
             else
             {
-                //TODO: Concurrency checks maybe here
+                if (overwrite)
+                {
+                    
+                }
                 _db.Entry(exists).CurrentValues.SetValues(order);
                 _db.Entry(exists).Entity.Items = order.Items;
                 _db.Entry(exists).State = EntityState.Modified;
             }
-            int res =  _db.SaveChanges();
+            int res =  _db.SaveChanges(overwrite);
             return order;
         }
 

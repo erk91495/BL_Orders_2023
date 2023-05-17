@@ -386,10 +386,10 @@ namespace BlOrders2023.ViewModels
         /// <summary>
         /// Saves changes to the current Order
         /// </summary>
-        public void SaveCurrentOrder()
+        public void SaveCurrentOrder(bool overwrite=false)
         {
             _order.Items = Items.ToList();
-            _db.Orders.Upsert(_order);
+            _db.Orders.Upsert(_order, overwrite);
         }
 
         /// <summary>
