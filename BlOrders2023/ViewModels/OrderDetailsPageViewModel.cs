@@ -7,6 +7,7 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -14,7 +15,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BlOrders2023.ViewModels
 {
-    public class OrderDetailsPageViewModel : ObservableRecipient, INavigationAware
+    public class OrderDetailsPageViewModel : ViewModelBase, INavigationAware
     {
         #region Properties
         ///// <summary>
@@ -121,6 +122,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 _order.TakenBy = value;
+                ValidateTakenBy();
                 OnPropertyChanged();
             }
         }
@@ -407,6 +409,18 @@ namespace BlOrders2023.ViewModels
              _db.Orders.Delete(_order);
         }
         #endregion Queries
+
+        #region Validators
+        private void ValidateTakenBy()
+        {
+            var errors = new List<string>();
+            if ( TakenBy.Length <= 0)
+            {
+                errors.Add("Taken By cannot be empty!");
+            }
+            SetErrors(nameof(TakenBy), errors);
+        }
+        #endregion Validators
         #endregion Methods
     }
 }

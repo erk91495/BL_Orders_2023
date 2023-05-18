@@ -10,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:BlOrders2023.ViewModels.Converters"
     xmlns:enums="using:BlOrders2023.Models.Enums"
+    xmlns:helpers="using:BlOrders2023.Helpers"
     xmlns:models="using:BlOrders2023.Models"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
@@ -23,6 +24,10 @@
         <vm:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
         <vm:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
         <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+        <DataTemplate x:Key="ValidationTemplate" x:DataType="x:String">
+            <TextBlock Foreground="{ThemeResource SystemFillColorCriticalBrush}" Text="{x:Bind}" />
+        </DataTemplate>
+        
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -111,7 +116,11 @@
                             Grid.Row="0"
                             Grid.Column="0">
                     <TextBlock Text="Taken By:"/>
-                    <TextBox Text="{x:Bind ViewModel.TakenBy, Mode=TwoWay}"/>
+                    <TextBox Text="{x:Bind ViewModel.TakenBy, Mode=TwoWay}"
+                             helpers:Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                             helpers:Validation.ValidationPropertyName="TakenBy"
+                             helpers:Validation.ValidationProvider="{x:Bind ViewModel}"
+                             Style="{StaticResource ValidatingTextBoxStyle}"/>
                 </StackPanel>
 
                 <RadioButtons Header="Shipping Type"
