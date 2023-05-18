@@ -27,7 +27,14 @@ namespace BlOrders2023.Core.Data.SQL
         {
             _db = db;
         }
+        #endregion Constructors
 
+        #region Methods
+        /// <summary>
+        /// Deletes the given Order from the database
+        /// </summary>
+        /// <param name="order">The Order to be deleted</param>
+        /// <returns></returns>
         public void Delete(Order order)
         {
             var match = _db.Orders.FirstOrDefault(_order => _order.OrderID == order.OrderID);
@@ -37,9 +44,7 @@ namespace BlOrders2023.Core.Data.SQL
             }
             _db.SaveChanges();
         }
-        #endregion Constructors
 
-        #region Methods
         /// <summary>
         /// Deletes the given Order from the database
         /// </summary>
@@ -78,7 +83,7 @@ namespace BlOrders2023.Core.Data.SQL
                 //.Include(order => order.Customer)
                 //.Include(Order => Order.ShippingItems)
                 .ToListAsync();
-        
+
         /// <summary>
         /// Gets the Order matching the given OrderID
         /// </summary>
@@ -92,27 +97,24 @@ namespace BlOrders2023.Core.Data.SQL
                 .Where(order => order.OrderID == orderID)
                 .ToListAsync();
 
+        /// <summary>
+        /// Updates the database context with the given Order. If the Order does not exist it will be added to the db
+        /// </summary>
+        /// <param name="order"></param> The order to be updated
+        /// <param name="overwrite"></param> setting this flag to true clobbers the current database values
+        /// <returns></returns>
         public Order Upsert(Order order, bool overwrite = false)
         {
-            var exists =  _db.Orders.FirstOrDefault(_order => order.OrderID == _order.OrderID);
-            if (exists == null)
+            _db.Update(order);
+            //TODO: may be a cleaner way of doing this but it works for now
+            if (overwrite)
             {
-                //var entry = _db.Entry(order);
-                //var entry = _db.Orders.Entry(order);
-                //Not Usiing Add(order) because it trys to add all related data
-                _db.Orders.Entry(order).State = EntityState.Added;
-            }
-            else
-            {
-                if (overwrite)
+                foreach (var entry in _db.ChangeTracker.Entries().Where(e => e.State != EntityState.Unchanged))
                 {
-                    
+                    entry.OriginalValues.SetValues(entry.GetDatabaseValues());
                 }
-                _db.Entry(exists).CurrentValues.SetValues(order);
-                _db.Entry(exists).Entity.Items = order.Items;
-                _db.Entry(exists).State = EntityState.Modified;
             }
-            int res =  _db.SaveChanges(overwrite);
+            int res = _db.SaveChanges();
             return order;
         }
 
@@ -124,8 +126,8 @@ namespace BlOrders2023.Core.Data.SQL
         public async Task<Order> UpsertAsync(Order order)
         {
             _db.Update(order);
-            
-            int res =  await _db.SaveChangesAsync();
+
+            int res = await _db.SaveChangesAsync();
             return order;
         }
         #endregion Methods

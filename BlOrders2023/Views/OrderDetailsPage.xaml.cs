@@ -86,6 +86,10 @@ namespace BlOrders2023.Views
                 if (_deleteOrder)
                 {
                     ViewModel.DeleteCurrentOrder();
+                    _canLeave = true;
+                    e.Cancel = false;
+                    var current = Window.Current;
+                    Frame.Navigate(e.SourcePageType, e.Parameter);
                 }
                 else
                 {
@@ -95,40 +99,56 @@ namespace BlOrders2023.Views
                     try
                     {
                         ViewModel.SaveCurrentOrder();
+                        _canLeave = true;
+                        e.Cancel = false;
+                        var current = Window.Current;
+                        Frame.Navigate(e.SourcePageType, e.Parameter);
                     }
                     catch (DbUpdateConcurrencyException ex)
                     {
 
                         ContentDialog dialog = new ContentDialog()
                         {
-                            Title = "Concurrency Exception",
-                            Content = $"The order was modified by another user. \r\n {ex.Message} \r\n" +
-                            $"Would you like to Overwrite with your changes or discard the changes?",
+                            Title = "Database Write Conflict",
+                            Content = $"The order was modified before your changes could be saved.\r\n" +
+                            $"What would you like to do with your changes?",
                             XamlRoot = this.XamlRoot,
                             PrimaryButtonText = "Overwrite",
-                            SecondaryButtonText = "Discard"
+                            SecondaryButtonText = "Discard",
+                            CloseButtonText = "Cancel",
                         };
                         var result = await dialog.ShowAsync();
                         if (result == ContentDialogResult.Primary)
                         {
                             ViewModel.SaveCurrentOrder(true);
                             _canLeave = true;
+                            e.Cancel = false;
                             var current = Window.Current;
                             Frame.Navigate(e.SourcePageType, e.Parameter);
                         }
-                        else
+                        else if(result == ContentDialogResult.Secondary)
                         {
-
+                            _canLeave = true;
+                            e.Cancel = false;
+                            var current = Window.Current;
+                            Frame.Navigate(e.SourcePageType, e.Parameter);
                         }
                     }
                     catch (DbUpdateException ex)
                     {
-
+                        ContentDialog dialog = new ContentDialog()
+                        {
+                            Title = "DbUpdateException",
+                            Content = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                            $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
+                            XamlRoot = this.XamlRoot,
+                            PrimaryButtonText = "Ok",
+                        };
+                        await dialog.ShowAsync();
                     }
 
                 }
             }
-
             base.OnNavigatingFrom(e);
         }
 

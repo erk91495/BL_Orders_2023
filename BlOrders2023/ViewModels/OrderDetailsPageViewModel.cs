@@ -236,13 +236,24 @@ namespace BlOrders2023.ViewModels
         public void OnNavigatedTo(object parameter)
         {
             var order = parameter as Order;
+            
             if (order != null)
             {
-                _order = order;
+                var entityOrder = _db.Orders.Get(order.OrderID).FirstOrDefault();
+                if (entityOrder != null)
+                {
+                    //We want to track changes so get it from the db context
+                    _order = entityOrder;
+                }
+                else
+                {
+                    //Must be a new Order
+                    _order = order;
+                }
                 _items = new ObservableCollection<OrderItem>(_order.Items);
-                _currentOrderIndex = _order.Customer.orders.IndexOf(_order);
-                HasNextOrder = _currentOrderIndex > 0;
-                HasPreviousOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
+                _currentOrderIndex = _order.Customer.orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
+                HasNextOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
+                HasPreviousOrder = _currentOrderIndex > 0;
                 OnAllPropertiesChanged();
             }
         }
@@ -282,7 +293,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasNextOrder)
             {
-                return _order.Customer.orders[_currentOrderIndex - 1].OrderID;
+                return _order.Customer.orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex + 1].OrderID;
             }
             return null;
         }
@@ -290,7 +301,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasNextOrder)
             {
-                return _order.Customer.orders[_currentOrderIndex - 1];
+                return _order.Customer.orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex + 1];
             }
             return null;
         }
@@ -299,7 +310,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasPreviousOrder)
             {
-                return _order.Customer.orders[_currentOrderIndex + 1].OrderID;
+                return _order.Customer.orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex - 1].OrderID;
             }
             return null;
         }
@@ -308,25 +319,9 @@ namespace BlOrders2023.ViewModels
         {
             if (HasPreviousOrder)
             {
-                return _order.Customer.orders[_currentOrderIndex + 1];
+                return _order.Customer.orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex - 1];
             }
             return null;
-        }
-        public void ChangeOrder(int? orderID)
-        {
-            if (orderID != null)
-            {
-                //_suggestedProducts = new();
-                //LoadProducts();
-
-                var changeOrder = _db.Orders.Get((int)orderID).First();
-                _order = changeOrder;
-                _items = new ObservableCollection<OrderItem>(_order.Items);
-                _currentOrderIndex = _order.Customer.orders.IndexOf(_order);
-                HasNextOrder = _currentOrderIndex > 0;
-                HasPreviousOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
-                OnAllPropertiesChanged();
-            }
         }
 
         #region Queries

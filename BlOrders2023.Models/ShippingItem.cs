@@ -17,7 +17,7 @@ namespace BlOrders2023.Models
         public int OrderID { get; set; }
         [ForeignKey("OrderID")]
         [JsonIgnore]
-        public virtual Order order { get; set; } = new Order();
+        public virtual Order order { get; set; } = null!;
         [Column("ProdID")]
         public int ProductID { get; set; }
         public int? QuanRcvd { get; set; }
@@ -30,7 +30,7 @@ namespace BlOrders2023.Models
         [Column("PackageDate")]
         public DateTime? PackDate { get; set; }
         [ForeignKey("ProductID")]
-        public virtual Product Product { get; set; }
+        public virtual Product Product { get; set; } = null!;
 
         public override bool Equals(object? obj)
         {

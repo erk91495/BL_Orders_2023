@@ -34,7 +34,7 @@ public class Order
 
     [ForeignKey("CustID")]
     [JsonIgnore]
-    public virtual WholesaleCustomer Customer { get; set; } = new WholesaleCustomer();
+    public virtual WholesaleCustomer Customer { get; set; } = null!;
     public string TakenBy { get; set; } = ""; 
     public DateTime PickupDate { get; set; }
     public DateTime PickupTime { get; set; }

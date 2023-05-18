@@ -18,7 +18,7 @@ namespace BlOrders2023.Models
         public int OrderID { get; set; }
         [ForeignKey("OrderID")]
         [JsonIgnore]
-        public virtual Order Order { get; set; } = new Order();
+        public virtual Order Order { get; set; } = null!;
         public int ProductID { get; set; }
         [ConcurrencyCheck]
         public float Quantity { get; set; }
@@ -30,7 +30,7 @@ namespace BlOrders2023.Models
         public int OrdDtl_ID { get; set; }
         public DateTime? ProdEntryDate { get; set; }
         [ForeignKey("ProductID")]
-        public virtual Product Product { get; set; }
+        public virtual Product Product { get; set; } = null!;
 
         public int QuantityReceived { get => CalcQuantityReceived(); }
         #endregion Properties
