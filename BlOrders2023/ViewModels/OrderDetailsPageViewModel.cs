@@ -11,11 +11,12 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BlOrders2023.ViewModels
 {
-    public class OrderDetailsPageViewModel : ViewModelBase, INavigationAware
+    public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     {
         #region Properties
         ///// <summary>
@@ -36,7 +37,7 @@ namespace BlOrders2023.ViewModels
             get => _items;
             set
             {
-                if(_items != value) 
+                if (_items != value)
                 {
                     value.CollectionChanged += LineItems_Changed;
                 }
@@ -108,7 +109,7 @@ namespace BlOrders2023.ViewModels
 
         public ShippingType Shipping
         {
-            get => _order.Shipping; 
+            get => _order.Shipping;
             set
             {
                 _order.Shipping = value;
@@ -116,14 +117,19 @@ namespace BlOrders2023.ViewModels
             }
         }
 
+        [Required]
+        [MinLength(1)]
         public string TakenBy
         {
             get => _order.TakenBy;
             set
             {
                 _order.TakenBy = value;
-                ValidateTakenBy();
+                ValidateProperty(value, nameof(TakenBy));
+                OnPropertyChanged(nameof(GetErrorMessage));
+                OnPropertyChanged(nameof(VisibleIfError));
                 OnPropertyChanged();
+
             }
         }
 
@@ -216,7 +222,7 @@ namespace BlOrders2023.ViewModels
             _currentOrderIndex = 0;
             _order = new();
             _suggestedProducts = new();
-            _items= new();
+            _items = new();
             LoadProducts();
         }
         #endregion Constructors
@@ -238,7 +244,7 @@ namespace BlOrders2023.ViewModels
         public void OnNavigatedTo(object parameter)
         {
             var order = parameter as Order;
-            
+
             if (order != null)
             {
                 var entityOrder = _db.Orders.Get(order.OrderID).FirstOrDefault();
@@ -262,13 +268,13 @@ namespace BlOrders2023.ViewModels
 
         public void OnNavigatedFrom()
         {
-            
+
         }
 
         public void addItem(Product p)
         {
             var tracked = _db.Products.Get(p.ProductID, false).First();
-            OrderItem item = new(tracked,_order);
+            OrderItem item = new(tracked, _order);
             Items.Add(item);
         }
 
@@ -338,7 +344,7 @@ namespace BlOrders2023.ViewModels
             });
 
             IProductsTable table = _db.Products;
-            var products = await Task.Run(() => table.GetAsync((int?)null,false));
+            var products = await Task.Run(() => table.GetAsync((int?)null, false));
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
@@ -383,7 +389,7 @@ namespace BlOrders2023.ViewModels
         /// <summary>
         /// Saves changes to the current Order
         /// </summary>
-        public void SaveCurrentOrder(bool overwrite=false)
+        public void SaveCurrentOrder(bool overwrite = false)
         {
             _order.Items = Items.ToList();
             _db.Orders.Upsert(_order, overwrite);
@@ -406,21 +412,51 @@ namespace BlOrders2023.ViewModels
 
         internal void DeleteCurrentOrder()
         {
-             _db.Orders.Delete(_order);
+            _db.Orders.Delete(_order);
         }
         #endregion Queries
 
         #region Validators
-        private void ValidateTakenBy()
+        public string GetErrorMessage(string name)
         {
-            var errors = new List<string>();
-            if ( TakenBy.Length <= 0)
+            var errors = GetErrors(name);
+            var firstError = errors.FirstOrDefault();
+            if (firstError != null)
             {
-                errors.Add("Taken By cannot be empty!");
+                return firstError.ErrorMessage ?? "Error";
             }
-            SetErrors(nameof(TakenBy), errors);
+            return string.Empty;
+            #endregion Validators
+            #endregion Methods
         }
-        #endregion Validators
-        #endregion Methods
+
+        public bool HasError(string name)
+        {
+            if (HasErrors)
+            {
+                var errors = GetErrors(name);
+                if(errors.IsNullOrEmpty())
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Visibility VisibleIfError(string name)
+        {
+            if (HasError(name))
+            {
+                return Visibility.Visible;
+            }
+            else 
+            { 
+                return Visibility.Collapsed; 
+            }
+        }
     }
 }

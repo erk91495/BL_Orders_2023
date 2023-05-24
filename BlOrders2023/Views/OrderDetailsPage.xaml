@@ -9,12 +9,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:BlOrders2023.ViewModels.Converters"
-    xmlns:enums="using:BlOrders2023.Models.Enums"
-    xmlns:helpers="using:BlOrders2023.Helpers"
     xmlns:models="using:BlOrders2023.Models"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
     xmlns:calendar="using:Syncfusion.UI.Xaml.Calendar"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -23,11 +22,7 @@
         <vm:FloatToDoubleConverter x:Key="FloatToDoubleConverter"/>
         <vm:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
         <vm:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
-        <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
-        <DataTemplate x:Key="ValidationTemplate" x:DataType="x:String">
-            <TextBlock Foreground="{ThemeResource SystemFillColorCriticalBrush}" Text="{x:Bind}" />
-        </DataTemplate>
-        
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -116,11 +111,12 @@
                             Grid.Row="0"
                             Grid.Column="0">
                     <TextBlock Text="Taken By:"/>
-                    <TextBox Text="{x:Bind ViewModel.TakenBy, Mode=TwoWay}"
-                             helpers:Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                             helpers:Validation.ValidationPropertyName="TakenBy"
-                             helpers:Validation.ValidationProvider="{x:Bind ViewModel}"
-                             Style="{StaticResource ValidatingTextBoxStyle}"/>
+                    <TextBox Text="{x:Bind ViewModel.TakenBy, Mode=TwoWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('TakenBy'), Mode=OneWay}" 
+                               Visibility="{x:Bind ViewModel.VisibleIfError('TakenBy'), Mode=OneWay}" 
+                               Style="{StaticResource ValidatorTextBlockStyle}"/>
+
+
                 </StackPanel>
 
                 <RadioButtons Header="Shipping Type"
