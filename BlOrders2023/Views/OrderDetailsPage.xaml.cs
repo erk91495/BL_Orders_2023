@@ -151,6 +151,7 @@ namespace BlOrders2023.Views
         {
             //change focus to write any changes
             OrderNumber.Focus(FocusState.Programmatic);
+            ViewModel.ValidateProperties();
             if (!ViewModel.HasErrors)
             {
                 try

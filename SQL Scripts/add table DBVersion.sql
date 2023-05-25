@@ -11,7 +11,7 @@ GO
 CREATE TABLE [dbo].[tbl_DBVersion](
 	[Version_Major] [int] NOT NULL,
 	[Version_Minor] [int] NOT NULL,
-	[Version_Revision] [int] NOT NULL
+	[Version_Build] [int] NOT NULL
 ) ON [PRIMARY]
 GO
 

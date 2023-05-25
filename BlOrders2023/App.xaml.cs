@@ -53,7 +53,7 @@ public partial class App : Application
     public App()
     {
         Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBaFt+QHFqUUdrXVNbdV5dVGpAd0N3RGlcdlR1fUUmHVdTRHRcQllhTX5bdEZjXH9deHM=;Mgo+DSMBPh8sVXJ1S0d+WFBPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9gSXpRckVrW3xedXRQQWc=;ORg4AjUWIQA/Gnt2VFhhQlVFfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5XdEFjUX1dcHFVQWVb;MTgyMjYyN0AzMjMxMmUzMTJlMzQzMVdnYlQ1Z1VXd0FCaG4zRmNDVWpNN1lwVy9NcndYamRmNm9jS2pLMHV5alk9;MTgyMjYyOEAzMjMxMmUzMTJlMzQzMW1xVDNQVVBjeVFhOFlLUWZSZ0M1c2FWVDlpWHk4d2c2SnB6VUUvQzQ0T3c9;NRAiBiAaIQQuGjN/V0d+XU9Ad1RDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS31TckdnWXdcc3RQR2hYVg==;MTgyMjYzMEAzMjMxMmUzMTJlMzQzMWxPUk5raFp4ZlFwMTdmcUlMWHFlTTUxdGZrUWRqUjhoZ3hBMWYrUTRwUDA9;MTgyMjYzMUAzMjMxMmUzMTJlMzQzMVVnWkQ1RnBFa2haR0pRZHNDSkFMRy9IakErNFV1SmFZVmpCOGdXRjg1cjQ9;Mgo+DSMBMAY9C3t2VFhhQlVFfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5XdEFjUX1dcHFWQGhb;MTgyMjYzM0AzMjMxMmUzMTJlMzQzMU55MDcrTXpmaUxZVjVTRHdEaVE4NlJXcW9Oa292YWZZaUtvUkVUTjhOUkk9;MTgyMjYzNEAzMjMxMmUzMTJlMzQzMUdDcFJ2dVhVV3ZSVGdPdzlnU2kranZxMW9OblU2N2VXNkZ6cjNUVlVRMjQ9;MTgyMjYzNUAzMjMxMmUzMTJlMzQzMWxPUk5raFp4ZlFwMTdmcUlMWHFlTTUxdGZrUWRqUjhoZ3hBMWYrUTRwUDA9");
-        //QuestPDF.Settings.License = LicenseType.Community;
+        QuestPDF.Settings.License = LicenseType.Community;
         InitializeComponent();
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
@@ -119,11 +119,11 @@ public partial class App : Application
         dbOptions.UseLazyLoadingProxies()
                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                .EnableSensitiveDataLogging()
-               .UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
+               .UseSqlServer(connectionString: "Data Source=BL4; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
         App.DBOptions = dbOptions.Options;
 
 
-        var SupportedDBVersion = new Version(0, 0, 0);
+        var SupportedDBVersion = new Version(0, 0, 1);
         var DBVersion = App.GetNewDatabase().dbVersion;
         if (!SupportedDBVersion.Equals(DBVersion))
         {

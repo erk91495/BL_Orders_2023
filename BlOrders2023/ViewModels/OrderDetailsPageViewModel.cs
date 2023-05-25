@@ -7,6 +7,7 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using ServiceStack;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -108,12 +109,15 @@ namespace BlOrders2023.ViewModels
             }
         }
 
+        [Required]
+        [CustomValidation(typeof(OrderDetailsPageViewModel), nameof(ValidateShipping), ErrorMessage = "A Shipping Type Must Be Selected")]
         public ShippingType Shipping
         {
             get => _order.Shipping;
             set
             {
                 _order.Shipping = value;
+                CheckValidation(value, nameof(Shipping));
                 OnPropertyChanged();
             }
         }
@@ -467,6 +471,12 @@ namespace BlOrders2023.ViewModels
             OnPropertyChanged(nameof(VisibleIfError));
         }
 
+        public static ValidationResult ValidateShipping(ShippingType shipping)
+        {
+            var isValid = shipping != ShippingType.NoType;
+            return isValid ? ValidationResult.Success : new ValidationResult(null);
+        }
+
         internal void ReloadOrder()
         {
             _order = _db.Orders.Reload(_order);
@@ -475,6 +485,11 @@ namespace BlOrders2023.ViewModels
             HasNextOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
             HasPreviousOrder = _currentOrderIndex > 0;
             OnAllPropertiesChanged();
+        }
+
+        public void ValidateProperties()
+        {
+            ValidateAllProperties();
         }
     }
 }

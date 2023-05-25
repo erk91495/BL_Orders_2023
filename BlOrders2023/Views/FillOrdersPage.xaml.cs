@@ -65,7 +65,7 @@ public sealed partial class FillOrdersPage : Page
                     var product = App.GetNewDatabase().Products.Get(item.ProductID, false).FirstOrDefault();
                     if (product != null)
                     {
-                        //item.Product = product;
+                        item.Product = product;
                         await AddShippingItemAsync(item);
                     }
                     else
