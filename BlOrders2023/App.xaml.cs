@@ -17,6 +17,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using QuestPDF.Infrastructure;
+using Windows.ApplicationModel;
+
 namespace BlOrders2023;
 
 // To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
@@ -121,12 +123,14 @@ public partial class App : Application
         App.DBOptions = dbOptions.Options;
 
 
-        var SupportedDBVersion = new Version(0, 0, 1);
+        var SupportedDBVersion = new Version(0, 0, 0);
         var DBVersion = App.GetNewDatabase().dbVersion;
         if (!SupportedDBVersion.Equals(DBVersion))
-        { 
+        {
+            var version = Windows.ApplicationModel.Package.Current.Id.Version;
+            var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
             var message = "The application version you are running is not compatible with the current Database version\r\n" +
-                "Please install the latest version of the application\r\n" +
+                $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n"+
                 $"Supported Database Version: {SupportedDBVersion}. Actual Database Version: {DBVersion}";
             System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
             Exit();
