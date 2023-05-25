@@ -136,12 +136,14 @@ namespace BlOrders2023.ViewModels
             }
         }
 
+        [CustomValidation(typeof(OrderDetailsPageViewModel), nameof(ValidatePickupDate),ErrorMessage = "Pickup\\Delivery Date cannot be in the past")]
         public DateTime PickupDate
         {
             get => _order.PickupDate;
             set
             {
                 _order.PickupDate = value;
+                CheckValidation(value, nameof(PickupDate));
                 OnPropertyChanged();
             }
         }
@@ -474,6 +476,12 @@ namespace BlOrders2023.ViewModels
         public static ValidationResult ValidateShipping(ShippingType shipping)
         {
             var isValid = shipping != ShippingType.NoType;
+            return isValid ? ValidationResult.Success : new ValidationResult(null);
+        }
+
+        public static ValidationResult ValidatePickupDate(DateTime dateTime)
+        {
+            var isValid = dateTime.CompareTo(DateTime.Today) >= 0;
             return isValid ? ValidationResult.Success : new ValidationResult(null);
         }
 

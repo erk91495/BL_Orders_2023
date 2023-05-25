@@ -150,11 +150,14 @@
                             Grid.Row="0"
                             Grid.Column="2">
                     <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Pickup/Delivery Date:"/>
-                    <calendar:SfCalendarDatePicker x:Name="PickupDate"
-                                                   AllowNull="False"
-                                                   SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
-                                                   TabIndex="3"/>
+                        <TextBlock Text="Pickup/Delivery Date:"/>
+                        <calendar:SfCalendarDatePicker x:Name="PickupDate"
+                                                       AllowNull="False"
+                                                       SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
+                                                       TabIndex="3"/>
+                        <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('PickupDate'), Mode=OneWay}" 
+                               Visibility="{x:Bind ViewModel.VisibleIfError('PickupDate'), Mode=OneWay}" 
+                               Style="{StaticResource ValidatorTextBlockStyle}"/>
                     </StackPanel>
                     <StackPanel x:Name="PickupTimeStack"  Orientation="Vertical">
                         <TextBlock Text="Pickup Time:"/>
