@@ -26,26 +26,24 @@ using Windows.Foundation.Collections;
 
 namespace BlOrders2023.UserControls
 {
-    public sealed partial class CustomerDataInputControl : ContentControl
+    public sealed partial class CustomerDataInputControl : ContentDialog
     {
         #region Properties
         CustomerDataInputControlViewModel ViewModel { get; }
         #endregion Properties
 
         #region Fields
-        private ContentDialog _dialog;
+        //private ContentDialog _dialog;
         #endregion Fields
 
         #region Constructors
         public CustomerDataInputControl(XamlRoot root)
         {
             this.InitializeComponent();
-            _dialog = new();
-            _dialog.XamlRoot = root;
-            _dialog.Content = this;
-            _dialog.PrimaryButtonText = "Create Customer";
-            _dialog.CloseButtonText = "Cancel";
-            _dialog.FlowDirection = FlowDirection.LeftToRight;
+            this.XamlRoot = root;
+            this.PrimaryButtonText = "Create Customer";
+            this.CloseButtonText = "Cancel";
+            this.FlowDirection = FlowDirection.LeftToRight;
 
             ViewModel = App.GetService<CustomerDataInputControlViewModel>();
             Binding b = new()
@@ -55,7 +53,7 @@ namespace BlOrders2023.UserControls
                 Converter = new BoolNegationConverter(),
                 Mode = BindingMode.OneWay
             };
-            _dialog.SetBinding(ContentDialog.IsPrimaryButtonEnabledProperty, b);
+            //this.SetBinding(ContentDialog.IsPrimaryButtonEnabledProperty, b);
 
             var states = Enum.GetNames(typeof(States)).Cast<string>();
             StateComboBox.ItemsSource = states.ToList();
@@ -64,12 +62,6 @@ namespace BlOrders2023.UserControls
         #endregion Constructors
 
         #region Methods
-
-        public async Task<int?> ShowAsync()
-        {
-            await _dialog.ShowAsync();
-            return 0;
-        }
         #endregion Methods
 
         private void Button_Click(object sender, RoutedEventArgs e)
