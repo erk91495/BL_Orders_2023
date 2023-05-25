@@ -228,7 +228,6 @@ namespace BlOrders2023.Views
         /// </summary>
         /// <param name="sender">the data grid</param>
         /// <param name="e">event args</param>
-        /// <exception cref="NotImplementedException"></exception>
         private void Records_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //If we added an item then enqueue a task to focus it and edit the quantity 
@@ -256,7 +255,7 @@ namespace BlOrders2023.Views
         /// <param name="args">the text changed event args</param>
         private void ProductEntryBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput || args.Reason == AutoSuggestionBoxTextChangeReason.ProgrammaticChange)
             {
                 ViewModel.QueryProducts(sender.Text);
             }
@@ -381,15 +380,6 @@ namespace BlOrders2023.Views
         {
             _ = await TrySaveCurrentOrderAsync();
         }
-        /// <summary>
-        /// Called when the ordereditems are loaded 
-        /// </summary>
-        /// <param name="sender">the sfdatagrid</param>
-        /// <param name="e">the event args</param>
-        private void OrderedItems_Loaded(object sender, RoutedEventArgs e)
-        {
-            OrderedItems.View.Records.CollectionChanged += Records_CollectionChanged;
-        }
 
         /// <summary>
         /// Called when a key is pressed down on the datagrid
@@ -433,9 +423,7 @@ namespace BlOrders2023.Views
         /// and also ChosenSuggestion, which is only non-null when a user selects an item in the errorMessages.</param>
         private async void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-
-            ProductEntryBox.IsSuggestionListOpen = false;
-            Product productToAdd;
+            Product? productToAdd = null;
             if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
             {
 
@@ -445,12 +433,11 @@ namespace BlOrders2023.Views
                 {
                     ViewModel.addItem(productToAdd);
                 }
-                ProductEntryBox.IsSuggestionListOpen = false;
-
             }
             else if (!string.IsNullOrEmpty(args.QueryText))
             {
                 var id = sender.Text.Trim();
+                ProductEntryBox.Text = null;
                 bool result = Int32.TryParse(id, out int prodcode);
                 var toAdd = ViewModel.SuggestedProducts.FirstOrDefault(prod => prod.ProductID == prodcode);
 
@@ -480,8 +467,10 @@ namespace BlOrders2023.Views
                     SystemSounds.Exclamation.Play();
                     await dialog.ShowAsync();
                 }
-                ProductEntryBox.Text = null;
-                ProductEntryBox.IsSuggestionListOpen = false;
+            }
+            if(productToAdd != null)
+            {
+                DispatcherQueue.TryEnqueue(FocusEditLastCell);
             }
         }
 
@@ -511,5 +500,15 @@ namespace BlOrders2023.Views
         #endregion Event Handlers
 
         #endregion Methods
+
+        private void ProductEntryBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ProductEntryBox.IsSuggestionListOpen = true;
+        }
+
+        private void ProductEntryBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ProductEntryBox.IsSuggestionListOpen = false;
+        }
     }
 }

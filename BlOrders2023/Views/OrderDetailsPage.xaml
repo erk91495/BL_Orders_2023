@@ -143,7 +143,7 @@
                             Grid.Row="1"
                             Grid.Column="0">
                     <TextBlock Text="PO #"/>
-                    <TextBox Text="{x:Bind ViewModel.PO_Number, Mode=TwoWay}" IsTabStop="False"/>
+                    <TextBox Text="{x:Bind ViewModel.PO_Number, Mode=TwoWay}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical"
@@ -193,8 +193,7 @@
                          AcceptsReturn="True"
                          Background="Transparent"
                          BorderBrush="{ThemeResource TextFillColorPrimary}"
-                         BorderThickness="1"
-                         IsTabStop="False"/>
+                         BorderThickness="1"/>
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" 
                             HorizontalAlignment="Right"
@@ -230,7 +229,6 @@
                        SelectionUnit="Row"
                        EditorSelectionBehavior="MoveLast"
                        PointerMoved="OrderedItems_PointerMoved"
-                       Loaded="OrderedItems_Loaded"
                        IsTabStop="False">
             
             <sf:SfDataGrid.Columns>
@@ -260,7 +258,9 @@
                         PlaceholderText="Add a product..."
                         Padding="0,0,0,10"
                         QuerySubmitted="ProductEntryBox_QuerySubmitted"
-                        TabIndex="5">
+                        TabIndex="5"
+                        GotFocus="ProductEntryBox_GotFocus"
+                        LostFocus="ProductEntryBox_LostFocus">
             <AutoSuggestBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Product">
                     <StackPanel Orientation="Horizontal"
