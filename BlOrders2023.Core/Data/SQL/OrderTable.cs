@@ -97,6 +97,13 @@ namespace BlOrders2023.Core.Data.SQL
                 .Where(order => order.OrderID == orderID)
                 .ToListAsync();
 
+        public Order Reload(Order order)
+        {
+            _db.ChangeTracker.Clear();
+            return _db.Orders.Where(o => o.OrderID == order.OrderID).First();
+            
+        }
+
         /// <summary>
         /// Updates the database context with the given Order. If the Order does not exist it will be added to the db
         /// </summary>

@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Windows.Foundation.Metadata;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BlOrders2023.ViewModels
@@ -117,17 +118,15 @@ namespace BlOrders2023.ViewModels
             }
         }
 
-        [Required]
-        [MinLength(1)]
+        [Required(ErrorMessage = "Taken By is required")]
         public string TakenBy
         {
             get => _order.TakenBy;
             set
             {
-                _order.TakenBy = value;
-                ValidateProperty(value, nameof(TakenBy));
-                OnPropertyChanged(nameof(GetErrorMessage));
-                OnPropertyChanged(nameof(VisibleIfError));
+                _order.TakenBy = value.Trim();
+                CheckValidation(value, nameof(TakenBy));
+
                 OnPropertyChanged();
 
             }
@@ -163,6 +162,7 @@ namespace BlOrders2023.ViewModels
             }
         }
 
+        [MaxLength(255)]
         public string? Memo
         {
             get => _order.Memo;
@@ -174,8 +174,9 @@ namespace BlOrders2023.ViewModels
                 }
                 else
                 {
-                    _order.Memo = value;
+                    _order.Memo = value?.Trim();
                 }
+                CheckValidation(Memo, nameof(Memo));
                 OnPropertyChanged();
             }
         }
@@ -457,6 +458,23 @@ namespace BlOrders2023.ViewModels
             { 
                 return Visibility.Collapsed; 
             }
+        }
+
+        private void CheckValidation(object? value, string propertyName = null)
+        {
+            ValidateProperty(value, propertyName);
+            OnPropertyChanged(nameof(GetErrorMessage));
+            OnPropertyChanged(nameof(VisibleIfError));
+        }
+
+        internal void ReloadOrder()
+        {
+            _order = _db.Orders.Reload(_order);
+            _items = new ObservableCollection<OrderItem>(_order.Items);
+            _currentOrderIndex = _order.Customer.orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
+            HasNextOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
+            HasPreviousOrder = _currentOrderIndex > 0;
+            OnAllPropertiesChanged();
         }
     }
 }

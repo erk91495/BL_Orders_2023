@@ -56,9 +56,9 @@
             <TextBlock Text="{x:Bind ViewModel.Customer.Fax, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
                                Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
-            <TextBlock>
+            <TextBlock IsTabStop="False">
                 <TextBlock.Inlines>
-                    <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">
+                    <Hyperlink Click="EmailButton_Click" IsTabStop="False">
                         <Hyperlink.Inlines>
                             <Span>
                                 <Run Text="{x:Bind ViewModel.Customer.Email, Mode=OneWay}"></Run>
@@ -67,15 +67,20 @@
                     </Hyperlink>
                 </TextBlock.Inlines>
             </TextBlock>
-
+    
         </StackPanel>
         <StackPanel x:Name="OrderInfo"
                     Orientation="Vertical"
                     RelativePanel.AlignRightWithPanel="True">
-            <Button HorizontalAlignment="Right">
+            <Button HorizontalAlignment="Right" IsTabStop="False">
                 <SymbolIcon Symbol="More"/>
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem Text="Save Order" Icon="Save" Click="SaveOrderFlyoutItem_Click" KeyboardAcceleratorPlacementMode="Auto">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
                         <MenuFlyoutItem Text="Delete Order" Icon="Delete" Click="DeleteOrderFlyoutItem_Click"/>
                     </MenuFlyout>
                 </Button.Flyout>
@@ -111,7 +116,7 @@
                             Grid.Row="0"
                             Grid.Column="0">
                     <TextBlock Text="Taken By:"/>
-                    <TextBox Text="{x:Bind ViewModel.TakenBy, Mode=TwoWay}"/>
+                    <TextBox Text="{x:Bind ViewModel.TakenBy, Mode=TwoWay}" TabIndex="1"/>
                     <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('TakenBy'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('TakenBy'), Mode=OneWay}" 
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
@@ -122,22 +127,23 @@
                 <RadioButtons Header="Shipping Type"
                               Grid.Row="0"
                               Grid.Column="1"
-                              SelectionChanged="RadioButtons_SelectionChanged">
+                              SelectionChanged="RadioButtons_SelectionChanged"
+                              IsTabStop="False"
+                              TabIndex="2"
+                              >
                     <RadioButton x:Name="RadioPickUp"  
                                  Content="Pickup"
-                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Pickup}"
-                                 />
+                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Pickup}"/>
                     <RadioButton x:Name="RadioDelivery" 
                                  Content="Delivery"
-                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Shipping}"
-                                 />
+                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Shipping}"/>
                 </RadioButtons>
 
                 <StackPanel Orientation="Vertical"
                             Grid.Row="1"
                             Grid.Column="0">
                     <TextBlock Text="PO #"/>
-                    <TextBox Text="{x:Bind ViewModel.PO_Number, Mode=TwoWay}"/>
+                    <TextBox Text="{x:Bind ViewModel.PO_Number, Mode=TwoWay}" IsTabStop="False"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical"
@@ -147,13 +153,15 @@
                     <TextBlock Text="Pickup/Delivery Date:"/>
                     <calendar:SfCalendarDatePicker x:Name="PickupDate"
                                                    AllowNull="False"
-                                                   SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
+                                                   SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
+                                                   TabIndex="3"/>
                     </StackPanel>
                     <StackPanel x:Name="PickupTimeStack"  Orientation="Vertical">
                         <TextBlock Text="Pickup Time:"/>
                         <editors:SfTimePicker x:Name="PickupTime"
                                               AllowNull="False"
-                                              SelectedTime="{x:Bind ViewModel.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
+                                              SelectedTime="{x:Bind ViewModel.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
+                                              TabIndex="4"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -164,7 +172,8 @@
                                VerticalAlignment="Center"
                                Padding="0,0,10,0"/>
                     <CheckBox IsChecked="{x:Bind ViewModel.Frozen, Mode=TwoWay}" 
-                              VerticalAlignment="Center"/>
+                              VerticalAlignment="Center"
+                              IsTabStop="False"/>
                 </StackPanel>
             </Grid>
             <StackPanel x:Name="MemoStack"
@@ -173,6 +182,9 @@
                         RelativePanel.RightOf="OrderInputGrid"
                         Padding="40,0,0,0">
                 <TextBlock Text="Memo:"/>
+                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Memo'), Mode=OneWay}" 
+                               Visibility="{x:Bind ViewModel.VisibleIfError('Memo'), Mode=OneWay}" 
+                               Style="{StaticResource ValidatorTextBlockStyle}"/>
                 <TextBox Text="{x:Bind ViewModel.Memo, Mode=TwoWay, TargetNullValue={x:Null}}"
                          TextWrapping="Wrap"
                          Margin="5,5,5,5"
@@ -181,16 +193,17 @@
                          AcceptsReturn="True"
                          Background="Transparent"
                          BorderBrush="{ThemeResource TextFillColorPrimary}"
-                         BorderThickness="1"/>
+                         BorderThickness="1"
+                         IsTabStop="False"/>
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" 
                             HorizontalAlignment="Right"
                             Padding="0,10,0,0">
-                        <TextBlock Text="Memo Weight: " VerticalAlignment="Center"/>
+                        <!--<TextBlock Text="Memo Weight: " VerticalAlignment="Center"/>
                         <NumberBox x:Name="MemoWeight"
                                Value="{x:Bind ViewModel.Memo_Weight, Mode=TwoWay, Converter={StaticResource FloatToDoubleConverter}}"
                                Background="Transparent"
-                               />
+                               />-->
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Right">
@@ -198,6 +211,7 @@
                         <NumberBox x:Name="MemoTotal"
                                    Value="{x:Bind ViewModel.Memo_Totl, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
                                    Background="Transparent"
+                                   IsTabStop="False"    
                                    />
                     </StackPanel>
                 </StackPanel>
@@ -216,7 +230,8 @@
                        SelectionUnit="Row"
                        EditorSelectionBehavior="MoveLast"
                        PointerMoved="OrderedItems_PointerMoved"
-                       Loaded="OrderedItems_Loaded">
+                       Loaded="OrderedItems_Loaded"
+                       IsTabStop="False">
             
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
@@ -224,11 +239,11 @@
                 <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" AllowEditing="False"/>
                 <sf:GridNumericColumn HeaderText="Customer Price" MappingName="ActualCustPrice" AllowEditing="True"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity" AllowEditing="True"/>
-                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuantityReceived"/>
+                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuantityReceived" />
                 <sf:GridUnboundColumn HeaderText="" UseBindingValue="False" MappingName="UnboundColumn" ColumnWidthMode="SizeToCells">
                     <sf:GridUnboundColumn.CellTemplate>
                         <DataTemplate>
-                            <Button x:Name="DeleteRow" Click="DeleteRow_Click">
+                            <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">
                                 <SymbolIcon Symbol="Delete"/>
                             </Button>
                         </DataTemplate>
@@ -244,7 +259,8 @@
                         TextChanged="ProductEntryBox_TextChanged"
                         PlaceholderText="Add a product..."
                         Padding="0,0,0,10"
-                        QuerySubmitted="ProductEntryBox_QuerySubmitted">
+                        QuerySubmitted="ProductEntryBox_QuerySubmitted"
+                        TabIndex="5">
             <AutoSuggestBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Product">
                     <StackPanel Orientation="Horizontal"
@@ -267,13 +283,15 @@
                           Grid.Column="0" 
                           HorizontalAlignment="Left" 
                           IsEnabled="{x:Bind ViewModel.HasPreviousOrder, Mode=OneWay}" 
-                          Click="OrderNavigation_Click"/>
+                          Click="OrderNavigation_Click"
+                          IsTabStop="False"/>
             <AppBarButton x:Name="NextOrderButton" 
                           Icon="Forward" 
                           Grid.Column="1" 
                           HorizontalAlignment="Right" 
                           IsEnabled="{x:Bind ViewModel.HasNextOrder, Mode=OneWay}"
-                          Click="OrderNavigation_Click"/>
+                          Click="OrderNavigation_Click"
+                          IsTabStop="False"/>
         </Grid>
     </RelativePanel>
 </Page>

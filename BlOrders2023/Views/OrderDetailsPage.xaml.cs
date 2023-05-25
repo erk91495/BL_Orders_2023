@@ -5,14 +5,10 @@ using BlOrders2023.Models;
 using BlOrders2023.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using BlOrders2023.Models.Enums;
 using Windows.Globalization.NumberFormatting;
-using BlOrders2023.Helpers;
 using Syncfusion.UI.Xaml.DataGrid;
 using System.Reflection;
 using Syncfusion.UI.Xaml.Data;
@@ -21,10 +17,9 @@ using BlOrders2023.Contracts.Services;
 using BlOrders2023.Services;
 using Microsoft.UI.Dispatching;
 using System.Media;
-using CommunityToolkit.Common;
-using Windows.Media.Devices;
 using Microsoft.EntityFrameworkCore;
-using Windows.UI.Core;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -88,65 +83,18 @@ namespace BlOrders2023.Views
                     ViewModel.DeleteCurrentOrder();
                     _canLeave = true;
                     e.Cancel = false;
-                    var current = Window.Current;
                     Frame.Navigate(e.SourcePageType, e.Parameter);
                 }
                 else
                 {
-
-                    //change focus to write any changes
-                    OrderNumber.Focus(FocusState.Programmatic);
-                    try
+                    if(await TrySaveCurrentOrderAsync())
                     {
-                        ViewModel.SaveCurrentOrder();
+                        //Order was saved or discarded 
                         _canLeave = true;
                         e.Cancel = false;
                         var current = Window.Current;
                         Frame.Navigate(e.SourcePageType, e.Parameter);
                     }
-                    catch (DbUpdateConcurrencyException ex)
-                    {
-
-                        ContentDialog dialog = new ContentDialog()
-                        {
-                            Title = "Database Write Conflict",
-                            Content = $"The order was modified before your changes could be saved.\r\n" +
-                            $"What would you like to do with your changes?",
-                            XamlRoot = this.XamlRoot,
-                            PrimaryButtonText = "Overwrite",
-                            SecondaryButtonText = "Discard",
-                            CloseButtonText = "Cancel",
-                        };
-                        var result = await dialog.ShowAsync();
-                        if (result == ContentDialogResult.Primary)
-                        {
-                            ViewModel.SaveCurrentOrder(true);
-                            _canLeave = true;
-                            e.Cancel = false;
-                            var current = Window.Current;
-                            Frame.Navigate(e.SourcePageType, e.Parameter);
-                        }
-                        else if(result == ContentDialogResult.Secondary)
-                        {
-                            _canLeave = true;
-                            e.Cancel = false;
-                            var current = Window.Current;
-                            Frame.Navigate(e.SourcePageType, e.Parameter);
-                        }
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        ContentDialog dialog = new ContentDialog()
-                        {
-                            Title = "DbUpdateException",
-                            Content = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
-                            $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
-                            XamlRoot = this.XamlRoot,
-                            PrimaryButtonText = "Ok",
-                        };
-                        await dialog.ShowAsync();
-                    }
-
                 }
             }
             base.OnNavigatingFrom(e);
@@ -196,7 +144,80 @@ namespace BlOrders2023.Views
             formatter.IntegerDigits = 1;
             formatter.FractionDigits = 2;
             formatter.NumberRounder = rounder;
-            MemoWeight.NumberFormatter = formatter;
+            //MemoWeight.NumberFormatter = formatter;
+        }
+
+        public async Task<bool> TrySaveCurrentOrderAsync()
+        {
+            //change focus to write any changes
+            OrderNumber.Focus(FocusState.Programmatic);
+            if (!ViewModel.HasErrors)
+            {
+                try
+                {
+                    ViewModel.SaveCurrentOrder();
+                    return true;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+
+                    ContentDialog dialog = new ContentDialog()
+                    {
+                        Title = "Database Write Conflict",
+                        Content = $"The order was modified before your changes could be saved.\r\n" +
+                        $"What would you like to do with your changes?",
+                        XamlRoot = this.XamlRoot,
+                        PrimaryButtonText = "Overwrite",
+                        SecondaryButtonText = "Discard",
+                        CloseButtonText = "Cancel",
+                    };
+                    var result = await dialog.ShowAsync();
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        ViewModel.SaveCurrentOrder(true);
+                        return true;
+                    }
+                    else if (result == ContentDialogResult.Secondary)
+                    {
+                        ViewModel.ReloadOrder();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (DbUpdateException ex)
+                {
+                    ContentDialog dialog = new ContentDialog()
+                    {
+                        Title = "DbUpdateException",
+                        Content = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                        $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
+                        XamlRoot = this.XamlRoot,
+                        PrimaryButtonText = "Ok",
+                    };
+                    await dialog.ShowAsync();
+                    return false;
+                }
+            }
+            else
+            {
+                List<string?> errorMessages = new();
+                foreach (var error in ViewModel.GetErrors())
+                {
+                    errorMessages.Add(error.ErrorMessage);
+                }
+                ContentDialog dialog = new ContentDialog()
+                {
+                    Title = "Input Error",
+                    Content = $"Please correct all errors before saving the order\r\n\r\nErrors:\r\n{String.Join("\r\n", errorMessages)}",
+                    XamlRoot = this.XamlRoot,
+                    PrimaryButtonText = "Ok",
+                };
+                await dialog.ShowAsync();
+                return false;
+            }
         }
 
         #region Events Handlers
@@ -355,6 +376,10 @@ namespace BlOrders2023.Views
             }
         }
 
+        private async void SaveOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            _ = await TrySaveCurrentOrderAsync();
+        }
         /// <summary>
         /// Called when the ordereditems are loaded 
         /// </summary>
@@ -388,6 +413,12 @@ namespace BlOrders2023.Views
                     //OrderedItems.MoveCurrentCell(rowColumnIndex);
                 }
             }
+            if(e.Key == Windows.System.VirtualKey.Tab)
+            {
+                OrderedItems.ClearSelections(false);    
+                DispatcherQueue.TryEnqueue(() => { ProductEntryBox.Focus(FocusState.Programmatic); });
+                //var res = ProductEntryBox.Focus(FocusState.Programmatic);
+            }
         }
 
         /// <summary>
@@ -398,7 +429,7 @@ namespace BlOrders2023.Views
         /// </summary>
         /// <param name="sender">The AutoSuggestBox that fired the event.</param>
         /// <param name="args">The args contain the QueryText, which is the text in the TextBox,
-        /// and also ChosenSuggestion, which is only non-null when a user selects an item in the list.</param>
+        /// and also ChosenSuggestion, which is only non-null when a user selects an item in the errorMessages.</param>
         private async void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
 
