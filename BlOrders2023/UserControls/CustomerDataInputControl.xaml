@@ -25,6 +25,7 @@
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMaxWidth">1200</x:Double>
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <vmconverters:EnumToStringConverter x:Key="EnumToStringConverter"/>
     </ContentDialog.Resources>
 
     <StackPanel Orientation="Vertical" Margin="10">
@@ -131,9 +132,10 @@
 
             <StackPanel Orientation="Vertical" Grid.Row="7" Grid.Column="0">
                 <TextBlock Text="State: " />
-                <ComboBox x:Name="StateComboBox" 
-                          SelectedItem="{x:Bind ViewModel.State, Mode=TwoWay}" 
-                          Width="200"/>
+                <ComboBox x:Name="StateComboBox"
+                          SelectedItem="{x:Bind ViewModel.State, Mode=TwoWay}"
+                          Width="200">
+                </ComboBox>
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('State'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('State'), Mode=OneWay}" 
                                Style="{StaticResource ValidatorTextBlockStyle}"/>

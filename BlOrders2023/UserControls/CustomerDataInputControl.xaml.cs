@@ -40,9 +40,9 @@ namespace BlOrders2023.UserControls
         public CustomerDataInputControl()
         {
             this.InitializeComponent();
+            var enumValues = Enum.GetNames(typeof(States));
+            StateComboBox.ItemsSource = enumValues;
             ViewModel = App.GetService<CustomerDataInputControlViewModel>();
-            var states = Enum.GetNames(typeof(States)).Cast<string>();
-            StateComboBox.ItemsSource = states.ToList();
             ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
         }
 

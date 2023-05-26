@@ -135,8 +135,9 @@ namespace BlOrders2023.ViewModels
             get => Customer.State;
             set
             {
+                //dont use OnPropertyChanged() it causes stack overflow
+                Customer.State = value;
                 CheckValidation(value, nameof(State));
-                OnPropertyChanged();
             }
         }
 
@@ -188,7 +189,7 @@ namespace BlOrders2023.ViewModels
             {
                 Customer.BillingState = value;
                 CheckValidation(value, nameof(BillingState));
-                OnPropertyChanged();
+                //dont use OnPropertyChanged() it causes stack overflow
             }
         }
 
