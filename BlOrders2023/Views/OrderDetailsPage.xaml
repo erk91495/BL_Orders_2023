@@ -23,6 +23,7 @@
         <vm:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
         <vm:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -222,7 +223,7 @@
         <sf:SfDataGrid x:Name="OrderedItems"
                        ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                        SourceType="models:OrderItem"
-                       RelativePanel.Below="ProductEntryBox"
+                       RelativePanel.Below="ProductEntryErrorMessage"
                        GridLinesVisibility="Both"
                        IsReadOnly="False"
                        AutoGenerateColumns="False"
@@ -263,7 +264,8 @@
                         QuerySubmitted="ProductEntryBox_QuerySubmitted"
                         TabIndex="5"
                         GotFocus="ProductEntryBox_GotFocus"
-                        LostFocus="ProductEntryBox_LostFocus">
+                        LostFocus="ProductEntryBox_LostFocus"                        
+                        IsEnabled="{x:Bind ViewModel.HasErrors, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
             <AutoSuggestBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Product">
                     <StackPanel Orientation="Horizontal"
@@ -276,6 +278,11 @@
             </AutoSuggestBox.ItemTemplate>
 
         </AutoSuggestBox>
+        <TextBlock x:Name="ProductEntryErrorMessage"
+                   RelativePanel.Below="ProductEntryBox"
+                   Text="Clear all errors before adding products" 
+                   Visibility="{x:Bind ViewModel.HasErrors, Mode=OneWay}" 
+                   Style="{StaticResource ValidatorTextBlockStyle}"/>
         <Grid RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>

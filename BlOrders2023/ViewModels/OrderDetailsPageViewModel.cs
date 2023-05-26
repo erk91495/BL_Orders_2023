@@ -21,18 +21,6 @@ namespace BlOrders2023.ViewModels
     public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     {
         #region Properties
-        ///// <summary>
-        ///// Gets or sets the current Order
-        ///// </summary>
-        //public Order CurrentOrder
-        //{
-        //    get => _order;
-        //    set
-        //    {
-        //        SetProperty(ref _order, value);
-        //        OnPropertyChanged(nameof(CurrentOrder));
-        //    }
-        //}
 
         public ObservableCollection<OrderItem> Items
         {
@@ -136,7 +124,8 @@ namespace BlOrders2023.ViewModels
             }
         }
 
-        [CustomValidation(typeof(OrderDetailsPageViewModel), nameof(ValidatePickupDate),ErrorMessage = "Pickup\\Delivery Date cannot be in the past")]
+        //Need to handle opening an old order before i can re enable this
+        //[CustomValidation(typeof(OrderDetailsPageViewModel), nameof(ValidatePickupDate),ErrorMessage = "Pickup\\Delivery Date cannot be in the past")]
         public DateTime PickupDate
         {
             get => _order.PickupDate;
@@ -236,9 +225,14 @@ namespace BlOrders2023.ViewModels
 
         #region Methods
 
+        /// <summary>
+        /// Checks if _items contains a product with the given id
+        /// </summary>
+        /// <param name="id">The id of the Prodcut to check for</param>
+        /// <returns></returns>
         public bool OrderItemsContains(int id)
         {
-            return (_items.FirstOrDefault(i => i.ProductID == id, null) != null);
+            return _items.FirstOrDefault(i => i.ProductID == id, null) != null;
         }
         /// <summary>
         /// Notifies anyone listening to this object that a line item changed. 
@@ -269,8 +263,11 @@ namespace BlOrders2023.ViewModels
                 _currentOrderIndex = _order.Customer.orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
                 HasNextOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
                 HasPreviousOrder = _currentOrderIndex > 0;
+
                 OnAllPropertiesChanged();
             }
+            //Validate this to disable the product entry box on a new order
+            ValidateProperty(Shipping, nameof(Shipping));
         }
 
         public void OnNavigatedFrom()
