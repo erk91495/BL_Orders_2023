@@ -41,7 +41,7 @@ namespace BlOrders2023.Core.Data.SQL
 
 
         public async Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID)=>
-            await _db.Customers.Include(c => c.orders).Where(c => c.CustID == customerID).ToListAsync();
+            await _db.Customers.Include(c => c.Orders).Where(c => c.CustID == customerID).ToListAsync();
 
         public async Task<IEnumerable<CustomerClass>> GetCustomerClassesAsync() =>
             await _db.CustomerClasses.ToListAsync();

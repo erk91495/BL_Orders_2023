@@ -79,7 +79,7 @@ namespace BlOrders2023.ViewModels
 
         #region Fields
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        private ObservableCollection<Product> _suggestedProducts;
+        private readonly ObservableCollection<Product> _suggestedProducts;
         private string? _packDate;
         private float? _pickWeight;
         private string? _serialNumber;
@@ -94,11 +94,6 @@ namespace BlOrders2023.ViewModels
             ShippingItem = new ShippingItem();
             _ = LoadProducts();
             ValidateAllProperties();
-        }
-
-        public ShippingItemDataInputControlViewModel(Product? selectedProduct)
-        {
-            SelectedProduct = selectedProduct;
         }
         #endregion Constructors
 
@@ -154,20 +149,24 @@ namespace BlOrders2023.ViewModels
             
         }
 
-        public ShippingItem GetShippingItem()
+        public ShippingItem? GetShippingItem()
         {
-            var item = new ShippingItem()
+            if (_selectedProduct != null)
             {
-                Product = _selectedProduct,
-                PackageSerialNumber = SerialNumber,
-                PackDate = DateTime.ParseExact(PackDate , "yy/MM/dd", null),
-                ProductID = (int)ProductID,
-                PickWeight = PickWeight,
-                ScanDate = DateTime.Now,
-                QuanRcvd = 1,
-            };
-            BarcodeInterpreter.SynthesizeBarcode(ref item);
-            return item;
+                var item = new ShippingItem()
+                {
+                    Product = _selectedProduct,
+                    PackageSerialNumber = SerialNumber,
+                    PackDate = DateTime.ParseExact(PackDate!, "yy/MM/dd", null),
+                    ProductID = (int)ProductID!,
+                    PickWeight = PickWeight,
+                    ScanDate = DateTime.Now,
+                    QuanRcvd = 1,
+                };
+                BarcodeInterpreter.SynthesizeBarcode(ref item);
+                return item;
+            }
+            return null;
         }
         #endregion Methods
 

@@ -37,27 +37,25 @@ namespace BlOrders2023.UserControls
         #endregion Fields
 
         #region Constructors
-        public CustomerDataInputControl(XamlRoot root)
+        public CustomerDataInputControl()
         {
             this.InitializeComponent();
-            this.XamlRoot = root;
-            this.PrimaryButtonText = "Create Customer";
-            this.CloseButtonText = "Cancel";
-            this.FlowDirection = FlowDirection.LeftToRight;
-
             ViewModel = App.GetService<CustomerDataInputControlViewModel>();
-            Binding b = new()
-            {
-                Source = ViewModel,
-                Path = new PropertyPath("HasErrors"),
-                Converter = new BoolNegationConverter(),
-                Mode = BindingMode.OneWay
-            };
-            //this.SetBinding(ContentDialog.IsPrimaryButtonEnabledProperty, b);
-
             var states = Enum.GetNames(typeof(States)).Cast<string>();
             StateComboBox.ItemsSource = states.ToList();
-            
+            ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
+        }
+
+        private void ViewModel_ErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
+        {
+            if (ViewModel.HasErrors)
+            {
+                IsPrimaryButtonEnabled = false;
+            }
+            else
+            {
+                IsPrimaryButtonEnabled = true;
+            }
         }
         #endregion Constructors
 

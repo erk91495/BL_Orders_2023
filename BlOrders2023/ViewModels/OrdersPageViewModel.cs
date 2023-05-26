@@ -30,9 +30,9 @@ public class OrdersPageViewModel : ObservableRecipient
     /// <summary>
     /// Gets or sets the selected Order.
     /// </summary>
-    public Order? SelectedOrder
+    public Order SelectedOrder
     {
-        get => _selectedOrder;
+        get => _selectedOrder!;
         set
         {
             SetProperty(ref _selectedOrder, value);
@@ -146,20 +146,12 @@ public class OrdersPageViewModel : ObservableRecipient
             IsLoading = false;
         }
     }
-
-    public async void SaveOrder(Order order)
-    {
-        IOrderTable table = App.GetNewDatabase().Orders;
-        var res = await Task.Run(() => table.UpsertAsync(order));
-    }
     #endregion Queries
 
     #region Filtering
     public bool FilterOrders(object o)
     {
-        Order? order = o as Order;
-
-        if (order != null)
+        if (o is Order order)
         {
             if (FilterText.IsNullOrEmpty())
             {
@@ -167,8 +159,8 @@ public class OrdersPageViewModel : ObservableRecipient
             }
             else
             {
-                bool nullableChecks = order.PO_Number == null ? false : order.PO_Number.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase);
-                nullableChecks = nullableChecks || (order.Customer.Phone_2 == null ? false : order.Customer.Phone_2.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase));
+                bool nullableChecks = order.PO_Number != null && order.PO_Number.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase);
+                nullableChecks = nullableChecks || (order.Customer.Phone_2 != null && order.Customer.Phone_2.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase));
                 if (order.OrderID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
                     || order.CustID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
                     || order.Customer.CustomerName.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)

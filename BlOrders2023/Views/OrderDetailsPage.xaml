@@ -113,6 +113,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+                
                 <StackPanel Orientation="Vertical"
                             Grid.Row="0"
                             Grid.Column="0">
@@ -121,8 +122,6 @@
                     <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('TakenBy'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('TakenBy'), Mode=OneWay}" 
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
-
-
                 </StackPanel>
 
                 <RadioButtons Header="Shipping Type"

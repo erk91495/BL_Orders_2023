@@ -110,7 +110,8 @@ namespace BlOrders2023.ViewModels
             }
         }
 
-        [Required(ErrorMessage = "Taken By is required")]
+        [Required]
+        [Display(Name = "Taken By")]
         public string TakenBy
         {
             get => _order.TakenBy;
@@ -202,11 +203,11 @@ namespace BlOrders2023.ViewModels
 
         #region Fields
         private Order _order;
-        private ObservableCollection<Product> _suggestedProducts;
+        private readonly ObservableCollection<Product> _suggestedProducts;
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         private ObservableCollection<OrderItem> _items;
         private int _currentOrderIndex;
-        private IBLDatabase _db = App.GetNewDatabase();
+        private readonly IBLDatabase _db = App.GetNewDatabase();
         #endregion Fields
 
         #region Constructors
@@ -232,21 +233,19 @@ namespace BlOrders2023.ViewModels
         /// <returns></returns>
         public bool OrderItemsContains(int id)
         {
-            return _items.FirstOrDefault(i => i.ProductID == id, null) != null;
+            return _items.FirstOrDefault(i => i!.ProductID == id, null) != null;
         }
         /// <summary>
         /// Notifies anyone listening to this object that a line item changed. 
         /// </summary>
-        private void LineItems_Changed(object sender, NotifyCollectionChangedEventArgs e)
+        private void LineItems_Changed(object? _sender, NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(Items));
         }
 
         public void OnNavigatedTo(object parameter)
         {
-            var order = parameter as Order;
-
-            if (order != null)
+            if (parameter is Order order)
             {
                 var entityOrder = _db.Orders.Get(order.OrderID).FirstOrDefault();
                 if (entityOrder != null)
@@ -260,8 +259,8 @@ namespace BlOrders2023.ViewModels
                     _order = order;
                 }
                 _items = new ObservableCollection<OrderItem>(_order.Items);
-                _currentOrderIndex = _order.Customer.orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
-                HasNextOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
+                _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
+                HasNextOrder = _currentOrderIndex < _order.Customer.Orders.Count - 1;
                 HasPreviousOrder = _currentOrderIndex > 0;
 
                 OnAllPropertiesChanged();
@@ -275,7 +274,7 @@ namespace BlOrders2023.ViewModels
 
         }
 
-        public void addItem(Product p)
+        public void AddItem(Product p)
         {
             var tracked = _db.Products.Get(p.ProductID, false).First();
             OrderItem item = new(tracked, _order);
@@ -305,7 +304,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasNextOrder)
             {
-                return _order.Customer.orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex + 1].OrderID;
+                return _order.Customer.Orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex + 1].OrderID;
             }
             return null;
         }
@@ -313,7 +312,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasNextOrder)
             {
-                return _order.Customer.orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex + 1];
+                return _order.Customer.Orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex + 1];
             }
             return null;
         }
@@ -322,7 +321,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasPreviousOrder)
             {
-                return _order.Customer.orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex - 1].OrderID;
+                return _order.Customer.Orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex - 1].OrderID;
             }
             return null;
         }
@@ -331,7 +330,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasPreviousOrder)
             {
-                return _order.Customer.orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex - 1];
+                return _order.Customer.Orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex - 1];
             }
             return null;
         }
@@ -463,31 +462,31 @@ namespace BlOrders2023.ViewModels
             }
         }
 
-        private void CheckValidation(object? value, string propertyName = null)
+        private void CheckValidation(object? value, string propertyName = null!)
         {
             ValidateProperty(value, propertyName);
             OnPropertyChanged(nameof(GetErrorMessage));
             OnPropertyChanged(nameof(VisibleIfError));
         }
 
-        public static ValidationResult ValidateShipping(ShippingType shipping)
+        public static ValidationResult? ValidateShipping(ShippingType shipping)
         {
             var isValid = shipping != ShippingType.NoType;
-            return isValid ? ValidationResult.Success : new ValidationResult(null);
+            return isValid ? ValidationResult.Success : new ValidationResult("Shipping must be selected");
         }
 
-        public static ValidationResult ValidatePickupDate(DateTime dateTime)
+        public static ValidationResult? ValidatePickupDate(DateTime dateTime)
         {
             var isValid = dateTime.CompareTo(DateTime.Today) >= 0;
-            return isValid ? ValidationResult.Success : new ValidationResult(null);
+            return isValid ? ValidationResult.Success : new ValidationResult("Pickup Date cannot be in the past");
         }
 
         internal void ReloadOrder()
         {
             _order = _db.Orders.Reload(_order);
             _items = new ObservableCollection<OrderItem>(_order.Items);
-            _currentOrderIndex = _order.Customer.orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
-            HasNextOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
+            _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
+            HasNextOrder = _currentOrderIndex < _order.Customer.Orders.Count - 1;
             HasPreviousOrder = _currentOrderIndex > 0;
             OnAllPropertiesChanged();
         }

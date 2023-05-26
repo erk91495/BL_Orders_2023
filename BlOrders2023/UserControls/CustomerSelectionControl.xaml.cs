@@ -20,23 +20,25 @@ namespace BlOrders2023.UserControls
         public CustomerSelectionViewModel ViewModel { get; }
         #endregion Properties
         #region Fields
-        ContentDialog _dialog;
+        readonly ContentDialog _dialog;
         #endregion Fields
         #region Events
-        public event EventHandler SelectionChoose;
+        public event EventHandler? SelectionChoose;
         #endregion Events
         #region Constructors
         public CustomerSelectionControl(XamlRoot root)
         {
-            _dialog = new();
-            _dialog.XamlRoot = root;
-            _dialog.Title = "Select A Customer";
-            _dialog.Content = this;
-            _dialog.PrimaryButtonText = "Create An Order";
-            _dialog.SecondaryButtonText = "New Customer";
-            _dialog.CloseButtonText = "Cancel";
-            _dialog.FlowDirection = FlowDirection.LeftToRight;
-            _dialog.IsPrimaryButtonEnabled = false;
+            _dialog = new()
+            {
+                XamlRoot = root,
+                Title = "Select A Customer",
+                Content = this,
+                PrimaryButtonText = "Create An Order",
+                SecondaryButtonText = "New Customer",
+                CloseButtonText = "Cancel",
+                FlowDirection = FlowDirection.LeftToRight,
+                IsPrimaryButtonEnabled = false
+            };
             ViewModel = App.GetService<CustomerSelectionViewModel>();
             this.InitializeComponent();
         }
@@ -51,7 +53,7 @@ namespace BlOrders2023.UserControls
             }
         }
 
-        public async void showAsync()
+        public async void ShowAsync()
         {
             var result = await _dialog.ShowAsync();
             if(result == ContentDialogResult.Primary)
@@ -60,7 +62,10 @@ namespace BlOrders2023.UserControls
             }
             else if (result == ContentDialogResult.Secondary)
             {
-                CustomerDataInputControl control = new(XamlRoot);
+                CustomerDataInputControl control = new()
+                {
+                    XamlRoot = XamlRoot,
+                };                
                 await control.ShowAsync();
             }
             else

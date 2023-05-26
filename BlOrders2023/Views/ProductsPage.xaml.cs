@@ -94,7 +94,7 @@ namespace BlOrders2023.Views
                 {
                     case "ProductID":
                         {
-                            Task<bool> dupCheck = Task.Run<bool>(async () => await ViewModel.productIDExists(prod.ProductID));
+                            Task<bool> dupCheck = Task.Run<bool>(async () => await ProductsPageViewModel.ProductIDExists(prod.ProductID));
                             if (dupCheck.Result)
                             {
                                 e.IsValid = false;

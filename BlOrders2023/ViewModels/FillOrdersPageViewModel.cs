@@ -15,7 +15,7 @@ namespace BlOrders2023.ViewModels;
 public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 {
     #region Properties
-    public bool hasOrder { get => _order != null; }
+    public bool HasOrder { get => _order != null; }
     public WholesaleCustomer Customer { get; set; }
     public Order? Order { get => _order; set => _order = value; }
     public ObservableCollection<ShippingItem> Items { get; set; }
@@ -164,7 +164,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         OnPropertyChanged(nameof(Customer));
         OnPropertyChanged(nameof(Order));
         OnPropertyChanged(nameof(Items));
-        OnPropertyChanged(nameof(hasOrder));
+        OnPropertyChanged(nameof(HasOrder));
         OnPropertyChanged(nameof(FillableOrders));
         OnPropertyChanged(nameof(FillableOrdersMasterList));
         OnPropertyChanged(nameof(OrderedVsReceivedItems));
@@ -208,7 +208,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     internal async Task DeleteShippingItemAsync(ShippingItem item)
     {
         Items.Remove(item);
-        if (!_order.ShippingItems.Remove(item))
+        if (!_order!.ShippingItems.Remove(item))
         {
             throw new Exception();
         }
@@ -223,10 +223,10 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     private void IncremantOrderedItem(ShippingItem item)
     {
-        var ordered = _order.Items.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
+        var ordered = _order!.Items.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
         if (ordered == null)
         {
-            OrderItem orderItem = new OrderItem(item.Product, _order)
+            OrderItem orderItem = new(item.Product, _order)
             {
                 Quantity = 0,
                 PickWeight = item.PickWeight,
@@ -241,7 +241,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     private void DecrementOrderedItem(ShippingItem item)
     {
-        var ordered = _order.Items.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
+        var ordered = _order!.Items.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
         if (ordered == null)
         {
             throw new Exception("Cannot Delete Item. Item does not exist");
@@ -261,10 +261,10 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     {
         throw new NotImplementedException();
         //need to handle order items
-        Items.Clear();
-        _order.ShippingItems.Clear();
-        await App.GetNewDatabase().ShipDetails.UpsertAsync(_order.ShippingItems);
-        ReCalculateOrderdVsReceived();
+        //Items.Clear();
+        //_order.ShippingItems.Clear();
+        //await App.GetNewDatabase().ShipDetails.UpsertAsync(_order.ShippingItems);
+        //ReCalculateOrderdVsReceived();
 
     }
     #endregion Methods

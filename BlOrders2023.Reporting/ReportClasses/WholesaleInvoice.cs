@@ -15,7 +15,7 @@ namespace BlOrders2023.Reporting.ReportClasses
     internal class WholesaleInvoice : IDocument
     {
 
-        private Order _order { get; set; }
+        private readonly Order _order;
 
         private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
         private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
@@ -59,13 +59,14 @@ namespace BlOrders2023.Reporting.ReportClasses
 
                     //Logo
                     var res = Assembly.GetExecutingAssembly().GetManifestResourceStream("BlOrders2023.Reporting.Assets.Images.BLLogo.bmp");
-                    row.RelativeItem(1).AlignLeft().AlignMiddle().Height(75).Image(res, ImageScaling.FitHeight);
+                    row.RelativeItem(1).AlignLeft().AlignMiddle().Height(75).Image(res).FitHeight();
 
                     row.RelativeItem(3).AlignCenter().Column(col =>
                     {
                         col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
                         col.Item().AlignCenter().Text("6490 East Ross Road, New Carlisle, Ohio 45344").Style(subTitleStyle);
                         col.Item().AlignCenter().Text("Phone: 937-845-9466          Fax: 937-845-9998");
+                        col.Item().AlignCenter().Text("www.bowmanlandes.com");
                     });
 
                     row.RelativeItem(1).AlignMiddle().AlignRight().Column(column =>
@@ -105,7 +106,10 @@ namespace BlOrders2023.Reporting.ReportClasses
                                 column.Item().Text($"{_order.Customer.Address}").Style(normalTextStyle);
                                 column.Item().Text($"{_order.Customer.CityStateZip()}").Style(normalTextStyle);
                                 column.Item().Text($"{_order.Customer.Buyer}").Style(normalTextStyle);
-                                column.Item().Text($"{_order.Customer.Email.Trim()}").Style(normalTextStyle);
+                                if (!_order.Customer.Email.IsNullOrEmpty())
+                                {
+                                    column.Item().Text($"{_order.Customer.Email.Trim()}").Style(normalTextStyle);
+                                }
                                 column.Item().Text($"{_order.Customer.Phone}").Style(normalTextStyle);
 
                             });

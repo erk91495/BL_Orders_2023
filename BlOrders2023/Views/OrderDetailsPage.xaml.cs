@@ -54,7 +54,7 @@ namespace BlOrders2023.Views
             ViewModel = App.GetService<OrderDetailsPageViewModel>();
             this.InitializeComponent();
             SetMemoTotalFormatter();
-            SetMemoWeightFormatter();
+            //SetMemoWeightFormatter();
             PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
             OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
         }
@@ -92,7 +92,6 @@ namespace BlOrders2023.Views
                         //Order was saved or discarded 
                         _canLeave = true;
                         e.Cancel = false;
-                        var current = Window.Current;
                         Frame.Navigate(e.SourcePageType, e.Parameter);
                     }
                 }
@@ -120,32 +119,40 @@ namespace BlOrders2023.Views
         /// </summary>
         private void SetMemoTotalFormatter()
         {
-            IncrementNumberRounder rounder = new();
-            rounder.Increment = 0.01;
-            rounder.RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp;
+            IncrementNumberRounder rounder = new()
+            {
+                Increment = 0.01,
+                RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp
+            };
 
-            DecimalFormatter formatter = new();
-            formatter.IntegerDigits = 1;
-            formatter.FractionDigits = 2;
-            formatter.NumberRounder = rounder;
+            DecimalFormatter formatter = new()
+            {
+                IntegerDigits = 1,
+                FractionDigits = 2,
+                NumberRounder = rounder
+            };
             MemoTotal.NumberFormatter = formatter;
         }
 
         /// <summary>
         /// Sets the Formatter for the MemoWeight field
         /// </summary>
-        private void SetMemoWeightFormatter()
-        {
-            IncrementNumberRounder rounder = new();
-            rounder.Increment = 0.01;
-            rounder.RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp;
+        //private void SetMemoWeightFormatter()
+        //{
+        //    IncrementNumberRounder rounder = new()
+        //    {
+        //        Increment = 0.01,
+        //        RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp
+        //    };
 
-            DecimalFormatter formatter = new();
-            formatter.IntegerDigits = 1;
-            formatter.FractionDigits = 2;
-            formatter.NumberRounder = rounder;
-            //MemoWeight.NumberFormatter = formatter;
-        }
+        //    DecimalFormatter formatter = new()
+        //    {
+        //        IntegerDigits = 1,
+        //        FractionDigits = 2,
+        //        NumberRounder = rounder
+        //    };
+        //    MemoWeight.NumberFormatter = formatter;
+        //}
 
         public async Task<bool> TrySaveCurrentOrderAsync()
         {
@@ -161,8 +168,8 @@ namespace BlOrders2023.Views
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-
-                    ContentDialog dialog = new ContentDialog()
+                    _ = ex;
+                    ContentDialog dialog = new()
                     {
                         Title = "Database Write Conflict",
                         Content = $"The order was modified before your changes could be saved.\r\n" +
@@ -190,7 +197,7 @@ namespace BlOrders2023.Views
                 }
                 catch (DbUpdateException ex)
                 {
-                    ContentDialog dialog = new ContentDialog()
+                    ContentDialog dialog = new()
                     {
                         Title = "DbUpdateException",
                         Content = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
@@ -209,7 +216,7 @@ namespace BlOrders2023.Views
                 {
                     errorMessages.Add(error.ErrorMessage);
                 }
-                ContentDialog dialog = new ContentDialog()
+                ContentDialog dialog = new()
                 {
                     Title = "Input Error",
                     Content = $"Please correct all errors before saving the order\r\n\r\nErrors:\r\n{String.Join("\r\n", errorMessages)}",
@@ -336,7 +343,7 @@ namespace BlOrders2023.Views
                     else
                     {
                         //Gets the column from ColumnsCollection by resolving the corresponding column index from  GridVisibleColumnIndex                      
-                        var gridColumn = OrderedItems.Columns[OrderedItems.ResolveToGridVisibleColumnIndex(rowColumnIndex.ColumnIndex)];
+                        //var gridColumn = OrderedItems.Columns[OrderedItems.ResolveToGridVisibleColumnIndex(rowColumnIndex.ColumnIndex)];
                         //For getting the record, need to resolve the corresponding record index from row index                     
                         _doomed = OrderedItems.View.Records[OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex)].Data as OrderItem;
                     }
@@ -347,7 +354,7 @@ namespace BlOrders2023.Views
 
         private async void DeleteOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            ContentDialog dialog = new ContentDialog()
+            ContentDialog dialog = new()
             {
                 Title = "Delete Order",
                 Content = "Are you sure you want to delete this entire order.\r\nThis action cannot be undone.",
@@ -361,8 +368,7 @@ namespace BlOrders2023.Views
             if (res == ContentDialogResult.Primary)
             {
                 _deleteOrder = true;
-                NavigationService nav = App.GetService<INavigationService>() as NavigationService;
-                if (nav != null)
+                if (App.GetService<INavigationService>() is NavigationService nav)
                 {
                     if (nav.CanGoBack)
                     {
@@ -431,7 +437,7 @@ namespace BlOrders2023.Views
                 productToAdd = p;
                 if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
                 {
-                    ViewModel.addItem(productToAdd);
+                    ViewModel.AddItem(productToAdd);
                 }
             }
             else if (!string.IsNullOrEmpty(args.QueryText))
@@ -453,11 +459,11 @@ namespace BlOrders2023.Views
                 }
                 if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
                 {
-                    ViewModel.addItem(productToAdd);
+                    ViewModel.AddItem(productToAdd);
                 }
                 else if (productToAdd != null)
                 {
-                    ContentDialog dialog = new ContentDialog
+                    ContentDialog dialog = new()
                     {
                         Title = "Duplicate Product",
                         Content = String.Format("Product ID: {0} already exists on the Order \n", productToAdd.ProductID),
@@ -474,7 +480,7 @@ namespace BlOrders2023.Views
             }
         }
 
-        private async void OrderNavigation_Click(object sender, RoutedEventArgs e)
+        private void OrderNavigation_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fix so you can naigate more than once
             if(sender is AppBarButton b)
@@ -501,12 +507,12 @@ namespace BlOrders2023.Views
 
         #endregion Methods
 
-        private void ProductEntryBox_GotFocus(object sender, RoutedEventArgs e)
+        private void ProductEntryBox_GotFocus(object _sender, RoutedEventArgs e)
         {
             ProductEntryBox.IsSuggestionListOpen = true;
         }
 
-        private void ProductEntryBox_LostFocus(object sender, RoutedEventArgs e)
+        private void ProductEntryBox_LostFocus(object _sender, RoutedEventArgs e)
         {
             ProductEntryBox.IsSuggestionListOpen = false;
         }

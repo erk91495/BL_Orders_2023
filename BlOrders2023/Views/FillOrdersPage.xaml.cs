@@ -163,7 +163,7 @@ public sealed partial class FillOrdersPage : Page
     {
         if (e.Items.FirstOrDefault() is ShippingItem)
         {
-            foreach (ShippingItem item in e.Items)
+            foreach (ShippingItem item in e.Items.Cast<ShippingItem>())
             {
                 await ViewModel.DeleteShippingItemAsync(item);
             }

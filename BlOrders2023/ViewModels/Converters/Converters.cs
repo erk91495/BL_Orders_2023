@@ -170,7 +170,7 @@ namespace BlOrders2023.ViewModels.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            DateTimeOffset offset = new DateTimeOffset((DateTime)value);
+            DateTimeOffset offset = new((DateTime)value);
             return offset;
         }
 
