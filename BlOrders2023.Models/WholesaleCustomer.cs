@@ -40,6 +40,7 @@ namespace BlOrders2023.Models
         public bool? SingleProdPerPallet { get; set; }
         public int? CustomerClassID { get; set; }
         //private bool? isGrocer { get; set; }
+        public bool UseSameAddress { get; set; }
         
         [Column("isGrocer")]
         public AllocationType AllocationType { get; set; }

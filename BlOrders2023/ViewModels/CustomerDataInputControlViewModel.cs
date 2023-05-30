@@ -112,6 +112,10 @@ namespace BlOrders2023.ViewModels
                 Customer.Address = value;
                 CheckValidation(value, nameof(Address));
                 OnPropertyChanged();
+                if (Customer.UseSameAddress)
+                {
+                    BillingAddress = value;
+                }
             }
         }
 
@@ -125,6 +129,10 @@ namespace BlOrders2023.ViewModels
                 Customer.City = value;
                 CheckValidation(value, nameof(City));
                 OnPropertyChanged();
+                if (Customer.UseSameAddress)
+                {
+                    BillingCity = value;
+                }
             }
         }
 
@@ -138,6 +146,11 @@ namespace BlOrders2023.ViewModels
                 //dont use OnPropertyChanged() it causes stack overflow
                 Customer.State = value;
                 CheckValidation(value, nameof(State));
+                OnPropertyChanged(nameof(State));
+                if (Customer.UseSameAddress)
+                {
+                    BillingState = value;
+                }
             }
         }
 
@@ -151,6 +164,10 @@ namespace BlOrders2023.ViewModels
                 Customer.ZipCode = value;
                 CheckValidation(value, nameof(ZipCode));
                 OnPropertyChanged();
+                if (Customer.UseSameAddress)
+                {
+                    BillingZipCode = value;
+                }
             }
         }
 
@@ -189,7 +206,7 @@ namespace BlOrders2023.ViewModels
             {
                 Customer.BillingState = value;
                 CheckValidation(value, nameof(BillingState));
-                //dont use OnPropertyChanged() it causes stack overflow
+                OnPropertyChanged(nameof(BillingState));
             }
         }
 
@@ -215,6 +232,16 @@ namespace BlOrders2023.ViewModels
             {
                 Customer.CustomerClass = value;
                 CheckValidation(value, nameof(CustomerClass));
+            }
+        }
+
+        public bool UseSameAddress
+        {
+            get => Customer.UseSameAddress;
+            set
+            {
+                Customer.UseSameAddress = value;
+                OnPropertyChanged();
             }
         }
 

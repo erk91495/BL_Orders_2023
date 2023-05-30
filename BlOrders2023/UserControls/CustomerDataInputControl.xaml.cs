@@ -42,6 +42,7 @@ namespace BlOrders2023.UserControls
             this.InitializeComponent();
             var enumValues = Enum.GetNames(typeof(States));
             StateComboBox.ItemsSource = enumValues;
+            BillingStateComboBox.ItemsSource = enumValues;
             ViewModel = App.GetService<CustomerDataInputControlViewModel>();
             ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
         }
