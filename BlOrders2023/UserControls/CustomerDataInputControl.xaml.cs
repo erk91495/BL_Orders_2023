@@ -5,6 +5,7 @@ using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
 using BlOrders2023.ViewModels;
 using CommunityToolkit.WinUI.UI.Converters;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -30,6 +31,7 @@ namespace BlOrders2023.UserControls
     {
         #region Properties
         CustomerDataInputControlViewModel ViewModel { get; }
+
         #endregion Properties
 
         #region Fields
@@ -37,7 +39,7 @@ namespace BlOrders2023.UserControls
         #endregion Fields
 
         #region Constructors
-        public CustomerDataInputControl()
+        public CustomerDataInputControl(bool CheckIfUnique = false)
         {
             this.InitializeComponent();
             var enumValues = Enum.GetNames(typeof(States));
@@ -45,6 +47,7 @@ namespace BlOrders2023.UserControls
             BillingStateComboBox.ItemsSource = enumValues;
             ViewModel = App.GetService<CustomerDataInputControlViewModel>();
             ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
+            ViewModel.CheckIfUnique = CheckIfUnique;
         }
 
         private void ViewModel_ErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
@@ -68,9 +71,28 @@ namespace BlOrders2023.UserControls
             int i = 0;
         }
 
-        //private void SfMaskedTextBox_ValueChanged(object sender, Syncfusion.UI.Xaml.Editors.MaskedTextBoxValueChangedEventArgs e)
-        //{
-        //    23int i = 0;
-        //}
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            try 
+            { 
+                ViewModel.SaveCustomer();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _ = ex;
+                FailureInfoBar.Message = $"The customer was modified before your changes could be saved.\r\n";
+                FailureInfoBar.IsOpen = true;
+                args.Cancel = true;
+            }
+            catch (DbUpdateException ex)
+            {
+                FailureInfoBar.Message = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                    $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}";
+                FailureInfoBar.IsOpen = true;
+                args.Cancel = true;
+
+            }
+
+        }
     }
 }

@@ -12,14 +12,16 @@
     xmlns:vm="using:BlOrders2023.ViewModels"
     xmlns:enums="using:BlOrders2023.Models.Enums"
     xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
-    xmlns:vmconverters="using:BlOrders2023.ViewModels.Converters"
+    xmlns:vmconverters="using:BlOrders2023.ViewModels.Converters" 
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     MinWidth="1200"
     CornerRadius="10"
     PrimaryButtonText="Create Customer"
     CloseButtonText="Cancel"
     FlowDirection="LeftToRight"
-    IsPrimaryButtonEnabled="False">
+    IsPrimaryButtonEnabled="False"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
     
     
     <ContentDialog.Resources>
@@ -29,6 +31,13 @@
     </ContentDialog.Resources>
 
     <StackPanel Orientation="Vertical" Margin="10">
+
+        <muxc:InfoBar
+            x:Name="FailureInfoBar"
+            Title="Error"
+            Severity="Error">
+        </muxc:InfoBar>
+
 
         <Grid x:Name="CustomerInfoGrid" ColumnSpacing="15">
             <Grid.ColumnDefinitions>
@@ -72,7 +81,7 @@
                     <sf:SfMaskedTextBox Mask="(000) 000-0000" MaskType="Simple" ValueMaskFormat="ExcludePromptAndLiterals" 
                                         Value="{x:Bind ViewModel.Phone,Mode=TwoWay}" Margin="0,0,10,0"/>
                     <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
-                    <TextBox x:Name="PhoneExtTextBox" Text="{x:Bind ViewModel.Customer.PhoneExt, Mode=TwoWay}" Width="50" />
+                    <TextBox x:Name="PhoneExtTextBox" Text="{x:Bind ViewModel.PhoneExt, Mode=TwoWay}" Width="50" />
                 </StackPanel>
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Phone'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('Phone'), Mode=OneWay}" 
@@ -86,7 +95,7 @@
                                         Value="{x:Bind ViewModel.Phone_2,Mode=TwoWay, TargetNullValue={x:Null}}" Margin="0,0,10,0"/>
                     <!--<TextBox x:Name="Phone_2TextBox" Text="{x:Bind ViewModel.Phone_2, Mode=TwoWay}" Width="175" Margin="0,0,10,0" />-->
                     <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
-                    <TextBox x:Name="Phone2ExtTextBox" Text="{x:Bind ViewModel.Customer.Phone2Ext, Mode=TwoWay}" Width="50" />
+                    <TextBox x:Name="Phone2ExtTextBox" Text="{x:Bind ViewModel.Phone2Ext, Mode=TwoWay}" Width="50" />
                 </StackPanel>
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Phone_2'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('Phone_2'), Mode=OneWay}" 

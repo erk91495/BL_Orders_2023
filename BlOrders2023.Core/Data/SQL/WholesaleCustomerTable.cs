@@ -23,6 +23,22 @@ namespace BlOrders2023.Core.Data.SQL
             throw new NotImplementedException();
         }
 
+        public IEnumerable<WholesaleCustomer> Get(string query = null)
+        {
+            if (query.IsNullOrEmpty())
+            {
+                return  _db.Customers
+                    .ToList();
+            }
+            else
+            {
+                return  _db.Customers
+                    .Where(c => c.CustomerName.Contains(query) ||
+                                c.CustID.ToString().Contains(query))
+                    .ToList();
+            }
+        }
+
         public async Task<IEnumerable<WholesaleCustomer>> GetAsync(string query = null)
         {
             if (query.IsNullOrEmpty())
@@ -48,7 +64,21 @@ namespace BlOrders2023.Core.Data.SQL
 
         public async Task<CustomerClass> GetDefaultCustomerClassAsync() =>
            await _db.CustomerClasses.FirstAsync();
-        
+
+        public WholesaleCustomer Upsert(WholesaleCustomer customer, bool overwrite = false)
+        {
+            _db.Update(customer);
+            //TODO: may be a cleaner way of doing this but it works for now
+            if (overwrite)
+            {
+                foreach (var entry in _db.ChangeTracker.Entries().Where(e => e.State != EntityState.Unchanged))
+                {
+                    entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                }
+            }
+            int res = _db.SaveChanges();
+            return customer;
+        }
 
         public Task<WholesaleCustomer> UpsertAsync(WholesaleCustomer order)
         {

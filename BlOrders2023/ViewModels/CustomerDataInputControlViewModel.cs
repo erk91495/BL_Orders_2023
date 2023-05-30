@@ -5,6 +5,7 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,13 +18,14 @@ namespace BlOrders2023.ViewModels
         [Required]
         [MinLength(1)]
         [MaxLength(30)]
+        [CustomValidation(typeof(CustomerDataInputControlViewModel), nameof(ValidateCustomerName))]
         [Display(Name = "Customer Name")]
         public string CustomerName
         {
             get => Customer.CustomerName;
             set
             {
-                Customer.CustomerName = value.Trim();
+                Customer.CustomerName = value.Trim().ToUpper();
                 CheckValidation(Customer.CustomerName, nameof(CustomerName));
                 OnPropertyChanged();
             }
@@ -35,6 +37,10 @@ namespace BlOrders2023.ViewModels
             get => Customer.Buyer;
             set
             {
+                if (value.IsNullOrEmpty())
+                {
+                    value = null;
+                }
                 Customer.Buyer = value;
                 CheckValidation(value, nameof(Buyer));
                 OnPropertyChanged();
@@ -53,8 +59,26 @@ namespace BlOrders2023.ViewModels
                 OnPropertyChanged();
             }
         }
+        [MaxLength(4)]
+        [Display(Name = "Phone ext.")]
+        public string? PhoneExt
+        {
+            get => Customer.PhoneExt;
+            set
+            {
+                if (value.IsNullOrEmpty())
+                {
+                    value = null;
+                }
+                Customer.PhoneExt = value;
+                
+                OnPropertyChanged();
+
+            }
+        }
 
         [Phone]
+        [Display(Name = "Phone 2")]
         public string? Phone_2
         {
             get => Customer.Phone_2;
@@ -67,6 +91,24 @@ namespace BlOrders2023.ViewModels
                 Customer.Phone_2 = value;
                 CheckValidation(value, nameof(Phone_2));
                 OnPropertyChanged();
+            }
+        }
+
+        [MaxLength(4)]
+        [Display(Name = "Phone 2 ext.")]
+        public string? Phone2Ext
+        {
+            get => Customer.Phone2Ext;
+            set
+            {
+                if (value.IsNullOrEmpty())
+                {
+                    value = null;
+                }
+                Customer.Phone2Ext = value;
+                ValidateProperty(value, nameof(Phone2Ext));
+                OnPropertyChanged();
+
             }
         }
 
@@ -156,6 +198,8 @@ namespace BlOrders2023.ViewModels
 
         [Required]
         [MaxLength(10)]
+        [MinLength(1)]
+        [Display(Name = "Zip Code")]
         public string? ZipCode
         {
             get => Customer.ZipCode;
@@ -173,6 +217,8 @@ namespace BlOrders2023.ViewModels
 
         [Required]
         [MaxLength(30)]
+        [MinLength(1)]
+        [Display(Name = "Address")]
         public string? BillingAddress
         {
             get => Customer.BillingAddress;
@@ -186,6 +232,8 @@ namespace BlOrders2023.ViewModels
 
         [Required]
         [MaxLength(20)]
+        [MinLength(1)]
+        [Display(Name = "City")]
         public string? BillingCity
         {
             get => Customer.BillingCity;
@@ -199,6 +247,8 @@ namespace BlOrders2023.ViewModels
 
         [Required]
         [MaxLength(2)]
+        [MinLength(1)]
+        [Display(Name = "State")]
         public string? BillingState
         {
             get => Customer.BillingState;
@@ -212,6 +262,8 @@ namespace BlOrders2023.ViewModels
 
         [Required]
         [MaxLength(10)]
+        [MinLength(1)]
+        [Display(Name = "Zip Code")]
         public string? BillingZipCode
         {
             get => Customer.BillingZipCode;
@@ -242,9 +294,18 @@ namespace BlOrders2023.ViewModels
             {
                 Customer.UseSameAddress = value;
                 OnPropertyChanged();
+                if (value)
+                {
+                    BillingAddress = Address;
+                    BillingCity = City;
+                    BillingState = State;
+                    BillingZipCode = ZipCode;
+                }
+                
             }
         }
 
+        public bool CheckIfUnique { get; set; } = false;
         public ObservableCollection<CustomerClass> Classes { get; } = new();
 
         public static IEnumerable<AllocationType> AllocationTypes { get => Enum.GetValues(typeof(AllocationType)).Cast<AllocationType>(); }
@@ -270,7 +331,7 @@ namespace BlOrders2023.ViewModels
                 {
                     Classes.Add(custClass);
                 }
-                OnPropertyChanged(nameof(classes));
+                OnPropertyChanged(nameof(Classes));
                 //Added so that the UI shows the selected item after the items list is populated
                 OnPropertyChanged(nameof(CustomerClass));
             });
@@ -326,6 +387,38 @@ namespace BlOrders2023.ViewModels
             ValidateProperty(value, propertyName);
             OnPropertyChanged(nameof(GetErrorMessage));
             OnPropertyChanged(nameof(VisibleIfError));
+        }
+
+        internal void SaveCustomer(bool overwrite = false)
+        {
+            if (!HasErrors)
+            {
+                var db = App.GetNewDatabase();
+                db.Customers.Upsert(Customer, overwrite);
+            }
+        }
+
+        public static ValidationResult? ValidateCustomerName(string? value, ValidationContext context)
+        {
+            if (context.ObjectInstance is CustomerDataInputControlViewModel vm && vm.CheckIfUnique)
+            {
+                if (value != null)
+                {
+                    //IDK if this is to many calls to the db, but we will just have to see
+                    var db = App.GetNewDatabase();
+                    var names = db.Customers.Get().Select(c => c.CustomerName).ToHashSet();
+                    if (!names.Contains(value))
+                    {
+                        return ValidationResult.Success;
+                    }
+                }
+                return new ValidationResult("A customer with the given name already exists");
+            }
+            else
+            {
+                return ValidationResult.Success;
+            }
+            
         }
         #endregion Validators
         #endregion Methods
