@@ -62,7 +62,7 @@ namespace BlOrders2023.UserControls
             }
             else if (result == ContentDialogResult.Secondary)
             {
-                CustomerDataInputControl control = new()
+                CustomerDataInputControl control = new(new WholesaleCustomer())
                 {
                     XamlRoot = XamlRoot,
                 };                

@@ -113,7 +113,7 @@ namespace BlOrders2023.ViewModels
             var products = await Task.Run(() => table.UpsertAsync(p));
         }
 
-        internal async Task DeleteItem(Product p) 
+        internal Task DeleteItem(Product p) 
         {
             IProductsTable table = App.GetNewDatabase().Products;
             throw new NotImplementedException();

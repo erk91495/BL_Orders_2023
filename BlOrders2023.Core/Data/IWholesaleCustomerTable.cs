@@ -12,6 +12,7 @@ namespace BlOrders2023.Core.Data
         Task<IEnumerable<WholesaleCustomer>> GetAsync(string query = null);
         Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID);
         IEnumerable<WholesaleCustomer> Get(string query = null);
+        IEnumerable<WholesaleCustomer> Get(int customerID);
         Task<WholesaleCustomer> UpsertAsync(WholesaleCustomer customer);
         WholesaleCustomer Upsert(WholesaleCustomer customer, bool overwrite = false);
         Task DeleteAsync(WholesaleCustomer order);

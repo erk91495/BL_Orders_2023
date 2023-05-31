@@ -1,4 +1,6 @@
-﻿using BlOrders2023.Models;
+﻿using BlOrders2023.Contracts.ViewModels;
+using BlOrders2023.Core.Data;
+using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
@@ -309,22 +311,25 @@ namespace BlOrders2023.ViewModels
         public ObservableCollection<CustomerClass> Classes { get; } = new();
 
         public static IEnumerable<AllocationType> AllocationTypes { get => Enum.GetValues(typeof(AllocationType)).Cast<AllocationType>(); }
-
+        public WholesaleCustomer Customer { get => _customer; }
         #endregion Properties
         #region Fields
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        public WholesaleCustomer Customer { get; set; }
+        private readonly IBLDatabase _db = App.GetNewDatabase();
+        private WholesaleCustomer _customer;
+
+       
         #endregion Fields
         #region Constructors
         public CustomerDataInputControlViewModel()
         {
-            Customer = new WholesaleCustomer();
+            _customer = new WholesaleCustomer();
             _ = GetClassesAsync();
         }
 
         public async Task GetClassesAsync()
         {
-            var classes = await Task.Run(() => App.GetNewDatabase().Customers.GetCustomerClassesAsync());
+            var classes = await Task.Run(() => _db.Customers.GetCustomerClassesAsync());
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 foreach (var custClass in classes)
@@ -419,6 +424,22 @@ namespace BlOrders2023.ViewModels
                 return ValidationResult.Success;
             }
             
+        }
+
+        internal void SetCustomer(WholesaleCustomer customer)
+        {
+            //var entityOrder = _db.Customers.Get(customer.CustID).FirstOrDefault();
+            //if (entityOrder != null)
+            //{
+            //    //We want to track changes so get it from the db context
+            //    _customer = entityOrder;
+            //}
+            //else
+            //{
+            //    //Must be a new Order
+            //    _customer = customer;
+            //}
+            _customer = customer;
         }
         #endregion Validators
         #endregion Methods

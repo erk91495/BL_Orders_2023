@@ -39,13 +39,14 @@ namespace BlOrders2023.UserControls
         #endregion Fields
 
         #region Constructors
-        public CustomerDataInputControl(bool CheckIfUnique = false)
+        public CustomerDataInputControl(WholesaleCustomer customer, bool CheckIfUnique = false)
         {
             this.InitializeComponent();
             var enumValues = Enum.GetNames(typeof(States));
             StateComboBox.ItemsSource = enumValues;
             BillingStateComboBox.ItemsSource = enumValues;
             ViewModel = App.GetService<CustomerDataInputControlViewModel>();
+            ViewModel.SetCustomer(customer);
             ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
             ViewModel.CheckIfUnique = CheckIfUnique;
         }
@@ -71,7 +72,7 @@ namespace BlOrders2023.UserControls
             int i = 0;
         }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             try 
             { 

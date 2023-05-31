@@ -257,7 +257,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    internal async Task DeleteAllShippingItemsAsync()
+    internal Task DeleteAllShippingItemsAsync()
     {
         throw new NotImplementedException();
         //need to handle order items

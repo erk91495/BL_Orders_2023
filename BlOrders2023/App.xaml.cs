@@ -16,7 +16,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+
 using QuestPDF.Infrastructure;
+
 using Windows.ApplicationModel;
 
 namespace BlOrders2023;
@@ -79,6 +81,8 @@ public partial class App : Application
             services.AddSingleton<IFileService, FileService>();
 
             // Views and ViewModels
+            services.AddTransient<WholesaleCustomersViewModel>();
+            services.AddTransient<WholesaleCustomersPage>();
             services.AddTransient<FillOrdersPageViewModel>();
             services.AddTransient<FillOrdersPage>();
             services.AddTransient<SettingsViewModel>();

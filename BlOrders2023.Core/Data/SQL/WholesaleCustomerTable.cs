@@ -39,6 +39,13 @@ namespace BlOrders2023.Core.Data.SQL
             }
         }
 
+        public IEnumerable<WholesaleCustomer> Get(int customerID)
+        {
+                return _db.Customers
+                    .Where(c => c.CustID == customerID)
+                    .ToList();
+        }
+
         public async Task<IEnumerable<WholesaleCustomer>> GetAsync(string query = null)
         {
             if (query.IsNullOrEmpty())

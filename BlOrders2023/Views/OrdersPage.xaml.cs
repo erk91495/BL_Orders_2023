@@ -203,7 +203,7 @@ public sealed partial class OrdersPage : Page
     /// <param name="e">the event args</param>
     private void NewCustomerBtn_Click(object _sender, RoutedEventArgs e)
     {
-        CustomerDataInputControl dialog = new() 
+        CustomerDataInputControl dialog = new(new WholesaleCustomer()) 
         {
             XamlRoot = XamlRoot,
         };

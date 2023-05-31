@@ -20,7 +20,6 @@
     PrimaryButtonText="Create Customer"
     CloseButtonText="Cancel"
     FlowDirection="LeftToRight"
-    IsPrimaryButtonEnabled="False"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
     
     
