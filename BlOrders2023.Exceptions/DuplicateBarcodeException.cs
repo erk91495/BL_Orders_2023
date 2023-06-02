@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlOrders2023.Core.Exceptions
+namespace BlOrders2023.Exceptions
 {
     public class DuplicateBarcodeException : Exception
     {

@@ -24,4 +24,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BlOrders2023.Exceptions\BlOrders2023.Exceptions.csproj" />
+  </ItemGroup>
+
 </Project>

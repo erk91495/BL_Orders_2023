@@ -1,6 +1,6 @@
 ﻿using BlOrders2023.Contracts.ViewModels;
 using BlOrders2023.Core.Data;
-using BlOrders2023.Core.Exceptions;
+using BlOrders2023.Exceptions;
 using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;

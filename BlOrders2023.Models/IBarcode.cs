@@ -9,6 +9,8 @@ namespace BlOrders2023.Models
 
     public interface IBarcode
     {
-        public string? Scanline { get; set; }
+        string? Scanline { get; }
+        public bool PopuplateProperties(ref ShippingItem item);
+        public void SetScanline(string scanline);
     }
 }

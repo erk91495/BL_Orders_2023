@@ -8,6 +8,16 @@ namespace BlOrders2023.Models
 {
     public class Code128Barcode : IBarcode
     {
-        public string? Scanline { get; set; }
+        public string? Scanline { get; private set;}
+
+        public bool PopuplateProperties(ref ShippingItem item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetScanline(string scanline)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

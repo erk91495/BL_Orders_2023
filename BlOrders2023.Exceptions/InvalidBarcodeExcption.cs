@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlOrders2023.Core.Exceptions
+namespace BlOrders2023.Exceptions
 {
     public class InvalidBarcodeExcption : Exception
     {

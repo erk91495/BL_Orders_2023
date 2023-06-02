@@ -3,7 +3,7 @@ using BlOrders2023.ViewModels;
 using BlOrders2023.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using BlOrders2023.Core.Exceptions;
+using BlOrders2023.Exceptions;
 using System.Diagnostics;
 using Windows.Management.Update;
 using System.Media;
@@ -49,19 +49,16 @@ public sealed partial class FillOrdersPage : Page
             {
                 var scanline = scanlineText;
                 box.Text = null;
-                GS1_128Barcode bc = new()
-                {
-                    Scanline = scanline,
-                };
                 ShippingItem item = new()
                 {
                     QuanRcvd = 1,
                     ScanDate = DateTime.Now,
+                    Scanline = scanline,
                 };
                 try
                 {
                     //interpreter has no concept of dbcontext and cannot track items
-                    BarcodeInterpreter.ParseBarcode(bc, ref item);
+                    BarcodeInterpreter.ParseBarcode(ref item);
                     var product = App.GetNewDatabase().Products.Get(item.ProductID, false).FirstOrDefault();
                     if (product != null)
                     {
@@ -107,8 +104,26 @@ public sealed partial class FillOrdersPage : Page
         {
             Debug.WriteLine(e.ToString());
             var s = e.Data["Scanline"];
-            await ShowLockedoutDialog(e.Message,
-                String.Format("Duplicate Scanline {0}", s));
+            ContentDialog d = new()
+            {
+                XamlRoot = XamlRoot,
+                Title = e.Message,
+                Content = $"Duplicate Scanline {s}\r\nWould you like to modify and override?",
+                PrimaryButtonText = "Modify",
+                SecondaryButtonText = "Continue",
+                DefaultButton = ContentDialogButton.None,
+
+            };
+            d.PreviewKeyDown += LockOutKeyPresses;
+            SystemSounds.Exclamation.Play();
+            var res = await d.ShowAsync();
+            if(res == ContentDialogResult.Primary)
+            {
+                BarcodeInterpreter.UpdateBarcode(ref item);
+                //GET WEIGHT FROM USER
+                //MODIFY SCANLINE AND WEIGHT ADD UNDERSCORE to BARCODE
+                //RE ADD ITEM
+            }
         }
     }
 
