@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
+using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
 using BlOrders2023.ViewModels;
@@ -35,11 +36,10 @@ namespace BlOrders2023.UserControls
         #endregion Properties
 
         #region Fields
-        //private ContentDialog _dialog;
         #endregion Fields
 
         #region Constructors
-        public CustomerDataInputControl(WholesaleCustomer customer, bool CheckIfUnique = false)
+        public CustomerDataInputControl(WholesaleCustomer customer, bool CheckIfUnique = true)
         {
             this.InitializeComponent();
             var enumValues = Enum.GetNames(typeof(States));
@@ -49,6 +49,10 @@ namespace BlOrders2023.UserControls
             ViewModel.SetCustomer(customer);
             ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
             ViewModel.CheckIfUnique = CheckIfUnique;
+            if (!CheckIfUnique)
+            {
+                PrimaryButtonText = "Update Customer";
+            }
         }
 
         private void ViewModel_ErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
@@ -74,9 +78,13 @@ namespace BlOrders2023.UserControls
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            try 
-            { 
-                ViewModel.SaveCustomer();
+            try
+            {
+                //if we didn't save we have validation issues
+                if (!ViewModel.SaveCustomer())
+                {
+                    args.Cancel = true;
+                }
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -95,5 +103,6 @@ namespace BlOrders2023.UserControls
             }
 
         }
+
     }
 }

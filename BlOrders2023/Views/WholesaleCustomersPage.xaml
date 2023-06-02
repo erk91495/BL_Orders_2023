@@ -6,17 +6,51 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:models="using:BlOrders2023.Models"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d">
 
     <Grid x:Name="ContentArea">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <RelativePanel Grid.Row="0">
+            <TextBox x:Name="CustomerSearch"
+                     PlaceholderText="Search..."
+                     MinWidth="300"
+                     TextChanged="CustomerSearch_TextChanged"
+                     RelativePanel.LeftOf="btn_NewCustomer"
+                     Margin="0,0,10,0"/>
+            <Button x:Name="btn_NewCustomer"
+                    Content="New Customer"
+                    RelativePanel.AlignRightWithPanel="True"
+                    Click="btn_NewCustomer_Click"/>
+        </RelativePanel>
+
+        <muxc:ProgressBar
+                    x:Name="progressBar"
+                    Grid.Row = "1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    Height="10"
+                    IsIndeterminate="True"
+                    Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                    Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+
         <controls:DataGrid
+            x:Name="CustomersGrid"
+            Grid.Row="2"
             AutoGenerateColumns="False"
             GridLinesVisibility="Horizontal"
             RowDetailsVisibilityMode="VisibleWhenSelected"
             ItemsSource="{x:Bind ViewModel.Customers, Mode=OneWay}"
-            SelectedItem="{x:Bind SelectedCustomer, Mode=TwoWay}"
+            SelectedItem="{x:Bind ViewModel.SelectedCustomer, Mode=TwoWay}"
             SelectionMode="Single"
-            RightTapped="DataGrid_RightTapped">
+            IsReadOnly="True"
+            RightTapped="DataGrid_RightTapped"
+            CanUserSortColumns="True">
             <controls:DataGrid.Resources>
                 <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
             </controls:DataGrid.Resources>

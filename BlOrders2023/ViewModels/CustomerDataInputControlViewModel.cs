@@ -28,7 +28,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.CustomerName = value.Trim().ToUpper();
-                CheckValidation(Customer.CustomerName, nameof(CustomerName));
+                ValidateProperty(Customer.CustomerName, nameof(CustomerName));
                 OnPropertyChanged();
             }
         }
@@ -44,7 +44,7 @@ namespace BlOrders2023.ViewModels
                     value = null;
                 }
                 Customer.Buyer = value;
-                CheckValidation(value, nameof(Buyer));
+                ValidateProperty(value, nameof(Buyer));
                 OnPropertyChanged();
             }
         }
@@ -57,7 +57,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.Phone = value; 
-                CheckValidation(value, nameof(Phone));
+                ValidateProperty(value, nameof(Phone));
                 OnPropertyChanged();
             }
         }
@@ -91,7 +91,7 @@ namespace BlOrders2023.ViewModels
                     value = null;
                 }
                 Customer.Phone_2 = value;
-                CheckValidation(value, nameof(Phone_2));
+                ValidateProperty(value, nameof(Phone_2));
                 OnPropertyChanged();
             }
         }
@@ -114,7 +114,8 @@ namespace BlOrders2023.ViewModels
             }
         }
 
-        [EmailAddress]
+        //We currently may use the email field for multiple emails
+        //[EmailAddress]
         public string? Email
         {
             get => Customer.Email;
@@ -125,7 +126,7 @@ namespace BlOrders2023.ViewModels
                     value = null;
                 }
                 Customer.Email = value;
-                CheckValidation(value, nameof(Email));
+                ValidateProperty(value, nameof(Email));
                 OnPropertyChanged();
             }
         }
@@ -141,7 +142,7 @@ namespace BlOrders2023.ViewModels
                     value = null;
                 }
                 Customer.Fax = value;
-                CheckValidation(value, nameof(Fax));
+                ValidateProperty(value, nameof(Fax));
                 OnPropertyChanged();
             }
         }
@@ -154,7 +155,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.Address = value;
-                CheckValidation(value, nameof(Address));
+                ValidateProperty(value, nameof(Address));
                 OnPropertyChanged();
                 if (Customer.UseSameAddress)
                 {
@@ -171,7 +172,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.City = value;
-                CheckValidation(value, nameof(City));
+                ValidateProperty(value, nameof(City));
                 OnPropertyChanged();
                 if (Customer.UseSameAddress)
                 {
@@ -189,7 +190,7 @@ namespace BlOrders2023.ViewModels
             {
                 //dont use OnPropertyChanged() it causes stack overflow
                 Customer.State = value;
-                CheckValidation(value, nameof(State));
+                ValidateProperty(value, nameof(State));
                 OnPropertyChanged(nameof(State));
                 if (Customer.UseSameAddress)
                 {
@@ -208,7 +209,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.ZipCode = value;
-                CheckValidation(value, nameof(ZipCode));
+                ValidateProperty(value, nameof(ZipCode));
                 OnPropertyChanged();
                 if (Customer.UseSameAddress)
                 {
@@ -227,7 +228,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.BillingAddress = value;
-                CheckValidation(value, nameof(BillingAddress));
+                ValidateProperty(value, nameof(BillingAddress));
                 OnPropertyChanged();
             }
         }
@@ -242,7 +243,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.BillingCity = value;
-                CheckValidation(value, nameof(BillingCity));
+                ValidateProperty(value, nameof(BillingCity));
                 OnPropertyChanged();
             }
         }
@@ -257,7 +258,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.BillingState = value;
-                CheckValidation(value, nameof(BillingState));
+                ValidateProperty(value, nameof(BillingState));
                 OnPropertyChanged(nameof(BillingState));
             }
         }
@@ -272,7 +273,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.BillingZipCode = value;
-                CheckValidation(value, nameof(BillingZipCode));
+                ValidateProperty(value, nameof(BillingZipCode));
                 OnPropertyChanged();
             }
         }
@@ -285,7 +286,7 @@ namespace BlOrders2023.ViewModels
             set
             {
                 Customer.CustomerClass = value;
-                CheckValidation(value, nameof(CustomerClass));
+                ValidateProperty(value, nameof(CustomerClass));
             }
         }
 
@@ -307,7 +308,7 @@ namespace BlOrders2023.ViewModels
             }
         }
 
-        public bool CheckIfUnique { get; set; } = false;
+        public bool CheckIfUnique { get; set; }
         public ObservableCollection<CustomerClass> Classes { get; } = new();
 
         public static IEnumerable<AllocationType> AllocationTypes { get => Enum.GetValues(typeof(AllocationType)).Cast<AllocationType>(); }
@@ -315,7 +316,7 @@ namespace BlOrders2023.ViewModels
         #endregion Properties
         #region Fields
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        private readonly IBLDatabase _db = App.GetNewDatabase();
+        
         private WholesaleCustomer _customer;
 
        
@@ -323,13 +324,21 @@ namespace BlOrders2023.ViewModels
         #region Constructors
         public CustomerDataInputControlViewModel()
         {
+            ErrorsChanged += HasErrorsChanged;
             _customer = new WholesaleCustomer();
             _ = GetClassesAsync();
         }
 
+        private void HasErrorsChanged(object? sender, System.ComponentModel.DataErrorsChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(GetErrorMessage));
+            OnPropertyChanged(nameof(VisibleIfError));
+        }
+
         public async Task GetClassesAsync()
         {
-            var classes = await Task.Run(() => _db.Customers.GetCustomerClassesAsync());
+            var db = App.GetNewDatabase();
+            var classes = await Task.Run(() => db.Customers.GetCustomerClassesAsync(true));
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 foreach (var custClass in classes)
@@ -347,6 +356,8 @@ namespace BlOrders2023.ViewModels
         #region Methods
 
         #region Validators
+
+
         public string GetErrorMessage(string name)
         {
             var errors = GetErrors(name);
@@ -387,20 +398,17 @@ namespace BlOrders2023.ViewModels
             }
         }
 
-        private void CheckValidation(object? value, string propertyName = null!)
-        {
-            ValidateProperty(value, propertyName);
-            OnPropertyChanged(nameof(GetErrorMessage));
-            OnPropertyChanged(nameof(VisibleIfError));
-        }
 
-        internal void SaveCustomer(bool overwrite = false)
+        internal bool SaveCustomer(bool overwrite = false)
         {
+            ValidateAllProperties();
             if (!HasErrors)
             {
                 var db = App.GetNewDatabase();
                 db.Customers.Upsert(Customer, overwrite);
+                return true;
             }
+            return false;
         }
 
         public static ValidationResult? ValidateCustomerName(string? value, ValidationContext context)

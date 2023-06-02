@@ -17,7 +17,7 @@ namespace BlOrders2023.Core.Data
         WholesaleCustomer Upsert(WholesaleCustomer customer, bool overwrite = false);
         Task DeleteAsync(WholesaleCustomer order);
         Task<CustomerClass> GetDefaultCustomerClassAsync();
-
-        Task<IEnumerable<CustomerClass>> GetCustomerClassesAsync();
+        void Reload();
+        Task<IEnumerable<CustomerClass>> GetCustomerClassesAsync(bool asNoTracking = false);
     }
 }
