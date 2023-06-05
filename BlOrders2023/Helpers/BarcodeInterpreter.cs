@@ -19,10 +19,6 @@ namespace BlOrders2023.Helpers
 
     public static class BarcodeInterpreter
     {
-
-
-        
-
         /// <summary>
         /// Populates the properties of the given shipping item with the data from the given barcode
         /// </summary>
@@ -32,23 +28,28 @@ namespace BlOrders2023.Helpers
         /// <exception cref="ProductNotFoundException">If the parsed barcodes product is not in the database</exception>
         public static void ParseBarcode(ref ShippingItem item)
         {
-            if(item.Scanline == null)
+            bool isValidBarcodeType = true;
+            IBarcode? barcode = null;
+
+            if (item.Scanline == null)
             {
                 throw new InvalidBarcodeExcption("Scanline was null");
             }
-            IBarcode? barcode = null;
+            
             try
             {
-                barcode = new GS1_128Barcode();
-                barcode.SetScanline(item.Scanline);
+                barcode = new GS1_128Barcode(item.Scanline);
             }
-            catch (InvalidBarcodeExcption e) { }
+            catch (InvalidBarcodeExcption) 
+            {
+                isValidBarcodeType = false; 
+            }
 
             //TODO try code128
 
-            if (barcode == null)
+            if (!isValidBarcodeType || barcode == null)
             {
-                throw new InvalidBarcodeExcption("The scanline given did not match a given barcode format");
+                throw new UnknownBarcodeFormatException("The scanline given did not match a given barcode format");
             }
             else
             {
@@ -58,21 +59,41 @@ namespace BlOrders2023.Helpers
 
         public static bool UpdateBarcode(ref ShippingItem shippingItem)
         {
+            bool isValidBarcodeType = true;
+            IBarcode? barcode = null;
             if (shippingItem.Scanline != null) 
             {
-                //try to set barcode data if exception try next type
-                //if (IsGS1128Barcode(shippingItem.Scanline))
-                //{
-                //    GS1_128Barcode bc = new()
-                //    {
-                //        Scanline = shippingItem.Scanline,
-                //    };
-                //    UpdateBarcodeScanline(bc, "3202", "002212");
-                //}
-                //else
-                //{
-                //    throw new NotImplementedException();
-                //}
+
+                try
+                {
+                    barcode = new GS1_128Barcode(shippingItem);
+                    shippingItem.Scanline = barcode.Scanline;
+                }
+                catch (InvalidBarcodeExcption) 
+                {
+                    isValidBarcodeType = false;
+                }
+
+                if (!isValidBarcodeType)
+                {
+                    try
+                    {
+                        barcode = new Code128Barcode(shippingItem);
+                    }
+                    catch (InvalidBarcodeExcption)
+                    {
+                        isValidBarcodeType = false;
+                    }
+                }
+
+                if (!isValidBarcodeType)
+                {
+                    throw new UnknownBarcodeFormatException();
+                }
+                else
+                {
+
+                }
             }
             return true;
         }
@@ -92,7 +113,7 @@ namespace BlOrders2023.Helpers
             if (item.PackDate != null && item.Product != null ) {
                 //Assumes b&L company code 
                 string gtin = (item.Product.CompanyCode ?? "90605375") + item.ProductID.ToString("D5");
-                AppendG10CheckDigit(ref gtin);
+                GS1_128Barcode.AppendG10CheckDigit(ref gtin);
                 var scanline = "01" + gtin +
                     "3202" + ((int)((item.PickWeight ?? 0) * 100)).ToString("D6") + "13" + item.PackDate?.ToString("yyMMdd") +
                     "21" + item.PackageSerialNumber;
@@ -103,62 +124,8 @@ namespace BlOrders2023.Helpers
         }
 
       
-        /// <summary>
-        /// This method caluculates and appends the check digit for the given gtin in accordance with the gs1 standard
-        /// see 
-        /// </summary>
-        /// <param name="gtin">The gtin to calgulate</param>
-        /// <returns> True if the calculation is successful</returns>
-        private static bool AppendG10CheckDigit(ref string gtin)
-        {
-            bool success = false;
-            
-            if ( gtin.Length <= 13)
-            { 
-                gtin += CalculateG10CheckDigit(in gtin);
-            }            
-            return success;
-        }
+ 
 
-        /// <summary>
-        /// Calculates and returns the check digit for the given GTIN 
-        /// see https://www.gs1.org/services/how-calculate-check-digit-manually
-        /// </summary>
-        /// <param name="gtin">the GTIN to calculate</param>
-        /// <returns>The check digit for the GTIN</returns>
-        private static string CalculateG10CheckDigit(in string gtin)
-        {
-            int sum = 0;
-            //SSCC cheksum is 18 digits
-            int j = 0;
-            for (int i = gtin.Length - 1; i >= 0; i--)
-            {
-                char c = gtin[i];
-                if (j % 2 == 0)
-                {
-                    sum += int.Parse(c.ToString()) * 3;
-                }
-                else
-                {
-                    sum += int.Parse(c.ToString()) * 1;
-                }
-                j++;
-            }
-            int checkDigit = 10 - (sum % 10);
-            return checkDigit.ToString();
-        }
-
-       
-
-
-
-
-        private static bool UpdateBarcodeScanline(IBarcode barcode, string ai, string value)
-        {
-            //var index = FindAIStartIndex(barcode, ai);
-            //var newScanline = barcode.Scanline[..(index+ai.Length)] + value + barcode.Scanline[]
-            return true;
-        }
 
        
     }

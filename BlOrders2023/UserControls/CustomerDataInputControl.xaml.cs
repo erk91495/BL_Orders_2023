@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation and Contributors.
-// Licensed under the MIT License.
-
 using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;

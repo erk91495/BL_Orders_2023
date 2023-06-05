@@ -14,6 +14,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using BlOrders2023.UserControls;
 using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
+using Microsoft.Identity.Client;
 
 namespace BlOrders2023.Views;
 
@@ -47,7 +48,7 @@ public sealed partial class FillOrdersPage : Page
             String scanlineText = box.Text;
             if (scanlineText.EndsWith('\r'))
             {
-                var scanline = scanlineText;
+                var scanline = scanlineText.Trim();
                 box.Text = null;
                 ShippingItem item = new()
                 {
@@ -62,7 +63,7 @@ public sealed partial class FillOrdersPage : Page
                     var product = App.GetNewDatabase().Products.Get(item.ProductID, false).FirstOrDefault();
                     if (product != null)
                     {
-                        item.Product = product;
+                        //item.Product = product;
                         await AddShippingItemAsync(item);
                     }
                     else
@@ -119,10 +120,28 @@ public sealed partial class FillOrdersPage : Page
             var res = await d.ShowAsync();
             if(res == ContentDialogResult.Primary)
             {
+
+                SingleValueInputControl inputControl = new()
+                {
+                    XamlRoot = XamlRoot,
+                    PrimaryButtonText = "Submit",
+                    Prompt = "Enter the new weight",
+                };
+                res = await inputControl.ShowAsync();
+                if(res == ContentDialogResult.Primary && !inputControl.Value.IsNullOrEmpty())
+                {
+                    item.PickWeight = float.Parse(inputControl?.Value);
+                    //Add underscore so when an invoice is printed we can see manual overrides
+                    item.PackageSerialNumber += '_';
+                }
+                else
+                {
+                    //User canceled out
+                    return;
+                }
                 BarcodeInterpreter.UpdateBarcode(ref item);
                 //GET WEIGHT FROM USER
-                //MODIFY SCANLINE AND WEIGHT ADD UNDERSCORE to BARCODE
-                //RE ADD ITEM
+                await AddShippingItemAsync(item);
             }
         }
     }

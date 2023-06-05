@@ -5,9 +5,67 @@ using System.Text.RegularExpressions;
 
 namespace BlOrders2023.Models
 {
+
+
     public class GS1_128Barcode : IBarcode
     {
+        #region Helpers
         public const char FNC1 = (char)0x1D; //Group Seperator char
+
+        /// <summary>
+        /// This method caluculates and appends the check digit for the given gtin in accordance with the gs1 standard
+        /// see 
+        /// </summary>
+        /// <param name="gtin">The gtin to calgulate</param>
+        /// <returns> True if the calculation is successful</returns>
+        public static bool AppendG10CheckDigit(ref string gtin)
+        {
+            bool success = false;
+
+            if (gtin.Length <= 13)
+            {
+                gtin += CalculateG10CheckDigit(in gtin);
+            }
+            return success;
+        }
+
+        /// <summary>
+        /// Calculates and returns the check digit for the given GTIN 
+        /// see https://www.gs1.org/services/how-calculate-check-digit-manually
+        /// </summary>
+        /// <param name="gtin">the GTIN to calculate</param>
+        /// <returns>The check digit for the GTIN</returns>
+        public static string CalculateG10CheckDigit(in string gtin)
+        {
+            int sum = 0;
+            //SSCC cheksum is 18 digits
+            int j = 0;
+            for (int i = gtin.Length - 1; i >= 0; i--)
+            {
+                char c = gtin[i];
+                if (j % 2 == 0)
+                {
+                    sum += int.Parse(c.ToString()) * 3;
+                }
+                else
+                {
+                    sum += int.Parse(c.ToString()) * 1;
+                }
+                j++;
+            }
+            int checkDigit = 10 - (sum % 10);
+            return checkDigit.ToString();
+        }
+        #endregion Helpers
+
+        #region Properties
+        public override string Scanline
+        {
+            get => GenerateScanline();
+        }
+        #endregion Properties
+
+        #region Fields 
         //Keep In mind as we add fields here we will also need to support them when we parse the fields into product data
         private readonly static Dictionary<string, Regex> SupportedAIRegex = new()
         {
@@ -16,20 +74,41 @@ namespace BlOrders2023.Models
             {"01", new Regex("^01(\\d{14})")},                                                                               //GTIN
             {"02", new Regex("^02(\\d{14})$ ")},                                                                             //GTIN OF CONTAINED ITEMS
             {"10", new Regex("^10([\\x21-\\x22\\x25-\\x2F\\x30-\\x39\\x3A-\\x3F\\x41-\\x5A\\x5F\\x61-\\x7A]{0,20})")},       //LOT CODE
+            {"11", new Regex("^13(\\d{6})")},
             {"13", new Regex("^13(\\d{6})")},                                                                                //PACKAGING DATE
             {"21", new Regex("^21([\\x21-\\x22\\x25-\\x2F\\x30-\\x39\\x3A-\\x3F\\x41-\\x5A\\x5F\\x61-\\x7A]{0,20})")},       //SERIAL NUMBER
             {"3202",new Regex("^320(\\d)(\\d{6})")},                                                                          //NET WEIGHT (LBS.)
         };
 
         private Dictionary<string, string> _AIValues = new();
-        private string? _scanline;
-        public string? Scanline
+        private readonly string? _scanline;
+        #endregion Fields
+
+        #region Constructors
+        public GS1_128Barcode(ShippingItem item) : base(item)
         {
-            get => _scanline;
-            private set => _scanline = value;
+            //TODO Need a way to determine order of AI's in a barcode. Then i can get rud
+            _scanline = item.Scanline;
+            ParseScanline();
+            //Scanline may be inconsisten with what the Items propertes are. 
+            ParseShippingItem(item);
         }
 
-        public bool PopuplateProperties(ref ShippingItem item)
+        public GS1_128Barcode(string scanline) : base(scanline)
+        {
+            _scanline = scanline;
+            ParseScanline();
+        }
+        #endregion Constructors
+
+        #region Methods
+        /// <summary>
+        /// Populates the given ShippingItem's Properties from the original scanline values 
+        /// DOES NOT UPDATE ShippingItemm.Scanline
+        /// </summary>
+        /// <param name="item">The shipping item to update</param>
+        /// <returns>true if all AI's were successfully coonverted to properties</returns>
+        public override  bool PopuplateProperties(ref ShippingItem item)
         {
             foreach(var ai in _AIValues.Keys) 
             {
@@ -41,15 +120,95 @@ namespace BlOrders2023.Models
             return true;
         }
 
-        public void SetScanline(string scanline)
+
+        /// <summary>
+        /// Updates the barcode scanline and shipping item scanline based on the properties of the Shipping Item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <exception cref="InvalidBarcodeExcption">Throws Invalid Barcode Exception if a non supported ai is found</exception>
+        private void ParseShippingItem(ShippingItem item)
         {
-            _scanline = scanline;
-            ParseScanline();
+            foreach(var ai in _AIValues.Keys)
+            {
+                //GTIN
+                if (ai.Equals("01"))
+                {
+                    var newGTIN = _AIValues["01"][..^6] + $"{item.ProductID:D5}";
+                    AppendG10CheckDigit(ref newGTIN);
+                    UpdateAI("01", newGTIN);
+                }
+                //LOT CODE
+                else if (ai.Equals("10"))
+                {
+                    //we dont save this ai so just carry it through to the scanline
+                    UpdateAI(ai, _AIValues[ai]);
+                }
+                //PRODUCTION DATE
+                else if (ai.Equals("11"))
+                {
+                    UpdateAI(ai, (item.PackDate ?? DateTime.Now).ToString("yyMMdd"));
+                }
+                //PACKAGING DATE
+                else if (ai.Equals("13"))
+                {
+                    UpdateAI(ai, (item.PackDate ?? DateTime.Now).ToString("yyMMdd"));
+                }
+                //SERIAL NUMBER
+                else if (ai.Equals("21"))
+                {
+                    UpdateAI(ai, item.PackageSerialNumber ?? "");
+                }
+                //NET WEIGHT
+                else if (ai.StartsWith("320"))
+                {
+                    var netWT = item.PickWeight;
+                    double power = float.Parse(ai.Substring(ai.Length - 2));
+                    float multiplier = (float)Math.Pow(10, power);
+                    netWT *= multiplier;
+                    UpdateAI(ai,(netWT ?? 0f).ToString("0#####"));
+                }
+                //Forgot to write code for that ai i guess
+                else
+                {
+                    throw new InvalidBarcodeExcption("Unsupported AI");
+                }
+            }
         }
 
+        /// <summary>
+        /// Uses _AIValues to generate a new Scanline
+        /// </summary>
+        private string GenerateScanline()
+        {
+            string newScanline = "";
+            foreach(var ai in _AIValues.Keys)
+            {
+                newScanline += ai + _AIValues[ai];
+            }
+            return newScanline;
+        }
+
+        private void UpdateAI(string ai, string value)
+        {
+            if (_AIValues.ContainsKey(ai))
+            {
+                _AIValues[ai] = value;
+            }
+            else
+            {
+                _AIValues.Add(ai, value);
+            }
+        }
+
+        /// <summary>
+        /// Populates _AIValues with AI keys and Data Values from the given scanline
+        /// </summary>
+        /// <exception cref="InvalidBarcodeExcption">Throws InvalidBarcodeExcption if an 
+        /// AI cannot be found in the Supported AI Regex</exception>
         private void ParseScanline()
         {
-            var scanline = _scanline.Trim('\r', '\n');
+            var scanline = _scanline.Trim();
+            _AIValues.Clear();
             //TODO: break if no matches found
             while (!scanline.IsNullOrEmpty())
             {
@@ -82,12 +241,13 @@ namespace BlOrders2023.Models
                 }
             }
         }
+        
         /// <summary>
         /// Check if the given AI is supported by the interpreter
         /// </summary>
         /// <param name="key">The AI to be checked</param>
         /// <returns>True if the AI is supported</returns>
-        private static bool IsSupportedAI(String key)
+        private static bool IsSupportedAI(string key)
         {
             if (key.Length == 2)
             {
@@ -107,7 +267,6 @@ namespace BlOrders2023.Models
             }
         }
 
-
         /// <summary>
         /// Populates a ShippingItem property with the given ai and data
         /// </summary>
@@ -115,7 +274,7 @@ namespace BlOrders2023.Models
         /// <param name="data">The data for the given AI</param>
         /// <param name="item">The ShippingItem to populate</param>
         /// <returns>True if the population was successful</returns>
-        private static bool PopulateProperty(String ai, String data, ref ShippingItem item)
+        private bool PopulateProperty(string ai, string data, ref ShippingItem item)
         {
             bool success = false;
             //Is the Ai Supported
@@ -143,6 +302,12 @@ namespace BlOrders2023.Models
                 else if (ai.Equals("10"))
                 {
                     var lotCode = data;
+                    success = true;
+                }
+                //ProductionDate data (YYMMDD)
+                else if (ai.Equals("11"))
+                {
+                    item.PackDate = DateTime.ParseExact(data, "yyMMdd", null);
                     success = true;
                 }
                 //Packaging data (YYMMDD)
@@ -173,12 +338,12 @@ namespace BlOrders2023.Models
             return success;
         }
 
-        private static bool IsGS1128Barcode(string scanline)
-        {
-            return IsSupportedAI(scanline[..2]) || IsSupportedAI(scanline[..3]);
-        }
-
-        private static string GetNextAI(string scanline)
+        /// <summary>
+        /// Checks the leading digits of the given scanline to determine the next AI
+        /// </summary>
+        /// <param name="scanline"></param>
+        /// <returns>the AI or Null if no AI was found</returns>
+        private static string? GetNextAI(string scanline)
         {
             if (scanline.Length >= 2 && IsSupportedAI(scanline[..2]))
             {
@@ -194,11 +359,17 @@ namespace BlOrders2023.Models
             }
             else
             {
-                return "";
+                return null;
             }
         }
 
-        private static int FindAIStartIndex(IBarcode barcode, string ai)
+        /// <summary>
+        /// Searches the barcode's scanline for the given AI and returns its start index
+        /// </summary>
+        /// <param name="barcode">the barcode to search</param>
+        /// <param name="ai">the AI to find the index of</param>
+        /// <returns>The start index of the given AI or -1 if the ai was not found</returns>
+        private static int FindAIStartIndex(GS1_128Barcode barcode, string ai)
         {
             var scanline = barcode.Scanline;
             if (scanline != null)
@@ -232,5 +403,6 @@ namespace BlOrders2023.Models
             }
             return -1;
         }
+        #endregion Methods
     }
 }

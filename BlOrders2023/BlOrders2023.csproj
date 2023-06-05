@@ -21,6 +21,7 @@
     <None Remove="UserControls\CustomerDataInputControl.xaml" />
     <None Remove="UserControls\CustomerSelectionControl.xaml" />
     <None Remove="UserControls\ShippingItemDataInputControl.xaml" />
+    <None Remove="UserControls\SingleValueInputControl.xaml" />
     <None Remove="Views\CustomerClassesPage.xaml" />
     <None Remove="Views\OrderDetailsPage.xaml" />
     <None Remove="Views\ProductsPage.xaml" />
@@ -35,6 +36,9 @@
     </Page>
     <Page Update="UserControls\ShippingItemDataInputControl.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </Page>
+    <Page Update="UserControls\SingleValueInputControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\CustomerClassesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
