@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlOrders2023.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -38,7 +39,11 @@ namespace BlOrders2023.Models
         //public string? Gift_Grocer { get; set; }
         public bool? SingleProdPerPallet { get; set; }
         public int? CustomerClassID { get; set; }
-        public bool? isGrocer { get; set; }
+        //private bool? isGrocer { get; set; }
+        public bool UseSameAddress { get; set; }
+        
+        [Column("isGrocer")]
+        public AllocationType AllocationType { get; set; }
         
         [ForeignKey("CustomerClassID")]
         public virtual CustomerClass CustomerClass
@@ -51,7 +56,7 @@ namespace BlOrders2023.Models
             }
         }
 
-        public virtual List<Order> orders { get; set; } = new();
+        public virtual List<Order> Orders { get; set; } = new();
         #endregion Properties
 
         #region Fields
@@ -63,10 +68,10 @@ namespace BlOrders2023.Models
         {
             CustomerName = "";
             Phone = "";
-            isGrocer = true;
+            AllocationType = AllocationType.Grocer;
             Inactive = false;
             SingleProdPerPallet = false;
-            CustomerClass = new();
+            _customerClass = new();
         }
         #endregion Constructors
 

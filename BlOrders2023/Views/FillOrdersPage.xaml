@@ -225,7 +225,7 @@
                              AcceptsReturn="True"
                              TextWrapping="NoWrap"
                              TextChanged="Scanline_TextChanged"
-                             IsEnabled="{x:Bind ViewModel.hasOrder, Mode=OneWay}"/>
+                             IsEnabled="{x:Bind ViewModel.HasOrder, Mode=OneWay}"/>
 
                     <Button x:Name="ManualProductAdd" RelativePanel.RightOf="Scanline" RelativePanel.AlignBottomWith="Scanline"
                             Margin="10,0,0,0" Click="ManualProductAdd_Click">

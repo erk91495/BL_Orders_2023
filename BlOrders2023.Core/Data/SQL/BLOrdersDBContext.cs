@@ -31,6 +31,12 @@ public class BLOrdersDBContext : DbContext
             v => (bool)v ? (short)-1 : (short)0,
             v => (bool)(v == -1)
             );
+        modelBuilder.Entity<WholesaleCustomer>()
+            .Property(e => e.AllocationType)
+            .HasConversion(
+            v => v == AllocationType.Grocer,
+            v => v ? AllocationType.Grocer : AllocationType.Gift
+            );
     }
 
     public DbSet<InventoryItem> Inventory { get; set; }

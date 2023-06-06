@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 namespace BlOrders2023.Models
 {
 
-    public interface IBarcode
+    public abstract class IBarcode
     {
-        public string? Scanline { get; set; }
+
+        protected IBarcode(ShippingItem item) { }
+        protected IBarcode(string scanline) { }
+        public abstract string Scanline { get; }
+        public abstract bool PopuplateProperties(ref ShippingItem item);
     }
 }

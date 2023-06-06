@@ -71,26 +71,28 @@ public sealed partial class OrdersPage : Page
     /// <summary>
     /// Creates an email about the currently selected invoice. 
     /// </summary>
-    private async void EmailButton_Click(object sender, RoutedEventArgs e)
+    private async void EmailButton_Click(object _sender, RoutedEventArgs e)
     {
         if (ViewModel.SelectedOrder != null)
             await Helpers.Helpers.SendEmailAsync(ViewModel.SelectedOrder.Customer.Email ?? String.Empty);
     }
 
     #region Pane Buttons
-    private void EditOrder_Click(object sender, RoutedEventArgs e) => NavigateToOrderDetailsPage();
+    private void EditOrder_Click(object _sender, RoutedEventArgs e) => NavigateToOrderDetailsPage();
 
-    private void FillOrder_Click(object sender, RoutedEventArgs e) => NavigateToFillOrdersPage();
+    private void FillOrder_Click(object _sender, RoutedEventArgs e) => NavigateToFillOrdersPage();
 
-    private void PrintInvoice_Click(object sender, RoutedEventArgs e)
+    private void PrintInvoice_Click(object _sender, RoutedEventArgs e)
     {
         ReportGenerator g = new();
         var pdf = g.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
         Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-        var filePath = Path.GetTempPath() + "BLOrders2023\\" + ViewModel.SelectedOrder.OrderID + "_"+  DateTime.Now.ToFileTime() + ".pdf";
+        var filePath = Path.GetTempPath() + "BLOrders2023\\" + ViewModel.SelectedOrder!.OrderID + "_"+  DateTime.Now.ToFileTime() + ".pdf";
         pdf.GeneratePdf(filePath);
-        var options = new LauncherOptions();
-        options.ContentType = "application/pdf";
+        LauncherOptions options = new()
+        {
+            ContentType = "application/pdf"
+        };
         _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
     }
 
@@ -102,7 +104,7 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the doubletaped event</param>
-    private void Order_OrdersGrid_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)=>
+    private void Order_OrdersGrid_DoubleTapped(object _sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)=>
         NavigateToOrderDetailsPage();
 
     /// <summary>
@@ -110,12 +112,12 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the righttapped event</param>>
-    private void OrdersGrid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+    private void OrdersGrid_RightTapped(object _sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
     {
         var element = (e.OriginalSource as FrameworkElement);
         if (element != null)
         {
-            ViewModel.SelectedOrder = element.DataContext as Order;
+            ViewModel.SelectedOrder = (Order)element.DataContext;
         }
     }
 
@@ -125,7 +127,7 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the click event</param>
-    private void MenuFlyoutViewDetails_Click(object sender, RoutedEventArgs e) =>
+    private void MenuFlyoutViewDetails_Click(object _sender, RoutedEventArgs e) =>
         NavigateToOrderDetailsPage();
 
     /// <summary>
@@ -133,9 +135,13 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the click event</param>
-    private void MenuFlyoutNewOrderClick(object sender, RoutedEventArgs e)
+    private void MenuFlyoutNewOrderClick(object _sender, RoutedEventArgs e)
     {
-        CreateNewOrder(ViewModel?.SelectedOrder?.Customer);
+        if (ViewModel?.SelectedOrder?.Customer != null)
+        {
+            WholesaleCustomer customer = ViewModel.SelectedOrder.Customer;
+            CreateNewOrder(customer);
+        }
     }
 
     /// <summary>
@@ -143,7 +149,7 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the click event</param>
-    private void MenuFlyoutFillOrderClick(object sender, RoutedEventArgs e) =>
+    private void MenuFlyoutFillOrderClick(object _sender, RoutedEventArgs e) =>
         NavigateToFillOrdersPage();
     #endregion Menu Flyouts
     #endregion Orders Grid
@@ -182,11 +188,11 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the sender of the event</param>
     /// <param name="e">the event args</param>
-    private void NewOrderBtn_Clicked(object sender, RoutedEventArgs e)
+    private void NewOrderBtn_Clicked(object _sender, RoutedEventArgs e)
     {
         CustomerSelectionControl dialog = new(XamlRoot);
         dialog.SelectionChoose += CustomerSelectionControl_SelectionChoose;
-        dialog.showAsync();
+        dialog.ShowAsync();
 
     }
 
@@ -195,9 +201,12 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the sender of the event</param>
     /// <param name="e">the event args</param>
-    private void NewCustomerBtn_Click(object sender, RoutedEventArgs e)
+    private void NewCustomerBtn_Click(object _sender, RoutedEventArgs e)
     {
-        CustomerDataInputControl dialog = new(XamlRoot);
+        CustomerDataInputControl dialog = new(new WholesaleCustomer()) 
+        {
+            XamlRoot = XamlRoot,
+        };
         _ = dialog.ShowAsync();
     }
 
@@ -226,7 +235,7 @@ public sealed partial class OrdersPage : Page
     {
         if (customer != null)
         {
-            Order order = new Order(customer);
+            Order order = new(customer);
             ViewModel.Orders.Add(order);
             Frame.Navigate(typeof(OrderDetailsPage), order);
         }

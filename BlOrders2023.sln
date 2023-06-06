@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlOrders2023.Core", "BlOrde
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlOrders2023.Models", "BlOrders2023.Models\BlOrders2023.Models.csproj", "{61BB0203-17E2-476D-9DDB-86B47FEBF6D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlOrders2023.Reporting", "BlOrders2023.Reporting\BlOrders2023.Reporting.csproj", "{22C45694-CD5D-40E8-BCE1-F3F3F565F565}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlOrders2023.Reporting", "BlOrders2023.Reporting\BlOrders2023.Reporting.csproj", "{22C45694-CD5D-40E8-BCE1-F3F3F565F565}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlOrders2023.Exceptions", "BlOrders2023.Exceptions\BlOrders2023.Exceptions.csproj", "{55A516F3-BDB5-4372-89C5-58BF44214D84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +97,22 @@ Global
 		{22C45694-CD5D-40E8-BCE1-F3F3F565F565}.Release|x64.Build.0 = Release|Any CPU
 		{22C45694-CD5D-40E8-BCE1-F3F3F565F565}.Release|x86.ActiveCfg = Release|Any CPU
 		{22C45694-CD5D-40E8-BCE1-F3F3F565F565}.Release|x86.Build.0 = Release|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Debug|arm64.Build.0 = Debug|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Debug|x64.Build.0 = Debug|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Debug|x86.Build.0 = Debug|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Release|arm64.ActiveCfg = Release|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Release|arm64.Build.0 = Release|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Release|x64.ActiveCfg = Release|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Release|x64.Build.0 = Release|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Release|x86.ActiveCfg = Release|Any CPU
+		{55A516F3-BDB5-4372-89C5-58BF44214D84}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

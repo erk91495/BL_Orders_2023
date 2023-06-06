@@ -195,4 +195,7 @@
   <data name="Shell_FillOrders.Content" xml:space="preserve">
     <value>Fill Orders</value>
   </data>
+  <data name="Shell_WholesaleCustomers.Content" xml:space="preserve">
+    <value>Wholesale Customers</value>
+  </data>
 </root>

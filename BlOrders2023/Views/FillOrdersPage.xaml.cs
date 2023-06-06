@@ -3,7 +3,7 @@ using BlOrders2023.ViewModels;
 using BlOrders2023.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using BlOrders2023.Core.Exceptions;
+using BlOrders2023.Exceptions;
 using System.Diagnostics;
 using Windows.Management.Update;
 using System.Media;
@@ -14,6 +14,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using BlOrders2023.UserControls;
 using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
+using Microsoft.Identity.Client;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlOrders2023.Views;
 
@@ -47,21 +49,18 @@ public sealed partial class FillOrdersPage : Page
             String scanlineText = box.Text;
             if (scanlineText.EndsWith('\r'))
             {
-                var scanline = scanlineText;
+                var scanline = scanlineText.Trim();
                 box.Text = null;
-                GS1_128Barcode bc = new()
-                {
-                    Scanline = scanline,
-                };
                 ShippingItem item = new()
                 {
                     QuanRcvd = 1,
                     ScanDate = DateTime.Now,
+                    Scanline = scanline,
                 };
                 try
                 {
                     //interpreter has no concept of dbcontext and cannot track items
-                    BarcodeInterpreter.ParseBarcode(bc, ref item);
+                    BarcodeInterpreter.ParseBarcode(ref item);
                     var product = App.GetNewDatabase().Products.Get(item.ProductID, false).FirstOrDefault();
                     if (product != null)
                     {
@@ -103,12 +102,71 @@ public sealed partial class FillOrdersPage : Page
             OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
             OrderedItems.ColumnSizer.Refresh();
         }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _ = ex;
+            await ShowLockedoutDialog("Database Write Conflict", $"The order was modified before your changes could be saved.\r\n" +
+                $"Please re-open the order to get all changes");
+        }
+        catch (DbUpdateException ex)
+        {
+            await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
+        }
         catch (DuplicateBarcodeException e)
         {
             Debug.WriteLine(e.ToString());
             var s = e.Data["Scanline"];
-            await ShowLockedoutDialog(e.Message,
-                String.Format("Duplicate Scanline {0}", s));
+            ContentDialog d = new()
+            {
+                XamlRoot = XamlRoot,
+                Title = e.Message,
+                Content = $"Duplicate Scanline {s}\r\nWould you like to modify and override?",
+                PrimaryButtonText = "Modify",
+                SecondaryButtonText = "Continue",
+                DefaultButton = ContentDialogButton.None,
+
+            };
+            d.PreviewKeyDown += LockOutKeyPresses;
+            SystemSounds.Exclamation.Play();
+            var res = await d.ShowAsync();
+            if(res == ContentDialogResult.Primary)
+            {
+
+                SingleValueInputControl inputControl = new()
+                {
+                    XamlRoot = XamlRoot,
+                    PrimaryButtonText = "Submit",
+                    Prompt = "Enter the new weight",
+                    ValidateValue = delegate (string? value)
+                    {
+                        if (value != null)
+                        {
+                            if (value.Replace(".",string.Empty).Length <= 6 && float.TryParse(value, out float result))
+                            {
+                                return true;
+                            }
+                        }
+                        return false;
+                    },
+                };
+                res = await inputControl.ShowAsync();
+                if(res == ContentDialogResult.Primary && !inputControl.Value.IsNullOrEmpty())
+                {
+                        item.PickWeight = float.Parse(inputControl?.Value);
+                        //Add underscore so when an invoice is printed we can see manual overrides
+                        item.PackageSerialNumber += '_';
+
+                }
+                else
+                {
+                    //User canceled out
+                    return;
+                }
+                BarcodeInterpreter.UpdateBarcode(ref item);
+                //GET WEIGHT FROM USER
+                await AddShippingItemAsync(item);
+            }
         }
     }
 
@@ -163,7 +221,7 @@ public sealed partial class FillOrdersPage : Page
     {
         if (e.Items.FirstOrDefault() is ShippingItem)
         {
-            foreach (ShippingItem item in e.Items)
+            foreach (ShippingItem item in e.Items.Cast<ShippingItem>())
             {
                 await ViewModel.DeleteShippingItemAsync(item);
             }

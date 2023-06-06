@@ -1,10 +1,9 @@
-// Copyright (c) Microsoft Corporation and Contributors.
-// Licensed under the MIT License.
-
+using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
 using BlOrders2023.ViewModels;
 using CommunityToolkit.WinUI.UI.Converters;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -26,50 +25,47 @@ using Windows.Foundation.Collections;
 
 namespace BlOrders2023.UserControls
 {
-    public sealed partial class CustomerDataInputControl : ContentControl
+    public sealed partial class CustomerDataInputControl : ContentDialog
     {
         #region Properties
         CustomerDataInputControlViewModel ViewModel { get; }
+
         #endregion Properties
 
         #region Fields
-        private ContentDialog _dialog;
         #endregion Fields
 
         #region Constructors
-        public CustomerDataInputControl(XamlRoot root)
+        public CustomerDataInputControl(WholesaleCustomer customer, bool CheckIfUnique = true)
         {
             this.InitializeComponent();
-            _dialog = new();
-            _dialog.XamlRoot = root;
-            _dialog.Content = this;
-            _dialog.PrimaryButtonText = "Create Customer";
-            _dialog.CloseButtonText = "Cancel";
-            _dialog.FlowDirection = FlowDirection.LeftToRight;
-
+            var enumValues = Enum.GetNames(typeof(States));
+            StateComboBox.ItemsSource = enumValues;
+            BillingStateComboBox.ItemsSource = enumValues;
             ViewModel = App.GetService<CustomerDataInputControlViewModel>();
-            Binding b = new()
+            ViewModel.SetCustomer(customer);
+            ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
+            ViewModel.CheckIfUnique = CheckIfUnique;
+            if (!CheckIfUnique)
             {
-                Source = ViewModel,
-                Path = new PropertyPath("HasErrors"),
-                Converter = new BoolNegationConverter(),
-                Mode = BindingMode.OneWay
-            };
-            _dialog.SetBinding(ContentDialog.IsPrimaryButtonEnabledProperty, b);
+                PrimaryButtonText = "Update Customer";
+            }
+        }
 
-            var states = Enum.GetNames(typeof(States)).Cast<string>();
-            StateComboBox.ItemsSource = states.ToList();
-            
+        private void ViewModel_ErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
+        {
+            if (ViewModel.HasErrors)
+            {
+                IsPrimaryButtonEnabled = false;
+            }
+            else
+            {
+                IsPrimaryButtonEnabled = true;
+            }
         }
         #endregion Constructors
 
         #region Methods
-
-        public async Task<int?> ShowAsync()
-        {
-            await _dialog.ShowAsync();
-            return 0;
-        }
         #endregion Methods
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -77,9 +73,33 @@ namespace BlOrders2023.UserControls
             int i = 0;
         }
 
-        //private void SfMaskedTextBox_ValueChanged(object sender, Syncfusion.UI.Xaml.Editors.MaskedTextBoxValueChangedEventArgs e)
-        //{
-        //    23int i = 0;
-        //}
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            try
+            {
+                //if we didn't save we have validation issues
+                if (!ViewModel.SaveCustomer())
+                {
+                    args.Cancel = true;
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _ = ex;
+                FailureInfoBar.Message = $"The customer was modified before your changes could be saved.\r\n";
+                FailureInfoBar.IsOpen = true;
+                args.Cancel = true;
+            }
+            catch (DbUpdateException ex)
+            {
+                FailureInfoBar.Message = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                    $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}";
+                FailureInfoBar.IsOpen = true;
+                args.Cancel = true;
+
+            }
+
+        }
+
     }
 }

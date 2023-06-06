@@ -12,9 +12,10 @@ namespace BlOrders2023.Core.Data
         Task<IEnumerable<Order>> GetAsync();
         Task<IEnumerable<Order>> GetAsync(int orderID);
         IEnumerable<Order> Get(int orderID);
+        Order Reload(Order orderID);
         Task<Order> UpsertAsync(Order order);
         Task DeleteAsync(Order order);
-        Order Upsert(Order order);
+        Order Upsert(Order order, bool overwrite=false);
         void Delete(Order order);
     }
 }

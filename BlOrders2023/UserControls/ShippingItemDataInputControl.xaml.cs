@@ -32,7 +32,7 @@ namespace BlOrders2023.UserControls
         #endregion Properties
 
         #region Fields
-        private ContentDialog _dialog;
+        private readonly ContentDialog _dialog;
         #endregion Fields
 
         #region Constructors
@@ -41,12 +41,14 @@ namespace BlOrders2023.UserControls
             InitializeComponent();
             ViewModel = App.GetService<ShippingItemDataInputControlViewModel>();
 
-            _dialog = new();
-            _dialog.XamlRoot = root;
-            _dialog.Content = this;
-            _dialog.PrimaryButtonText = "Add Product";
-            _dialog.CloseButtonText = "Cancel";
-            _dialog.FlowDirection = FlowDirection.LeftToRight;
+            _dialog = new()
+            {
+                XamlRoot = root,
+                Content = this,
+                PrimaryButtonText = "Add Product",
+                CloseButtonText = "Cancel",
+                FlowDirection = FlowDirection.LeftToRight
+            };
 
             Binding b = new()
             {
@@ -102,7 +104,7 @@ namespace BlOrders2023.UserControls
                 }
                 else
                 {
-                    productToAdd = null;
+                    productToAdd = null!;
                 }
 
                 ProductSelection.Text = null;

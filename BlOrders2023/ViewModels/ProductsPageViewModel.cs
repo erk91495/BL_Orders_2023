@@ -113,7 +113,7 @@ namespace BlOrders2023.ViewModels
             var products = await Task.Run(() => table.UpsertAsync(p));
         }
 
-        internal async Task DeleteItem(Product p) 
+        internal Task DeleteItem(Product p) 
         {
             IProductsTable table = App.GetNewDatabase().Products;
             throw new NotImplementedException();
@@ -122,12 +122,12 @@ namespace BlOrders2023.ViewModels
         /// <summary>
         /// Notifies anyone listening to this object that a line item changed. 
         /// </summary>
-        private void LineItems_Changed(object sender, NotifyCollectionChangedEventArgs e)
+        private void LineItems_Changed(object? sender, NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(Products));
         }
 
-        internal async Task<bool> productIDExists(int productId)
+        internal static async Task<bool> ProductIDExists(int productId)
         {
             return await App.GetNewDatabase().Products.IdExists(productId);
         }

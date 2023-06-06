@@ -7,35 +7,27 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using ServiceStack;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Windows.Foundation.Metadata;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BlOrders2023.ViewModels
 {
-    public class OrderDetailsPageViewModel : ObservableRecipient, INavigationAware
+    public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     {
         #region Properties
-        ///// <summary>
-        ///// Gets or sets the current Order
-        ///// </summary>
-        //public Order CurrentOrder
-        //{
-        //    get => _order;
-        //    set
-        //    {
-        //        SetProperty(ref _order, value);
-        //        OnPropertyChanged(nameof(CurrentOrder));
-        //    }
-        //}
 
         public ObservableCollection<OrderItem> Items
         {
             get => _items;
             set
             {
-                if(_items != value) 
+                if (_items != value)
                 {
                     value.CollectionChanged += LineItems_Changed;
                 }
@@ -105,32 +97,43 @@ namespace BlOrders2023.ViewModels
             }
         }
 
+        [Required]
+        [CustomValidation(typeof(OrderDetailsPageViewModel), nameof(ValidateShipping), ErrorMessage = "A Shipping Type Must Be Selected")]
         public ShippingType Shipping
         {
-            get => _order.Shipping; 
+            get => _order.Shipping;
             set
             {
                 _order.Shipping = value;
+                CheckValidation(value, nameof(Shipping));
                 OnPropertyChanged();
             }
         }
 
+        [Required]
+        [Display(Name = "Taken By")]
         public string TakenBy
         {
             get => _order.TakenBy;
             set
             {
-                _order.TakenBy = value;
+                _order.TakenBy = value.Trim();
+                CheckValidation(value, nameof(TakenBy));
+
                 OnPropertyChanged();
+
             }
         }
 
+        //Need to handle opening an old order before i can re enable this
+        //[CustomValidation(typeof(OrderDetailsPageViewModel), nameof(ValidatePickupDate),ErrorMessage = "Pickup\\Delivery Date cannot be in the past")]
         public DateTime PickupDate
         {
             get => _order.PickupDate;
             set
             {
                 _order.PickupDate = value;
+                CheckValidation(value, nameof(PickupDate));
                 OnPropertyChanged();
             }
         }
@@ -155,6 +158,7 @@ namespace BlOrders2023.ViewModels
             }
         }
 
+        [MaxLength(255)]
         public string? Memo
         {
             get => _order.Memo;
@@ -166,8 +170,9 @@ namespace BlOrders2023.ViewModels
                 }
                 else
                 {
-                    _order.Memo = value;
+                    _order.Memo = value?.Trim();
                 }
+                CheckValidation(Memo, nameof(Memo));
                 OnPropertyChanged();
             }
         }
@@ -198,11 +203,11 @@ namespace BlOrders2023.ViewModels
 
         #region Fields
         private Order _order;
-        private ObservableCollection<Product> _suggestedProducts;
+        private readonly ObservableCollection<Product> _suggestedProducts;
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         private ObservableCollection<OrderItem> _items;
         private int _currentOrderIndex;
-        private IBLDatabase _db = App.GetNewDatabase();
+        private readonly IBLDatabase _db = App.GetNewDatabase();
         #endregion Fields
 
         #region Constructors
@@ -214,48 +219,65 @@ namespace BlOrders2023.ViewModels
             _currentOrderIndex = 0;
             _order = new();
             _suggestedProducts = new();
-            _items= new();
+            _items = new();
             LoadProducts();
         }
         #endregion Constructors
 
         #region Methods
 
+        /// <summary>
+        /// Checks if _items contains a product with the given id
+        /// </summary>
+        /// <param name="id">The id of the Prodcut to check for</param>
+        /// <returns></returns>
         public bool OrderItemsContains(int id)
         {
-            return (_items.FirstOrDefault(i => i.ProductID == id, null) != null);
+            return _items.FirstOrDefault(i => i!.ProductID == id, null) != null;
         }
         /// <summary>
         /// Notifies anyone listening to this object that a line item changed. 
         /// </summary>
-        private void LineItems_Changed(object sender, NotifyCollectionChangedEventArgs e)
+        private void LineItems_Changed(object? _sender, NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(Items));
         }
 
         public void OnNavigatedTo(object parameter)
         {
-            var order = parameter as Order;
-            if (order != null)
+            if (parameter is Order order)
             {
-                _order = order;
+                var entityOrder = _db.Orders.Get(order.OrderID).FirstOrDefault();
+                if (entityOrder != null)
+                {
+                    //We want to track changes so get it from the db context
+                    _order = entityOrder;
+                }
+                else
+                {
+                    //Must be a new Order
+                    _order = order;
+                }
                 _items = new ObservableCollection<OrderItem>(_order.Items);
-                _currentOrderIndex = _order.Customer.orders.IndexOf(_order);
-                HasNextOrder = _currentOrderIndex > 0;
-                HasPreviousOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
+                _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
+                HasNextOrder = _currentOrderIndex < _order.Customer.Orders.Count - 1;
+                HasPreviousOrder = _currentOrderIndex > 0;
+
                 OnAllPropertiesChanged();
             }
+            //Validate this to disable the product entry box on a new order
+            ValidateProperty(Shipping, nameof(Shipping));
         }
 
         public void OnNavigatedFrom()
         {
-            
+
         }
 
-        public void addItem(Product p)
+        public void AddItem(Product p)
         {
             var tracked = _db.Products.Get(p.ProductID, false).First();
-            OrderItem item = new(tracked,_order);
+            OrderItem item = new(tracked, _order);
             Items.Add(item);
         }
 
@@ -282,7 +304,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasNextOrder)
             {
-                return _order.Customer.orders[_currentOrderIndex - 1].OrderID;
+                return _order.Customer.Orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex + 1].OrderID;
             }
             return null;
         }
@@ -290,7 +312,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasNextOrder)
             {
-                return _order.Customer.orders[_currentOrderIndex - 1];
+                return _order.Customer.Orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex + 1];
             }
             return null;
         }
@@ -299,7 +321,7 @@ namespace BlOrders2023.ViewModels
         {
             if (HasPreviousOrder)
             {
-                return _order.Customer.orders[_currentOrderIndex + 1].OrderID;
+                return _order.Customer.Orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex - 1].OrderID;
             }
             return null;
         }
@@ -308,25 +330,9 @@ namespace BlOrders2023.ViewModels
         {
             if (HasPreviousOrder)
             {
-                return _order.Customer.orders[_currentOrderIndex + 1];
+                return _order.Customer.Orders.OrderBy(o => o.OrderID).ToList()[_currentOrderIndex - 1];
             }
             return null;
-        }
-        public void ChangeOrder(int? orderID)
-        {
-            if (orderID != null)
-            {
-                //_suggestedProducts = new();
-                //LoadProducts();
-
-                var changeOrder = _db.Orders.Get((int)orderID).First();
-                _order = changeOrder;
-                _items = new ObservableCollection<OrderItem>(_order.Items);
-                _currentOrderIndex = _order.Customer.orders.IndexOf(_order);
-                HasNextOrder = _currentOrderIndex > 0;
-                HasPreviousOrder = _currentOrderIndex < _order.Customer.orders.Count - 1;
-                OnAllPropertiesChanged();
-            }
         }
 
         #region Queries
@@ -341,7 +347,7 @@ namespace BlOrders2023.ViewModels
             });
 
             IProductsTable table = _db.Products;
-            var products = await Task.Run(() => table.GetAsync((int?)null,false));
+            var products = await Task.Run(() => table.GetAsync((int?)null, false));
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
@@ -386,10 +392,10 @@ namespace BlOrders2023.ViewModels
         /// <summary>
         /// Saves changes to the current Order
         /// </summary>
-        public void SaveCurrentOrder()
+        public void SaveCurrentOrder(bool overwrite = false)
         {
             _order.Items = Items.ToList();
-            _db.Orders.Upsert(_order);
+            _db.Orders.Upsert(_order, overwrite);
         }
 
         /// <summary>
@@ -409,9 +415,85 @@ namespace BlOrders2023.ViewModels
 
         internal void DeleteCurrentOrder()
         {
-             _db.Orders.Delete(_order);
+            _db.Orders.Delete(_order);
         }
         #endregion Queries
-        #endregion Methods
+
+        #region Validators
+        public string GetErrorMessage(string name)
+        {
+            var errors = GetErrors(name);
+            var firstError = errors.FirstOrDefault();
+            if (firstError != null)
+            {
+                return firstError.ErrorMessage ?? "Error";
+            }
+            return string.Empty;
+            #endregion Validators
+            #endregion Methods
+        }
+
+        public bool HasError(string name)
+        {
+            if (HasErrors)
+            {
+                var errors = GetErrors(name);
+                if(errors.IsNullOrEmpty())
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Visibility VisibleIfError(string name)
+        {
+            if (HasError(name))
+            {
+                return Visibility.Visible;
+            }
+            else 
+            { 
+                return Visibility.Collapsed; 
+            }
+        }
+
+        private void CheckValidation(object? value, string propertyName = null!)
+        {
+            ValidateProperty(value, propertyName);
+            OnPropertyChanged(nameof(GetErrorMessage));
+            OnPropertyChanged(nameof(VisibleIfError));
+        }
+
+        public static ValidationResult? ValidateShipping(ShippingType shipping)
+        {
+            var isValid = shipping != ShippingType.NoType;
+            return isValid ? ValidationResult.Success : new ValidationResult("Shipping must be selected");
+        }
+
+        public static ValidationResult? ValidatePickupDate(DateTime dateTime)
+        {
+            var isValid = dateTime.CompareTo(DateTime.Today) >= 0;
+            return isValid ? ValidationResult.Success : new ValidationResult("Pickup Date cannot be in the past");
+        }
+
+        internal void ReloadOrder()
+        {
+            _order = _db.Orders.Reload(_order);
+            _items = new ObservableCollection<OrderItem>(_order.Items);
+            _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
+            HasNextOrder = _currentOrderIndex < _order.Customer.Orders.Count - 1;
+            HasPreviousOrder = _currentOrderIndex > 0;
+            OnAllPropertiesChanged();
+        }
+
+        public void ValidateProperties()
+        {
+            ValidateAllProperties();
+        }
     }
 }
