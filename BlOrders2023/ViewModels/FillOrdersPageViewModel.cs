@@ -191,8 +191,6 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         {
             Items.Add(item);
             _order?.ShippingItems.Add(item);
-            //TODO:
-            //This item will not be a castle proxy need to fix that so the app doesnt crash
             IncremantOrderedItem(item);
             await App.GetNewDatabase().Orders.UpsertAsync(_order);
             IncrementReceivedItem(item);

@@ -15,6 +15,7 @@ using BlOrders2023.UserControls;
 using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
 using Microsoft.Identity.Client;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlOrders2023.Views;
 
@@ -100,6 +101,17 @@ public sealed partial class FillOrdersPage : Page
             await ViewModel.ReceiveItemAsync(item);
             OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
             OrderedItems.ColumnSizer.Refresh();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _ = ex;
+            await ShowLockedoutDialog("Database Write Conflict", $"The order was modified before your changes could be saved.\r\n" +
+                $"Please re-open the order to get all changes");
+        }
+        catch (DbUpdateException ex)
+        {
+            await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
         }
         catch (DuplicateBarcodeException e)
         {
