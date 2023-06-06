@@ -126,13 +126,25 @@ public sealed partial class FillOrdersPage : Page
                     XamlRoot = XamlRoot,
                     PrimaryButtonText = "Submit",
                     Prompt = "Enter the new weight",
+                    ValidateValue = delegate (string? value)
+                    {
+                        if (value != null)
+                        {
+                            if (value.Replace(".",string.Empty).Length <= 6 && float.TryParse(value, out float result))
+                            {
+                                return true;
+                            }
+                        }
+                        return false;
+                    },
                 };
                 res = await inputControl.ShowAsync();
                 if(res == ContentDialogResult.Primary && !inputControl.Value.IsNullOrEmpty())
                 {
-                    item.PickWeight = float.Parse(inputControl?.Value);
-                    //Add underscore so when an invoice is printed we can see manual overrides
-                    item.PackageSerialNumber += '_';
+                        item.PickWeight = float.Parse(inputControl?.Value);
+                        //Add underscore so when an invoice is printed we can see manual overrides
+                        item.PackageSerialNumber += '_';
+
                 }
                 else
                 {

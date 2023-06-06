@@ -7,9 +7,11 @@
 
     mc:Ignorable="d"
     MinWidth="1200"
-    CornerRadius="10">
+    CornerRadius="10"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
     <StackPanel Orientation="Vertical">
         <TextBlock x:Name="PromptBlock" Text="{x:Bind Prompt}"/>
+        <TextBlock x:Name="Error" Text="Invalid input" Visibility="{x:Bind notValid , Mode=OneWay}" Style="{StaticResource ValidatorTextBlockStyle}"/>
         <TextBox x:Name="InputBox" Text="{x:Bind Value, Mode=TwoWay}"/>
     </StackPanel>
     
