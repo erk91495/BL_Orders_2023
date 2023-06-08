@@ -16,4 +16,13 @@ namespace BlOrders2023.Reporting
             typeof(WholesaleOrderPickupRecap) 
         }; 
     }
+
+    public enum InputTypes
+    {
+        NO_INPUT,
+        WHOLESALE_CUSTOMER,
+        ORDER,
+        WHOLESALE_CUSTOMER_LIST,
+        ORDER_LIST
+    }
 }
