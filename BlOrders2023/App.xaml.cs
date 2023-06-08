@@ -96,6 +96,8 @@ public partial class App : Application
             services.AddTransient<OrderDetailsPageViewModel>();
             services.AddTransient<ProductsPage>();
             services.AddTransient<ProductsPageViewModel>();
+            services.AddTransient<ReportsPage>();
+            services.AddTransient<ReportsPageViewModel>();
             services.AddTransient<CustomerSelectionViewModel>();
             services.AddTransient<CustomerDataInputControlViewModel>();
             services.AddTransient<ShippingItemDataInputControlViewModel>();

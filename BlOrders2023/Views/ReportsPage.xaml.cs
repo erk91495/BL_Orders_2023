@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using BlOrders2023.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -26,6 +27,7 @@ namespace BlOrders2023.Views;
 public sealed partial class ReportsPage : Page
 {
     #region Properties
+    public ReportsPageViewModel ViewModel { get; }
     #endregion Properties
 
     #region Fields
@@ -35,6 +37,8 @@ public sealed partial class ReportsPage : Page
     public ReportsPage()
     {
         this.InitializeComponent();
+        ViewModel = App.GetService<ReportsPageViewModel>();
+        
     }
     #endregion Constructors
 

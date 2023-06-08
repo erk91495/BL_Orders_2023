@@ -20,6 +20,7 @@
     <None Remove="Styles\ValidationStyles.xaml" />
     <None Remove="UserControls\CustomerDataInputControl.xaml" />
     <None Remove="UserControls\CustomerSelectionControl.xaml" />
+    <None Remove="UserControls\ReportControl.xaml" />
     <None Remove="UserControls\ShippingItemDataInputControl.xaml" />
     <None Remove="UserControls\SingleValueInputControl.xaml" />
     <None Remove="Views\CustomerClassesPage.xaml" />
@@ -31,6 +32,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UserControls\ReportControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Styles\ValidationStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

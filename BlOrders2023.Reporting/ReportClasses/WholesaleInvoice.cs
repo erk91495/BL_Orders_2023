@@ -6,13 +6,12 @@ using System;
 using BlOrders2023.Models;
 using System.Reflection;
 using System.Net;
-using static System.Net.Mime.MediaTypeNames;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BlOrders2023.Reporting.ReportClasses
 {
-    internal class WholesaleInvoice : IDocument
+    [System.ComponentModel.DisplayName("Wholesale Invoice")]
+    internal class WholesaleInvoice : IReport
     {
 
         private readonly Order _order;
