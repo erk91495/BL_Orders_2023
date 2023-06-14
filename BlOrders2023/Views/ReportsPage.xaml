@@ -12,7 +12,7 @@
     mc:Ignorable="d">
 
     <StackPanel>
-        <ItemsRepeater ItemsSource="{x:Bind ViewModel.ReportsList}">
+        <ItemsRepeater ItemsSource="{x:Bind ReportsList}">
         </ItemsRepeater>
     </StackPanel>
 </Page>

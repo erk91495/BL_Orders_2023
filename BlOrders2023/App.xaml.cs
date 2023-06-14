@@ -7,10 +7,9 @@ using BlOrders2023.Core.Services;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
 using BlOrders2023.Services;
-using BlOrders2023.UserControls.ViewModels;
 using BlOrders2023.ViewModels;
 using BlOrders2023.Views;
-
+using BlOrders2023.UserControls.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Proxies;
 using Microsoft.Extensions.DependencyInjection;
@@ -98,10 +97,9 @@ public partial class App : Application
             services.AddTransient<ProductsPageViewModel>();
             services.AddTransient<ReportsPage>();
             services.AddTransient<ReportsPageViewModel>();
-            services.AddTransient<CustomerSelectionViewModel>();
+            services.AddTransient<CustomerSelectionDialogViewModel>();
             services.AddTransient<CustomerDataInputControlViewModel>();
             services.AddTransient<ShippingItemDataInputControlViewModel>();
-            services.AddTransient<SingleValueInputControlViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

@@ -11,7 +11,7 @@ using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace BlOrders2023.ViewModels
+namespace BlOrders2023.UserControls.ViewModels
 {
     public class CustomerDataInputControlViewModel : ObservableValidator
     {

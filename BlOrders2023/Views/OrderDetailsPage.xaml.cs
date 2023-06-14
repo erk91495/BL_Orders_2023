@@ -287,6 +287,7 @@ namespace BlOrders2023.Views
             else
             {
                 ViewModel.Shipping = ShippingType.Shipping;
+                ViewModel.PickupTime = new(ViewModel.PickupTime.Year, ViewModel.PickupTime.Month, ViewModel.PickupTime.Day, 0, 0, 0, 0);
                 PickupTimeStack.Visibility = Visibility.Collapsed;
             }
         }

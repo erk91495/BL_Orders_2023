@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms.Design.Behavior;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace BlOrders2023.ViewModels
+namespace BlOrders2023.UserControls.ViewModels
 {
     public class ShippingItemDataInputControlViewModel : ObservableValidator
     {

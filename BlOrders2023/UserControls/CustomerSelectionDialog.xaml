@@ -2,7 +2,7 @@
 <!-- Licensed under the MIT License. -->
 
 <ContentControl
-    x:Class="BlOrders2023.UserControls.CustomerSelectionControl"
+    x:Class="BlOrders2023.UserControls.CustomerSelectionDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:BlOrders2023.UserControls"

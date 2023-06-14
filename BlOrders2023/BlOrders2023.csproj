@@ -18,11 +18,12 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Styles\ValidationStyles.xaml" />
-    <None Remove="UserControls\CustomerDataInputControl.xaml" />
-    <None Remove="UserControls\CustomerSelectionControl.xaml" />
+    <None Remove="UserControls\CustomerDataInputDialog.xaml" />
+    <None Remove="UserControls\CustomerSelectionDialog.xaml" />
+    <None Remove="UserControls\DateRangeSelectionDialog.xaml" />
     <None Remove="UserControls\ReportControl.xaml" />
-    <None Remove="UserControls\ShippingItemDataInputControl.xaml" />
-    <None Remove="UserControls\SingleValueInputControl.xaml" />
+    <None Remove="UserControls\ShippingItemDataInputDialog.xaml" />
+    <None Remove="UserControls\SingleValueInputDialog.xaml" />
     <None Remove="Views\CustomerClassesPage.xaml" />
     <None Remove="Views\OrderDetailsPage.xaml" />
     <None Remove="Views\ProductsPage.xaml" />
@@ -32,25 +33,28 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UserControls\DateRangeSelectionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UserControls\ReportControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Styles\ValidationStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="UserControls\ShippingItemDataInputControl.xaml">
+    <Page Update="UserControls\ShippingItemDataInputDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </Page>
-    <Page Update="UserControls\SingleValueInputControl.xaml">
+    <Page Update="UserControls\SingleValueInputDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\CustomerClassesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="UserControls\CustomerDataInputControl.xaml">
+    <Page Update="UserControls\CustomerDataInputDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="UserControls\CustomerSelectionControl.xaml">
+    <Page Update="UserControls\CustomerSelectionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\ProductsPage.xaml">

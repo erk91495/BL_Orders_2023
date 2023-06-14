@@ -1,7 +1,7 @@
 using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
-using BlOrders2023.ViewModels;
+using BlOrders2023.UserControls.ViewModels;
 using CommunityToolkit.WinUI.UI.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
@@ -25,7 +25,7 @@ using Windows.Foundation.Collections;
 
 namespace BlOrders2023.UserControls
 {
-    public sealed partial class CustomerDataInputControl : ContentDialog
+    public sealed partial class CustomerDataInputDialog : ContentDialog
     {
         #region Properties
         CustomerDataInputControlViewModel ViewModel { get; }
@@ -36,7 +36,7 @@ namespace BlOrders2023.UserControls
         #endregion Fields
 
         #region Constructors
-        public CustomerDataInputControl(WholesaleCustomer customer, bool CheckIfUnique = true)
+        public CustomerDataInputDialog(WholesaleCustomer customer, bool CheckIfUnique = true)
         {
             this.InitializeComponent();
             var enumValues = Enum.GetNames(typeof(States));

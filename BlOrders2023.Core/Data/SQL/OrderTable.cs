@@ -97,6 +97,24 @@ namespace BlOrders2023.Core.Data.SQL
                 .Where(order => order.OrderID == orderID)
                 .ToListAsync();
 
+        public IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            return _db.Orders
+                .Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate)
+                .OrderBy(o => o.PickupDate)
+                .ThenBy(o => o.PickupTime)
+                .ToList();
+        }
+        public IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            return _db.Orders
+                .Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate)
+                .OrderBy(o => o.PickupDate)
+                .ThenBy(o => o.Customer.CustomerName)
+                .ThenBy(o => o.PickupTime)
+                .ToList();
+        }
+
         public Order Reload(Order order)
         {
             _db.ChangeTracker.Clear();

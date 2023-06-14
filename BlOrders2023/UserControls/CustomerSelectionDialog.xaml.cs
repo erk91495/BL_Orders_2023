@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 using Microsoft.UI.Xaml.Controls;
-using BlOrders2023.ViewModels;
+using BlOrders2023.UserControls.ViewModels;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.CodeDom;
 using Microsoft.UI.Xaml;
@@ -14,10 +14,10 @@ using BlOrders2023.Models;
 
 namespace BlOrders2023.UserControls
 {
-    public sealed partial class CustomerSelectionControl : ContentControl
+    public sealed partial class CustomerSelectionDialog : ContentControl
     {
         #region Properties
-        public CustomerSelectionViewModel ViewModel { get; }
+        public CustomerSelectionDialogViewModel ViewModel { get; }
         #endregion Properties
         #region Fields
         readonly ContentDialog _dialog;
@@ -26,7 +26,7 @@ namespace BlOrders2023.UserControls
         public event EventHandler? SelectionChoose;
         #endregion Events
         #region Constructors
-        public CustomerSelectionControl(XamlRoot root)
+        public CustomerSelectionDialog(XamlRoot root)
         {
             _dialog = new()
             {
@@ -39,7 +39,7 @@ namespace BlOrders2023.UserControls
                 FlowDirection = FlowDirection.LeftToRight,
                 IsPrimaryButtonEnabled = false
             };
-            ViewModel = App.GetService<CustomerSelectionViewModel>();
+            ViewModel = App.GetService<CustomerSelectionDialogViewModel>();
             this.InitializeComponent();
         }
         #endregion Constructors
@@ -62,7 +62,7 @@ namespace BlOrders2023.UserControls
             }
             else if (result == ContentDialogResult.Secondary)
             {
-                CustomerDataInputControl control = new(new WholesaleCustomer())
+                CustomerDataInputDialog control = new(new WholesaleCustomer())
                 {
                     XamlRoot = XamlRoot,
                 };                

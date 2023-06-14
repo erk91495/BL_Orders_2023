@@ -4,10 +4,10 @@ using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
 using System.Collections.ObjectModel;
 
-namespace BlOrders2023.ViewModels
+namespace BlOrders2023.UserControls.ViewModels
 {
 
-    public class CustomerSelectionViewModel
+    public class CustomerSelectionDialogViewModel
     {
         #region Properties
         public ObservableCollection<WholesaleCustomer> SuggestedCustomers
@@ -23,7 +23,7 @@ namespace BlOrders2023.ViewModels
         #endregion Fields
 
         #region Constructors
-        public CustomerSelectionViewModel()
+        public CustomerSelectionDialogViewModel()
         {
             _suggestedCustomers= new();
             SelectedCustomer = new();

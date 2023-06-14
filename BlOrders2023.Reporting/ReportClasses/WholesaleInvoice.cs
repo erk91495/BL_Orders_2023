@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace BlOrders2023.Reporting.ReportClasses
 {
     [System.ComponentModel.DisplayName("Wholesale Invoice")]
-    internal class WholesaleInvoice : IReport
+    public class WholesaleInvoice : IReport
     {
 
         private readonly Order _order;
@@ -69,7 +69,8 @@ namespace BlOrders2023.Reporting.ReportClasses
                     });
 
                     row.RelativeItem(1).AlignMiddle().AlignRight().Column(column =>
-                    {   //Invoice Number
+                    {   
+                        //Invoice Number
                         column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
                         //if (!_order.PO_Number.IsNullOrEmpty())
                         //{

@@ -133,7 +133,7 @@ public sealed partial class FillOrdersPage : Page
             if(res == ContentDialogResult.Primary)
             {
 
-                SingleValueInputControl inputControl = new()
+                SingleValueInputDialog inputControl = new()
                 {
                     XamlRoot = XamlRoot,
                     PrimaryButtonText = "Submit",
@@ -230,7 +230,7 @@ public sealed partial class FillOrdersPage : Page
 
     private async void ManualProductAdd_Click(object sender, RoutedEventArgs e)
     {
-        ShippingItemDataInputControl dialog = new(XamlRoot);
+        ShippingItemDataInputDialog dialog = new(XamlRoot);
         var result = await dialog.ShowAsync();
         if (result != null)
         {

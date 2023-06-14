@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using BlOrders2023.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
+using ServiceStack;
 
 namespace BlOrders2023.Models;
 [Table("tblOrdersWholesale")]
@@ -15,8 +16,8 @@ public class Order
         OrderDate = DateTime.Now;
         Frozen = false;
         //Set the date for today so that sql will accept the time
-        PickupDate = DateTime.Now;
-        PickupTime = DateTime.Today;
+        PickupDate = DateTime.Today;
+        PickupTime = DateTime.MinValue;
     }
     
     public Order(WholesaleCustomer customer)
@@ -68,5 +69,18 @@ public class Order
         }
         total += Memo_Totl ?? 0;
         return total;
+    }
+
+    public int GetTotalOrdered()
+    {
+        if (Items.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            var total =  Items.Sum(item => (int)item.Quantity);
+            return total;
+        }
     }
 }

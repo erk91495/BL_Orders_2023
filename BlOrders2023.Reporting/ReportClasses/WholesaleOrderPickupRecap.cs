@@ -11,9 +11,11 @@ using System.Collections.Generic;
 namespace BlOrders2023.Reporting.ReportClasses
 {
     [System.ComponentModel.DisplayName("Wholesale Order Pickup Recap")]
-    internal class WholesaleOrderPickupRecap : IReport
+    public class WholesaleOrderPickupRecap : IReport
     {
         private IEnumerable<Order> _orders;
+        private DateTimeOffset _startDate;
+        private DateTimeOffset _endDate;
 
         public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
         public static readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
@@ -21,9 +23,12 @@ namespace BlOrders2023.Reporting.ReportClasses
         public static readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
         public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
         public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-        WholesaleOrderPickupRecap(IEnumerable<Order> orders)
+
+        public WholesaleOrderPickupRecap(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
         {
             _orders = orders;
+            _startDate = startDate;
+            _endDate = endDate;
         }
 
         public void Compose(IDocumentContainer container)
@@ -48,20 +53,25 @@ namespace BlOrders2023.Reporting.ReportClasses
         {
             container.Row(row =>
             {
-                row.RelativeItem().AlignCenter().Text("B & L Wholesale Order Pickup Recap").Style(titleStyle);
+                row.RelativeItem(2).AlignCenter().Text("B & L Wholesale Order Pickup Recap").Style(titleStyle);
+                row.RelativeItem(1).AlignRight().Column( column =>
+                {
+                    column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);
+                    column.Item().Text($"To: {_endDate.ToString("M/d/yy")}").Style(subTitleStyle);
+                });
             });
         }
 
         private void ComposeContent(IContainer container)
         {
             container.Column(column => {
-                // step 3
                 //Items
                 column.Item().Table(table =>
                 {
                     table.ColumnsDefinition(column =>
                     {
                         column.RelativeColumn(8);
+                        column.RelativeColumn(2);
                         column.RelativeColumn(2);
                         column.RelativeColumn(2);
                         column.RelativeColumn(2);
@@ -81,6 +91,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                         header.Cell().Element(CellStyle).Text("Pickup Date").Style(tableHeaderStyle);
 
                         header.Cell().Element(CellStyle).Text("Pickup Time").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Cases Ordered").Style(tableHeaderStyle);
 
 
                         static IContainer CellStyle(IContainer container)
@@ -89,7 +100,6 @@ namespace BlOrders2023.Reporting.ReportClasses
                         }
                     });
 
-                    // step 3
                     foreach (var order in _orders)
                     {
                         table.Cell().Element(CellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
@@ -98,10 +108,16 @@ namespace BlOrders2023.Reporting.ReportClasses
 
                         table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
 
-                        table.Cell().Element(CellStyle).Text($"{order.PickupDate}").Style(tableTextStyle);
-
-                        table.Cell().Element(CellStyle).Text($"{order.PickupTime}").Style(tableTextStyle);
-
+                        table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yyyy")}").Style(tableTextStyle);
+                        if(order.Shipping == Models.Enums.ShippingType.Shipping)
+                        {
+                            table.Cell().Element(CellStyle).Text($"Delivery").Style(tableTextStyle).Italic();
+                        }
+                        else
+                        {
+                            table.Cell().Element(CellStyle).Text($"{order.PickupTime.ToString("t")}").Style(tableTextStyle);
+                        }
+                        table.Cell().Element(CellStyle).Text($"{order.GetTotalOrdered()}").Style(tableTextStyle);
                         static IContainer CellStyle(IContainer container)
                         {
                             return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);

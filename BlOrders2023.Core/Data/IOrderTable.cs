@@ -12,6 +12,8 @@ namespace BlOrders2023.Core.Data
         Task<IEnumerable<Order>> GetAsync();
         Task<IEnumerable<Order>> GetAsync(int orderID);
         IEnumerable<Order> Get(int orderID);
+        IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
+        IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate);
         Order Reload(Order orderID);
         Task<Order> UpsertAsync(Order order);
         Task DeleteAsync(Order order);

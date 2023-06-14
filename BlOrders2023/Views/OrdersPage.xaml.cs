@@ -84,11 +84,7 @@ public sealed partial class OrdersPage : Page
 
     private void PrintInvoice_Click(object _sender, RoutedEventArgs e)
     {
-        ReportGenerator g = new();
-        var pdf = g.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
-        Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-        var filePath = Path.GetTempPath() + "BLOrders2023\\" + ViewModel.SelectedOrder!.OrderID + "_"+  DateTime.Now.ToFileTime() + ".pdf";
-        pdf.GeneratePdf(filePath);
+        var filePath = ReportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
         LauncherOptions options = new()
         {
             ContentType = "application/pdf"
@@ -190,7 +186,7 @@ public sealed partial class OrdersPage : Page
     /// <param name="e">the event args</param>
     private void NewOrderBtn_Clicked(object _sender, RoutedEventArgs e)
     {
-        CustomerSelectionControl dialog = new(XamlRoot);
+        CustomerSelectionDialog dialog = new(XamlRoot);
         dialog.SelectionChoose += CustomerSelectionControl_SelectionChoose;
         dialog.ShowAsync();
 
@@ -203,7 +199,7 @@ public sealed partial class OrdersPage : Page
     /// <param name="e">the event args</param>
     private void NewCustomerBtn_Click(object _sender, RoutedEventArgs e)
     {
-        CustomerDataInputControl dialog = new(new WholesaleCustomer()) 
+        CustomerDataInputDialog dialog = new(new WholesaleCustomer()) 
         {
             XamlRoot = XamlRoot,
         };
@@ -213,11 +209,11 @@ public sealed partial class OrdersPage : Page
     /// <summary>
     /// The callback for the customer selection dialog. Gets the customer from the dialog and then create a new order for the customer
     /// </summary>
-    /// <param name="o">The CustomerSelectionControl</param>
+    /// <param name="o">The CustomerSelectionDialog</param>
     /// <param name="args">the event args</param>
     private void CustomerSelectionControl_SelectionChoose(object? o, EventArgs args)
     {
-        if (o is CustomerSelectionControl control 
+        if (o is CustomerSelectionDialog control 
             && control.ViewModel != null 
             && control.ViewModel.SelectedCustomer != null)
         {

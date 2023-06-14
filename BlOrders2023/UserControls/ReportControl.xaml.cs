@@ -24,7 +24,9 @@ namespace BlOrders2023.UserControls
 {
     public sealed partial class ReportControl : UserControl
     {
-        private Type ReportType;
+        public Type ReportType;
+
+        public event EventHandler? ReportSelected;
         public ReportControl(Type report)
         {
             if(!typeof(IReport).IsAssignableFrom(report))
@@ -42,14 +44,11 @@ namespace BlOrders2023.UserControls
             {
                 ReportNameRun.Text = ReportType.Name;
             }
-            
-
-
         }
 
         private void Hyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-
+            ReportSelected?.Invoke(this, EventArgs.Empty);
         }
     }
 }
