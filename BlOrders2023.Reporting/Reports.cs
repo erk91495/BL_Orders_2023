@@ -13,7 +13,8 @@ namespace BlOrders2023.Reporting
         public static readonly Collection<Type> AvalibleReports = new()
         { 
             typeof(WholesaleInvoice), 
-            typeof(WholesaleOrderPickupRecap) 
+            typeof(WholesaleOrderPickupRecap),
+            typeof(WholesaleOrderTotals),
         }; 
     }
 }

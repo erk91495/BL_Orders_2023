@@ -40,5 +40,15 @@ namespace BlOrders2023.Reporting
             report.GeneratePdf(filePath);
             return filePath;
         }
+
+        public static string GenerateWholesaleOrderTotals(IEnumerable<OrderTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var report = new WholesaleOrderTotals(items, startDate, endDate);
+            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "WholesaleOrderPickupRecap" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
+
+        }
     }
 }

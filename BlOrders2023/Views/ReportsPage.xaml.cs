@@ -113,23 +113,15 @@ public sealed partial class ReportsPage : Page
             }
             else if(control.ReportType == typeof(WholesaleOrderPickupRecap))
             {
-                DateRangeSelectionDialog date = new DateRangeSelectionDialog
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
                 {
-                    XamlRoot = XamlRoot,
-                };
-                await date.ShowAsync();
-                if(date.StartDate == null || date.EndDate == null) 
-                {
-                    ContentDialog d = new()
-                    {
-                        XamlRoot = XamlRoot,
-                        Title = "Error",
-                        Content = $"Date range was invalid",
-                        PrimaryButtonText = "ok",
-                    };
-                }
-                else
-                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    var values = ViewModel.GetOrderTotals(startDate, endDate);
+                    reportPath = ReportGenerator.GenerateWholesaleOrderTotals(values, startDate, endDate);
+                    
                     ContentDialog d = new()
                     {
                         XamlRoot = XamlRoot,
@@ -139,10 +131,22 @@ public sealed partial class ReportsPage : Page
                         SecondaryButtonText = "Alphabetical",
                     };
                     var res = await d.ShowAsync();
-                    DateTimeOffset startDate = (DateTimeOffset)date.StartDate;
-                    DateTimeOffset endDate = (DateTimeOffset)date.EndDate;
+
+
                     var orders = res == ContentDialogResult.Primary ? ViewModel.GetOrdersByPickupDate(startDate,endDate) : ViewModel.GetOrdersByPickupDateThenName(startDate, endDate);
                     reportPath = ReportGenerator.GenerateWholesaleOrderPickupRecap(orders, startDate, endDate);
+                }
+            }
+            else if(control.ReportType == typeof(WholesaleOrderTotals))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+                
+                if(dateTuple.Item1 != null && dateTuple.Item2 != null) 
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    var values = ViewModel.GetOrderTotals(startDate, endDate);
+                    reportPath = ReportGenerator.GenerateWholesaleOrderTotals(values, startDate, endDate);
                 }
             }
             else
@@ -165,6 +169,34 @@ public sealed partial class ReportsPage : Page
     private bool ValidateOrderID(string? value)
     {
         return int.TryParse(value, out int id);
+    }
+
+    private async Task<(DateTimeOffset?, DateTimeOffset?)> ShowDateRangeSelectionAsync()
+    {
+        DateRangeSelectionDialog dialog = new()
+        {
+            XamlRoot = XamlRoot
+        };
+        var res = await dialog.ShowAsync();
+        if( res == ContentDialogResult.Primary)
+        {
+            if (dialog.StartDate == null || dialog.EndDate == null)
+            {
+                ContentDialog d = new()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Error",
+                    Content = $"Please select a date range",
+                    PrimaryButtonText = "ok",
+                };
+                await d.ShowAsync();
+            }
+            return (dialog.StartDate, dialog.EndDate);
+        }
+        else
+        {
+            return (null, null);
+        }
     }
     #endregion Methods
 }

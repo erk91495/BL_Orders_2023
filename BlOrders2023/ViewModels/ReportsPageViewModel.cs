@@ -20,4 +20,9 @@ public class ReportsPageViewModel : ObservableRecipient
     {
         return App.GetNewDatabase().Orders.GetByPickupDateThenName(startDate, endDate);
     }
+
+    internal IEnumerable<OrderTotalsItem> GetOrderTotals(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return App.GetNewDatabase().ShipDetails.GetOrderTotals(startDate, endDate);
+    }
 }
