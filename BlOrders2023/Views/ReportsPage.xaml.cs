@@ -149,9 +149,65 @@ public sealed partial class ReportsPage : Page
                     reportPath = ReportGenerator.GenerateWholesaleOrderTotals(values, startDate, endDate);
                 }
             }
+            else if(control.ReportType == typeof(WholesalePaymentsReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    var values = ViewModel.GetWholesalePayments(startDate, endDate);
+                    reportPath = ReportGenerator.GenerateWholesalePaymentsReport(values, startDate, endDate);
+                }
+            }
+            else if(control.ReportType == typeof(ShippingList))
+            {
+                SingleValueInputDialog dialog = new SingleValueInputDialog()
+                {
+                    Title = "Order ID",
+                    Prompt = "Please Enter An Order ID",
+                    XamlRoot = XamlRoot,
+                    PrimaryButtonText = "Submit",
+                    ValidateValue = ValidateOrderID,
+                };
+                await dialog.ShowAsync();
+                var res = int.TryParse(dialog.Value ?? "", out int id);
+                if (!res)
+                {
+                    ContentDialog d = new()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = "User Error",
+                        Content = $"Invalid Order ID {dialog.Value}.\r\n " +
+                        $"Please enter a numeric value",
+                        PrimaryButtonText = "ok",
+                    };
+                    await d.ShowAsync();
+                }
+                else
+                {
+                    var order = ViewModel.GetOrder(id);
+                    if (order != null)
+                    {
+                        reportPath = ReportGenerator.GenerateShippingList(order);
+                    }
+                    else
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "Error",
+                            Content = $"No order with the order id {id} found.",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
+                    }
+                }
+            }
             else
             {
-                throw new Exception("Report Type Not Found ast the programmer if they forgot something");
+                throw new Exception("Report Type Not Found ask the programmer if they forgot something");
             }
 
             if (reportPath != string.Empty)

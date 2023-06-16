@@ -45,10 +45,28 @@ namespace BlOrders2023.Reporting
         {
             var report = new WholesaleOrderTotals(items, startDate, endDate);
             Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "WholesaleOrderPickupRecap" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "WholesaleOrderTotals" + "_" + DateTime.Now.ToFileTime() + ".pdf";
             report.GeneratePdf(filePath);
             return filePath;
 
+        }
+
+        public static string GenerateWholesalePaymentsReport(IEnumerable<Payment> payments, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var report = new WholesalePaymentsReport(payments, startDate, endDate);
+            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "WholesalePaymentsReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
+        }
+
+        public static string GenerateShippingList(Order order)
+        {
+            var report = new ShippingList(order);
+            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "ShippingList" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
         }
     }
 }

@@ -31,6 +31,8 @@ namespace BlOrders2023.Core.Data.SQL
 
         public IShipDetailsTable ShipDetails => new ShipDetailsTable(_dbContext);
 
+        public IPaymentsTable Payments => new PaymentsTable(_dbContext);
+
         public Version dbVersion 
         {
             get
