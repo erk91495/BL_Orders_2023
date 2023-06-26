@@ -17,6 +17,7 @@ namespace BlOrders2023.Reporting
             typeof(WholesaleOrderTotals),
             typeof(WholesalePaymentsReport),
             typeof(ShippingList),
+            typeof(UnpaidInvoicesReport),
         }; 
     }
 }

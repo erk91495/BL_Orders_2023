@@ -247,12 +247,17 @@ public sealed partial class ReportsPage : Page
                 };
                 await d.ShowAsync();
             }
-            return (dialog.StartDate, dialog.EndDate);
+            else
+            {
+                //set the time so we pick up everything within the range
+                DateTime sDate = dialog.StartDate.Value.Date;
+                DateTime eDate = dialog.EndDate.Value.Date;
+                DateTimeOffset startDate = new(sDate.Year, sDate.Month, sDate.Day, 0, 0, 0, 0, new());
+                DateTimeOffset endDate = new(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, new());
+                return (dialog.StartDate, dialog.EndDate);
+            }
         }
-        else
-        {
-            return (null, null);
-        }
+        return (null, null);
     }
     #endregion Methods
 }

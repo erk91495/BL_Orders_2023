@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,15 +9,16 @@ namespace BlOrders2023.Models
     [Table("tblPayments")]
     public class Payment
     {
+        [Key]
         [Column("PaymentID")]
         public int PaymentID { get; set; }
         public int OrderId { get; set; }
         public int CustId { get; set; }
-        public decimal PaymentAmount { get; set; }
+        public decimal? PaymentAmount { get; set; }
         public DateTime PaymentDate { get; set; }
         public string? CreditCardNumber { get; set; }
         public string? CardholdersName { get; set; }
-        public DateTime CreditCardExpDate { get; set; }
+        public DateTime? CreditCardExpDate { get; set; }
         public int? PaymentMethodID {  get; set; }
         public string? Notes { get; set; }
         public string? CheckNumber { get; set; }

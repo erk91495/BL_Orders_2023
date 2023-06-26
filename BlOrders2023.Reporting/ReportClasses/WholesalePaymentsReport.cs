@@ -24,6 +24,11 @@ namespace BlOrders2023.Reporting.ReportClasses
         public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
         public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
+        static IContainer CellStyle(IContainer container)
+        {
+            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+        }
+
         public WholesalePaymentsReport(IEnumerable<Payment> payments, DateTimeOffset startDate, DateTimeOffset endDate)
         {
             _payments = payments;
@@ -53,7 +58,7 @@ namespace BlOrders2023.Reporting.ReportClasses
         {
             container.Row(row =>
             {
-                row.RelativeItem(2).AlignCenter().Text("B & L Wholesale Order Pickup Recap").Style(titleStyle);
+                row.RelativeItem(2).AlignCenter().Text("B & L Wholesale Payments").Style(titleStyle);
                 row.RelativeItem(1).AlignRight().Column(column =>
                 {
                     column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);
@@ -71,8 +76,10 @@ namespace BlOrders2023.Reporting.ReportClasses
                     table.ColumnsDefinition(column =>
                     {
                         column.RelativeColumn(2);
-                        column.RelativeColumn(8);
+                        column.RelativeColumn(6);
                         column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(1);
                         column.RelativeColumn(2);
                         column.RelativeColumn(2);
 
@@ -85,7 +92,9 @@ namespace BlOrders2023.Reporting.ReportClasses
                         header.Cell().Element(CellStyle).Text("Customer").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).Text("Order ID").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).Text("Payment ID").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Payment Amount").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Type").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Check Number").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Amount").Style(tableHeaderStyle);
 
                         static IContainer CellStyle(IContainer container)
                         {
@@ -99,13 +108,23 @@ namespace BlOrders2023.Reporting.ReportClasses
                         table.Cell().Element(CellStyle).Text($"{payment.Customer.CustomerName}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{payment.OrderId}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{payment.PaymentID}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{payment.PaymentAmount}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{payment.PaymentMethod.Method}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{payment.CheckNumber ?? String.Empty}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{payment.PaymentAmount:C}").Style(tableTextStyle);
 
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
-                        }
                     }
+                    table.Footer(footer =>
+                    {
+                        footer.Cell().Element(CellStyle).Text("");
+                        footer.Cell().Element(CellStyle).Text("");
+                        footer.Cell().Element(CellStyle).Text("");
+                        footer.Cell().Element(CellStyle).Text("");
+                        footer.Cell().Element(CellStyle).Text("");
+                        footer.Cell().Element(CellStyle).AlignRight().Text("Total: ").Style(tableHeaderStyle);
+
+                        footer.Cell().Element(CellStyle).Text($"{_payments.Sum(p => p.PaymentAmount):C}").Style(tableHeaderStyle);
+                    });
+
                 });
             });
         }

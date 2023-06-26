@@ -22,7 +22,7 @@ GO
 INSERT INTO [dbo].[tbl_DBVersion]
            ([Version_Major]
            ,[Version_Minor]
-           ,[Version_Revision])
+           ,[Version_Build])
      VALUES
            (0,0,1)
 GO

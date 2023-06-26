@@ -66,7 +66,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                     row.RelativeItem(3).AlignCenter().Column(col =>
                     {
                         col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
-                        col.Item().AlignCenter().Text("6490 East Ross Road, New Carlisle, Ohio 45344").Style(subTitleStyle);
+                        col.Item().AlignCenter().Text("6490 Ross Road, New Carlisle, Ohio 45344").Style(subTitleStyle);
                         col.Item().AlignCenter().Text("Phone: 937-845-9466          Fax: 937-845-9998");
                         col.Item().AlignCenter().Text("www.bowmanlandes.com");
                         col.Item().AlignCenter().Text("Shipping List").Style(subTitleStyle);
@@ -132,7 +132,7 @@ namespace BlOrders2023.Reporting.ReportClasses
 
                         table.Footer(footer =>
                         {
-                            footer.Cell().Element(CellStyle).AlignRight().Text("Total:").Style(tableHeaderStyle);
+                            footer.Cell().Element(CellStyle).AlignRight().Text("Total: ").Style(tableHeaderStyle);
 
                             footer.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableHeaderStyle);
                             footer.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableHeaderStyle);
