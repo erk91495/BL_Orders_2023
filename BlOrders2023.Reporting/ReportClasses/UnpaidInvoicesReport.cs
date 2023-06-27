@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 
 namespace BlOrders2023.Reporting.ReportClasses
 {
-    [System.ComponentModel.DisplayName("Wholesale Invoice")]
-    internal class UnpaidInvoicesReport : IReport
+    [System.ComponentModel.DisplayName("Unpaid Invoices")]
+    public class UnpaidInvoicesReport : IReport
     {
 
         private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
@@ -22,8 +22,15 @@ namespace BlOrders2023.Reporting.ReportClasses
         private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
         private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-        public UnpaidInvoicesReport(WholesaleCustomer customer)
+        private IEnumerable<Order> _orders;
+        private DateTimeOffset _startDate;
+        private DateTimeOffset _endDate;    
+
+        public UnpaidInvoicesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
         {
+            _orders = orders;
+            _startDate = startDate;
+            _endDate = endDate;
         }
 
         public void Compose(IDocumentContainer container)
@@ -65,7 +72,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                     });
 
                 });
-                headerCol.Item().Row(row => row.RelativeItem(1).Text("Outstanding Balance Report for:") );
+                headerCol.Item().Row(row => row.RelativeItem(1).Text($"Outstanding Balance Report for: {_orders.First().Customer.CustomerName}") );
 
             });
         }

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using BlOrders2023.Models;
 using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
 using BlOrders2023.UserControls;
@@ -24,6 +25,7 @@ using Microsoft.UI.Xaml.Navigation;
 using QuestPDF.Fluent;
 using Syncfusion.UI.Xaml.Data;
 using Windows.System;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -202,6 +204,29 @@ public sealed partial class ReportsPage : Page
                             PrimaryButtonText = "ok",
                         };
                         await d.ShowAsync();
+                    }
+                }
+            }
+            else if(control.ReportType == typeof(UnpaidInvoicesReport))
+            {
+                WholesaleCustomer customer;
+                CustomerSelectionDialog custDialog = new(XamlRoot);
+                await custDialog.ShowAsync();
+                if (custDialog.ViewModel != null && custDialog.ViewModel.SelectedCustomer != null)
+                {
+                    customer = custDialog.ViewModel.SelectedCustomer;
+                    DateRangeSelectionDialog dateDialog = new()
+                    {
+                        XamlRoot = XamlRoot,
+                    };
+                    var dateTuple = await ShowDateRangeSelectionAsync();
+                    if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                    {
+                        DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                        DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                        var values = ViewModel.GetUnpaidInvoices(customer, startDate, endDate);
+
+                        reportPath = ReportGenerator.GenerateUnpaidInvoicesReport(values, startDate, endDate);
                     }
                 }
             }

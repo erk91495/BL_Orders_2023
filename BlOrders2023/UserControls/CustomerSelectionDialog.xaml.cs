@@ -53,7 +53,7 @@ namespace BlOrders2023.UserControls
             }
         }
 
-        public async void ShowAsync()
+        public async Task ShowAsync()
         {
             var result = await _dialog.ShowAsync();
             if(result == ContentDialogResult.Primary)

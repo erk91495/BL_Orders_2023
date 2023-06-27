@@ -60,6 +60,15 @@ namespace BlOrders2023.Reporting
             return filePath;
         }
 
+        public static string GenerateUnpaidInvoicesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var report = new UnpaidInvoicesReport(orders, startDate, endDate);
+            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "WholesalePaymentsReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
+        }
+
         public static string GenerateShippingList(Order order)
         {
             var report = new ShippingList(order);
