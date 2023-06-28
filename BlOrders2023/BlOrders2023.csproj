@@ -15,6 +15,7 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <PackageCertificateThumbprint>02B5F3CC6E63AC80B4E792D8734BCE7B6E1F40C2</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <StartupObject>BlOrders2023.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Styles\ValidationStyles.xaml" />

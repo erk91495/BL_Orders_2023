@@ -5,13 +5,21 @@
     <RootNamespace>BlOrders2023.Reporting</RootNamespace>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="RDL\**" />
+    <Content Remove="RDL\**" />
+    <EmbeddedResource Remove="RDL\**" />
+    <None Remove="RDL\**" />
+    <Page Remove="RDL\**" />
+    <PRIResource Remove="RDL\**" />
+  </ItemGroup>
   <ItemGroup>
     <Content Remove="Assets\Images\BLLogo.bmp" />
   </ItemGroup>
 
   <ItemGroup>
-      <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230602002" />
       <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
       <PackageReference Include="QuestPDF" Version="2023.5.3" />
   </ItemGroup>
