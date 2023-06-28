@@ -79,7 +79,63 @@ namespace BlOrders2023.Reporting.ReportClasses
 
         private void ComposeContent(IContainer container)
         {
-            
+            container.Column(column =>
+            {
+                //Items
+                column.Item().Table(table =>
+                {
+                    table.ColumnsDefinition(column =>
+                    {
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+
+                    });
+
+                    table.Header(header =>
+                    {
+                        header.Cell().Element(CellStyle).Text("Invoice Number").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Pickup Date").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Invoice Total").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Payments").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Balance Due").Style(tableHeaderStyle);
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                        }
+                    });
+
+                    foreach (var order in _orders)
+                    {
+                        table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yy")}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.GetInvoiceTotal()}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.GetTotalPayments()}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.GetBalanceDue()}").Style(tableTextStyle);
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                        }
+                    }
+                    table.Footer(footer =>
+                    {
+                        footer.Cell().Element(CellStyle).Text("Totals:");
+                        footer.Cell().Element(CellStyle).Text("");                        
+                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal())}").Style(tableHeaderStyle);
+                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetBalanceDue())}");
+                        footer.Cell().Element(CellStyle).Text("");
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                        }
+                    });
+
+                });
+            });
         }
 
         private void ComposeFooter(IContainer container)

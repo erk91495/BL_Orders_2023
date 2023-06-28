@@ -56,7 +56,7 @@ public class Order
     public OrderStatus OrderStatus { get; set; }
     public virtual List<OrderItem> Items { get; set; } = new();
     public virtual List<ShippingItem> ShippingItems { get; set; } = new();
-
+    public virtual List<Payment> Payments { get; set; } = new();
     public decimal GetInvoiceTotal()
     {
         decimal total = 0;
@@ -82,5 +82,22 @@ public class Order
             var total =  Items.Sum(item => (int)item.Quantity);
             return total;
         }
+    }
+
+    public decimal GetTotalPayments()
+    {
+        if (Payments.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            return Payments.Sum(p => p.PaymentAmount ?? 0);
+        }
+    }
+
+    public decimal GetBalanceDue()
+    {
+        return GetInvoiceTotal() - GetTotalPayments();
     }
 }

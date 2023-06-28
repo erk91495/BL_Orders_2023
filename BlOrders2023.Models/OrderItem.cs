@@ -72,7 +72,7 @@ namespace BlOrders2023.Models
 
         public decimal GetTotalPrice()
         {
-            return ActualCustPrice * (decimal)(PickWeight ?? 0);
+            return decimal.Round(ActualCustPrice * (decimal)(PickWeight ?? 0),2);
         }
 
         public override string ToString()

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BlOrders2023.Models
@@ -28,5 +29,8 @@ namespace BlOrders2023.Models
 
         [ForeignKey(nameof(CustId))]
         public virtual WholesaleCustomer? Customer { get; set; }
+
+        [ForeignKey(nameof(OrderId))]
+        public virtual Order Order { get; set; } = null!;
     }
 }

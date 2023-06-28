@@ -24,11 +24,6 @@ namespace BlOrders2023.Reporting.ReportClasses
         public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
         public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-        static IContainer CellStyle(IContainer container)
-        {
-            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
-        }
-
         public WholesalePaymentsReport(IEnumerable<Payment> payments, DateTimeOffset startDate, DateTimeOffset endDate)
         {
             _payments = payments;
@@ -112,6 +107,10 @@ namespace BlOrders2023.Reporting.ReportClasses
                         table.Cell().Element(CellStyle).Text($"{payment.CheckNumber ?? String.Empty}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{payment.PaymentAmount:C}").Style(tableTextStyle);
 
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                        }
                     }
                     table.Footer(footer =>
                     {
@@ -123,6 +122,11 @@ namespace BlOrders2023.Reporting.ReportClasses
                         footer.Cell().Element(CellStyle).AlignRight().Text("Total: ").Style(tableHeaderStyle);
 
                         footer.Cell().Element(CellStyle).Text($"{_payments.Sum(p => p.PaymentAmount):C}").Style(tableHeaderStyle);
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                        }
                     });
 
                 });
