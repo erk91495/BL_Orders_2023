@@ -72,7 +72,11 @@ namespace BlOrders2023.Reporting.ReportClasses
                     });
 
                 });
-                headerCol.Item().Row(row => row.RelativeItem(1).Text($"Outstanding Balance Report for: {_orders.First().Customer.CustomerName}") );
+                headerCol.Item().Row(row => 
+                {
+                    row.AutoItem().MinimalBox().Text($"Outstanding Balance Report for:");
+                    row.RelativeItem().AlignLeft().Text($"{_orders.First().Customer.CustomerName}").Bold();
+                });
 
             });
         }
@@ -112,9 +116,9 @@ namespace BlOrders2023.Reporting.ReportClasses
                     {
                         table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yy")}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.GetInvoiceTotal()}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.GetTotalPayments()}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.GetBalanceDue()}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.GetInvoiceTotal():C}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.GetTotalPayments():C}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.GetBalanceDue():C}").Style(tableTextStyle);
                         static IContainer CellStyle(IContainer container)
                         {
                             return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
@@ -122,15 +126,15 @@ namespace BlOrders2023.Reporting.ReportClasses
                     }
                     table.Footer(footer =>
                     {
-                        footer.Cell().Element(CellStyle).Text("Totals:");
-                        footer.Cell().Element(CellStyle).Text("");                        
-                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal())}").Style(tableHeaderStyle);
-                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetBalanceDue())}");
-                        footer.Cell().Element(CellStyle).Text("");
+                        footer.Cell().Element(CellStyle).Text("Totals:").Style(tableHeaderStyle);
+                        footer.Cell().Element(CellStyle).Text("").Style(tableHeaderStyle);                        
+                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
+                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetTotalPayments()):C}").Style(tableHeaderStyle);
+                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetBalanceDue()):C}").Style(tableHeaderStyle);
 
                         static IContainer CellStyle(IContainer container)
                         {
-                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                            return container.PaddingVertical(2);
                         }
                     });
 
