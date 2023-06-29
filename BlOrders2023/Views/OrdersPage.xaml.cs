@@ -11,6 +11,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Windows.Storage;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace BlOrders2023.Views;
 
@@ -184,12 +185,35 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the sender of the event</param>
     /// <param name="e">the event args</param>
-    private void NewOrderBtn_Clicked(object _sender, RoutedEventArgs e)
+    private async void NewOrderBtn_Clicked(object _sender, RoutedEventArgs e)
     {
         CustomerSelectionDialog dialog = new(XamlRoot);
-        dialog.SelectionChoose += CustomerSelectionControl_SelectionChoose;
-        dialog.ShowAsync();
+        WholesaleCustomer? selectedCustomer = null;
+        var res = await dialog.ShowAsync();
+        if(res == ContentDialogResult.Primary)
+        {
+            if (dialog.ViewModel != null && dialog.ViewModel.SelectedCustomer != null)
+            {
+                selectedCustomer = dialog.ViewModel.SelectedCustomer;
+            }
+        }
+        else if (res == ContentDialogResult.Secondary)
+        {
+            CustomerDataInputDialog control = new(new WholesaleCustomer())
+            {
+                XamlRoot = XamlRoot,
+            };
+            var result = await control.ShowAsync();
+            if(result == ContentDialogResult.Primary && control.GetCustomer() != null)
+            {
+                selectedCustomer = control.GetCustomer();
+            }
+        }
 
+        if (selectedCustomer != null)
+        {
+            CreateNewOrder(selectedCustomer);
+        }
     }
 
     /// <summary>
@@ -204,21 +228,6 @@ public sealed partial class OrdersPage : Page
             XamlRoot = XamlRoot,
         };
         _ = dialog.ShowAsync();
-    }
-
-    /// <summary>
-    /// The callback for the customer selection dialog. Gets the customer from the dialog and then create a new order for the customer
-    /// </summary>
-    /// <param name="o">The CustomerSelectionDialog</param>
-    /// <param name="args">the event args</param>
-    private void CustomerSelectionControl_SelectionChoose(object? o, EventArgs args)
-    {
-        if (o is CustomerSelectionDialog control 
-            && control.ViewModel != null 
-            && control.ViewModel.SelectedCustomer != null)
-        {
-            CreateNewOrder(control.ViewModel.SelectedCustomer);
-        }
     }
 
     #endregion Event Handlers

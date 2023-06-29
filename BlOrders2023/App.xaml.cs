@@ -120,12 +120,15 @@ public partial class App : Application
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
+        var localsettings = App.GetService<ILocalSettingsService>();
+        var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
+        var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
         var dbOptions = new DbContextOptionsBuilder<BLOrdersDBContext>();
         dbOptions.UseLazyLoadingProxies()
                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                .EnableSensitiveDataLogging()
                .EnableDetailedErrors()
-               .UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
+               .UseSqlServer(connectionString: $"Data Source={dbServer}; Database={dbName};Integrated Security=true; Trust Server Certificate=true");
         App.DBOptions = dbOptions.Options;
 
         var SupportedDBVersion = new Version(0, 0, 1);

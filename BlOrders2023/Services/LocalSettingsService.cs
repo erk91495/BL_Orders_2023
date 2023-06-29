@@ -3,8 +3,8 @@ using BlOrders2023.Core.Contracts.Services;
 using BlOrders2023.Core.Helpers;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
-
 using Microsoft.Extensions.Options;
+using BlOrders2023.Helpers;
 
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -36,6 +36,28 @@ public class LocalSettingsService : ILocalSettingsService
         _localsettingsFile = _options.LocalSettingsFile ?? _defaultLocalSettingsFile;
 
         _settings = new Dictionary<string, object>();
+    }
+
+    private async Task WriteDefaultLocalSettings()
+    {
+        bool firstRun;
+        if (RuntimeHelper.IsMSIX)
+        {
+            firstRun = !ApplicationData.Current.LocalSettings.Values.TryGetValue(LocalSettingsKeys.FirstRun, out _);
+        }
+        else
+        {
+            var settings = _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile) ?? new Dictionary<string, object>();
+            firstRun = !settings.TryGetValue(LocalSettingsKeys.FirstRun, out _);
+        }
+        if (firstRun)
+        {
+            await Task.WhenAll(
+            SaveSettingAsync(LocalSettingsKeys.FirstRun, false),
+            SaveSettingAsync(LocalSettingsKeys.DatabaseServer, "ERIC-PC"),
+            SaveSettingAsync(LocalSettingsKeys.DatabaseName, "New_Bl_Orders")
+            );
+        }
     }
 
     private async Task InitializeAsync()
