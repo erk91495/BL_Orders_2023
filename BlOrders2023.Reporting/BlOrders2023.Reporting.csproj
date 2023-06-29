@@ -9,9 +9,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="RDL\**" />
+    <Compile Remove="Resources\**" />
     <Content Remove="RDL\**" />
     <EmbeddedResource Remove="RDL\**" />
+    <EmbeddedResource Remove="Resources\**" />
     <None Remove="RDL\**" />
+    <None Remove="Resources\**" />
     <Page Remove="RDL\**" />
     <PRIResource Remove="RDL\**" />
   </ItemGroup>
@@ -26,10 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlOrders2023.Models\BlOrders2023.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>

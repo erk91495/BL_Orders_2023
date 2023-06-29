@@ -210,24 +210,18 @@ public sealed partial class ReportsPage : Page
             else if(control.ReportType == typeof(UnpaidInvoicesReport))
             {
                 WholesaleCustomer customer;
-                CustomerSelectionDialog custDialog = new(XamlRoot);
-                await custDialog.ShowAsync();
-                if (custDialog.ViewModel != null && custDialog.ViewModel.SelectedCustomer != null)
+                CustomerSelectionDialog custDialog = new(XamlRoot)
+                {
+                    PrimaryButtonText = "Select A Customer",
+                    SecondaryButtonText = ""
+                };
+                var res = await custDialog.ShowAsync();
+                if (res == ContentDialogResult.Primary && custDialog.ViewModel != null && custDialog.ViewModel.SelectedCustomer != null)
                 {
                     customer = custDialog.ViewModel.SelectedCustomer;
-                    DateRangeSelectionDialog dateDialog = new()
-                    {
-                        XamlRoot = XamlRoot,
-                    };
-                    var dateTuple = await ShowDateRangeSelectionAsync();
-                    if (dateTuple.Item1 != null && dateTuple.Item2 != null)
-                    {
-                        DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
-                        DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
-                        var values = ViewModel.GetUnpaidInvoices(customer, startDate, endDate);
-
-                        reportPath = ReportGenerator.GenerateUnpaidInvoicesReport(values, startDate, endDate);
-                    }
+                    var values = ViewModel.GetUnpaidInvoices(customer);
+                    reportPath = ReportGenerator.GenerateUnpaidInvoicesReport(values);
+                    
                 }
             }
             else

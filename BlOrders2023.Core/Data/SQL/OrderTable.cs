@@ -106,13 +106,11 @@ namespace BlOrders2023.Core.Data.SQL
                 .ToList();
         }
 
-        public IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer, DateTimeOffset startDate, DateTimeOffset endDate)
+        public IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer)
         {
             return _db.Orders
                 .Where(o => 
                     o.CustID == customer.CustID 
-                    && o.PickupDate >= startDate 
-                    && o.PickupDate <= endDate 
                     && o.Paid == false)
                 .ToList();
         }

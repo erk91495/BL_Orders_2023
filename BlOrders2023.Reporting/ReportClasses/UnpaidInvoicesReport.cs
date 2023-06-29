@@ -1,4 +1,5 @@
 ﻿using BlOrders2023.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -22,15 +23,11 @@ namespace BlOrders2023.Reporting.ReportClasses
         private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
         private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-        private IEnumerable<Order> _orders;
-        private DateTimeOffset _startDate;
-        private DateTimeOffset _endDate;    
+        private IEnumerable<Order> _orders;    
 
-        public UnpaidInvoicesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+        public UnpaidInvoicesReport(IEnumerable<Order> orders)
         {
             _orders = orders;
-            _startDate = startDate;
-            _endDate = endDate;
         }
 
         public void Compose(IDocumentContainer container)
@@ -72,10 +69,25 @@ namespace BlOrders2023.Reporting.ReportClasses
                     });
 
                 });
-                headerCol.Item().Row(row => 
+                headerCol.Item().Column(column => 
                 {
-                    row.AutoItem().MinimalBox().Text($"Outstanding Balance Report for:");
-                    row.RelativeItem().AlignLeft().Text($"{_orders.First().Customer.CustomerName}").Bold();
+                    column.Item().MinimalBox().Text($"Outstanding Balance Report for:");
+                    column.Item().PaddingLeft(3).Text($"{_orders.First().Customer.CustomerName}").Style(subTitleStyle);
+                    column.Item().Row(row =>
+                    {
+                        row.RelativeItem().PaddingLeft(3).Column(column =>
+                        {
+                            column.Item().Text($"{_orders.First().Customer.Address}").Style(normalTextStyle);
+                            column.Item().Text($"{_orders.First().Customer.CityStateZip()}").Style(normalTextStyle);
+                            column.Item().Text($"{_orders.First().Customer.Buyer}").Style(normalTextStyle);
+                            if (_orders.First().Customer.Email != null)
+                            {
+                                column.Item().Text($"{_orders.First().Customer.Email.Trim()}").Style(normalTextStyle);
+                            }
+                            column.Item().Text($"{_orders.First().Customer.Phone}").Style(normalTextStyle);
+
+                        });
+                    });
                 });
 
             });

@@ -101,5 +101,9 @@ namespace BlOrders2023.UserControls
 
         }
 
+        public WholesaleCustomer GetCustomer() 
+        {
+            return ViewModel.Customer;
+        }
     }
 }

@@ -26,9 +26,9 @@ public class ReportsPageViewModel : ObservableRecipient
         return App.GetNewDatabase().ShipDetails.GetOrderTotals(startDate, endDate);
     }
 
-    internal IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer, DateTimeOffset startDate, DateTimeOffset endDate)
+    internal IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer)
     {
-        return App.GetNewDatabase().Orders.GetUnpaidInvoices(customer, startDate, endDate);
+        return App.GetNewDatabase().Orders.GetUnpaidInvoices(customer);
     }
 
     internal IEnumerable<Payment> GetWholesalePayments(DateTimeOffset startDate, DateTimeOffset endDate)

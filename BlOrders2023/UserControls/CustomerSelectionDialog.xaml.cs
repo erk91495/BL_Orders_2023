@@ -14,31 +14,18 @@ using BlOrders2023.Models;
 
 namespace BlOrders2023.UserControls
 {
-    public sealed partial class CustomerSelectionDialog : ContentControl
+    public sealed partial class CustomerSelectionDialog : ContentDialog
     {
         #region Properties
         public CustomerSelectionDialogViewModel ViewModel { get; }
         #endregion Properties
         #region Fields
-        readonly ContentDialog _dialog;
+        //readonly ContentDialog _dialog;
         #endregion Fields
-        #region Events
-        public event EventHandler? SelectionChoose;
-        #endregion Events
         #region Constructors
         public CustomerSelectionDialog(XamlRoot root)
         {
-            _dialog = new()
-            {
-                XamlRoot = root,
-                Title = "Select A Customer",
-                Content = this,
-                PrimaryButtonText = "Create An Order",
-                SecondaryButtonText = "New Customer",
-                CloseButtonText = "Cancel",
-                FlowDirection = FlowDirection.LeftToRight,
-                IsPrimaryButtonEnabled = false
-            };
+            XamlRoot = root;
             ViewModel = App.GetService<CustomerSelectionDialogViewModel>();
             this.InitializeComponent();
         }
@@ -50,27 +37,6 @@ namespace BlOrders2023.UserControls
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 ViewModel.QueryCustomers(sender.Text);
-            }
-        }
-
-        public async Task ShowAsync()
-        {
-            var result = await _dialog.ShowAsync();
-            if(result == ContentDialogResult.Primary)
-            {
-                SelectionChoose?.Invoke(this, new EventArgs());
-            }
-            else if (result == ContentDialogResult.Secondary)
-            {
-                CustomerDataInputDialog control = new(new WholesaleCustomer())
-                {
-                    XamlRoot = XamlRoot,
-                };                
-                await control.ShowAsync();
-            }
-            else
-            {
-                return;
             }
         }
 
@@ -94,12 +60,12 @@ namespace BlOrders2023.UserControls
             }
             if(ViewModel.SelectedCustomer!= null)
             {
-                _dialog.IsPrimaryButtonEnabled = true;
+                IsPrimaryButtonEnabled = true;
                 CustomerSelection.Text = ViewModel.SelectedCustomer.CustomerName;
             }
             else
             {
-                _dialog.IsPrimaryButtonEnabled = false;
+                IsPrimaryButtonEnabled = false;
             }
         }
         #endregion Methods
