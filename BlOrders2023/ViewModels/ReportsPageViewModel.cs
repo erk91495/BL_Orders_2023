@@ -35,4 +35,13 @@ public class ReportsPageViewModel : ObservableRecipient
     {
         return App.GetNewDatabase().Payments.GetPayments(startDate.Date,endDate.Date);
     }
+    internal async Task<IEnumerable<Order>> GetOrdersByCustomerIdAndPickupDateAsync(IEnumerable<int>  custIds, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await App.GetNewDatabase().Orders.GetByCustomerIDAndPickupDateAsync(custIds, startDate, endDate);
+    }
+
+    internal async Task<IEnumerable<Order>> GetOutstandingOrdersAsync()
+    {
+        return await App.GetNewDatabase().Orders.GetUnpaidInvoicesAsync();
+    }
 }

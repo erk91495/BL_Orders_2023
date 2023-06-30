@@ -64,7 +64,7 @@ namespace BlOrders2023.Reporting
         {
             var report = new UnpaidInvoicesReport(orders);
             Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "WholesalePaymentsReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "UnpaidInvoicesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
             report.GeneratePdf(filePath);
             return filePath;
         }
@@ -76,6 +76,26 @@ namespace BlOrders2023.Reporting
             var filePath = Path.GetTempPath() + "BLOrders2023\\" + "ShippingList" + "_" + DateTime.Now.ToFileTime() + ".pdf";
             report.GeneratePdf(filePath);
             return filePath;
+        }
+
+        public static string GenerateAggregateInvoiceReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var report = new AggregateInvoiceReport(orders, startDate, endDate);
+            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "AggregateInvoiceReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
+
+        }
+
+        public static string GenerateOutstandingBalancesReport(IEnumerable<Order> orders)
+        {
+            var report = new OutstandingBalancesReport(orders);
+            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "OutstandingBalancesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
+
         }
     }
 }

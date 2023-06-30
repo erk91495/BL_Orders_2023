@@ -29,6 +29,7 @@
     <None Remove="UserControls\CustomerDataInputDialog.xaml" />
     <None Remove="UserControls\CustomerSelectionDialog.xaml" />
     <None Remove="UserControls\DateRangeSelectionDialog.xaml" />
+    <None Remove="UserControls\MultipleCustomerSelectionDialog.xaml" />
     <None Remove="UserControls\ReportControl.xaml" />
     <None Remove="UserControls\ShippingItemDataInputDialog.xaml" />
     <None Remove="UserControls\SingleValueInputDialog.xaml" />
@@ -41,6 +42,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UserControls\MultipleCustomerSelectionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UserControls\DateRangeSelectionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

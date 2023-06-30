@@ -106,13 +106,25 @@ namespace BlOrders2023.Core.Data.SQL
                 .ToList();
         }
 
+        public async Task<IEnumerable<Order>> GetByCustomerIDAndPickupDateAsync(IEnumerable<int> CustomerIDs, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            return await _db.Orders
+                .Where(o => CustomerIDs.Contains(o.CustID) && o.PickupDate >= startDate && o.PickupDate <= endDate)
+                .ToListAsync();
+        }
+
         public IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer)
         {
             return _db.Orders
                 .Where(o => 
                     o.CustID == customer.CustID 
-                    && o.Paid == false)
+                    && o.OrderStatus == Models.Enums.OrderStatus.Invoiced)
                 .ToList();
+        }
+
+        public async Task<IEnumerable<Order>> GetUnpaidInvoicesAsync()
+        {
+            return await _db.Orders.Where(o => o.OrderStatus == Models.Enums.OrderStatus.Invoiced).ToListAsync();
         }
 
         public IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate)
@@ -165,6 +177,8 @@ namespace BlOrders2023.Core.Data.SQL
             int res = await _db.SaveChangesAsync();
             return order;
         }
+
+
         #endregion Methods
     }
 }

@@ -23,7 +23,8 @@ namespace BlOrders2023.Reporting.ReportClasses
         private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
         private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-        private IEnumerable<Order> _orders;    
+        private IEnumerable<Order> _orders;
+        private DateTime _reportDate = DateTime.Now;
 
         public UnpaidInvoicesReport(IEnumerable<Order> orders)
         {
@@ -71,7 +72,11 @@ namespace BlOrders2023.Reporting.ReportClasses
                 });
                 headerCol.Item().Column(column => 
                 {
-                    column.Item().MinimalBox().Text($"Outstanding Balance Report for:");
+                    column.Item().Row(row =>
+                    {
+                        row.RelativeItem().Text($"Outstanding Balance Report for:");
+                        row.RelativeItem().Text($"As of: {_reportDate.ToString():d}");
+                    });
                     column.Item().PaddingLeft(3).Text($"{_orders.First().Customer.CustomerName}").Style(subTitleStyle);
                     column.Item().Row(row =>
                     {
@@ -79,17 +84,9 @@ namespace BlOrders2023.Reporting.ReportClasses
                         {
                             column.Item().Text($"{_orders.First().Customer.Address}").Style(normalTextStyle);
                             column.Item().Text($"{_orders.First().Customer.CityStateZip()}").Style(normalTextStyle);
-                            column.Item().Text($"{_orders.First().Customer.Buyer}").Style(normalTextStyle);
-                            if (_orders.First().Customer.Email != null)
-                            {
-                                column.Item().Text($"{_orders.First().Customer.Email.Trim()}").Style(normalTextStyle);
-                            }
-                            column.Item().Text($"{_orders.First().Customer.Phone}").Style(normalTextStyle);
-
                         });
                     });
                 });
-
             });
         }
 
@@ -163,7 +160,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                     footer.RelativeItem().AlignLeft().Text(time =>
                     {
                         time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                        time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
+                        time.Span($"{_reportDate.ToString():d}").Style(smallFooterStyle);
                     });
 
                     footer.RelativeItem().AlignRight().Text(page =>

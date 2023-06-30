@@ -5,12 +5,17 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BlOrders2023.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Windows.Media.AppBroadcasting;
+using Windows.System.RemoteSystems;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BlOrders2023.Reporting.ReportClasses;
-internal class AggregateInvoiceReport : IReport
+[System.ComponentModel.DisplayName("Aggregate Invoice")]
+public class AggregateInvoiceReport : IReport
 {
 
     private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
@@ -20,7 +25,15 @@ internal class AggregateInvoiceReport : IReport
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-    private Order _order;
+    private IEnumerable<Order> _orders;
+    private DateTimeOffset _startDate;
+    private DateTimeOffset _endDate;
+    public AggregateInvoiceReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        _orders = orders;
+        _startDate = startDate;
+        _endDate = endDate;
+    }
 
     public void Compose(IDocumentContainer container)
     {
@@ -60,14 +73,10 @@ internal class AggregateInvoiceReport : IReport
                     col.Item().AlignCenter().Text("www.bowmanlandes.com");
                 });
 
-                row.RelativeItem(1).AlignMiddle().AlignRight().Column(column =>
+                row.RelativeItem(1).AlignRight().Column(column =>
                 {
-                    //Invoice Number
-                    column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
-                    //if (!_order.PO_Number.IsNullOrEmpty())
-                    //{
-                    //    column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
-                    //}
+                    column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);
+                    column.Item().Text($" To:  {_endDate.ToString("M/d/yy")}").Style(subTitleStyle);
                 });
 
             });
@@ -77,118 +86,89 @@ internal class AggregateInvoiceReport : IReport
 
     private void ComposeContent(IContainer container)
     {
-
-        container.Column(column => {
-
-            //Bill To Ship To
-            column.Item().MinimalBox().AlignBottom().PaddingBottom(5).Row(row =>
-            {
-                //Padding 
-                row.RelativeItem(1);
-
-                //Ship To:
-                row.RelativeItem(9).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
+        container.Column(mainColumn =>{
+            mainColumn.Item().Row(row => {
+                row.RelativeItem(2).Border(1).PaddingLeft(1).Table(invoicesTable =>
                 {
-                    column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Ship To:");
-                    column.Item().PaddingLeft(3).Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
-                    column.Item().Row(row =>
+                    invoicesTable.ColumnsDefinition(column =>
                     {
-                        row.RelativeItem().PaddingLeft(3).Column(column =>
-                        {
-                            column.Item().Text($"{_order.Customer.Address}").Style(normalTextStyle);
-                            column.Item().Text($"{_order.Customer.CityStateZip()}").Style(normalTextStyle);
-                            column.Item().Text($"{_order.Customer.Buyer}").Style(normalTextStyle);
-                            if (_order.Customer.Email != null)
-                            {
-                                column.Item().Text($"{_order.Customer.Email.Trim()}").Style(normalTextStyle);
-                            }
-                            column.Item().Text($"{_order.Customer.Phone}").Style(normalTextStyle);
-
-                        });
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
                     });
-                });
 
-                //Padding 
-                row.RelativeItem(4);
-
-                //Bill To:
-                row.RelativeItem(9).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
-                {
-
-                    column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Bill To:");
-                    column.Item().PaddingLeft(3).Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
-                    column.Item().Row(row =>
+                    invoicesTable.Header(header =>
                     {
-                        row.RelativeItem().PaddingLeft(3).Column(column =>
+                        header.Cell().Element(CellStyle).Text("Invoice Number").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Invoice Total").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Pickup Date").Style(tableHeaderStyle);
+
+                        static IContainer CellStyle(IContainer container)
                         {
-                            column.Item().Text($"{_order.Customer.BillingAddress}").Style(normalTextStyle);
-                            column.Item().Text($"{_order.Customer.BillingCityStateZip()}").Style(normalTextStyle);
-                        });
+                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                        }
                     });
-                });
 
-                //Padding 
-                row.RelativeItem(1);
-
-            });
-
-
-            // | Order Date | Pickup Date | PO |
-            column.Item().Row(row =>
-            {
-                //Order Date
-                row.RelativeItem().Border(1).Column(orderDateCol =>
-                {
-                    orderDateCol.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("Order Date").Style(tableHeaderStyle);
-                    orderDateCol.Item().AlignCenter().Text($"{_order.OrderDate.ToShortDateString()}").Style(tableTextStyle);
-                });
-
-                //Pickup Date
-                row.RelativeItem().Border(1).Column(column =>
-                {
-                    if (_order.Shipping == Models.Enums.ShippingType.Pickup)
+                    foreach(Order order in _orders)
                     {
-                        column.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("Pickup ").Style(tableHeaderStyle);
-                        column.Item().AlignCenter().Text($"{_order.PickupDate.ToShortDateString():d} {_order.PickupTime.ToShortTimeString():d}").Style(tableTextStyle);
+                        invoicesTable.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
+                        invoicesTable.Cell().Element(CellStyle).Text($"{order.GetInvoiceTotal():C}").Style(tableTextStyle);
+                        invoicesTable.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yy")}").Style(tableTextStyle);
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                        }
                     }
-                    else
+
+                    invoicesTable.Footer(footer =>
                     {
-                        column.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("Deliver By ").Style(tableHeaderStyle);
-                        column.Item().AlignCenter().Text($"{_order.PickupDate.ToShortDateString():d}").Style(tableTextStyle);
+                        footer.Cell().Element(CellStyle).Text("Total").Style(tableHeaderStyle);
+                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
+                        footer.Cell().Element(CellStyle).Text("").Style(tableHeaderStyle);
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderColor(Colors.Black);
+                        }
+                    });
+
+                });
+                row.ConstantItem(10);
+                row.RelativeItem(2).Border(1).PaddingLeft(1).Table(customersTable =>
+                {
+                    customersTable.ColumnsDefinition(column =>
+                    {
+                        column.RelativeColumn(2);
+                    });
+
+                    customersTable.Header(header =>
+                    {
+                        header.Cell().Element(CellStyle).Text("Customer Name").Style(tableHeaderStyle);
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                        }
+                    });
+
+                    foreach (var customerName in _orders.Select(o => o.Customer.CustomerName).Distinct())
+                    {
+                        customersTable.Cell().Element(CellStyle).Text($"{customerName}").Style(tableTextStyle);
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                        }
                     }
                 });
-
-                //PO Number
-                row.RelativeItem().Border(1).Column(orderDateCol =>
-                {
-                    orderDateCol.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("PO").Style(tableHeaderStyle);
-                    orderDateCol.Item().AlignCenter().Text($"{_order.PO_Number}").Style(tableTextStyle);
-                });
-
-                //Terms
-                row.RelativeItem().Border(1).Column(orderDateCol =>
-                {
-                    orderDateCol.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("Terms").Style(tableHeaderStyle);
-                    orderDateCol.Item().AlignCenter().Text($"Net 10 Days").Style(tableTextStyle);
-                });
-
-
-            });
-
-            //Memo Box
-
-            column.Item().PaddingBottom(5).Column(memoCol =>
-            {
-                memoCol.Item().Text("Memo:").Style(tableHeaderStyle);
-                memoCol.Item().Border(1).PaddingLeft(4).PaddingRight(4).ExtendHorizontal().Text($"{_order.Memo}").FontSize(11);
             });
 
             //Items
-            column.Item().Table(table =>
+            mainColumn.Item().Table(table =>
             {
                 table.ColumnsDefinition(column =>
                 {
-                    column.RelativeColumn(1);
                     column.RelativeColumn(2);
                     column.RelativeColumn(2);
                     column.RelativeColumn(2);
@@ -200,8 +180,6 @@ internal class AggregateInvoiceReport : IReport
 
                 table.Header(header =>
                 {
-                    header.Cell().Element(CellStyle).Text("Line").Style(tableHeaderStyle);
-
                     header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Ordered").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Received").Style(tableHeaderStyle);
@@ -217,27 +195,43 @@ internal class AggregateInvoiceReport : IReport
                         return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
                     }
                 });
-
+                var aggregateItems = _orders.SelectMany(o => o.Items);
+                var groupedItems = aggregateItems.GroupBy(i => new { i.ProductID, i.ActualCustPrice });
+                
                 // step 3
-                foreach (var item in _order.Items)
+                foreach (var group in groupedItems)
                 {
-                    table.Cell().Element(CellStyle).Text($"{_order.Items.IndexOf(item) + 1}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{group.First().ProductID}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{group.Sum(i => i.Quantity)}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{group.Sum(i => i.QuantityReceived)}").Style(tableTextStyle);
 
-                    table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item.Quantity}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item.QuantityReceived}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text(group.First().Product.ProductName).Style(tableTextStyle);
 
-                    table.Cell().Element(CellStyle).Text(item.Product.ProductName).Style(tableTextStyle);
-
-                    table.Cell().Element(CellStyle).Text($"{item.PickWeight:N2}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).AlignRight().Text($"{item.ActualCustPrice:C}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).AlignRight().Text($"{item.GetTotalPrice():C}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{group.Sum(i => i.PickWeight):N2}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).AlignRight().Text($"{group.First().ActualCustPrice:C}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).AlignRight().Text($"{group.Sum(i => i.GetTotalPrice()):C}").Style(tableTextStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
                     }
                 }
+
+                table.Footer(footer =>
+                {
+                    footer.Cell().Element(CellStyle).Text("Total: ").Style(tableHeaderStyle);
+                    footer.Cell().Element(CellStyle).Text($"{aggregateItems.Sum(i => i.QuantityReceived)}").Style(tableHeaderStyle);
+                    footer.Cell().Element(CellStyle).Text($"{aggregateItems.Sum(i => i.Quantity)}").Style(tableHeaderStyle);
+                    footer.Cell();
+                    footer.Cell().Element(CellStyle).Text($"{aggregateItems.Sum(i => i.PickWeight):N2}").Style(tableHeaderStyle);
+                    footer.Cell();
+                    footer.Cell().Element(CellStyle).AlignRight().Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
+
+                    static IContainer CellStyle(IContainer container)
+                    {
+                        return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderColor(Colors.Black);
+                    }
+                });
 
             });
         });
@@ -247,12 +241,6 @@ internal class AggregateInvoiceReport : IReport
     {
         container.AlignBottom().Column(column =>
         {
-            if (!(_order.Memo_Totl == null || _order.Memo_Totl == 0))
-            {
-                column.Item().AlignRight().Text($"{_order.Memo_Totl:C}");
-            }
-            column.Item().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Invoice Total: {_order.GetInvoiceTotal():C}").Bold();
-
             column.Item().AlignBottom().AlignRight().Row(footer =>
             {
                 footer.RelativeItem().AlignLeft().Text(time =>

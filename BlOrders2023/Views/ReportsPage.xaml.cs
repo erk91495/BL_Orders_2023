@@ -15,6 +15,7 @@ using BlOrders2023.Reporting.ReportClasses;
 using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
 using Microsoft.Graphics.Canvas.Text;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -212,7 +213,7 @@ public sealed partial class ReportsPage : Page
                 WholesaleCustomer customer;
                 CustomerSelectionDialog custDialog = new(XamlRoot)
                 {
-                    PrimaryButtonText = "Select A Customer",
+                    PrimaryButtonText = "Select Customer",
                     SecondaryButtonText = ""
                 };
                 var res = await custDialog.ShowAsync();
@@ -223,6 +224,54 @@ public sealed partial class ReportsPage : Page
                     reportPath = ReportGenerator.GenerateUnpaidInvoicesReport(values);
                     
                 }
+            }
+            else if(control.ReportType == typeof(AggregateInvoiceReport))
+            {
+                MultipleCustomerSelectionDialog dialog = new(XamlRoot);
+                var res = await dialog.ShowAsync();
+                if(res == ContentDialogResult.Primary)
+                {
+                    if(dialog.Customers.IsNullOrEmpty())
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "Error",
+                            Content = $"No Customers Selected",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
+                    }
+                    else
+                    {
+                        var dateTuple = await ShowDateRangeSelectionAsync();
+                        if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                        {
+                            DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                            DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                            IEnumerable<int> ids = dialog.Customers!.Select(c => c.CustID);
+                            var values = await ViewModel.GetOrdersByCustomerIdAndPickupDateAsync(ids, startDate, endDate);
+                            if(values.Any(o => o.Paid == true))
+                            {
+                                ContentDialog d = new()
+                                {
+                                    XamlRoot = XamlRoot,
+                                    Title = "Warning",
+                                    Content = $"One or more invoices on this report have already been marked paid",
+                                    PrimaryButtonText = "ok",
+                                };
+                                await d.ShowAsync();
+                            }
+                            reportPath = ReportGenerator.GenerateAggregateInvoiceReport(values, startDate, endDate);
+                        }
+
+                    }
+                }
+            }
+            else if(control.ReportType == typeof(OutstandingBalancesReport))
+            {
+                var values = await ViewModel.GetOutstandingOrdersAsync();
+                reportPath = ReportGenerator.GenerateOutstandingBalancesReport(values);
             }
             else
             {

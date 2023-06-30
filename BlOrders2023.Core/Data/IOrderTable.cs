@@ -14,11 +14,13 @@ namespace BlOrders2023.Core.Data
         IEnumerable<Order> Get(int orderID);
         IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
         IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate);
-        public IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer);
+        Task<IEnumerable<Order>> GetByCustomerIDAndPickupDateAsync(IEnumerable<int> CustomerIDs, DateTimeOffset startDate, DateTimeOffset endDate);
+        IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer);
         Order Reload(Order orderID);
         Task<Order> UpsertAsync(Order order);
         Task DeleteAsync(Order order);
         Order Upsert(Order order, bool overwrite=false);
         void Delete(Order order);
+        Task<IEnumerable<Order>> GetUnpaidInvoicesAsync();
     }
 }
