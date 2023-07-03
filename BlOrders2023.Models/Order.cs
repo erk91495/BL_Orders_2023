@@ -8,7 +8,8 @@ using ServiceStack;
 namespace BlOrders2023.Models;
 [Table("tblOrdersWholesale")]
 public class Order
-{ 
+{
+    #region Constructors
     public Order() 
     {
         Memo_Totl = 0M;
@@ -18,6 +19,7 @@ public class Order
         //Set the date for today so that sql will accept the time
         PickupDate = DateTime.Today;
         PickupTime = DateTime.MinValue;
+        OrderStatus = OrderStatus.Ordered;
     }
     
     public Order(WholesaleCustomer customer)
@@ -26,7 +28,9 @@ public class Order
         Customer = customer;
         CustID = customer.CustID;
     }
+    #endregion Constructors
 
+    #region Properties
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OrderID { get; set; }
@@ -57,6 +61,12 @@ public class Order
     public virtual List<OrderItem> Items { get; set; } = new();
     public virtual List<ShippingItem> ShippingItems { get; set; } = new();
     public virtual List<Payment> Payments { get; set; } = new();
+    public bool CanFillOrder => OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled;
+    public bool CanEditOrder => OrderStatus == OrderStatus.Ordered;
+    public bool CanPrintInvoice => OrderStatus == OrderStatus.Filled;
+    #endregion Properties
+
+    #region Methods
     public decimal GetInvoiceTotal()
     {
         decimal total = 0;
@@ -100,4 +110,5 @@ public class Order
     {
         return GetInvoiceTotal() - GetTotalPayments();
     }
+    #endregion Methods
 }

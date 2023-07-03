@@ -51,8 +51,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         await LoadFillableOrders();
         if (orderID != null)
         {
-            await LoadOrder((int)orderID);
-            
+            await LoadOrder((int)orderID); 
         }
     }
 
@@ -65,7 +64,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         FillableOrders.Clear();
         FillableOrdersMasterList.Clear();
         foreach (var order in orders.Where( e => e.OrderStatus == Models.Enums.OrderStatus.Ordered ||
-                                            e.OrderStatus ==  Models.Enums.OrderStatus.Filling).ToList())
+                                            e.OrderStatus ==  Models.Enums.OrderStatus.Filling || e.OrderStatus == Models.Enums.OrderStatus.Filling).ToList())
         {
             FillableOrders.Add(order);
             FillableOrdersMasterList.Add(order);
