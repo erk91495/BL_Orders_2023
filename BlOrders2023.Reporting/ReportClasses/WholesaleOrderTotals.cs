@@ -8,129 +8,128 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlOrders2023.Reporting.ReportClasses
+namespace BlOrders2023.Reporting.ReportClasses;
+
+[System.ComponentModel.DisplayName("Wholesale Order Totals")]
+public class WholesaleOrderTotals : IReport
 {
-    [System.ComponentModel.DisplayName("Wholesale Order Totals")]
-    public class WholesaleOrderTotals : IReport
+
+    private readonly IEnumerable<OrderTotalsItem> _items;
+    private readonly DateTimeOffset _startDate;
+    private readonly DateTimeOffset _endDate;
+
+    public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
+    public static readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
+    public static readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
+    public static readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
+    public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
+    public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
+
+    public WholesaleOrderTotals(IEnumerable<OrderTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
     {
-
-        private IEnumerable<OrderTotalsItem> _items;
-        private DateTimeOffset _startDate;
-        private DateTimeOffset _endDate;
-
-        public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-        public static readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-        public static readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-        public static readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-        public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-        public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-
-        public WholesaleOrderTotals(IEnumerable<OrderTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
+        _items = items;
+        _startDate = startDate;
+        _endDate = endDate;
+    }
+    public void Compose(IDocumentContainer container)
+    {
+        container.Page(page =>
         {
-            _items = items;
-            _startDate = startDate;
-            _endDate = endDate;
-        }
-        public void Compose(IDocumentContainer container)
+            page.Margin(10);
+
+            page.Header().Height(100).Background(Colors.Grey.Lighten1);
+            page.Header().Element(ComposeHeader);
+
+            page.Content().Background(Colors.Grey.Lighten3);
+            page.Content().Element(ComposeContent);
+
+            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
+            page.Footer().Element(ComposeFooter);
+
+        });
+    }
+
+    private void ComposeHeader(IContainer container)
+    {
+        container.Row(row =>
         {
-            container.Page(page =>
+            row.RelativeItem(2).AlignCenter().Text("B & L Wholesale Order Pickup Recap").Style(titleStyle);
+            row.RelativeItem(1).AlignRight().Column(column =>
             {
-                page.Margin(10);
-
-                page.Header().Height(100).Background(Colors.Grey.Lighten1);
-                page.Header().Element(ComposeHeader);
-
-                page.Content().Background(Colors.Grey.Lighten3);
-                page.Content().Element(ComposeContent);
-
-                page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-                page.Footer().Element(ComposeFooter);
-
+                column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);
+                column.Item().Text($"To: {_endDate.ToString("M/d/yy")}").Style(subTitleStyle);
             });
-        }
+        });
+    }
 
-        private void ComposeHeader(IContainer container)
-        {
-            container.Row(row =>
+    private void ComposeContent(IContainer container)
+    {
+        container.Column(column => {
+            //Items
+            column.Item().Table(table =>
             {
-                row.RelativeItem(2).AlignCenter().Text("B & L Wholesale Order Pickup Recap").Style(titleStyle);
-                row.RelativeItem(1).AlignRight().Column(column =>
+                table.ColumnsDefinition(column =>
                 {
-                    column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);
-                    column.Item().Text($"To: {_endDate.ToString("M/d/yy")}").Style(subTitleStyle);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(8);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
+
                 });
-            });
-        }
 
-        private void ComposeContent(IContainer container)
-        {
-            container.Column(column => {
-                //Items
-                column.Item().Table(table =>
+                table.Header(header =>
                 {
-                    table.ColumnsDefinition(column =>
+                    header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
+
+                    header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Quantity Ordered").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Quantity Received").Style(tableHeaderStyle);
+
+                    static IContainer CellStyle(IContainer container)
                     {
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(8);
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-
-                    });
-
-                    table.Header(header =>
-                    {
-                        header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
-
-                        header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Quantity Ordered").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Quantity Received").Style(tableHeaderStyle);
-
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
-                        }
-                    });
-
-                    foreach (var item in _items)
-                    {
-                        table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{item.TotalQuantity ?? 0}").Style(tableTextStyle);
-
-                        table.Cell().Element(CellStyle).Text($"{item.TotalReceived ?? 0}").Style(tableTextStyle);
-
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
-                        }
+                        return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
                     }
                 });
-            });
-        }
 
-        private void ComposeFooter(IContainer container)
-        {
-            container.AlignBottom().Column(column =>
-            {
-                column.Item().AlignBottom().AlignRight().Row(footer =>
+                foreach (var item in _items)
                 {
-                    footer.RelativeItem().AlignLeft().Text(time =>
-                    {
-                        time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                        time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
-                    });
+                    table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.TotalQuantity ?? 0}").Style(tableTextStyle);
 
-                    footer.RelativeItem().AlignRight().Text(page =>
+                    table.Cell().Element(CellStyle).Text($"{item.TotalReceived ?? 0}").Style(tableTextStyle);
+
+                    static IContainer CellStyle(IContainer container)
                     {
-                        page.Span("pg. ").Style(smallFooterStyle);
-                        page.CurrentPageNumber().Style(smallFooterStyle);
-                        page.Span(" of ").Style(smallFooterStyle);
-                        page.TotalPages().Style(smallFooterStyle);
-                    });
+                        return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                    }
+                }
+            });
+        });
+    }
+
+    private void ComposeFooter(IContainer container)
+    {
+        container.AlignBottom().Column(column =>
+        {
+            column.Item().AlignBottom().AlignRight().Row(footer =>
+            {
+                footer.RelativeItem().AlignLeft().Text(time =>
+                {
+                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
+                    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
                 });
 
+                footer.RelativeItem().AlignRight().Text(page =>
+                {
+                    page.Span("pg. ").Style(smallFooterStyle);
+                    page.CurrentPageNumber().Style(smallFooterStyle);
+                    page.Span(" of ").Style(smallFooterStyle);
+                    page.TotalPages().Style(smallFooterStyle);
+                });
             });
 
-        }
+        });
+
     }
 }

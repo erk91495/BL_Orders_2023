@@ -61,7 +61,7 @@ public class Order
     public virtual List<OrderItem> Items { get; set; } = new();
     public virtual List<ShippingItem> ShippingItems { get; set; } = new();
     public virtual List<Payment> Payments { get; set; } = new();
-    public bool CanFillOrder => OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled;
+    public bool CanFillOrder => (OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled);
     public bool CanEditOrder => OrderStatus == OrderStatus.Ordered;
     public bool CanPrintInvoice => OrderStatus == OrderStatus.Filled;
     #endregion Properties

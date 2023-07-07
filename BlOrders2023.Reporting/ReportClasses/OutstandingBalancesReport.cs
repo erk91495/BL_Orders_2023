@@ -20,8 +20,8 @@ public class OutstandingBalancesReport : IReport
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-    private IEnumerable<Order> _orders;
-    private DateTime _reportDate = DateTime.Now;
+    private readonly IEnumerable<Order> _orders;
+    private readonly DateTime _reportDate = DateTime.Now;
 
     public OutstandingBalancesReport(IEnumerable<Order> orders)
     {

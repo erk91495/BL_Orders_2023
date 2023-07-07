@@ -23,87 +23,86 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace BlOrders2023.UserControls
+namespace BlOrders2023.UserControls;
+
+public sealed partial class CustomerDataInputDialog : ContentDialog
 {
-    public sealed partial class CustomerDataInputDialog : ContentDialog
+    #region Properties
+    CustomerDataInputControlViewModel ViewModel { get; }
+
+    #endregion Properties
+
+    #region Fields
+    #endregion Fields
+
+    #region Constructors
+    public CustomerDataInputDialog(WholesaleCustomer customer, bool CheckIfUnique = true)
     {
-        #region Properties
-        CustomerDataInputControlViewModel ViewModel { get; }
-
-        #endregion Properties
-
-        #region Fields
-        #endregion Fields
-
-        #region Constructors
-        public CustomerDataInputDialog(WholesaleCustomer customer, bool CheckIfUnique = true)
+        this.InitializeComponent();
+        var enumValues = Enum.GetNames(typeof(States));
+        StateComboBox.ItemsSource = enumValues;
+        BillingStateComboBox.ItemsSource = enumValues;
+        ViewModel = App.GetService<CustomerDataInputControlViewModel>();
+        ViewModel.SetCustomer(customer);
+        ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
+        ViewModel.CheckIfUnique = CheckIfUnique;
+        if (!CheckIfUnique)
         {
-            this.InitializeComponent();
-            var enumValues = Enum.GetNames(typeof(States));
-            StateComboBox.ItemsSource = enumValues;
-            BillingStateComboBox.ItemsSource = enumValues;
-            ViewModel = App.GetService<CustomerDataInputControlViewModel>();
-            ViewModel.SetCustomer(customer);
-            ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
-            ViewModel.CheckIfUnique = CheckIfUnique;
-            if (!CheckIfUnique)
-            {
-                PrimaryButtonText = "Update Customer";
-            }
+            PrimaryButtonText = "Update Customer";
         }
+    }
 
-        private void ViewModel_ErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
+    private void ViewModel_ErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
+    {
+        if (ViewModel.HasErrors)
         {
-            if (ViewModel.HasErrors)
-            {
-                IsPrimaryButtonEnabled = false;
-            }
-            else
-            {
-                IsPrimaryButtonEnabled = true;
-            }
+            IsPrimaryButtonEnabled = false;
         }
-        #endregion Constructors
-
-        #region Methods
-        #endregion Methods
-
-        private void Button_Click(object sender, RoutedEventArgs e)
+        else
         {
-            int i = 0;
+            IsPrimaryButtonEnabled = true;
         }
+    }
+    #endregion Constructors
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    #region Methods
+    #endregion Methods
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        var i = 0;
+    }
+
+    private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        try
         {
-            try
+            //if we didn't save we have validation issues
+            if (!ViewModel.SaveCustomer())
             {
-                //if we didn't save we have validation issues
-                if (!ViewModel.SaveCustomer())
-                {
-                    args.Cancel = true;
-                }
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                _ = ex;
-                FailureInfoBar.Message = $"The customer was modified before your changes could be saved.\r\n";
-                FailureInfoBar.IsOpen = true;
                 args.Cancel = true;
             }
-            catch (DbUpdateException ex)
-            {
-                FailureInfoBar.Message = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
-                    $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}";
-                FailureInfoBar.IsOpen = true;
-                args.Cancel = true;
-
-            }
-
         }
-
-        public WholesaleCustomer GetCustomer() 
+        catch (DbUpdateConcurrencyException ex)
         {
-            return ViewModel.Customer;
+            _ = ex;
+            FailureInfoBar.Message = $"The customer was modified before your changes could be saved.\r\n";
+            FailureInfoBar.IsOpen = true;
+            args.Cancel = true;
         }
+        catch (DbUpdateException ex)
+        {
+            FailureInfoBar.Message = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}";
+            FailureInfoBar.IsOpen = true;
+            args.Cancel = true;
+
+        }
+
+    }
+
+    public WholesaleCustomer GetCustomer() 
+    {
+        return ViewModel.Customer;
     }
 }

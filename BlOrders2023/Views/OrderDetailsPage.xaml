@@ -13,7 +13,8 @@
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
     xmlns:calendar="using:Syncfusion.UI.Xaml.Calendar"
-    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters" 
+    xmlns:enums="using:BlOrders2023.Models.Enums"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -94,6 +95,11 @@
                             Padding="0,10,0,5"
                             FontSize="50"
                             FontWeight="SemiBold"/>
+            <ComboBox x:Name="OrderStatusCombo"
+                      xmlns:ui="using:CommunityToolkit.WinUI.UI"
+                      ItemsSource="{ui:EnumValues Type=enums:OrderStatus}"
+                      SelectedItem="{x:Bind ViewModel.OrderStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
         </StackPanel>
         <RelativePanel x:Name="UserInputRanel"
                        RelativePanel.Below="CustomerInfo"
@@ -237,8 +243,8 @@
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
-                <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" AllowEditing="False"/>
-                <sf:GridNumericColumn HeaderText="Customer Price" MappingName="ActualCustPrice" AllowEditing="True"/>
+                <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" AllowEditing="False" DisplayNumberFormat="N2"/>
+                <sf:GridNumericColumn HeaderText="Customer Price" MappingName="ActualCustPrice" AllowEditing="True" DisplayNumberFormat="C"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity" AllowEditing="True"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuantityReceived" />
                 <sf:GridUnboundColumn HeaderText="" UseBindingValue="False" MappingName="UnboundColumn" ColumnWidthMode="SizeToCells">
@@ -264,7 +270,7 @@
                         TabIndex="5"
                         GotFocus="ProductEntryBox_GotFocus"
                         LostFocus="ProductEntryBox_LostFocus"                        
-                        IsEnabled="{x:Bind ViewModel.HasErrors, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                        IsEnabled="{x:Bind ViewModel.CanAddItems, Mode=OneWay}">
             <AutoSuggestBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Product">
                     <StackPanel Orientation="Horizontal"

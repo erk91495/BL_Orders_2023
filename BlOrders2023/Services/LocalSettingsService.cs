@@ -4,7 +4,6 @@ using BlOrders2023.Core.Helpers;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
 using Microsoft.Extensions.Options;
-using BlOrders2023.Helpers;
 
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -52,15 +51,17 @@ public class LocalSettingsService : ILocalSettingsService
         }
     }
 
-    private async Task WriteDefaultLocalSettingsAsync()
-    {
-        await Task.WhenAll(
-        SaveSettingAsync(LocalSettingsKeys.FirstRun, false),
-        SaveSettingAsync(LocalSettingsKeys.DatabaseServer, "ERIC-PC"),
-        SaveSettingAsync(LocalSettingsKeys.DatabaseName, "New_Bl_Orders")
-        );
-    }
+    //private async Task WriteDefaultLocalSettingsAsync()
+    //{
+    //    await Task.WhenAll(
+    //    SaveSettingAsync(LocalSettingsKeys.FirstRun, false),
+    //    SaveSettingAsync(LocalSettingsKeys.DatabaseServer, "ERIC-PC"),
+    //    SaveSettingAsync(LocalSettingsKeys.DatabaseName, "New_Bl_Orders")
+    //    );
+    //}
 
+
+    //TODO: CHANGE BEFORE RELEASE
     private void WriteDefaultLocalSettings()
     {
         SaveSetting(LocalSettingsKeys.FirstRun, false);

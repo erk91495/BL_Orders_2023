@@ -15,7 +15,7 @@ namespace BlOrders2023.ViewModels;
 public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 {
     #region Properties
-    public bool HasOrder { get => _order != null; }
+    public bool HasOrder => _order != null;
     public WholesaleCustomer Customer { get; set; }
     public Order? Order { get => _order; set => _order = value; }
     public ObservableCollection<ShippingItem> Items { get; set; }
@@ -185,7 +185,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     internal async Task ReceiveItemAsync(ShippingItem item)
     {
-        bool duplicate = await App.GetNewDatabase().ShipDetails.IsDuplicateScanline(item.Scanline);
+        var duplicate = await App.GetNewDatabase().ShipDetails.IsDuplicateScanline(item.Scanline);
         if (!duplicate)
         {
             Items.Add(item);

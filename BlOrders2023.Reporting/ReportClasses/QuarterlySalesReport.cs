@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BlOrders2023.Models;
@@ -20,8 +21,8 @@ internal class QuarterlySalesReport : IReport
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-    private IEnumerable<Order> _orders;
-    private DateTime _reportDate = DateTime.Now;
+    private readonly IEnumerable<Order> _orders;
+    private readonly DateTime _reportDate = DateTime.Now;
 
     public QuarterlySalesReport(IEnumerable<Order> orders)
     {
