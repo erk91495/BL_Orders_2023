@@ -517,4 +517,35 @@ public sealed partial class OrderDetailsPage : Page
     {
         ProductEntryBox.IsSuggestionListOpen = false;
     }
+
+    private void OrderStatusCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+
+        if ((ComboBox)sender == OrderStatusCombo )
+        {
+            var selection = e.AddedItems.First();
+            if(selection != null && selection is OrderStatus)
+            {
+                ViewModel.DetachedOrderStatus = (OrderStatus)selection;
+            }
+        }
+    }
+
+    private async void StatusFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        ContentDialog contentDialog = new ContentDialog()
+        {
+            XamlRoot = XamlRoot,
+            Title = "WARNING",
+            Content = "You are about to change the status of this order. Are you sure you know what you are doing?",
+            PrimaryButtonText = "Continue",
+            CloseButtonText = "Cancel",
+        };
+        SystemSounds.Exclamation.Play();
+        var res = await contentDialog.ShowAsync();
+        if(res == ContentDialogResult.Primary)
+        {
+            OrderStatusCombo.IsEnabled = true;
+        }
+    }
 }

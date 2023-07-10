@@ -67,7 +67,17 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     public OrderStatus OrderStatus
     {
         get => _order.OrderStatus;
-        set { _order.OrderStatus = value; OnPropertyChanged(nameof(OrderStatus))//TODO: FIX THIS STACK OVERFLOW; }
+        set 
+        { 
+            _order.OrderStatus = value; 
+            OnPropertyChanged(nameof(OrderStatus)); 
+        }
+    }
+
+    public OrderStatus DetachedOrderStatus
+    {
+        get => _order.OrderStatus;
+        set => _order.OrderStatus = value;
     }
 
     public string? PO_Number

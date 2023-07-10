@@ -84,6 +84,7 @@
                             </MenuFlyoutItem.KeyboardAccelerators>
                         </MenuFlyoutItem>
                         <MenuFlyoutItem Text="Delete Order" Icon="Delete" Click="DeleteOrderFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Allow Status Changes" Icon="Edit" Click="StatusFlyoutItem_Click"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
@@ -98,7 +99,10 @@
             <ComboBox x:Name="OrderStatusCombo"
                       xmlns:ui="using:CommunityToolkit.WinUI.UI"
                       ItemsSource="{ui:EnumValues Type=enums:OrderStatus}"
-                      SelectedItem="{x:Bind ViewModel.OrderStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                      SelectionChanged="OrderStatusCombo_SelectionChanged"
+                      SelectedItem="{x:Bind ViewModel.OrderStatus, Mode=OneTime}"
+                      IsEnabled="False"/>
+                        <!-- Two way binding is causing a stack overflow so this is my workaround-->
 
         </StackPanel>
         <RelativePanel x:Name="UserInputRanel"
