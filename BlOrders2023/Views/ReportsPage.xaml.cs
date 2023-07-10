@@ -69,7 +69,7 @@ public sealed partial class ReportsPage : Page
     {
         if(sender is ReportControl control)
         {
-            string reportPath = string.Empty;
+            var reportPath = string.Empty;
             if(control.ReportType == typeof(WholesaleInvoice))
             {
                 SingleValueInputDialog dialog = new SingleValueInputDialog()

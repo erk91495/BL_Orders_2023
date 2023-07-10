@@ -18,7 +18,7 @@ namespace BlOrders2023.Core.Data.SQL
 
         public IEnumerable<Payment> GetPayments(DateTime startDate, DateTime endDate)
         {
-            return _db.Payments.Where(p => p.PaymentDate >= startDate && p.PaymentDate <= endDate).ToList();
+            return _db.Payments.Where(p => p.PaymentDate >= startDate && p.PaymentDate <= endDate).OrderBy(p => p.PaymentDate).ThenBy(p => p.Customer.CustomerName).ToList();
         }
     }
 }

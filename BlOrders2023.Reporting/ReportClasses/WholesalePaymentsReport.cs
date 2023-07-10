@@ -112,22 +112,21 @@ public class WholesalePaymentsReport : IReport
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
                     }
                 }
-                table.Footer(footer =>
+                //Add At bottom of grid
+                table.Cell().Element(FooterCellStyle).Text("");
+                table.Cell().Element(FooterCellStyle).Text("");
+                table.Cell().Element(FooterCellStyle).Text("");
+                table.Cell().Element(FooterCellStyle).Text("");
+                table.Cell().Element(FooterCellStyle).Text("");
+                table.Cell().Element(FooterCellStyle).AlignRight().Text("Total: ").Style(tableHeaderStyle);
+
+                table.Cell().Element(FooterCellStyle).Text($"{_payments.Sum(p => p.PaymentAmount):C}").Style(tableHeaderStyle);
+
+                static IContainer FooterCellStyle(IContainer container)
                 {
-                    footer.Cell().Element(CellStyle).Text("");
-                    footer.Cell().Element(CellStyle).Text("");
-                    footer.Cell().Element(CellStyle).Text("");
-                    footer.Cell().Element(CellStyle).Text("");
-                    footer.Cell().Element(CellStyle).Text("");
-                    footer.Cell().Element(CellStyle).AlignRight().Text("Total: ").Style(tableHeaderStyle);
+                    return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
+                }
 
-                    footer.Cell().Element(CellStyle).Text($"{_payments.Sum(p => p.PaymentAmount):C}").Style(tableHeaderStyle);
-
-                    static IContainer CellStyle(IContainer container)
-                    {
-                        return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
-                    }
-                });
 
             });
         });
