@@ -201,6 +201,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     public bool HasPreviousOrder { get; set; } = false;
 
     public bool CanAddItems => !HasErrors && _order.OrderStatus == OrderStatus.Ordered;
+    public bool CanDeleteItems => _order.OrderStatus < OrderStatus.Invoiced;
     #endregion Properties
 
     #region Fields

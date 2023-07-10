@@ -301,7 +301,21 @@ public sealed partial class OrderDetailsPage : Page
     {
         if (_doomed != null)
         {
-            ViewModel.Items.Remove(_doomed);
+            if(_doomed.QuantityReceived == 0)
+            {
+                ViewModel.Items.Remove(_doomed);
+            }
+            else
+            {
+                ContentDialog dialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Error",
+                    Content = "Quantity received must be 0 before this item can be removed",
+                    PrimaryButtonText = "Ok",
+                };
+                _ = dialog.ShowAsync();
+            }
         }
         _doomed = null;
     }

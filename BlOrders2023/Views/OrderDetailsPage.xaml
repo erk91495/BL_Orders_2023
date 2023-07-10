@@ -233,6 +233,7 @@
                        ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                        SourceType="models:OrderItem"
                        RelativePanel.Below="ProductEntryErrorMessage"
+                       RelativePanel.Above="NavigationButtonGrid"
                        GridLinesVisibility="Both"
                        IsReadOnly="False"
                        AutoGenerateColumns="False"
@@ -251,7 +252,7 @@
                 <sf:GridNumericColumn HeaderText="Customer Price" MappingName="ActualCustPrice" AllowEditing="True" DisplayNumberFormat="C"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity" AllowEditing="True"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuantityReceived" />
-                <sf:GridUnboundColumn HeaderText="" UseBindingValue="False" MappingName="UnboundColumn" ColumnWidthMode="SizeToCells">
+                <sf:GridUnboundColumn HeaderText="" UseBindingValue="False" MappingName="UnboundColumn" ColumnWidthMode="SizeToCells" IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
                     <sf:GridUnboundColumn.CellTemplate>
                         <DataTemplate>
                             <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">
@@ -292,7 +293,7 @@
                    Text="Clear all errors before adding products" 
                    Visibility="{x:Bind ViewModel.HasErrors, Mode=OneWay}" 
                    Style="{StaticResource ValidatorTextBlockStyle}"/>
-        <Grid RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+        <Grid x:Name="NavigationButtonGrid" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
