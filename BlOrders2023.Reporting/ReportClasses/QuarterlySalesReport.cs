@@ -10,8 +10,8 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
-[System.ComponentModel.DisplayName("Quarterly Sales Recap")]
-internal class QuarterlySalesReport : IReport
+[System.ComponentModel.DisplayName("Quarterly Sales Report")]
+public class QuarterlySalesReport : IReport
 {
 
     private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
@@ -23,10 +23,14 @@ internal class QuarterlySalesReport : IReport
 
     private readonly IEnumerable<Order> _orders;
     private readonly DateTime _reportDate = DateTime.Now;
+    private readonly DateTimeOffset _startDate;
+    private readonly DateTimeOffset _endDate;
 
-    public QuarterlySalesReport(IEnumerable<Order> orders)
+    public QuarterlySalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         _orders = orders;
+        _startDate  = startDate;
+        _endDate = endDate; 
     }
 
     public void Compose(IDocumentContainer container)
@@ -79,19 +83,20 @@ internal class QuarterlySalesReport : IReport
             {
                 table.ColumnsDefinition(column =>
                 {
-                    column.RelativeColumn(2);
-                    column.RelativeColumn(2);
-                    column.RelativeColumn(4);
                     column.RelativeColumn(1);
-
+                    column.RelativeColumn(4);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
                 });
 
                 table.Header(header =>
                 {
-                    header.Cell().Element(CellStyle).Text("Pickup Date").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).Text("Order ID").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).Text("Customer Name").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).Text("Balance Due").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Quantity").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Extended Price").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Net Wt").Style(tableHeaderStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -99,12 +104,16 @@ internal class QuarterlySalesReport : IReport
                     }
                 });
 
-                foreach (var order in _orders)
+                var orderItems = _orders.SelectMany(o => o.Items);
+                var productsIDs = orderItems.Select(i => i.ProductID).Distinct().OrderBy(i => i);
+                foreach (var id in productsIDs)
                 {
-                    table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yy")}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{order.GetBalanceDue():C}").Style(tableTextStyle);
+                    var matchingItems = orderItems.Where(item => item.ProductID == id);
+                    table.Cell().Element(CellStyle).Text($"{id}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{matchingItems.First().Product.ProductName}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.QuantityReceived)}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.GetTotalPrice()):C}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.PickWeight):N2}").Style(tableTextStyle);
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);

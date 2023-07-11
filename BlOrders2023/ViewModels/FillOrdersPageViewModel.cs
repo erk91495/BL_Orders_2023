@@ -226,13 +226,13 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
             OrderItem orderItem = new(item.Product, _order)
             {
                 Quantity = 0,
-                PickWeight = item.PickWeight,
+                //PickWeight = item.PickWeight,
             };
             _order.Items.Add(orderItem);
         }
         else
         {
-            ordered.PickWeight += item.PickWeight;
+            //ordered.PickWeight += item.PickWeight;
         }
     }
 
@@ -245,7 +245,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         }
         else
         {
-            ordered.PickWeight -= item.PickWeight;
+            //ordered.PickWeight -= item.PickWeight;
             if(ordered.QuantityReceived <= 0 && ordered.Quantity <=0)
             {
                 _order.Items.Remove(ordered);

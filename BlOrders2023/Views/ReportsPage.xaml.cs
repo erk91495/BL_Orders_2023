@@ -273,6 +273,18 @@ public sealed partial class ReportsPage : Page
                 var values = await ViewModel.GetOutstandingOrdersAsync();
                 reportPath = ReportGenerator.GenerateOutstandingBalancesReport(values);
             }
+            else if(control.ReportType == typeof(QuarterlySalesReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    var values = ViewModel.GetOrdersByPickupDate(startDate, endDate);
+                    reportPath = ReportGenerator.GenerateQuarterlySalesReport(values, startDate, endDate);
+                }
+            }
             else
             {
                 throw new Exception("Report Type Not Found ask the programmer if they forgot something");

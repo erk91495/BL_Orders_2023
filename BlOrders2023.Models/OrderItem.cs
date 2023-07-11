@@ -22,7 +22,7 @@ public class OrderItem
     public int ProductID { get; set; }
     [ConcurrencyCheck]
     public float Quantity { get; set; }
-    public float? PickWeight { get; set; }
+    public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight);
     public decimal ActualCustPrice { get; set; }
     //public float QuanRcvd { get; set; }
     [Key]
@@ -50,7 +50,6 @@ public class OrderItem
         Order = order;
         ProductID = product.ProductID;
         Quantity = 0;
-        PickWeight = 0;
         ActualCustPrice = Helpers.Helpers.CalculateCustomerPrice(product, order.Customer);
         //QuanRcvd = 0;
         ProdEntryDate = DateTime.Now;
@@ -72,6 +71,10 @@ public class OrderItem
 
     public decimal GetTotalPrice()
     {
+        if(Product.FixedPrice == true)
+        {
+            return ActualCustPrice;
+        }
         return decimal.Round(ActualCustPrice * (decimal)(PickWeight ?? 0),2);
     }
 

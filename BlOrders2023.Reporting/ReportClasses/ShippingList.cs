@@ -124,21 +124,40 @@ namespace BlOrders2023.Reporting.ReportClasses
                             table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                             table.Cell().Element(CellStyle).Text($"{item.QuanRcvd}").Style(tableTextStyle);
                             table.Cell().Element(CellStyle).Text($"{item.PickWeight:F2}").Style(tableTextStyle);
-                        }
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                            static IContainer CellStyle(IContainer container)
+                            {
+                                return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                            }
                         }
 
-                        table.Footer(footer =>
+                        table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableTextStyle);
+                        table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableTextStyle);
+                        table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableTextStyle);
+                        static IContainer FooterCellStyle(IContainer container)
                         {
-                            footer.Cell().Element(CellStyle).AlignRight().Text("Total: ").Style(tableHeaderStyle);
-
-                            footer.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableHeaderStyle);
-                            footer.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableHeaderStyle);
-                        });
+                            return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
+                        }
                     });
                 }
+                column.Item().Table(table =>
+                {
+                    table.ColumnsDefinition(column =>
+                    {
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+                        column.RelativeColumn(2);
+
+                    });
+
+                    table.Cell().Element(CellStyle).PaddingRight(1).AlignRight().Text("Order Totals: ").Style(tableHeaderStyle);
+                    table.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Sum(i => i.QuanRcvd)}").Style(tableHeaderStyle);
+                    table.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Sum(i => i.PickWeight)}").Style(tableHeaderStyle);
+
+                    static IContainer CellStyle(IContainer container)
+                    {
+                        return container.PaddingTop(3).BorderTop(2f).BorderColor(Colors.Black).PaddingVertical(2);
+                    }
+                });
                 
             
             });

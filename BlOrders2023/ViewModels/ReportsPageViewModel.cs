@@ -44,4 +44,9 @@ public class ReportsPageViewModel : ObservableRecipient
     {
         return await App.GetNewDatabase().Orders.GetUnpaidInvoicesAsync();
     }
+
+    internal IEnumerable<Product> GetProducts()
+    {
+        return App.GetNewDatabase().Products.Get(null, false);
+    }
 }

@@ -20,6 +20,8 @@ namespace BlOrders2023.Reporting
             typeof(UnpaidInvoicesReport),
             typeof(AggregateInvoiceReport),
             typeof(OutstandingBalancesReport),
+            typeof(QuarterlySalesReport),
+
         }; 
     }
 }

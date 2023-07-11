@@ -97,5 +97,14 @@ namespace BlOrders2023.Reporting
             return filePath;
 
         }
+
+        public static string GenerateQuarterlySalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate) 
+        {
+            var report = new QuarterlySalesReport(orders, startDate, endDate);
+            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "QuarterlySalesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
+        }
     }
 }
