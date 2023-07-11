@@ -12,6 +12,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Windows.Storage;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlOrders2023.Views;
 
@@ -91,6 +92,13 @@ public sealed partial class OrdersPage : Page
             ContentType = "application/pdf"
         };
         _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+        if (ViewModel.SelectedOrder.OrderStatus <= Models.Enums.OrderStatus.Filled)
+        {
+            ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Invoiced;
+            _ = ViewModel.SaveCurrentOrderAsync();
+        }
+
     }
 
     #endregion Pane Buttons
@@ -246,7 +254,28 @@ public sealed partial class OrdersPage : Page
         }
     }
 
+    public async Task<bool> TrySaveCurrentOrderAsync()
+    {
+        try
+        {
+            await ViewModel.SaveCurrentOrderAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            ContentDialog dialog = new()
+            {
+                Title = "DbUpdateException",
+                Content = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
+                XamlRoot = this.XamlRoot,
+                PrimaryButtonText = "Ok",
+            };
+            await dialog.ShowAsync();
+            return false;
+        }
+        
 
-
+    }
     #endregion Methods
 }

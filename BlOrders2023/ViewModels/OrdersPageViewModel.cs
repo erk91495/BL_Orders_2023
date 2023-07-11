@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
+using Microsoft.UI.Xaml.Controls;
 
 namespace BlOrders2023.ViewModels;
 
@@ -81,6 +82,7 @@ public class OrdersPageViewModel : ObservableRecipient
     /// Gets the dispatcher Queue for the current thread
     /// </summary>
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    private readonly IBLDatabase _db = App.GetNewDatabase();
     #endregion Fields
 
     #region Constructors
@@ -106,7 +108,7 @@ public class OrdersPageViewModel : ObservableRecipient
             MasterOrdersList.Clear();
         });
 
-        IOrderTable table = App.GetNewDatabase().Orders;
+        IOrderTable table = _db.Orders;
         var orders = await Task.Run(table.GetAsync);
 
         await dispatcherQueue.EnqueueAsync(() =>
@@ -130,7 +132,7 @@ public class OrdersPageViewModel : ObservableRecipient
             IsLoading = true;
             Orders.Clear();
 
-            IOrderTable table = App.GetNewDatabase().Orders;
+            IOrderTable table = _db.Orders;
 
             var results = await Task.Run(table.GetAsync);
             await dispatcherQueue.EnqueueAsync(() =>
@@ -175,6 +177,14 @@ public class OrdersPageViewModel : ObservableRecipient
         }
     }
     #endregion Filtering
+
+    /// <summary>
+    /// Saves changes to the current Order
+    /// </summary>
+    public async Task SaveCurrentOrderAsync()
+    {
+        await _db.Orders.UpsertAsync(SelectedOrder);
+    }
 
     #endregion Methods
 }

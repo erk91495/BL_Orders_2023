@@ -33,7 +33,16 @@ namespace BlOrders2023.Helpers
                 isValidBarcodeType = false; 
             }
 
-            //TODO try code128
+            if(!isValidBarcodeType) {
+                try
+                {
+                    barcode = new Code128Barcode(item.Scanline);
+                }
+                catch (InvalidBarcodeExcption)
+                {
+                    isValidBarcodeType = false;
+                }
+            }
 
             if (!isValidBarcodeType || barcode == null)
             {

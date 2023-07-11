@@ -32,6 +32,16 @@ public class WholesaleInvoice : IReport
     {
         container.Page(page =>
                 {
+                    if(_order.OrderStatus >= Models.Enums.OrderStatus.Invoiced) {
+                        page.Background().AlignCenter().AlignMiddle()
+                        .TranslateX(50)
+                        .TranslateY(50)
+                        .Rotate(-45)
+                        .TranslateX(-50)
+                        .TranslateY(-50)
+                        .Text("COPY").FontColor(Colors.Grey.Lighten4).FontSize(200).ExtraBold();
+                    }
+
                     page.Margin(10);
 
                     page.Header().Height(100).Background(Colors.Grey.Lighten1);
