@@ -49,4 +49,9 @@ public class ReportsPageViewModel : ObservableRecipient
     {
         return App.GetNewDatabase().Products.Get(null, false);
     }
+    internal IEnumerable<Order> GetFrozenOrders(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return App.GetNewDatabase().Orders.GetFrozenOrdersByPickupDate(startDate.Date, endDate.Date);
+    }
+
 }

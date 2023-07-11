@@ -12,6 +12,7 @@ namespace BlOrders2023.Core.Data
         Task<IEnumerable<Order>> GetAsync();
         Task<IEnumerable<Order>> GetAsync(int orderID);
         IEnumerable<Order> Get(int orderID);
+        IEnumerable<Order> GetFrozenOrdersByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
         IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
         IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate);
         Task<IEnumerable<Order>> GetByCustomerIDAndPickupDateAsync(IEnumerable<int> CustomerIDs, DateTimeOffset startDate, DateTimeOffset endDate);

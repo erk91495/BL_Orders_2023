@@ -70,6 +70,15 @@ public class OrderTable : IOrderTable
             .ToList();
     }
 
+    public IEnumerable<Order> GetFrozenOrdersByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return _db.Orders
+            .Where(o => o.Frozen == true && o.PickupDate >= startDate && o.PickupDate <= endDate)
+            .OrderBy(o => o.PickupDate)
+            .ThenBy(o => o.PickupTime)
+            .ToList();
+    }
+
     /// <summary>
     /// Gets all of the Orders from the database
     /// </summary>

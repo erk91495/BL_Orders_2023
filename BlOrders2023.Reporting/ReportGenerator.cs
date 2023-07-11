@@ -106,5 +106,14 @@ namespace BlOrders2023.Reporting
             report.GeneratePdf(filePath);
             return filePath;
         }
+
+        public static string GenerateFrozenOrdersReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var report = new FrozenOrdersReport(orders, startDate, endDate);
+            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "FrozenOrdersReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
+        }
     }
 }

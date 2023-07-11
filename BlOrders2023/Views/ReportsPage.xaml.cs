@@ -285,6 +285,18 @@ public sealed partial class ReportsPage : Page
                     reportPath = ReportGenerator.GenerateQuarterlySalesReport(values, startDate, endDate);
                 }
             }
+            else if(control.ReportType == typeof(FrozenOrdersReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    var values = ViewModel.GetFrozenOrders(startDate, endDate);
+                    reportPath = ReportGenerator.GenerateFrozenOrdersReport(values, startDate, endDate);
+                }
+            }
             else
             {
                 throw new Exception("Report Type Not Found ask the programmer if they forgot something");

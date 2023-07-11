@@ -66,11 +66,15 @@ public class QuarterlySalesReport : IReport
                 row.RelativeItem(3).AlignCenter().Column(col =>
                 {
                     col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
-                    col.Item().AlignCenter().Text("Outstanding Balances").Style(titleStyle);
+                    col.Item().AlignCenter().Text("Quarterly Sales Report").Style(titleStyle);
                 });
 
+                row.RelativeItem(1).AlignRight().Column(column =>
+                {
+                    column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);
+                    column.Item().Text($"To: {_endDate.ToString("M/d/yy")}").Style(subTitleStyle);
+                });
             });
-            headerCol.Item().Text($"As of: {_reportDate.ToString():d}").Style(subTitleStyle);
         });
     }
 
