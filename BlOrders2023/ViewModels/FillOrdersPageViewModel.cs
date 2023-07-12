@@ -215,14 +215,22 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     internal async Task DeleteShippingItemAsync(ShippingItem item)
     {
-        Items.Remove(item);
-        if (!_order!.ShippingItems.Remove(item))
+        if(!Items.Remove(item))
         {
-            throw new Exception();
+            if (!_order!.ShippingItems.Remove(item))
+            {
+                //throw new Exception();
+            }
+            else
+            {
+                DecrementOrderedItem(item);
+                await _orderDB.Orders.UpsertAsync(_order);
+                DecrementReceivedItem(item);
+            }
+            OnPropertyChanged(nameof(Items));
         }
         
-        DecrementOrderedItem(item);
-        DecrementReceivedItem(item);
+        
 
 
     }
