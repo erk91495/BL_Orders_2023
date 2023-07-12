@@ -61,17 +61,8 @@ public sealed partial class FillOrdersPage : Page
                 {
                     //interpreter has no concept of dbcontext and cannot track items
                     BarcodeInterpreter.ParseBarcode(ref item);
-                    var product = App.GetNewDatabase().Products.Get(item.ProductID, false).FirstOrDefault();
-                    if (product != null)
-                    {
-                        //item.Product = product;
-                        await AddShippingItemAsync(item);
-                    }
-                    else
-                    {
-                        throw new ProductNotFoundException(String.Format("Product {0} Not Found", item.ProductID), item.ProductID);
-                    }
-                    
+                    //item.Product = product;
+                    await AddShippingItemAsync(item);
                 }
                 catch (ProductNotFoundException e)
                 {
@@ -164,7 +155,6 @@ public sealed partial class FillOrdersPage : Page
                     return;
                 }
                 BarcodeInterpreter.UpdateBarcode(ref item);
-                //GET WEIGHT FROM USER
                 await AddShippingItemAsync(item);
             }
         }

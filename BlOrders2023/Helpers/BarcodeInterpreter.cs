@@ -30,10 +30,7 @@ namespace BlOrders2023.Helpers
             }
             catch (InvalidBarcodeExcption) 
             {
-                isValidBarcodeType = false; 
-            }
-
-            if(!isValidBarcodeType) {
+                //not a GS1 barcode try again
                 try
                 {
                     barcode = new Code128Barcode(item.Scanline);

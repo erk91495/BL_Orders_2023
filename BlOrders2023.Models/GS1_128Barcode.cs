@@ -356,7 +356,7 @@ public class GS1_128Barcode : IBarcode
         }
         else
         {
-            return null;
+            return string.Empty;
         }
     }
 

@@ -29,6 +29,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     #region Fields
     private Order? _order;
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    private readonly IBLDatabase _orderDB = App.GetNewDatabase();
     #endregion Fields
 
     #region Consturctors
@@ -73,7 +74,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     public async Task LoadOrder(int orderID)
     {
-        IOrderTable table = App.GetNewDatabase().Orders;
+        IOrderTable table = _orderDB.Orders;
         var order = await Task.Run(() => table.GetAsync(orderID));
 
         await dispatcherQueue.EnqueueAsync(() =>
@@ -185,13 +186,23 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
 
     internal async Task ReceiveItemAsync(ShippingItem item)
     {
-        var duplicate = await App.GetNewDatabase().ShipDetails.IsDuplicateScanline(item.Scanline);
+        var product = _orderDB.Products.Get(item.ProductID).FirstOrDefault();
+        if(product == null)
+        {
+            throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
+        }
+        else
+        {
+            item.Product = product;
+        }
+
+        var duplicate = await _orderDB.ShipDetails.IsDuplicateScanline(item.Scanline);
         if (!duplicate)
         {
             Items.Add(item);
             _order?.ShippingItems.Add(item);
             IncremantOrderedItem(item);
-            await App.GetNewDatabase().Orders.UpsertAsync(_order);
+            await _orderDB.Orders.UpsertAsync(_order);
             IncrementReceivedItem(item);
             
             
@@ -211,7 +222,6 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         }
         
         DecrementOrderedItem(item);
-        await App.GetNewDatabase().ShipDetails.DeleteAsync(item);
         DecrementReceivedItem(item);
 
 
@@ -223,16 +233,13 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         var ordered = _order!.Items.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
         if (ordered == null)
         {
+            
             OrderItem orderItem = new(item.Product, _order)
             {
                 Quantity = 0,
-                //PickWeight = item.PickWeight,
+
             };
             _order.Items.Add(orderItem);
-        }
-        else
-        {
-            //ordered.PickWeight += item.PickWeight;
         }
     }
 
@@ -245,10 +252,10 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         }
         else
         {
-            //ordered.PickWeight -= item.PickWeight;
             if(ordered.QuantityReceived <= 0 && ordered.Quantity <=0)
             {
                 _order.Items.Remove(ordered);
+                _orderDB.Orders.Upsert(_order);
             }
         }
     }

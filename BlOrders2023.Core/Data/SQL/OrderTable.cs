@@ -83,8 +83,11 @@ public class OrderTable : IOrderTable
     /// Gets all of the Orders from the database
     /// </summary>
     /// <returns>An IEnumerable<Order> of all of the database orders</returns>
-    public async Task<IEnumerable<Order>> GetAsync() =>
-        await _db.Orders
+    public async Task<IEnumerable<Order>> GetAsync(bool tracking = true)
+    {
+        if (tracking)
+        {
+            return await _db.Orders
             .OrderByDescending(order => order.PickupDate)
             .ThenBy(order => order.OrderID)
             .Where(order => order.PickupDate.Year >= DateTime.Now.Year - 2)
@@ -92,19 +95,49 @@ public class OrderTable : IOrderTable
             //.Include(order => order.Customer)
             //.Include(Order => Order.ShippingItems)
             .ToListAsync();
+        }
+        else
+        {
+            return await _db.Orders
+            .OrderByDescending(order => order.PickupDate)
+            .ThenBy(order => order.OrderID)
+            .Where(order => order.PickupDate.Year >= DateTime.Now.Year - 2)
+            .Include(Order => Order.Items)
+            .Include(order => order.Customer)
+            .Include(Order => Order.ShippingItems)
+            .AsNoTracking()
+            .ToListAsync();
+        }
+    }
+        
 
     /// <summary>
     /// Gets the Order matching the given OrderID
     /// </summary>
     /// <param name="orderID">The ID of the Order to get</param>
     /// <returns>An Order with the given id</returns>
-    public async Task<IEnumerable<Order>> GetAsync(int orderID) =>
-        await _db.Orders
+    public async Task<IEnumerable<Order>> GetAsync(int orderID, bool tracking = true)
+    {
+        if (tracking){
+            return await _db.Orders
             .Include(order => order.Items)
             .Include(order => order.Customer)
             .Include(order => order.ShippingItems)
             .Where(order => order.OrderID == orderID)
             .ToListAsync();
+        }
+        else
+        {
+            return await _db.Orders
+            .Include(order => order.Items)
+            .Include(order => order.Customer)
+            .Include(order => order.ShippingItems)
+            .Where(order => order.OrderID == orderID)
+            .AsNoTracking()
+            .ToListAsync();
+        }
+    }
+        
 
     public IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
     {

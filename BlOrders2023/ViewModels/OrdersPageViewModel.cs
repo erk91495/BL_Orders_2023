@@ -109,7 +109,7 @@ public class OrdersPageViewModel : ObservableRecipient
         });
 
         IOrderTable table = _db.Orders;
-        var orders = await Task.Run(table.GetAsync);
+        var orders = await table.GetAsync();
 
         await dispatcherQueue.EnqueueAsync(() =>
         {
@@ -134,7 +134,7 @@ public class OrdersPageViewModel : ObservableRecipient
 
             IOrderTable table = _db.Orders;
 
-            var results = await Task.Run(table.GetAsync);
+            var results = await table.GetAsync();
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 foreach (Order o in results)
