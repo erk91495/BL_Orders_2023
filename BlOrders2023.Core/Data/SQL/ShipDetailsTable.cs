@@ -36,6 +36,11 @@ namespace BlOrders2023.Core.Data.SQL
             return await _db.ShippingItems.ToListAsync();
         }
 
+        public IEnumerable<OrderTotalsItem> GetOrderTotals(DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            return _db.OrderTotalsItems.FromSql($"[dbo].[uspRptWholesaleOrderTotals] {startDate.Date.ToShortDateString()}, { endDate.Date.ToShortDateString()}").ToList();
+        }
+
         public async Task<bool> IsDuplicateScanline(string scanline)
         {
             var item = await _db.ShippingItems.Where(item => item.Scanline == scanline).FirstOrDefaultAsync();

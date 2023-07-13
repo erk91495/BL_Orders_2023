@@ -1,18 +1,16 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using BlOrders2023.UserControls.ViewModels;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace BlOrders2023.UserControls
 {
-    public partial class SingleValueInputControl : ContentDialog, INotifyPropertyChanged
+    public partial class SingleValueInputDialog : ContentDialog, INotifyPropertyChanged
     {
         private string? _value;
         private bool isValid = true;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        SingleValueInputControlViewModel ViewModel { get; }
         public string? Prompt { get; set; }
 
         public string? Value 
@@ -33,10 +31,9 @@ namespace BlOrders2023.UserControls
         public ValidationMethod? ValidateValue { get; set; }
 
         public delegate bool ValidationMethod(string? value);
-        public SingleValueInputControl()
+        public SingleValueInputDialog()
         {
             InitializeComponent();
-            ViewModel = App.GetService<SingleValueInputControlViewModel>();
             
         }
 

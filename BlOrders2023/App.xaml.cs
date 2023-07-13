@@ -7,10 +7,9 @@ using BlOrders2023.Core.Services;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
 using BlOrders2023.Services;
-using BlOrders2023.UserControls.ViewModels;
 using BlOrders2023.ViewModels;
 using BlOrders2023.Views;
-
+using BlOrders2023.UserControls.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Proxies;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,7 +53,7 @@ public partial class App : Application
 
     public App()
     {
-        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBaFt+QHFqUUdrXVNbdV5dVGpAd0N3RGlcdlR1fUUmHVdTRHRcQllhTX5bdEZjXH9deHM=;Mgo+DSMBPh8sVXJ1S0d+WFBPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9gSXpRckVrW3xedXRQQWc=;ORg4AjUWIQA/Gnt2VFhhQlVFfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5XdEFjUX1dcHFVQWVb;MTgyMjYyN0AzMjMxMmUzMTJlMzQzMVdnYlQ1Z1VXd0FCaG4zRmNDVWpNN1lwVy9NcndYamRmNm9jS2pLMHV5alk9;MTgyMjYyOEAzMjMxMmUzMTJlMzQzMW1xVDNQVVBjeVFhOFlLUWZSZ0M1c2FWVDlpWHk4d2c2SnB6VUUvQzQ0T3c9;NRAiBiAaIQQuGjN/V0d+XU9Ad1RDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS31TckdnWXdcc3RQR2hYVg==;MTgyMjYzMEAzMjMxMmUzMTJlMzQzMWxPUk5raFp4ZlFwMTdmcUlMWHFlTTUxdGZrUWRqUjhoZ3hBMWYrUTRwUDA9;MTgyMjYzMUAzMjMxMmUzMTJlMzQzMVVnWkQ1RnBFa2haR0pRZHNDSkFMRy9IakErNFV1SmFZVmpCOGdXRjg1cjQ9;Mgo+DSMBMAY9C3t2VFhhQlVFfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5XdEFjUX1dcHFWQGhb;MTgyMjYzM0AzMjMxMmUzMTJlMzQzMU55MDcrTXpmaUxZVjVTRHdEaVE4NlJXcW9Oa292YWZZaUtvUkVUTjhOUkk9;MTgyMjYzNEAzMjMxMmUzMTJlMzQzMUdDcFJ2dVhVV3ZSVGdPdzlnU2kranZxMW9OblU2N2VXNkZ6cjNUVlVRMjQ9;MTgyMjYzNUAzMjMxMmUzMTJlMzQzMWxPUk5raFp4ZlFwMTdmcUlMWHFlTTUxdGZrUWRqUjhoZ3hBMWYrUTRwUDA9");
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NGaF5cXmVCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXlceXRSQmBZUU1+XUc=");
         QuestPDF.Settings.License = LicenseType.Community;
 
         InitializeComponent();
@@ -96,10 +95,12 @@ public partial class App : Application
             services.AddTransient<OrderDetailsPageViewModel>();
             services.AddTransient<ProductsPage>();
             services.AddTransient<ProductsPageViewModel>();
-            services.AddTransient<CustomerSelectionViewModel>();
+            services.AddTransient<ReportsPage>();
+            services.AddTransient<ReportsPageViewModel>();
+            services.AddTransient<CustomerSelectionDialogViewModel>();
             services.AddTransient<CustomerDataInputControlViewModel>();
             services.AddTransient<ShippingItemDataInputControlViewModel>();
-            services.AddTransient<SingleValueInputControlViewModel>();
+            services.AddTransient<MultipleCustomerSelectionDialogViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
@@ -120,11 +121,15 @@ public partial class App : Application
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
+        var localsettings = App.GetService<ILocalSettingsService>();
+        var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
+        var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
         var dbOptions = new DbContextOptionsBuilder<BLOrdersDBContext>();
         dbOptions.UseLazyLoadingProxies()
                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                .EnableSensitiveDataLogging()
-               .UseSqlServer(connectionString: "Data Source=ERIC-PC; Database=New_Bl_Orders;Integrated Security=true; Trust Server Certificate=true");
+               .EnableDetailedErrors()
+               .UseSqlServer(connectionString: $"Data Source={dbServer}; Database={dbName};Integrated Security=true; Trust Server Certificate=true");
         App.DBOptions = dbOptions.Options;
 
         var SupportedDBVersion = new Version(0, 0, 1);

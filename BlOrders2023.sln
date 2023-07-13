@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlOrders2023", "BlOrders2023\BlOrders2023.csproj", "{3731BE19-8B7A-41CD-8CB4-2726C7E42564}"
+	ProjectSection(ProjectDependencies) = postProject
+		{55A516F3-BDB5-4372-89C5-58BF44214D84} = {55A516F3-BDB5-4372-89C5-58BF44214D84}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlOrders2023.Core", "BlOrders2023.Core\BlOrders2023.Core.csproj", "{9BA5F86F-BF7E-4A9B-8FEE-F84BB1D41FAC}"
 EndProject
@@ -11,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlOrders2023.Models", "BlOr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlOrders2023.Reporting", "BlOrders2023.Reporting\BlOrders2023.Reporting.csproj", "{22C45694-CD5D-40E8-BCE1-F3F3F565F565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlOrders2023.Exceptions", "BlOrders2023.Exceptions\BlOrders2023.Exceptions.csproj", "{55A516F3-BDB5-4372-89C5-58BF44214D84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlOrders2023.Exceptions", "BlOrders2023.Exceptions\BlOrders2023.Exceptions.csproj", "{55A516F3-BDB5-4372-89C5-58BF44214D84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

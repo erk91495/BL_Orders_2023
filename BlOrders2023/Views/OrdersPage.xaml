@@ -7,6 +7,7 @@
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:vm="using:BlOrders2023.ViewModels.Converters"
+    xmlns:enums="using:BlOrders2023.Models.Enums"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -22,7 +23,8 @@
             <MenuFlyoutItem
                 Click="MenuFlyoutFillOrderClick"
                 Icon="List"
-                Text="Fill"/>
+                Text="Fill"
+                IsEnabled="{x:Bind ViewModel.SelectedOrder.CanFillOrder, Mode=OneWay}"/>
         </MenuFlyout>
     </Page.Resources>
     <RelativePanel>
@@ -127,7 +129,6 @@
                                    Padding="0,10,0,5"
                                    FontSize="50"
                                    FontWeight="SemiBold"/>
-
                         <Line X1="5" X2="750" 
                               Stroke="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
                               StrokeThickness="2"/>
@@ -197,9 +198,9 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Uid="Order_BtnFillOrder" Content="Fill Order" Grid.Column="0" HorizontalAlignment="Center" Click="FillOrder_Click"/>
+                        <Button x:Uid="Order_BtnFillOrder" Content="Fill Order" Grid.Column="0" HorizontalAlignment="Center" Click="FillOrder_Click" IsEnabled="{x:Bind ViewModel.SelectedOrder.CanFillOrder, Mode=OneWay}"/>
                         <Button x:Uid="Order_BtnEditOrder" Content="Edit Order" Grid.Column="1" HorizontalAlignment="Center" Click="EditOrder_Click"/>
-                        <Button x:Uid="Order_BtnPrintInvoice" Content="Print Invoice" Grid.Column="2" HorizontalAlignment="Center" Click="PrintInvoice_Click"/>
+                        <Button x:Uid="Order_BtnPrintInvoice" Content="Print Invoice" Grid.Column="2" HorizontalAlignment="Center" Click="PrintInvoice_Click" IsEnabled="{x:Bind ViewModel.SelectedOrder.CanPrintInvoice, Mode=OneWay}"/>
                     </Grid>
 
 
@@ -225,6 +226,7 @@
                                    RelativePanel.AlignLeftWithPanel="True"
                                    ContextFlyout="{StaticResource DataGridContextMenu}"
                                    EnableDataVirtualization="True"
+                                   IsDynamicItemsSource="True"
                                    AllowFiltering="True"
                                    SelectionMode="Single"
                                    NavigationMode="Row">
@@ -233,7 +235,7 @@
                             <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>
                             <sf:GridTextColumn HeaderText="CustomerName" MappingName="Customer.CustomerName" TextWrapping="NoWrap" ColumnWidthMode="Star"/>
                             <sf:GridDateColumn HeaderText="Pickup Date" MappingName="PickupDate"/>
-                            <sf:GridTextColumn HeaderText="Order Status" MappingName="OrderStatus"/>
+                            <sf:GridTextColumn HeaderText="Order Status" MappingName="OrderStatus" UseBindingValue="True"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
 

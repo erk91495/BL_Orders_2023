@@ -11,6 +11,8 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Windows.Storage;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlOrders2023.Views;
 
@@ -84,16 +86,19 @@ public sealed partial class OrdersPage : Page
 
     private void PrintInvoice_Click(object _sender, RoutedEventArgs e)
     {
-        ReportGenerator g = new();
-        var pdf = g.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
-        Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-        var filePath = Path.GetTempPath() + "BLOrders2023\\" + ViewModel.SelectedOrder!.OrderID + "_"+  DateTime.Now.ToFileTime() + ".pdf";
-        pdf.GeneratePdf(filePath);
+        var filePath = ReportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
         LauncherOptions options = new()
         {
             ContentType = "application/pdf"
         };
         _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+        if (ViewModel.SelectedOrder.OrderStatus <= Models.Enums.OrderStatus.Filled)
+        {
+            ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Invoiced;
+            _ = ViewModel.SaveCurrentOrderAsync();
+        }
+
     }
 
     #endregion Pane Buttons
@@ -188,12 +193,35 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the sender of the event</param>
     /// <param name="e">the event args</param>
-    private void NewOrderBtn_Clicked(object _sender, RoutedEventArgs e)
+    private async void NewOrderBtn_Clicked(object _sender, RoutedEventArgs e)
     {
-        CustomerSelectionControl dialog = new(XamlRoot);
-        dialog.SelectionChoose += CustomerSelectionControl_SelectionChoose;
-        dialog.ShowAsync();
+        CustomerSelectionDialog dialog = new(XamlRoot);
+        WholesaleCustomer? selectedCustomer = null;
+        var res = await dialog.ShowAsync();
+        if(res == ContentDialogResult.Primary)
+        {
+            if (dialog.ViewModel != null && dialog.ViewModel.SelectedCustomer != null)
+            {
+                selectedCustomer = dialog.ViewModel.SelectedCustomer;
+            }
+        }
+        else if (res == ContentDialogResult.Secondary)
+        {
+            CustomerDataInputDialog control = new(new WholesaleCustomer())
+            {
+                XamlRoot = XamlRoot,
+            };
+            var result = await control.ShowAsync();
+            if(result == ContentDialogResult.Primary && control.GetCustomer() != null)
+            {
+                selectedCustomer = control.GetCustomer();
+            }
+        }
 
+        if (selectedCustomer != null)
+        {
+            CreateNewOrder(selectedCustomer);
+        }
     }
 
     /// <summary>
@@ -203,26 +231,11 @@ public sealed partial class OrdersPage : Page
     /// <param name="e">the event args</param>
     private void NewCustomerBtn_Click(object _sender, RoutedEventArgs e)
     {
-        CustomerDataInputControl dialog = new(new WholesaleCustomer()) 
+        CustomerDataInputDialog dialog = new(new WholesaleCustomer()) 
         {
             XamlRoot = XamlRoot,
         };
         _ = dialog.ShowAsync();
-    }
-
-    /// <summary>
-    /// The callback for the customer selection dialog. Gets the customer from the dialog and then create a new order for the customer
-    /// </summary>
-    /// <param name="o">The CustomerSelectionControl</param>
-    /// <param name="args">the event args</param>
-    private void CustomerSelectionControl_SelectionChoose(object? o, EventArgs args)
-    {
-        if (o is CustomerSelectionControl control 
-            && control.ViewModel != null 
-            && control.ViewModel.SelectedCustomer != null)
-        {
-            CreateNewOrder(control.ViewModel.SelectedCustomer);
-        }
     }
 
     #endregion Event Handlers
@@ -241,7 +254,28 @@ public sealed partial class OrdersPage : Page
         }
     }
 
+    public async Task<bool> TrySaveCurrentOrderAsync()
+    {
+        try
+        {
+            await ViewModel.SaveCurrentOrderAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            ContentDialog dialog = new()
+            {
+                Title = "DbUpdateException",
+                Content = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
+                XamlRoot = this.XamlRoot,
+                PrimaryButtonText = "Ok",
+            };
+            await dialog.ShowAsync();
+            return false;
+        }
+        
 
-
+    }
     #endregion Methods
 }

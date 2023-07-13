@@ -46,7 +46,7 @@ public sealed partial class FillOrdersPage : Page
     {
         if(sender is TextBox box )
         {
-            String scanlineText = box.Text;
+            var scanlineText = box.Text;
             if (scanlineText.EndsWith('\r'))
             {
                 var scanline = scanlineText.Trim();
@@ -61,17 +61,8 @@ public sealed partial class FillOrdersPage : Page
                 {
                     //interpreter has no concept of dbcontext and cannot track items
                     BarcodeInterpreter.ParseBarcode(ref item);
-                    var product = App.GetNewDatabase().Products.Get(item.ProductID, false).FirstOrDefault();
-                    if (product != null)
-                    {
-                        //item.Product = product;
-                        await AddShippingItemAsync(item);
-                    }
-                    else
-                    {
-                        throw new ProductNotFoundException(String.Format("Product {0} Not Found", item.ProductID), item.ProductID);
-                    }
-                    
+                    //item.Product = product;
+                    await AddShippingItemAsync(item);
                 }
                 catch (ProductNotFoundException e)
                 {
@@ -133,7 +124,7 @@ public sealed partial class FillOrdersPage : Page
             if(res == ContentDialogResult.Primary)
             {
 
-                SingleValueInputControl inputControl = new()
+                SingleValueInputDialog inputControl = new()
                 {
                     XamlRoot = XamlRoot,
                     PrimaryButtonText = "Submit",
@@ -142,7 +133,7 @@ public sealed partial class FillOrdersPage : Page
                     {
                         if (value != null)
                         {
-                            if (value.Replace(".",string.Empty).Length <= 6 && float.TryParse(value, out float result))
+                            if (value.Replace(".",string.Empty).Length <= 6 && float.TryParse(value, out var result))
                             {
                                 return true;
                             }
@@ -153,7 +144,7 @@ public sealed partial class FillOrdersPage : Page
                 res = await inputControl.ShowAsync();
                 if(res == ContentDialogResult.Primary && !inputControl.Value.IsNullOrEmpty())
                 {
-                        item.PickWeight = float.Parse(inputControl?.Value);
+                        item.PickWeight = float.Parse(inputControl?.Value!);
                         //Add underscore so when an invoice is printed we can see manual overrides
                         item.PackageSerialNumber += '_';
 
@@ -164,7 +155,6 @@ public sealed partial class FillOrdersPage : Page
                     return;
                 }
                 BarcodeInterpreter.UpdateBarcode(ref item);
-                //GET WEIGHT FROM USER
                 await AddShippingItemAsync(item);
             }
         }
@@ -230,7 +220,7 @@ public sealed partial class FillOrdersPage : Page
 
     private async void ManualProductAdd_Click(object sender, RoutedEventArgs e)
     {
-        ShippingItemDataInputControl dialog = new(XamlRoot);
+        ShippingItemDataInputDialog dialog = new(XamlRoot);
         var result = await dialog.ShowAsync();
         if (result != null)
         {

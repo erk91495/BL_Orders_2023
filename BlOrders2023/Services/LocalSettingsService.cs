@@ -3,7 +3,6 @@ using BlOrders2023.Core.Contracts.Services;
 using BlOrders2023.Core.Helpers;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
-
 using Microsoft.Extensions.Options;
 
 using Windows.ApplicationModel;
@@ -36,6 +35,38 @@ public class LocalSettingsService : ILocalSettingsService
         _localsettingsFile = _options.LocalSettingsFile ?? _defaultLocalSettingsFile;
 
         _settings = new Dictionary<string, object>();
+        bool firstRun;
+        if (RuntimeHelper.IsMSIX)
+        {
+            firstRun = !ApplicationData.Current.LocalSettings.Values.TryGetValue(LocalSettingsKeys.FirstRun, out _);
+        }
+        else
+        {
+            var settings = _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile) ?? new Dictionary<string, object>();
+            firstRun = !settings.TryGetValue(LocalSettingsKeys.FirstRun, out _);
+        }
+        if (firstRun) 
+        {
+            WriteDefaultLocalSettings();
+        }
+    }
+
+    //private async Task WriteDefaultLocalSettingsAsync()
+    //{
+    //    await Task.WhenAll(
+    //    SaveSettingAsync(LocalSettingsKeys.FirstRun, false),
+    //    SaveSettingAsync(LocalSettingsKeys.DatabaseServer, "ERIC-PC"),
+    //    SaveSettingAsync(LocalSettingsKeys.DatabaseName, "New_Bl_Orders")
+    //    );
+    //}
+
+
+    //TODO: CHANGE BEFORE RELEASE
+    private void WriteDefaultLocalSettings()
+    {
+        SaveSetting(LocalSettingsKeys.FirstRun, false);
+        SaveSetting(LocalSettingsKeys.DatabaseServer, "ERIC-PC");
+        SaveSetting(LocalSettingsKeys.DatabaseName, "New_Bl_Orders");
     }
 
     private async Task InitializeAsync()
@@ -43,6 +74,16 @@ public class LocalSettingsService : ILocalSettingsService
         if (!_isInitialized)
         {
             _settings = await Task.Run(() => _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile)) ?? new Dictionary<string, object>();
+
+            _isInitialized = true;
+        }
+    }
+
+    private void Initialize()
+    {
+        if (!_isInitialized)
+        {
+            _settings = _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile) ?? new Dictionary<string, object>();
 
             _isInitialized = true;
         }
@@ -83,6 +124,22 @@ public class LocalSettingsService : ILocalSettingsService
             _settings[key] = await Json.StringifyAsync(value);
 
             await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
+        }
+    }
+
+    private void SaveSetting<T>(string key, T value)
+    {
+        if (RuntimeHelper.IsMSIX)
+        {
+            ApplicationData.Current.LocalSettings.Values[key] = Json.Stringify(value);
+        }
+        else
+        {
+            Initialize();
+
+            _settings[key] = Json.Stringify(value);
+
+            _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings);
         }
     }
 }

@@ -3,11 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using BlOrders2023.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
+using ServiceStack;
 
 namespace BlOrders2023.Models;
 [Table("tblOrdersWholesale")]
 public class Order
-{ 
+{
+    #region Constructors
     public Order() 
     {
         Memo_Totl = 0M;
@@ -15,8 +17,9 @@ public class Order
         OrderDate = DateTime.Now;
         Frozen = false;
         //Set the date for today so that sql will accept the time
-        PickupDate = DateTime.Now;
-        PickupTime = DateTime.Today;
+        PickupDate = DateTime.Today;
+        PickupTime = DateTime.MinValue;
+        OrderStatus = OrderStatus.Ordered;
     }
     
     public Order(WholesaleCustomer customer)
@@ -25,7 +28,9 @@ public class Order
         Customer = customer;
         CustID = customer.CustID;
     }
+    #endregion Constructors
 
+    #region Properties
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OrderID { get; set; }
@@ -55,7 +60,13 @@ public class Order
     public OrderStatus OrderStatus { get; set; }
     public virtual List<OrderItem> Items { get; set; } = new();
     public virtual List<ShippingItem> ShippingItems { get; set; } = new();
+    public virtual List<Payment> Payments { get; set; } = new();
+    public bool CanFillOrder => (OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled);
+    public bool CanEditOrder => OrderStatus == OrderStatus.Ordered;
+    public bool CanPrintInvoice => OrderStatus == OrderStatus.Filled;
+    #endregion Properties
 
+    #region Methods
     public decimal GetInvoiceTotal()
     {
         decimal total = 0;
@@ -69,4 +80,35 @@ public class Order
         total += Memo_Totl ?? 0;
         return total;
     }
+
+    public int GetTotalOrdered()
+    {
+        if (Items.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            var total =  Items.Sum(item => (int)item.Quantity);
+            return total;
+        }
+    }
+
+    public decimal GetTotalPayments()
+    {
+        if (Payments.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            return Payments.Sum(p => p.PaymentAmount ?? 0);
+        }
+    }
+
+    public decimal GetBalanceDue()
+    {
+        return GetInvoiceTotal() - GetTotalPayments();
+    }
+    #endregion Methods
 }

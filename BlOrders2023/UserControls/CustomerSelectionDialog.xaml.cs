@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 using Microsoft.UI.Xaml.Controls;
-using BlOrders2023.ViewModels;
+using BlOrders2023.UserControls.ViewModels;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.CodeDom;
 using Microsoft.UI.Xaml;
@@ -14,32 +14,19 @@ using BlOrders2023.Models;
 
 namespace BlOrders2023.UserControls
 {
-    public sealed partial class CustomerSelectionControl : ContentControl
+    public sealed partial class CustomerSelectionDialog : ContentDialog
     {
         #region Properties
-        public CustomerSelectionViewModel ViewModel { get; }
+        public CustomerSelectionDialogViewModel ViewModel { get; }
         #endregion Properties
         #region Fields
-        readonly ContentDialog _dialog;
+        //readonly ContentDialog _dialog;
         #endregion Fields
-        #region Events
-        public event EventHandler? SelectionChoose;
-        #endregion Events
         #region Constructors
-        public CustomerSelectionControl(XamlRoot root)
+        public CustomerSelectionDialog(XamlRoot root)
         {
-            _dialog = new()
-            {
-                XamlRoot = root,
-                Title = "Select A Customer",
-                Content = this,
-                PrimaryButtonText = "Create An Order",
-                SecondaryButtonText = "New Customer",
-                CloseButtonText = "Cancel",
-                FlowDirection = FlowDirection.LeftToRight,
-                IsPrimaryButtonEnabled = false
-            };
-            ViewModel = App.GetService<CustomerSelectionViewModel>();
+            XamlRoot = root;
+            ViewModel = App.GetService<CustomerSelectionDialogViewModel>();
             this.InitializeComponent();
         }
         #endregion Constructors
@@ -50,27 +37,6 @@ namespace BlOrders2023.UserControls
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 ViewModel.QueryCustomers(sender.Text);
-            }
-        }
-
-        public async void ShowAsync()
-        {
-            var result = await _dialog.ShowAsync();
-            if(result == ContentDialogResult.Primary)
-            {
-                SelectionChoose?.Invoke(this, new EventArgs());
-            }
-            else if (result == ContentDialogResult.Secondary)
-            {
-                CustomerDataInputControl control = new(new WholesaleCustomer())
-                {
-                    XamlRoot = XamlRoot,
-                };                
-                await control.ShowAsync();
-            }
-            else
-            {
-                return;
             }
         }
 
@@ -94,12 +60,12 @@ namespace BlOrders2023.UserControls
             }
             if(ViewModel.SelectedCustomer!= null)
             {
-                _dialog.IsPrimaryButtonEnabled = true;
+                IsPrimaryButtonEnabled = true;
                 CustomerSelection.Text = ViewModel.SelectedCustomer.CustomerName;
             }
             else
             {
-                _dialog.IsPrimaryButtonEnabled = false;
+                IsPrimaryButtonEnabled = false;
             }
         }
         #endregion Methods

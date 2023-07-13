@@ -13,46 +13,7 @@
 	<Nullable>enable</Nullable>
 	<UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <PackageCertificateThumbprint>02B5F3CC6E63AC80B4E792D8734BCE7B6E1F40C2</PackageCertificateThumbprint>
-    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Styles\ValidationStyles.xaml" />
-    <None Remove="UserControls\CustomerDataInputControl.xaml" />
-    <None Remove="UserControls\CustomerSelectionControl.xaml" />
-    <None Remove="UserControls\ShippingItemDataInputControl.xaml" />
-    <None Remove="UserControls\SingleValueInputControl.xaml" />
-    <None Remove="Views\CustomerClassesPage.xaml" />
-    <None Remove="Views\OrderDetailsPage.xaml" />
-    <None Remove="Views\ProductsPage.xaml" />
-    <None Remove="Views\ReportsPage.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Page Update="Styles\ValidationStyles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\ShippingItemDataInputControl.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </Page>
-    <Page Update="UserControls\SingleValueInputControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\CustomerClassesPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\CustomerDataInputControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\CustomerSelectionControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\ProductsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
 
   <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
@@ -63,16 +24,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.9" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230502000" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230602002" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
-    <PackageReference Include="QuestPDF" Version="2023.5.1" />
-    <PackageReference Include="Syncfusion.Grid.WinUI" Version="21.2.8" />
-    <PackageReference Include="Syncfusion.Licensing" Version="21.2.8" />
+    <PackageReference Include="QuestPDF" Version="2023.6.0" />
+    <PackageReference Include="Syncfusion.Grid.WinUI" Version="22.1.38" />
+    <PackageReference Include="Syncfusion.Licensing" Version="22.1.38" />
     <PackageReference Include="WinUIEx" Version="2.2.0" />
   </ItemGroup>
 
@@ -83,22 +44,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Views\ReportsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+	<None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
   </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Views\OrderDetailsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Themes\" />
+	
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+	<ProjectCapability Include="Msix" />
   </ItemGroup>
   
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <PRIResource Remove="Themes\**" />
+  </ItemGroup>
 </Project>

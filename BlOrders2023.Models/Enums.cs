@@ -14,10 +14,8 @@ namespace BlOrders2023.Models.Enums
         Ordered,
         Filling,
         Filled,
-        Printed,
-        Paid,
+        Invoiced,
         Complete,
-
     }
 
     public enum ShippingType

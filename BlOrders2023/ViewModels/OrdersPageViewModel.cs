@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
+using Microsoft.UI.Xaml.Controls;
 
 namespace BlOrders2023.ViewModels;
 
@@ -53,10 +54,7 @@ public class OrdersPageViewModel : ObservableRecipient
         }
     }
 
-    public bool IsLoaded
-    {
-        get => !_isLoading;
-    }
+    public bool IsLoaded => !_isLoading;
 
     /// <summary>
     /// Gets the orders to display.
@@ -84,6 +82,7 @@ public class OrdersPageViewModel : ObservableRecipient
     /// Gets the dispatcher Queue for the current thread
     /// </summary>
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    private readonly IBLDatabase _db = App.GetNewDatabase();
     #endregion Fields
 
     #region Constructors
@@ -109,8 +108,8 @@ public class OrdersPageViewModel : ObservableRecipient
             MasterOrdersList.Clear();
         });
 
-        IOrderTable table = App.GetNewDatabase().Orders;
-        var orders = await Task.Run(table.GetAsync);
+        IOrderTable table = _db.Orders;
+        var orders = await table.GetAsync();
 
         await dispatcherQueue.EnqueueAsync(() =>
         {
@@ -133,9 +132,9 @@ public class OrdersPageViewModel : ObservableRecipient
             IsLoading = true;
             Orders.Clear();
 
-            IOrderTable table = App.GetNewDatabase().Orders;
+            IOrderTable table = _db.Orders;
 
-            var results = await Task.Run(table.GetAsync);
+            var results = await table.GetAsync();
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 foreach (Order o in results)
@@ -159,7 +158,7 @@ public class OrdersPageViewModel : ObservableRecipient
             }
             else
             {
-                bool nullableChecks = order.PO_Number != null && order.PO_Number.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase);
+                var nullableChecks = order.PO_Number != null && order.PO_Number.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase);
                 nullableChecks = nullableChecks || (order.Customer.Phone_2 != null && order.Customer.Phone_2.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase));
                 if (order.OrderID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
                     || order.CustID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase)
@@ -178,6 +177,14 @@ public class OrdersPageViewModel : ObservableRecipient
         }
     }
     #endregion Filtering
+
+    /// <summary>
+    /// Saves changes to the current Order
+    /// </summary>
+    public async Task SaveCurrentOrderAsync()
+    {
+        await _db.Orders.UpsertAsync(SelectedOrder);
+    }
 
     #endregion Methods
 }

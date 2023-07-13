@@ -1,18 +1,6 @@
 ﻿using BlOrders2023.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using BlOrders2023.Exceptions;
-using BlOrders2023.Core.Data;
-using System.Windows.Forms.Design.Behavior;
-using Microsoft.IdentityModel.Tokens;
-using ABI.Windows.ApplicationModel.Activation;
-using Microsoft.Graphics.Canvas.Text;
-using BlOrders2023.Exceptions;
+
 
 namespace BlOrders2023.Helpers
 {
@@ -42,10 +30,16 @@ namespace BlOrders2023.Helpers
             }
             catch (InvalidBarcodeExcption) 
             {
-                isValidBarcodeType = false; 
+                //not a GS1 barcode try again
+                try
+                {
+                    barcode = new Code128Barcode(item.Scanline);
+                }
+                catch (InvalidBarcodeExcption)
+                {
+                    isValidBarcodeType = false;
+                }
             }
-
-            //TODO try code128
 
             if (!isValidBarcodeType || barcode == null)
             {

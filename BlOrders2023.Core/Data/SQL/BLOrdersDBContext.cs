@@ -46,4 +46,7 @@ public class BLOrdersDBContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<CustomerClass> CustomerClasses { get; set; }
     public DbSet<ShippingItem> ShippingItems { get; set; }
+    public DbSet<OrderTotalsItem> OrderTotalsItems { get; set; }
+    public DbSet<Payment> Payments { get; set; }
+    public DbSet<PaymentMethod> PaymentMethods { get; set; }
 }

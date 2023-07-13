@@ -1,7 +1,7 @@
 ﻿using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
-using BlOrders2023.ViewModels;
+using BlOrders2023.UserControls.ViewModels;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.UI.Converters;
 using Microsoft.UI.Xaml;
@@ -25,7 +25,7 @@ using Windows.Foundation.Collections;
 
 namespace BlOrders2023.UserControls
 {
-    public sealed partial class ShippingItemDataInputControl : ContentControl
+    public sealed partial class ShippingItemDataInputDialog : ContentControl
     {
         #region Properties
         ShippingItemDataInputControlViewModel ViewModel { get; }
@@ -36,7 +36,7 @@ namespace BlOrders2023.UserControls
         #endregion Fields
 
         #region Constructors
-        public ShippingItemDataInputControl(XamlRoot root)
+        public ShippingItemDataInputDialog(XamlRoot root)
         {
             InitializeComponent();
             ViewModel = App.GetService<ShippingItemDataInputControlViewModel>();

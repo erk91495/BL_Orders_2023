@@ -24,202 +24,184 @@ using System.Runtime.CompilerServices;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace BlOrders2023.Views
+namespace BlOrders2023.Views;
+
+/// <summary>
+/// A page for viewing and editing Orders
+/// </summary>
+public sealed partial class OrderDetailsPage : Page
 {
+    #region Properties
     /// <summary>
-    /// A page for viewing and editing Orders
+    /// The viewmodel for the Order details page
     /// </summary>
-    public sealed partial class OrderDetailsPage : Page
+    public OrderDetailsPageViewModel ViewModel { get; }
+    #endregion Properties
+
+    #region Fields
+    private OrderItem? _doomed;
+    private bool _deleteOrder;
+    private bool _canLeave = false;
+    private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    #endregion Fields
+
+    #region Constructors
+    /// <summary>
+    /// Initializes an instance of the OrderDetails Page
+    /// </summary>
+    public OrderDetailsPage()
     {
-        #region Properties
-        /// <summary>
-        /// The viewmodel for the Order details page
-        /// </summary>
-        public OrderDetailsPageViewModel ViewModel { get; }
-        #endregion Properties
+        ViewModel = App.GetService<OrderDetailsPageViewModel>();
+        this.InitializeComponent();
+        SetMemoTotalFormatter();
+        //SetMemoWeightFormatter();
+        PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
+        OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
+    }
 
-        #region Fields
-        private OrderItem? _doomed;
-        private bool _deleteOrder;
-        private bool _canLeave = false;
-        private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        #endregion Fields
-
-        #region Constructors
-        /// <summary>
-        /// Initializes an instance of the OrderDetails Page
-        /// </summary>
-        public OrderDetailsPage()
+    #endregion Constructors
+    #region Methods
+    /// <summary>
+    /// Handles NavigatedTo events
+    /// </summary>
+    /// <param name="e">the navigation envent args</param>
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+    }
+    /// <summary>
+    /// Handles NavigatingFrom events
+    /// </summary>
+    /// <param name="e">the navigation envent args</param>
+    protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        if (!_canLeave)
         {
-            ViewModel = App.GetService<OrderDetailsPageViewModel>();
-            this.InitializeComponent();
-            SetMemoTotalFormatter();
-            //SetMemoWeightFormatter();
-            PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
-            OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
-        }
-
-        #endregion Constructors
-        #region Methods
-        /// <summary>
-        /// Handles NavigatedTo events
-        /// </summary>
-        /// <param name="e">the navigation envent args</param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-        }
-        /// <summary>
-        /// Handles NavigatingFrom events
-        /// </summary>
-        /// <param name="e">the navigation envent args</param>
-        protected override async void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            if (!_canLeave)
+            e.Cancel = true;
+            if (_deleteOrder)
             {
-                e.Cancel = true;
-                if (_deleteOrder)
+                ViewModel.DeleteCurrentOrder();
+                _canLeave = true;
+                e.Cancel = false;
+                Frame.Navigate(e.SourcePageType, e.Parameter);
+            }
+            else
+            {
+                if(await TrySaveCurrentOrderAsync())
                 {
-                    ViewModel.DeleteCurrentOrder();
+                    //Order was saved or discarded 
                     _canLeave = true;
                     e.Cancel = false;
                     Frame.Navigate(e.SourcePageType, e.Parameter);
                 }
-                else
-                {
-                    if(await TrySaveCurrentOrderAsync())
-                    {
-                        //Order was saved or discarded 
-                        _canLeave = true;
-                        e.Cancel = false;
-                        Frame.Navigate(e.SourcePageType, e.Parameter);
-                    }
-                }
             }
-            base.OnNavigatingFrom(e);
         }
+        base.OnNavigatingFrom(e);
+    }
 
-        /// <summary>
-        /// Attempts to focus the last row and edit the Quantity ordered Column
-        /// </summary>
-        private void FocusEditLastCell()
+    /// <summary>
+    /// Attempts to focus the last row and edit the Quantity ordered Column
+    /// </summary>
+    private void FocusEditLastCell()
+    {
+        var res = OrderedItems.Focus(FocusState.Keyboard);
+
+        //TODO: Handle Empty row
+        var rowIndex = OrderedItems.ResolveToRowIndex(ViewModel.Items.Last());
+        var columnIndex = OrderedItems.Columns.IndexOf(OrderedItems.Columns.FirstOrDefault(c => c.HeaderText.ToString() == "Quantity Ordered"));
+        var rowColumnIndex = new RowColumnIndex(rowIndex, columnIndex);
+        OrderedItems.MoveCurrentCell(rowColumnIndex);
+        res = OrderedItems.SelectionController.CurrentCellManager.BeginEdit();
+    }
+
+    /// <summary>
+    /// Sets the Formatter for the MemoTotal field
+    /// </summary>
+    private void SetMemoTotalFormatter()
+    {
+        IncrementNumberRounder rounder = new()
         {
-            var res = OrderedItems.Focus(FocusState.Keyboard);
+            Increment = 0.01,
+            RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp
+        };
 
-            //TODO: Handle Empty row
-            var rowIndex = OrderedItems.ResolveToRowIndex(ViewModel.Items.Last());
-            var columnIndex = OrderedItems.Columns.IndexOf(OrderedItems.Columns.FirstOrDefault(c => c.HeaderText.ToString() == "Quantity Ordered"));
-            var rowColumnIndex = new RowColumnIndex(rowIndex, columnIndex);
-            OrderedItems.MoveCurrentCell(rowColumnIndex);
-            res = OrderedItems.SelectionController.CurrentCellManager.BeginEdit();
-        }
-
-        /// <summary>
-        /// Sets the Formatter for the MemoTotal field
-        /// </summary>
-        private void SetMemoTotalFormatter()
+        DecimalFormatter formatter = new()
         {
-            IncrementNumberRounder rounder = new()
-            {
-                Increment = 0.01,
-                RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp
-            };
+            IntegerDigits = 1,
+            FractionDigits = 2,
+            NumberRounder = rounder
+        };
+        MemoTotal.NumberFormatter = formatter;
+    }
 
-            DecimalFormatter formatter = new()
-            {
-                IntegerDigits = 1,
-                FractionDigits = 2,
-                NumberRounder = rounder
-            };
-            MemoTotal.NumberFormatter = formatter;
-        }
+    /// <summary>
+    /// Sets the Formatter for the MemoWeight field
+    /// </summary>
+    //private void SetMemoWeightFormatter()
+    //{
+    //    IncrementNumberRounder rounder = new()
+    //    {
+    //        Increment = 0.01,
+    //        RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp
+    //    };
 
-        /// <summary>
-        /// Sets the Formatter for the MemoWeight field
-        /// </summary>
-        //private void SetMemoWeightFormatter()
-        //{
-        //    IncrementNumberRounder rounder = new()
-        //    {
-        //        Increment = 0.01,
-        //        RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp
-        //    };
+    //    DecimalFormatter formatter = new()
+    //    {
+    //        IntegerDigits = 1,
+    //        FractionDigits = 2,
+    //        NumberRounder = rounder
+    //    };
+    //    MemoWeight.NumberFormatter = formatter;
+    //}
 
-        //    DecimalFormatter formatter = new()
-        //    {
-        //        IntegerDigits = 1,
-        //        FractionDigits = 2,
-        //        NumberRounder = rounder
-        //    };
-        //    MemoWeight.NumberFormatter = formatter;
-        //}
-
-        public async Task<bool> TrySaveCurrentOrderAsync()
+    public async Task<bool> TrySaveCurrentOrderAsync()
+    {
+        //change focus to write any changes
+        OrderNumber.Focus(FocusState.Programmatic);
+        ViewModel.ValidateProperties();
+        if (!ViewModel.HasErrors)
         {
-            //change focus to write any changes
-            OrderNumber.Focus(FocusState.Programmatic);
-            ViewModel.ValidateProperties();
-            if (!ViewModel.HasErrors)
+            try
             {
-                try
+                ViewModel.SaveCurrentOrder();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _ = ex;
+                ContentDialog dialog = new()
                 {
-                    ViewModel.SaveCurrentOrder();
+                    Title = "Database Write Conflict",
+                    Content = $"The order was modified before your changes could be saved.\r\n" +
+                    $"What would you like to do with your changes?",
+                    XamlRoot = this.XamlRoot,
+                    PrimaryButtonText = "Overwrite",
+                    SecondaryButtonText = "Discard",
+                    CloseButtonText = "Cancel",
+                };
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    ViewModel.SaveCurrentOrder(true);
                     return true;
                 }
-                catch (DbUpdateConcurrencyException ex)
+                else if (result == ContentDialogResult.Secondary)
                 {
-                    _ = ex;
-                    ContentDialog dialog = new()
-                    {
-                        Title = "Database Write Conflict",
-                        Content = $"The order was modified before your changes could be saved.\r\n" +
-                        $"What would you like to do with your changes?",
-                        XamlRoot = this.XamlRoot,
-                        PrimaryButtonText = "Overwrite",
-                        SecondaryButtonText = "Discard",
-                        CloseButtonText = "Cancel",
-                    };
-                    var result = await dialog.ShowAsync();
-                    if (result == ContentDialogResult.Primary)
-                    {
-                        ViewModel.SaveCurrentOrder(true);
-                        return true;
-                    }
-                    else if (result == ContentDialogResult.Secondary)
-                    {
-                        ViewModel.ReloadOrder();
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    ViewModel.ReloadOrder();
+                    return true;
                 }
-                catch (DbUpdateException ex)
+                else
                 {
-                    ContentDialog dialog = new()
-                    {
-                        Title = "DbUpdateException",
-                        Content = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
-                        $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
-                        XamlRoot = this.XamlRoot,
-                        PrimaryButtonText = "Ok",
-                    };
-                    await dialog.ShowAsync();
                     return false;
                 }
             }
-            else
+            catch (DbUpdateException ex)
             {
-                List<string?> errorMessages = new();
-                foreach (var error in ViewModel.GetErrors())
-                {
-                    errorMessages.Add(error.ErrorMessage);
-                }
                 ContentDialog dialog = new()
                 {
-                    Title = "Input Error",
-                    Content = $"Please correct all errors before saving the order\r\n\r\nErrors:\r\n{String.Join("\r\n", errorMessages)}",
+                    Title = "DbUpdateException",
+                    Content = $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+                    $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
                     XamlRoot = this.XamlRoot,
                     PrimaryButtonText = "Ok",
                 };
@@ -227,294 +209,357 @@ namespace BlOrders2023.Views
                 return false;
             }
         }
-
-        #region Events Handlers
-
-        /// <summary>
-        /// Triggers when the collection changes
-        /// </summary>
-        /// <param name="sender">the data grid</param>
-        /// <param name="e">event args</param>
-        private void Records_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        else
         {
-            //If we added an item then enqueue a task to focus it and edit the quantity 
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            List<string?> errorMessages = new();
+            foreach (var error in ViewModel.GetErrors())
             {
-                dispatcherQueue.TryEnqueue(() => FocusEditLastCell());
+                errorMessages.Add(error.ErrorMessage);
             }
+            ContentDialog dialog = new()
+            {
+                Title = "Input Error",
+                Content = $"Please correct all errors before saving the order\r\n\r\nErrors:\r\n{String.Join("\r\n", errorMessages)}",
+                XamlRoot = this.XamlRoot,
+                PrimaryButtonText = "Ok",
+            };
+            await dialog.ShowAsync();
+            return false;
         }
+    }
 
-        /// <summary>
-        /// Handles click events for the email hyperlink button. Creates a mailto: event
-        /// </summary>
-        /// <param name="sender">the hplerlink button that was clicked</param>
-        /// <param name="e">the click event args</param>
-        private async void EmailButton_Click(object sender, RoutedEventArgs e)
+    #region Events Handlers
+
+    /// <summary>
+    /// Triggers when the collection changes
+    /// </summary>
+    /// <param name="sender">the data grid</param>
+    /// <param name="e">event args</param>
+    private void Records_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        //If we added an item then enqueue a task to focus it and edit the quantity 
+        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
         {
-            if (ViewModel.Customer.Email != null)
-                await Helpers.Helpers.SendEmailAsync(ViewModel.Customer.Email);
+            dispatcherQueue.TryEnqueue(() => FocusEditLastCell());
         }
+    }
 
-        /// <summary>
-        /// Handles text changed events for the Product entry box. Requeries the database for _products matching the given input
-        /// </summary>
-        /// <param name="sender">the product entry autosuggestbox</param>
-        /// <param name="args">the text changed event args</param>
-        private void ProductEntryBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    /// <summary>
+    /// Handles click events for the email hyperlink button. Creates a mailto: event
+    /// </summary>
+    /// <param name="sender">the hplerlink button that was clicked</param>
+    /// <param name="e">the click event args</param>
+    private async void EmailButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.Customer.Email != null)
+            await Helpers.Helpers.SendEmailAsync(ViewModel.Customer.Email);
+    }
+
+    /// <summary>
+    /// Handles text changed events for the Product entry box. Requeries the database for _products matching the given input
+    /// </summary>
+    /// <param name="sender">the product entry autosuggestbox</param>
+    /// <param name="args">the text changed event args</param>
+    private void ProductEntryBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput || args.Reason == AutoSuggestionBoxTextChangeReason.ProgrammaticChange)
         {
-            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput || args.Reason == AutoSuggestionBoxTextChangeReason.ProgrammaticChange)
-            {
-                ViewModel.QueryProducts(sender.Text);
-            }
-            else if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
-            {
-                ProductEntryBox.Text = null;
-            }
+            ViewModel.QueryProducts(sender.Text);
         }
-        /// <summary>
-        /// Handles Selection changed for the shipping type radio buttons. Hides or shows the pickup time timepicker
-        /// </summary>
-        /// <param name="sender">A radio button</param>
-        /// <param name="e">the selection changed event args</param>
-        private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        else if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
         {
-
-            if (RadioPickUp.IsChecked == true)
-            {
-                ViewModel.Shipping = ShippingType.Pickup;
-                PickupTimeStack.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ViewModel.Shipping = ShippingType.Shipping;
-                PickupTimeStack.Visibility = Visibility.Collapsed;
-            }
+            ProductEntryBox.Text = null;
         }
+    }
+    /// <summary>
+    /// Handles Selection changed for the shipping type radio buttons. Hides or shows the pickup time timepicker
+    /// </summary>
+    /// <param name="sender">A radio button</param>
+    /// <param name="e">the selection changed event args</param>
+    private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
 
-        /// <summary>
-        /// Deletes the given row from the datagrid
-        /// </summary>
-        /// <param name="sender">a delete button</param>
-        /// <param name="e">the event args for the click event</param>
-        private void DeleteRow_Click(object sender, RoutedEventArgs e)
+        if (RadioPickUp.IsChecked == true)
         {
-            if (_doomed != null)
+            ViewModel.Shipping = ShippingType.Pickup;
+            PickupTimeStack.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            ViewModel.Shipping = ShippingType.Shipping;
+            ViewModel.PickupTime = new(ViewModel.PickupTime.Year, ViewModel.PickupTime.Month, ViewModel.PickupTime.Day, 0, 0, 0, 0);
+            PickupTimeStack.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    /// <summary>
+    /// Deletes the given row from the datagrid
+    /// </summary>
+    /// <param name="sender">a delete button</param>
+    /// <param name="e">the event args for the click event</param>
+    private void DeleteRow_Click(object sender, RoutedEventArgs e)
+    {
+        if (_doomed != null)
+        {
+            if(_doomed.QuantityReceived == 0)
             {
                 ViewModel.Items.Remove(_doomed);
             }
-            _doomed = null;
-        }
-
-        /// <summary>
-        /// Tracks pointer movements so we know which item to delete from the datagrid
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OrderedItems_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (OrderedItems != null)
+            else
             {
-                var visualcontainer = OrderedItems.GetType()?.GetProperty("VisualContainer", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(OrderedItems) as VisualContainer;
-                if (visualcontainer == null)
+                ContentDialog dialog = new ContentDialog()
                 {
-                    return;
-                }
+                    XamlRoot = XamlRoot,
+                    Title = "Error",
+                    Content = "Quantity received must be 0 before this item can be removed",
+                    PrimaryButtonText = "Ok",
+                };
+                _ = dialog.ShowAsync();
+            }
+        }
+        _doomed = null;
+    }
 
-                var point = e.GetCurrentPoint(visualcontainer).Position;
-                var rowColumnIndex = visualcontainer.PointToCellRowColumnIndex(point);
-                var recordIndex = OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex);
-                if (recordIndex < 0)
-                {
-                    return;
-                }
+    /// <summary>
+    /// Tracks pointer movements so we know which item to delete from the datagrid
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OrderedItems_PointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        if (OrderedItems != null)
+        {
+            var visualcontainer = OrderedItems.GetType()?.GetProperty("VisualContainer", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(OrderedItems) as VisualContainer;
+            if (visualcontainer == null)
+            {
+                return;
+            }
 
-                //When the rowindex is zero , the row will be header row
-                if (!rowColumnIndex.IsEmpty)
+            var point = e.GetCurrentPoint(visualcontainer).Position;
+            var rowColumnIndex = visualcontainer.PointToCellRowColumnIndex(point);
+            var recordIndex = OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex);
+            if (recordIndex < 0)
+            {
+                return;
+            }
+
+            //When the rowindex is zero , the row will be header row
+            if (!rowColumnIndex.IsEmpty)
+            {
+                if (OrderedItems.View.TopLevelGroup != null)
                 {
-                    if (OrderedItems.View.TopLevelGroup != null)
+                    // Get the current row record while grouping
+                    var record = OrderedItems.View.TopLevelGroup.DisplayElements[recordIndex];
+                    if (record is RecordEntry r)
                     {
-                        // Get the current row record while grouping
-                        var record = OrderedItems.View.TopLevelGroup.DisplayElements[recordIndex];
-                        if (record is RecordEntry r)
-                        {
-                            _doomed = r.Data as OrderItem;
-                        }
+                        _doomed = r.Data as OrderItem;
                     }
-                    else
-                    {
-                        //Gets the column from ColumnsCollection by resolving the corresponding column index from  GridVisibleColumnIndex                      
-                        //var gridColumn = OrderedItems.Columns[OrderedItems.ResolveToGridVisibleColumnIndex(rowColumnIndex.ColumnIndex)];
-                        //For getting the record, need to resolve the corresponding record index from row index                     
-                        _doomed = OrderedItems.View.Records[OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex)].Data as OrderItem;
-                    }
-
-                }
-            }
-        }
-
-        private async void DeleteOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            ContentDialog dialog = new()
-            {
-                Title = "Delete Order",
-                Content = "Are you sure you want to delete this entire order.\r\nThis action cannot be undone.",
-                CloseButtonText = "Cancel",
-                PrimaryButtonText = "Delete Order",
-                IsPrimaryButtonEnabled = true,
-                XamlRoot= XamlRoot,
-            };
-
-            var res = await dialog.ShowAsync();
-            if (res == ContentDialogResult.Primary)
-            {
-                _deleteOrder = true;
-                if (App.GetService<INavigationService>() is NavigationService nav)
-                {
-                    if (nav.CanGoBack)
-                    {
-                        nav.GoBack();
-                    }
-                    else
-                    {
-                        Frame.Navigate(typeof(OrdersPage));
-                    }
-                }
-            }
-        }
-
-        private async void SaveOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            _ = await TrySaveCurrentOrderAsync();
-        }
-
-        /// <summary>
-        /// Called when a key is pressed down on the datagrid
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void OrderedItems_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if(e.Key == Windows.System.VirtualKey.Enter)
-            {
-                var rowindex = OrderedItems.SelectionController.CurrentCellManager.CurrentCell.RowIndex;
-                var columnIndex = OrderedItems.SelectionController.CurrentCellManager.CurrentCell.ColumnIndex;
-                if (columnIndex < OrderedItems.Columns.Count -1)
-                {
-                    var rowColumnIndex = new RowColumnIndex(rowindex, columnIndex + 1);
-                    //OrderedItems.MoveCurrentCell(rowColumnIndex);
-                    //Dont need Count -1 becuase there is a header row
-                }else if (rowindex < ViewModel.Items.Count)
-                {
-                    var rowColumnIndex = new RowColumnIndex(rowindex + 1, 2);
-                    //OrderedItems.MoveCurrentCell(rowColumnIndex);
-                }
-            }
-            if(e.Key == Windows.System.VirtualKey.Tab)
-            {
-                OrderedItems.ClearSelections(false);    
-                DispatcherQueue.TryEnqueue(() => { ProductEntryBox.Focus(FocusState.Programmatic); });
-                //var res = ProductEntryBox.Focus(FocusState.Programmatic);
-            }
-        }
-
-        /// <summary>
-        /// This event gets fired when:
-        ///     * a user presses Enter while focus is in the TextBox
-        ///     * a user clicks or tabs to and invokes the query button (defined using the QueryIcon API)
-        ///     * a user presses selects (clicks/taps/presses Enter) a suggestion
-        /// </summary>
-        /// <param name="sender">The AutoSuggestBox that fired the event.</param>
-        /// <param name="args">The args contain the QueryText, which is the text in the TextBox,
-        /// and also ChosenSuggestion, which is only non-null when a user selects an item in the errorMessages.</param>
-        private async void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            Product? productToAdd = null;
-            if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
-            {
-
-                //User selected an item, take an action
-                productToAdd = p;
-                if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
-                {
-                    ViewModel.AddItem(productToAdd);
-                }
-            }
-            else if (!string.IsNullOrEmpty(args.QueryText))
-            {
-                var id = sender.Text.Trim();
-                ProductEntryBox.Text = null;
-                bool result = Int32.TryParse(id, out int prodcode);
-                var toAdd = ViewModel.SuggestedProducts.FirstOrDefault(prod => prod.ProductID == prodcode);
-
-                if (result && toAdd != null)
-                {
-                    //The text matched a productcode
-                    productToAdd = toAdd;
                 }
                 else
                 {
-                    productToAdd = null;
-                    return;
+                    //Gets the column from ColumnsCollection by resolving the corresponding column index from  GridVisibleColumnIndex                      
+                    //var gridColumn = OrderedItems.Columns[OrderedItems.ResolveToGridVisibleColumnIndex(rowColumnIndex.ColumnIndex)];
+                    //For getting the record, need to resolve the corresponding record index from row index                     
+                    _doomed = OrderedItems.View.Records[OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex)].Data as OrderItem;
                 }
-                if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
-                {
-                    ViewModel.AddItem(productToAdd);
-                }
-                else if (productToAdd != null)
-                {
-                    ContentDialog dialog = new()
-                    {
-                        Title = "Duplicate Product",
-                        Content = String.Format("Product ID: {0} already exists on the Order \n", productToAdd.ProductID),
-                        CloseButtonText = "Ok",
-                        XamlRoot = XamlRoot,
-                    };
-                    SystemSounds.Exclamation.Play();
-                    await dialog.ShowAsync();
-                }
+
             }
-            if(productToAdd != null)
+        }
+    }
+
+    private async void DeleteOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        ContentDialog dialog = new()
+        {
+            Title = "Delete Order",
+            Content = "Are you sure you want to delete this entire order.\r\nThis action cannot be undone.",
+            CloseButtonText = "Cancel",
+            PrimaryButtonText = "Delete Order",
+            IsPrimaryButtonEnabled = true,
+            XamlRoot= XamlRoot,
+        };
+
+        var res = await dialog.ShowAsync();
+        if (res == ContentDialogResult.Primary)
+        {
+            _deleteOrder = true;
+            if (App.GetService<INavigationService>() is NavigationService nav)
             {
-                DispatcherQueue.TryEnqueue(FocusEditLastCell);
+                if (nav.CanGoBack)
+                {
+                    nav.GoBack();
+                }
+                else
+                {
+                    Frame.Navigate(typeof(OrdersPage));
+                }
             }
         }
+    }
 
-        private void OrderNavigation_Click(object sender, RoutedEventArgs e)
+    private async void SaveOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        _ = await TrySaveCurrentOrderAsync();
+    }
+
+    /// <summary>
+    /// Called when a key is pressed down on the datagrid
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    private void OrderedItems_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if(e.Key == Windows.System.VirtualKey.Enter)
         {
-            //TODO: fix so you can naigate more than once
-            if(sender is AppBarButton b)
+            var rowindex = OrderedItems.SelectionController.CurrentCellManager.CurrentCell.RowIndex;
+            var columnIndex = OrderedItems.SelectionController.CurrentCellManager.CurrentCell.ColumnIndex;
+            if (columnIndex < OrderedItems.Columns.Count -1)
             {
-                if(b == NextOrderButton && ViewModel.HasNextOrder)
-                {
-                    var s = App.GetService<INavigationService>();
-                    s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetNextOrder());
-                    //ViewModel.SaveCurrentOrderAsync();
-                    //ViewModel.ChangeOrder(ViewModel.GetNextOrderID());
-                }
-                if(b == PreviousOrderButton && ViewModel.HasPreviousOrder)
-                {
-                    var s = App.GetService<INavigationService>();
-                    s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetPreviousOrder());
-                    //Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetPreviousOrderID());
-                    //ViewModel.SaveCurrentOrderAsync();
-                    //ViewModel.ChangeOrder(ViewModel.GetPreviousOrderID());
-                }
+                var rowColumnIndex = new RowColumnIndex(rowindex, columnIndex + 1);
+                //OrderedItems.MoveCurrentCell(rowColumnIndex);
+                //Dont need Count -1 becuase there is a header row
+            }else if (rowindex < ViewModel.Items.Count)
+            {
+                var rowColumnIndex = new RowColumnIndex(rowindex + 1, 2);
+                //OrderedItems.MoveCurrentCell(rowColumnIndex);
             }
         }
-
-        #endregion Event Handlers
-
-        #endregion Methods
-
-        private void ProductEntryBox_GotFocus(object _sender, RoutedEventArgs e)
+        if(e.Key == Windows.System.VirtualKey.Tab)
         {
-            ProductEntryBox.IsSuggestionListOpen = true;
+            OrderedItems.ClearSelections(false);    
+            DispatcherQueue.TryEnqueue(() => { ProductEntryBox.Focus(FocusState.Programmatic); });
+            //var res = ProductEntryBox.Focus(FocusState.Programmatic);
         }
+    }
 
-        private void ProductEntryBox_LostFocus(object _sender, RoutedEventArgs e)
+    /// <summary>
+    /// This event gets fired when:
+    ///     * a user presses Enter while focus is in the TextBox
+    ///     * a user clicks or tabs to and invokes the query button (defined using the QueryIcon API)
+    ///     * a user presses selects (clicks/taps/presses Enter) a suggestion
+    /// </summary>
+    /// <param name="sender">The AutoSuggestBox that fired the event.</param>
+    /// <param name="args">The args contain the QueryText, which is the text in the TextBox,
+    /// and also ChosenSuggestion, which is only non-null when a user selects an item in the errorMessages.</param>
+    private async void ProductEntryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        Product? productToAdd = null;
+        if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
         {
-            ProductEntryBox.IsSuggestionListOpen = false;
+
+            //User selected an item, take an action
+            productToAdd = p;
+            if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
+            {
+                ViewModel.AddItem(productToAdd);
+            }
+        }
+        else if (!string.IsNullOrEmpty(args.QueryText))
+        {
+            var id = sender.Text.Trim();
+            ProductEntryBox.Text = null;
+            var result = Int32.TryParse(id, out var prodcode);
+            var toAdd = ViewModel.SuggestedProducts.FirstOrDefault(prod => prod.ProductID == prodcode);
+
+            if (result && toAdd != null)
+            {
+                //The text matched a productcode
+                productToAdd = toAdd;
+            }
+            else
+            {
+                productToAdd = null;
+                return;
+            }
+            if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
+            {
+                ViewModel.AddItem(productToAdd);
+            }
+            else if (productToAdd != null)
+            {
+                ContentDialog dialog = new()
+                {
+                    Title = "Duplicate Product",
+                    Content = String.Format("Product ID: {0} already exists on the Order \n", productToAdd.ProductID),
+                    CloseButtonText = "Ok",
+                    XamlRoot = XamlRoot,
+                };
+                SystemSounds.Exclamation.Play();
+                await dialog.ShowAsync();
+            }
+        }
+        if(productToAdd != null)
+        {
+            DispatcherQueue.TryEnqueue(FocusEditLastCell);
+        }
+    }
+
+    private void OrderNavigation_Click(object sender, RoutedEventArgs e)
+    {
+        //TODO: fix so you can naigate more than once
+        if(sender is AppBarButton b)
+        {
+            if(b == NextOrderButton && ViewModel.HasNextOrder)
+            {
+                var s = App.GetService<INavigationService>();
+                s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetNextOrder());
+                //ViewModel.SaveCurrentOrderAsync();
+                //ViewModel.ChangeOrder(ViewModel.GetNextOrderID());
+            }
+            if(b == PreviousOrderButton && ViewModel.HasPreviousOrder)
+            {
+                var s = App.GetService<INavigationService>();
+                s.NavigateTo(typeof(OrderDetailsPageViewModel).FullName!, ViewModel.GetPreviousOrder());
+                //Frame.Navigate(typeof(OrderDetailsPage), ViewModel.GetPreviousOrderID());
+                //ViewModel.SaveCurrentOrderAsync();
+                //ViewModel.ChangeOrder(ViewModel.GetPreviousOrderID());
+            }
+        }
+    }
+
+    #endregion Event Handlers
+
+    #endregion Methods
+
+    private void ProductEntryBox_GotFocus(object _sender, RoutedEventArgs e)
+    {
+        ProductEntryBox.IsSuggestionListOpen = true;
+    }
+
+    private void ProductEntryBox_LostFocus(object _sender, RoutedEventArgs e)
+    {
+        ProductEntryBox.IsSuggestionListOpen = false;
+    }
+
+    private void OrderStatusCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+
+        if ((ComboBox)sender == OrderStatusCombo )
+        {
+            var selection = e.AddedItems.First();
+            if(selection != null && selection is OrderStatus)
+            {
+                ViewModel.DetachedOrderStatus = (OrderStatus)selection;
+            }
+        }
+    }
+
+    private async void StatusFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        ContentDialog contentDialog = new ContentDialog()
+        {
+            XamlRoot = XamlRoot,
+            Title = "WARNING",
+            Content = "You are about to change the status of this order. Are you sure you know what you are doing?",
+            PrimaryButtonText = "Continue",
+            CloseButtonText = "Cancel",
+        };
+        SystemSounds.Exclamation.Play();
+        var res = await contentDialog.ShowAsync();
+        if(res == ContentDialogResult.Primary)
+        {
+            OrderStatusCombo.IsEnabled = true;
         }
     }
 }

@@ -14,5 +14,6 @@ namespace BlOrders2023.Core.Data
         public Task UpsertAsync(List<ShippingItem> items);
         public Task UpsertAsync(ShippingItem item);
         public Task DeleteAsync(ShippingItem item);
+        public IEnumerable<OrderTotalsItem> GetOrderTotals(DateTimeOffset startDate, DateTimeOffset endDate);
     }
 }

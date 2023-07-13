@@ -30,7 +30,7 @@ public sealed partial class WholesaleCustomersPage : Page
     private async void MenuFlyoutEdit_Click(object sender, RoutedEventArgs e)
     {
 
-        CustomerDataInputControl control = new(ViewModel.SelectedCustomer, false)
+        CustomerDataInputDialog control = new(ViewModel.SelectedCustomer, false)
         {
             XamlRoot = XamlRoot,
         };
@@ -119,7 +119,7 @@ public sealed partial class WholesaleCustomersPage : Page
     /// <param name="e">the event args</param>
     private async void btn_NewCustomer_Click(object sender, RoutedEventArgs e)
     {
-        CustomerDataInputControl dialog = new(new WholesaleCustomer(), true)
+        CustomerDataInputDialog dialog = new(new WholesaleCustomer(), true)
         {
             XamlRoot = XamlRoot,
         };
