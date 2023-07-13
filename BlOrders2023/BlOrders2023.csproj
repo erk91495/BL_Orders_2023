@@ -5,6 +5,7 @@
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>BlOrders2023</RootNamespace>
     <ApplicationIcon>Assets/WindowIcon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <PublishProfile>Properties\PublishProfiles\win10-$(Platform).pubxml</PublishProfile>
@@ -12,71 +13,7 @@
 	<Nullable>enable</Nullable>
 	<UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <PackageCertificateThumbprint>02B5F3CC6E63AC80B4E792D8734BCE7B6E1F40C2</PackageCertificateThumbprint>
-    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <StartupObject></StartupObject>
-    <WindowsPackageType>None</WindowsPackageType>
-    <IncludeSymbols>False</IncludeSymbols>
-    <SignAssembly>False</SignAssembly>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Themes\**" />
-    <EmbeddedResource Remove="Themes\**" />
-    <None Remove="Themes\**" />
-    <Page Remove="Themes\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Styles\ValidationStyles.xaml" />
-    <None Remove="UserControls\CustomerDataInputDialog.xaml" />
-    <None Remove="UserControls\CustomerSelectionDialog.xaml" />
-    <None Remove="UserControls\DateRangeSelectionDialog.xaml" />
-    <None Remove="UserControls\MultipleCustomerSelectionDialog.xaml" />
-    <None Remove="UserControls\ReportControl.xaml" />
-    <None Remove="UserControls\ShippingItemDataInputDialog.xaml" />
-    <None Remove="UserControls\SingleValueInputDialog.xaml" />
-    <None Remove="Views\CustomerClassesPage.xaml" />
-    <None Remove="Views\OrderDetailsPage.xaml" />
-    <None Remove="Views\ProductsPage.xaml" />
-    <None Remove="Views\ReportsPage.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Page Update="UserControls\MultipleCustomerSelectionDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\DateRangeSelectionDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\ReportControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Styles\ValidationStyles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\ShippingItemDataInputDialog.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </Page>
-    <Page Update="UserControls\SingleValueInputDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\CustomerClassesPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\CustomerDataInputDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\CustomerSelectionDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\ProductsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
 
   <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
@@ -107,15 +44,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Views\ReportsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+	<None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
   </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Views\OrderDetailsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+	
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+	<ProjectCapability Include="Msix" />
   </ItemGroup>
   
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
