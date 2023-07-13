@@ -481,6 +481,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         ValidateProperty(value, propertyName);
         OnPropertyChanged(nameof(GetErrorMessage));
         OnPropertyChanged(nameof(VisibleIfError));
+        OnPropertyChanged(nameof(CanAddItems));
     }
 
     public static ValidationResult? ValidateShipping(ShippingType shipping)

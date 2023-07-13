@@ -90,18 +90,21 @@
             </Button>
 
 
-            <TextBlock Text="{x:Bind ViewModel.OrderStatus, Mode=OneWay}"
+            <!--<TextBlock Text="{x:Bind ViewModel.OrderStatus, Mode=OneWay}"
                             HorizontalTextAlignment="Center"
                             HorizontalAlignment="Stretch"
                             Padding="0,10,0,5"
                             FontSize="50"
-                            FontWeight="SemiBold"/>
+                            FontWeight="SemiBold"/>-->
+            
             <ComboBox x:Name="OrderStatusCombo"
                       xmlns:ui="using:CommunityToolkit.WinUI.UI"
                       ItemsSource="{ui:EnumValues Type=enums:OrderStatus}"
                       SelectionChanged="OrderStatusCombo_SelectionChanged"
                       SelectedItem="{x:Bind ViewModel.OrderStatus, Mode=OneTime}"
-                      IsEnabled="False"/>
+                      Margin="0,50,0,0"
+                      IsEnabled="False"
+                      FontSize="20"/>
                         <!-- Two way binding is causing a stack overflow so this is my workaround-->
 
         </StackPanel>

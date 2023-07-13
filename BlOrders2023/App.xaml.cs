@@ -122,7 +122,8 @@ public partial class App : Application
     {
         base.OnLaunched(args);
         var localsettings = App.GetService<ILocalSettingsService>();
-        var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
+        //var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
+        var dbServer = "ERIC-PC";
         var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
         var dbOptions = new DbContextOptionsBuilder<BLOrdersDBContext>();
         dbOptions.UseLazyLoadingProxies()

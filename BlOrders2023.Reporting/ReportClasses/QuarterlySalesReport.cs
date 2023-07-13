@@ -98,7 +98,7 @@ public class QuarterlySalesReport : IReport
                 {
                     header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).Text("Quantity").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Quantity Received").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Extended Price").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Net Wt").Style(tableHeaderStyle);
 

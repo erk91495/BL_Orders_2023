@@ -518,10 +518,6 @@ public sealed partial class OrderDetailsPage : Page
         }
     }
 
-    #endregion Event Handlers
-
-    #endregion Methods
-
     private void ProductEntryBox_GotFocus(object _sender, RoutedEventArgs e)
     {
         ProductEntryBox.IsSuggestionListOpen = true;
@@ -535,10 +531,10 @@ public sealed partial class OrderDetailsPage : Page
     private void OrderStatusCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
 
-        if ((ComboBox)sender == OrderStatusCombo )
+        if ((ComboBox)sender == OrderStatusCombo)
         {
             var selection = e.AddedItems.First();
-            if(selection != null && selection is OrderStatus)
+            if (selection != null && selection is OrderStatus)
             {
                 ViewModel.DetachedOrderStatus = (OrderStatus)selection;
             }
@@ -557,9 +553,13 @@ public sealed partial class OrderDetailsPage : Page
         };
         SystemSounds.Exclamation.Play();
         var res = await contentDialog.ShowAsync();
-        if(res == ContentDialogResult.Primary)
+        if (res == ContentDialogResult.Primary)
         {
             OrderStatusCombo.IsEnabled = true;
         }
     }
+
+    #endregion Event Handlers
+
+    #endregion Methods
 }

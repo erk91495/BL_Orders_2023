@@ -78,39 +78,42 @@ public sealed partial class ReportsPage : Page
                     Prompt = "Please Enter An Order ID",
                     XamlRoot = XamlRoot,
                     PrimaryButtonText = "Submit",
+                    SecondaryButtonText = "Cancel",
                     ValidateValue = ValidateOrderID,
                 };
-                await dialog.ShowAsync();
-                var res = int.TryParse(dialog.Value ?? "", out int id);
-                if (!res)
-                {
-                    ContentDialog d = new()
-                    {
-                        XamlRoot = XamlRoot,
-                        Title = "User Error",
-                        Content = $"Invalid Order ID {dialog.Value}.\r\n " +
-                        $"Please enter a numeric value",
-                        PrimaryButtonText = "ok",
-                    };
-                    await d.ShowAsync();
-                }
-                else
-                {
-                    var order = ViewModel.GetOrder(id);
-                    if (order != null)
-                    {
-                        reportPath = ReportGenerator.GenerateWholesaleInvoice(order);
-                    }
-                    else
+                var result = await dialog.ShowAsync();
+                if(result == ContentDialogResult.Primary){
+                    var res = int.TryParse(dialog.Value ?? "", out var id);
+                    if (!res)
                     {
                         ContentDialog d = new()
                         {
                             XamlRoot = XamlRoot,
-                            Title = "Error",
-                            Content = $"No order with the order id {id} found.",
+                            Title = "User Error",
+                            Content = $"Invalid Order ID {dialog.Value}.\r\n " +
+                            $"Please enter a numeric value",
                             PrimaryButtonText = "ok",
                         };
                         await d.ShowAsync();
+                    }
+                    else
+                    {
+                        var order = ViewModel.GetOrder(id);
+                        if (order != null)
+                        {
+                            reportPath = ReportGenerator.GenerateWholesaleInvoice(order);
+                        }
+                        else
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"No order with the order id {id} found.",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
                     }
                 }
             }
@@ -172,39 +175,43 @@ public sealed partial class ReportsPage : Page
                     Prompt = "Please Enter An Order ID",
                     XamlRoot = XamlRoot,
                     PrimaryButtonText = "Submit",
+                    SecondaryButtonText = "Cancel",
                     ValidateValue = ValidateOrderID,
                 };
-                await dialog.ShowAsync();
-                var res = int.TryParse(dialog.Value ?? "", out int id);
-                if (!res)
+                var result = await dialog.ShowAsync();
+                if(result == ContentDialogResult.Primary)
                 {
-                    ContentDialog d = new()
-                    {
-                        XamlRoot = XamlRoot,
-                        Title = "User Error",
-                        Content = $"Invalid Order ID {dialog.Value}.\r\n " +
-                        $"Please enter a numeric value",
-                        PrimaryButtonText = "ok",
-                    };
-                    await d.ShowAsync();
-                }
-                else
-                {
-                    var order = ViewModel.GetOrder(id);
-                    if (order != null)
-                    {
-                        reportPath = ReportGenerator.GenerateShippingList(order);
-                    }
-                    else
+                    var res = int.TryParse(dialog.Value ?? "", out int id);
+                    if (!res)
                     {
                         ContentDialog d = new()
                         {
                             XamlRoot = XamlRoot,
-                            Title = "Error",
-                            Content = $"No order with the order id {id} found.",
+                            Title = "User Error",
+                            Content = $"Invalid Order ID {dialog.Value}.\r\n " +
+                            $"Please enter a numeric value",
                             PrimaryButtonText = "ok",
                         };
                         await d.ShowAsync();
+                    }
+                    else
+                    {
+                        var order = ViewModel.GetOrder(id);
+                        if (order != null)
+                        {
+                            reportPath = ReportGenerator.GenerateShippingList(order);
+                        }
+                        else
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"No order with the order id {id} found.",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
                     }
                 }
             }
@@ -316,7 +323,7 @@ public sealed partial class ReportsPage : Page
 
     private bool ValidateOrderID(string? value)
     {
-        return int.TryParse(value, out int id);
+        return int.TryParse(value, out var id);
     }
 
     private async Task<(DateTimeOffset?, DateTimeOffset?)> ShowDateRangeSelectionAsync()
@@ -346,7 +353,7 @@ public sealed partial class ReportsPage : Page
                 DateTime eDate = dialog.EndDate.Value.Date;
                 DateTimeOffset startDate = new(sDate.Year, sDate.Month, sDate.Day, 0, 0, 0, 0, new());
                 DateTimeOffset endDate = new(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, new());
-                return (dialog.StartDate, dialog.EndDate);
+                return (startDate, endDate);
             }
         }
         return (null, null);

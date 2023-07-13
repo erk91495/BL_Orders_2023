@@ -72,7 +72,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                         col.Item().AlignCenter().Text("Shipping List").Style(subTitleStyle);
                     });
 
-                    row.RelativeItem(1).AlignMiddle().AlignRight().Column(column =>
+                    row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
                     {
                         //Invoice Number
                         column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
@@ -80,6 +80,11 @@ namespace BlOrders2023.Reporting.ReportClasses
                         {
                             column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
                         }
+
+                        column.Item().Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
+                        column.Item().Text($"{_order.Customer.Address}").Style(normalTextStyle);
+                        column.Item().Text($"{_order.Customer.CityStateZip()}").Style(normalTextStyle);
+
                     });
 
                 });
