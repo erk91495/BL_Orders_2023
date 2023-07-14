@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BlOrders2023.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
@@ -12,12 +13,13 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
-[System.ComponentModel.DisplayName("Shipping List")]
-internal class PickList : IReport
+[System.ComponentModel.DisplayName("Pick List")]
+public class PickList : IReport
 {
     private readonly Order _order;
+    private readonly DateTime _ReportDate = DateTime.Now;
 
-    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
+    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).Bold().FontColor(Colors.Black);
     private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
     private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(8.5f);
@@ -59,28 +61,37 @@ internal class PickList : IReport
 
                 //Logo
                 var res = Assembly.GetExecutingAssembly().GetManifestResourceStream("BlOrders2023.Reporting.Assets.Images.BLLogo.bmp");
-                row.RelativeItem(1).AlignLeft().AlignMiddle().Height(75).Image(res).FitHeight();
+                row.RelativeItem(1).AlignLeft().AlignMiddle().Height(50).Image(res).FitHeight();
 
-                row.RelativeItem(3).AlignCenter().Column(col =>
+                row.RelativeItem(3).AlignMiddle().AlignCenter().Column(col =>
                 {
-                    col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
-                    col.Item().AlignCenter().Text("Pick List").Style(titleStyle);
+                    col.Item().Text("B & L Wholesale Order Pick List").Style(titleStyle);
+                    col.Item().PaddingTop(5).Row(row =>
+                    {
+                        //Invoice Number
+                        row.RelativeItem().AlignCenter().Text($"Order ID: {_order.OrderID}").FontSize(14);
+                        row.RelativeItem().AlignCenter().Text($"PO: {_order.PO_Number ?? ""}").FontSize(14);
+
+                    });
+
                 });
 
                 row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
                 {
                     FontManager.RegisterFontFromEmbeddedResource("BlOrders2023.Reporting.Assets.Fonts.IDAutomationHC39M_Free.ttf");
                     //barcode
-                    column.Item().Text($"{_order.OrderID}").FontFamily("IDAutomationHC39M");
+                    column.Item().Text($"*{_order.OrderID}*").FontFamily("IDAutomationHC39M").FontSize(18);
                     //Invoice Number
-                    column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
-                    if (!_order.PO_Number.IsNullOrEmpty())
-                    {
-                        column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
-                    }
+                    //column.Item().Text($"Order #{_order.OrderID}").SemiBold().FontSize(14);
+                    //if (!_order.PO_Number.IsNullOrEmpty())
+                    //{
+                    //    column.Item().Text($"PO: {_order.PO_Number}").SemiBold().FontSize(13);
+                    //}
                 });
 
             });
+
+            headerCol.Item().PaddingVertical(5).LineHorizontal(1).LineColor(Colors.Black);
 
         });
     }
@@ -90,78 +101,130 @@ internal class PickList : IReport
 
         container.Column(column => {
 
-            column.Item().Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
-            column.Item().Text($"{_order.Customer.Address}").Style(normalTextStyle);
-            column.Item().Text($"{_order.Customer.CityStateZip()}").Style(normalTextStyle);
-
-            var idList = _order.ShippingItems.Select(i => i.ProductID).Distinct().OrderBy(i => i);
-            foreach (var id in idList)
+            column.Item().Row(row => 
             {
-                column.Item().Table(table =>
+                row.RelativeItem().Column(custColumn =>
                 {
-                    table.ColumnsDefinition(column =>
+                    custColumn.Item().Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
+                    custColumn.Item().Text($"{_order.Customer.Address}").Style(normalTextStyle);
+                    custColumn.Item().Text($"{_order.Customer.CityStateZip()}").Style(normalTextStyle);
+                    custColumn.Item().Row(row =>
                     {
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-
-                    });
-
-                    table.Header(header =>
-                    {
-                        header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
-
-                        header.Cell().Element(CellStyle).Text("Quantity").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Net Wt").Style(tableHeaderStyle);
-
-                        static IContainer CellStyle(IContainer container)
+                        row.RelativeItem().Text(Formatters.PhoneFormatter(_order.Customer.Phone)).Style(normalTextStyle);
+                        if( !_order.Customer.Phone_2.IsNullOrEmpty()) 
                         {
-                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                            row.RelativeItem().Text(Formatters.PhoneFormatter(_order.Customer.Phone_2)).Style(normalTextStyle);
                         }
                     });
 
-                    foreach (var item in _order.ShippingItems.Where(i => i.ProductID == id))
-                    {
+                    if(!_order.Customer.Fax.IsNullOrEmpty())
+                    { 
+                        custColumn.Item().Row(row =>
+                        {
+                            row.AutoItem().MinimalBox().Text("Fax: ").SemiBold().Style(normalTextStyle);
+                            row.RelativeItem().MinimalBox().AlignLeft().Text(Formatters.PhoneFormatter(_order.Customer.Fax)).Style(normalTextStyle);
+                        });
+                    }
 
-                        table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{item.QuanRcvd}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{item.PickWeight:F2}").Style(tableTextStyle);
+
+                    custColumn.Item().Row(row =>
+                    {
+                        row.AutoItem().MinimalBox().Text("Customer Class: ").SemiBold().Style(normalTextStyle);
+                        row.RelativeItem().MinimalBox().AlignLeft().Text($"{_order.Customer.CustomerClass.Class}").Style(normalTextStyle);
+                    });
+
+                    custColumn.Item().Row(row =>
+                    {
+                        row.AutoItem().MinimalBox().Text("Buyer: ").SemiBold().Style(normalTextStyle);
+                        row.RelativeItem().MinimalBox().AlignLeft().Text($"{_order.Customer.Buyer}").Style(normalTextStyle);
+                    });
+
+                });
+
+                row.RelativeItem(1.25f).Column(pickupColumn =>
+                {
+                    pickupColumn.Item().Table(table => 
+                    {
+                        table.ColumnsDefinition(column =>
+                        {
+                            column.RelativeColumn(1);
+                            column.RelativeColumn(1.5f);
+                            column.RelativeColumn(1.5f);
+                            column.RelativeColumn(1);
+                            column.RelativeColumn(1);
+                            column.RelativeColumn(1);
+                        });
+
+                        table.Header(header =>
+                        {
+                            header.Cell().Element(HeaderCellStyle).Text("Order Date").Style(tableHeaderStyle);
+
+                            header.Cell().Element(HeaderCellStyle).Text($"{_order.Shipping} Date").Style(tableHeaderStyle);
+                            header.Cell().Element(HeaderCellStyle).Text($"{_order.Shipping} Time").Style(tableHeaderStyle);
+                            header.Cell().Element(HeaderCellStyle).Text("Taken By").Style(tableHeaderStyle);
+                            header.Cell().Element(HeaderCellStyle).Text("Shipping").Style(tableHeaderStyle);
+                            header.Cell().Element(HeaderCellStyle).Text("").Style(tableHeaderStyle);
+
+                            static IContainer HeaderCellStyle(IContainer container)
+                            {
+                                return container.DefaultTextStyle(x => x.SemiBold().FontSize(8)).PaddingVertical(2).AlignCenter();
+                            }
+                        });
+
+                        table.Cell().Element(CellStyle).Text($"{_order.OrderDate:d}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{_order.PickupDate:d}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{_order.PickupTime:t}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{_order.TakenBy}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{_order.Shipping}").Style(tableTextStyle);
+                        var frozen = _order.Frozen ?? false ? "Frozen" : "Fresh";
+                        table.Cell().Element(CellStyle).Text($"{ frozen}").Style(tableTextStyle);
                         static IContainer CellStyle(IContainer container)
                         {
-                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                            return container.AlignCenter();
                         }
-                    }
 
-                    table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableTextStyle);
-                    table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableTextStyle);
-                    table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableTextStyle);
-                    static IContainer FooterCellStyle(IContainer container)
-                    {
-                        return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
-                    }
+
+                    });
                 });
-            }
-            column.Item().Table(table =>
+            });
+            column.Item().PaddingVertical(5).LineHorizontal(.5f).LineColor(Colors.Black);
+            column.Item().Table(itemsTable =>
             {
-                table.ColumnsDefinition(column =>
+                itemsTable.ColumnsDefinition(def =>
                 {
-                    column.RelativeColumn(2);
-                    column.RelativeColumn(2);
-                    column.RelativeColumn(2);
-
+                    def.RelativeColumn(2);
+                    def.RelativeColumn(8);
+                    def.RelativeColumn(4);
+                    def.RelativeColumn(4);
                 });
 
-                table.Cell().Element(CellStyle).PaddingRight(1).AlignRight().Text("Order Totals: ").Style(tableHeaderStyle);
-                table.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Sum(i => i.QuanRcvd)}").Style(tableHeaderStyle);
-                table.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Sum(i => i.PickWeight)}").Style(tableHeaderStyle);
-
-                static IContainer CellStyle(IContainer container)
+                itemsTable.Header(header =>
                 {
-                    return container.PaddingTop(3).BorderTop(2f).BorderColor(Colors.Black).PaddingVertical(2);
+                    header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
+
+                    header.Cell().Element(CellStyle).Text("Name").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Ordered").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Allocated").Style(tableHeaderStyle);
+
+                    static IContainer CellStyle(IContainer container)
+                    {
+                        return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                    }
+                });
+
+                foreach (var item in _order.Items)
+                {
+
+                    itemsTable.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
+                    itemsTable.Cell().Element(CellStyle).Text($"{item.Product.ProductName}").Style(tableTextStyle);
+                    itemsTable.Cell().Element(CellStyle).Text($"{item.Quantity}").Style(tableTextStyle);
+                    itemsTable.Cell().Element(CellStyle).Text($"{item.QuanAllocated ?? 0}").Style(tableTextStyle);
+                    static IContainer CellStyle(IContainer container)
+                    {
+                        return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                    }
                 }
             });
-
-
         });
     }
 
@@ -174,7 +237,7 @@ internal class PickList : IReport
                 footer.RelativeItem().AlignLeft().Text(time =>
                 {
                     time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
+                    time.Span($"{_ReportDate.ToString():d}").Style(smallFooterStyle);
                 });
 
                 footer.RelativeItem().AlignRight().Text(page =>

@@ -22,6 +22,7 @@ namespace BlOrders2023.Reporting
             typeof(OutstandingBalancesReport),
             typeof(QuarterlySalesReport),
             typeof(FrozenOrdersReport),
+            typeof(PickList),
         }; 
     }
 }

@@ -304,9 +304,65 @@ public sealed partial class ReportsPage : Page
                     reportPath = ReportGenerator.GenerateFrozenOrdersReport(values, startDate, endDate);
                 }
             }
+            else if (control.ReportType == typeof(PickList))
+            {
+                SingleValueInputDialog dialog = new SingleValueInputDialog()
+                {
+                    Title = "Order ID",
+                    Prompt = "Please Enter An Order ID",
+                    XamlRoot = XamlRoot,
+                    PrimaryButtonText = "Submit",
+                    SecondaryButtonText = "Cancel",
+                    ValidateValue = ValidateOrderID,
+                };
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    var res = int.TryParse(dialog.Value ?? "", out var id);
+                    if (!res)
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "User Error",
+                            Content = $"Invalid Order ID {dialog.Value}.\r\n " +
+                            $"Please enter a numeric value",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
+                    }
+                    else
+                    {
+                        var order = ViewModel.GetOrder(id);
+                        if (order != null)
+                        {
+                            reportPath = ReportGenerator.GeneratePickList(order);
+                        }
+                        else
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"No order with the order id {id} found.",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
+                    }
+                }
+            }
             else
             {
-                throw new Exception("Report Type Not Found ask the programmer if they forgot something");
+                ContentDialog d = new()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Error",
+                    Content = $"Sorry the person writing ths progam made a mistake because the Report Type \"{control.ReportType}\" " +
+                    $"was not found. \r\n Please ask the programmer nicely if they forgot something.",
+                    PrimaryButtonText = "ok",
+                };
+                await d.ShowAsync();
             }
 
             if (reportPath != string.Empty)

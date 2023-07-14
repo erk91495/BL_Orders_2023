@@ -21,6 +21,9 @@
   <ItemGroup>
     <Content Remove="Assets\Images\BLLogo.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\Fonts\IDAutomationHC39M_Free.ttf" />
+  </ItemGroup>
 
   <ItemGroup>
       <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
@@ -32,12 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\Fonts\IDAutomationHC39M_Free.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Assets\Images\BLLogo.bmp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Assets\Fonts\" />
   </ItemGroup>
 </Project>

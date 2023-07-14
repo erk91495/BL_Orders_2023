@@ -115,5 +115,14 @@ namespace BlOrders2023.Reporting
             report.GeneratePdf(filePath);
             return filePath;
         }
+
+        public static string GeneratePickList(Order order)
+        {
+            var report = new PickList(order);
+            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
+            var filePath = Path.GetTempPath() + "BLOrders2023\\" + $"{order.OrderID}_PickList" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
+        }
     }
 }
