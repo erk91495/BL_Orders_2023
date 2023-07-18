@@ -22,9 +22,9 @@ public class PickList : IReport
     private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).Bold().FontColor(Colors.Black);
     private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
     private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(8.5f);
-    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(8.5f).SemiBold();
-    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(8.5f);
+    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(10f);
+    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(10f).SemiBold();
+    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(8f);
 
     public PickList(Order order)
     {
@@ -157,13 +157,13 @@ public class PickList : IReport
 
                         table.Header(header =>
                         {
-                            header.Cell().Element(HeaderCellStyle).Text("Order Date").Style(tableHeaderStyle);
+                            header.Cell().Element(HeaderCellStyle).Text("Order Date");
 
-                            header.Cell().Element(HeaderCellStyle).Text($"{_order.Shipping} Date").Style(tableHeaderStyle);
-                            header.Cell().Element(HeaderCellStyle).Text($"{_order.Shipping} Time").Style(tableHeaderStyle);
-                            header.Cell().Element(HeaderCellStyle).Text("Taken By").Style(tableHeaderStyle);
-                            header.Cell().Element(HeaderCellStyle).Text("Shipping").Style(tableHeaderStyle);
-                            header.Cell().Element(HeaderCellStyle).Text("").Style(tableHeaderStyle);
+                            header.Cell().Element(HeaderCellStyle).Text($"{_order.Shipping} Date");
+                            header.Cell().Element(HeaderCellStyle).Text($"{_order.Shipping} Time");
+                            header.Cell().Element(HeaderCellStyle).Text("Taken By");
+                            header.Cell().Element(HeaderCellStyle).Text("Shipping");
+                            header.Cell().Element(HeaderCellStyle).Text("");
 
                             static IContainer HeaderCellStyle(IContainer container)
                             {
@@ -171,16 +171,16 @@ public class PickList : IReport
                             }
                         });
 
-                        table.Cell().Element(CellStyle).Text($"{_order.OrderDate:d}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{_order.PickupDate:d}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{_order.PickupTime:t}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{_order.TakenBy}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{_order.Shipping}").Style(tableTextStyle);
-                        var frozen = _order.Frozen ?? false ? "Frozen" : "Fresh";
-                        table.Cell().Element(CellStyle).Text($"{ frozen}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{_order.OrderDate:d}");
+                        table.Cell().Element(CellStyle).Text($"{_order.PickupDate:d}");
+                        table.Cell().Element(CellStyle).Text($"{_order.PickupTime:t}");
+                        table.Cell().Element(CellStyle).Text($"{_order.TakenBy}");
+                        table.Cell().Element(CellStyle).Text($"{_order.Shipping}");
+                        var frozen = (bool)(_order.Frozen) ? "Frozen" : "Fresh";
+                        table.Cell().Element(CellStyle).Text($"{ frozen}").SemiBold();
                         static IContainer CellStyle(IContainer container)
                         {
-                            return container.AlignCenter();
+                            return container.DefaultTextStyle(x => x.FontSize(8)).AlignCenter();
                         }
 
 
@@ -212,7 +212,7 @@ public class PickList : IReport
                     }
                 });
 
-                foreach (var item in _order.Items)
+                foreach (var item in _order.Items.OrderBy(i => i.ProductID))
                 {
 
                     itemsTable.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
@@ -224,7 +224,18 @@ public class PickList : IReport
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
                     }
                 }
+                itemsTable.Cell().Element(FooterCellStyle).Text($"").Style(tableTextStyle);
+                itemsTable.Cell().Element(FooterCellStyle).AlignRight().PaddingRight(2).Text($"Totals:").Style(tableTextStyle);
+                itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.Quantity)}").Style(tableTextStyle);
+                itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.QuanAllocated ?? 0)}").Style(tableTextStyle);
+                static IContainer FooterCellStyle(IContainer container)
+                {
+                    return container.DefaultTextStyle(x => x.SemiBold()).BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
+                }
             });
+            //Memo Box
+
+
         });
     }
 
@@ -232,6 +243,11 @@ public class PickList : IReport
     {
         container.AlignBottom().Column(column =>
         {
+            column.Item().PaddingBottom(5).Column(memoCol =>
+            {
+                memoCol.Item().Text("Memo:").Style(tableHeaderStyle);
+                memoCol.Item().Border(1).PaddingLeft(4).PaddingRight(4).MinHeight(48).ExtendHorizontal().Text($"{_order.Memo}").FontSize(11);
+            });
             column.Item().AlignBottom().AlignRight().Row(footer =>
             {
                 footer.RelativeItem().AlignLeft().Text(time =>

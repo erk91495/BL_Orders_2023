@@ -197,6 +197,8 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         }
     }
 
+    public Order Order => _order; 
+
     public bool HasNextOrder { get; set; } = false;
     public bool HasPreviousOrder { get; set; } = false;
 

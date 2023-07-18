@@ -18,8 +18,11 @@ using BlOrders2023.Services;
 using Microsoft.UI.Dispatching;
 using System.Media;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
+using BlOrders2023.Reporting;
+using System.Diagnostics;
+using Windows.Graphics.Printing;
+using Spire.Pdf;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -562,4 +565,58 @@ public sealed partial class OrderDetailsPage : Page
     #endregion Event Handlers
 
     #endregion Methods
+
+    private void PrintOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        
+    }
+
+    private void PrintInvoiceFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        _= PrintInvoiceAsync();
+    }
+
+    private async Task PrintInvoiceAsync()
+    {
+        if (!ViewModel.Order.CanPrintInvoice) 
+        {
+            ContentDialog contentDialog= new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Content = "This invoice has already been printed. To print a copy press continue",
+                PrimaryButtonText = "Continue",
+                CloseButtonText = "Cancel",
+            };
+            var res = await contentDialog.ShowAsync();
+            if(res != ContentDialogResult.Primary)
+            {
+                return;
+            }
+        }
+        var filePath = ReportGenerator.GeneratePickList(ViewModel.Order);
+        //Windows.System.LauncherOptions options = new()
+        //{
+        //    ContentType = "application/pdf"
+        //};
+        //_ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+        PdfDocument pdfdocument = new PdfDocument();
+        pdfdocument.LoadFromFile(filePath);
+        pdfdocument.PrintSettings.Copies = 2;
+        pdfdocument.Print();
+        pdfdocument.Dispose();
+
+        ViewModel.OrderStatus = OrderStatus.Filling;
+        _ = ViewModel.SaveCurrentOrderAsync();
+
+    }
+
+    private async Task PrintOrderAsync()
+    {
+        if (ViewModel.Order.CanPrintInvoice)
+        {
+
+        }
+    }
+
+
 }

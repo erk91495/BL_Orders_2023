@@ -200,7 +200,7 @@
                         </Grid.ColumnDefinitions>
                         <Button x:Uid="Order_BtnFillOrder" Content="Fill Order" Grid.Column="0" HorizontalAlignment="Center" Click="FillOrder_Click" IsEnabled="{x:Bind ViewModel.SelectedOrder.CanFillOrder, Mode=OneWay}"/>
                         <Button x:Uid="Order_BtnEditOrder" Content="Edit Order" Grid.Column="1" HorizontalAlignment="Center" Click="EditOrder_Click"/>
-                        <Button x:Uid="Order_BtnPrintInvoice" Content="Print Invoice" Grid.Column="2" HorizontalAlignment="Center" Click="PrintInvoice_Click" IsEnabled="{x:Bind ViewModel.SelectedOrder.CanPrintInvoice, Mode=OneWay}"/>
+                        <Button x:Name="Order_BtnPrintInvoice" x:Uid="Order_BtnPrintInvoice" Content="Print Invoice" Grid.Column="2" HorizontalAlignment="Center" Click="PrintInvoice_Click"/>
                     </Grid>
 
 
@@ -229,7 +229,8 @@
                                    IsDynamicItemsSource="True"
                                    AllowFiltering="True"
                                    SelectionMode="Single"
-                                   NavigationMode="Row">
+                                   NavigationMode="Row"
+                                   SelectionChanged="OrdersGrid_SelectionChanged">
 
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>
