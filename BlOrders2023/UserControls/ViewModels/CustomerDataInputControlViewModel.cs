@@ -338,7 +338,7 @@ public class CustomerDataInputControlViewModel : ObservableValidator
     public async Task GetClassesAsync()
     {
         var db = App.GetNewDatabase();
-        var classes = await Task.Run(() => db.Customers.GetCustomerClassesAsync(true));
+        var classes = await Task.Run(() => db.CustomerClasses.GetCustomerClassesAsync(asNoTracking: true));
         await dispatcherQueue.EnqueueAsync(() =>
         {
             foreach (var custClass in classes)

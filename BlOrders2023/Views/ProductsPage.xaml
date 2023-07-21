@@ -47,12 +47,11 @@
                        ColumnWidthMode="AutoWithLastColumnFill"
                        RecordDeleted="ProductsGrid_RecordDeleted"
                        AllowEditing="True"
-                       AllowDeleting="True"
+                       AllowDeleting="False"
                        AddNewRowPosition="Top"
                        DataValidationMode="InView"
                        AddNewRowInitiating="ProductsGrid_AddNewRowInitiating"
-                       RowValidating="ProductsGrid_RowValidating"
-                       CurrentCellValidating="ProductsGrid_CurrentCellValidating">
+                       CurrentCellValidated="ProductsGrid_CurrentCellValidated">
             
             <sf:SfDataGrid.Columns>
                 <sf:GridNumericColumn MappingName="ProductID" IsReadOnly="True"/>

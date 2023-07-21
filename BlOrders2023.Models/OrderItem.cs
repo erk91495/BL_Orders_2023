@@ -57,6 +57,7 @@ public class OrderItem
         ProdEntryDate = DateTime.Now;
     }
     #endregion Constructors 
+
     #region Methods
     private int CalcQuantityReceived()
     {

@@ -43,7 +43,7 @@ public sealed partial class OrderDetailsPage : Page
     private OrderItem? _doomed;
     private bool _deleteOrder;
     private bool _canLeave = false;
-    private ReportGenerator reportGenerator;
+    private readonly ReportGenerator reportGenerator;
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     #endregion Fields
 

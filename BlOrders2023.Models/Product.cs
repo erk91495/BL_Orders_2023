@@ -14,6 +14,8 @@ namespace BlOrders2023.Models
         [Key]
         [Required]
         public int ProductID { get; set; }
+        [MinLength(1)]
+        [MaxLength(40)]
         public string? ProductName { get; set; }
         public short? NoPerCase { get; set; }
         [Column("Price_(Wholesale)")]
