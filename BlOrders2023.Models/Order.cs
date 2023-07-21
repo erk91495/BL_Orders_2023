@@ -68,6 +68,20 @@ public class Order
     public bool CanEditOrder => OrderStatus == OrderStatus.Ordered;
     public bool CanPrintInvoice => OrderStatus == OrderStatus.Filled;
     public bool CanPrintOrder => OrderStatus == OrderStatus.Ordered;
+    public bool AllItemsReceived
+    {
+        get
+        {
+            if ((bool)Allocated)
+            {
+                return Items.All(i => i.QuanAllocated == i.QuantityReceived);
+            }
+            else
+            {
+                return Items.All(i => i.Quantity == i .QuantityReceived);
+            }
+        }
+    }
     #endregion Properties
 
     #region Methods

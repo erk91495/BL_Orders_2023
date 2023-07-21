@@ -209,6 +209,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
 
     public bool CanPrintInvoice => _order.CanPrintInvoice;
     public bool CanPrintOrder => _order.CanPrintOrder;
+    public bool AllItemsScanned => _order.AllItemsReceived;
 
     #endregion Properties
 

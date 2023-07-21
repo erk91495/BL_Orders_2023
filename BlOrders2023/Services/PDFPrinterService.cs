@@ -34,7 +34,7 @@ internal class PDFPrinterService
         toPrint.Load(pdfFilePath);
         SizeF size = new(850, 1100);
         var bitmap = toPrint.ExportAsImage(CurrentPageIndex, 600, 600);
-        bitmap.Save(Path.GetTempPath() + "BLOrders2023\\" + "temp.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+        //bitmap.Save(Path.GetTempPath() + "BLOrders2023\\" + "temp.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
         e.Graphics.DrawImage(bitmap, e.MarginBounds);
         
         e.HasMorePages = CurrentPageIndex < toPrint.PageCount - 1;
