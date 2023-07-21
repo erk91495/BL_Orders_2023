@@ -43,6 +43,7 @@ public sealed partial class OrderDetailsPage : Page
     private OrderItem? _doomed;
     private bool _deleteOrder;
     private bool _canLeave = false;
+    private ReportGenerator reportGenerator;
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     #endregion Fields
 
@@ -53,6 +54,7 @@ public sealed partial class OrderDetailsPage : Page
     public OrderDetailsPage()
     {
         ViewModel = App.GetService<OrderDetailsPageViewModel>();
+        reportGenerator = new();
         this.InitializeComponent();
         SetMemoTotalFormatter();
         //SetMemoWeightFormatter();
@@ -588,7 +590,7 @@ public sealed partial class OrderDetailsPage : Page
                     return;
                 }
             }
-            var filePath = ReportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
+            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
 
             //Windows.System.LauncherOptions options = new()
             //{
@@ -628,7 +630,7 @@ public sealed partial class OrderDetailsPage : Page
                     return;
                 }
             }
-            var filePath = ReportGenerator.GeneratePickList(ViewModel.Order);
+            var filePath = reportGenerator.GeneratePickList(ViewModel.Order);
 
             //Windows.System.LauncherOptions options = new()
             //{

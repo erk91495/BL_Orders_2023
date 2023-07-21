@@ -22,6 +22,7 @@ namespace BlOrders2023.Views;
 /// </summary>
 public sealed partial class OrdersPage : Page
 {
+    
     #region Properties
     /// <summary>
     /// Gets the view model for the Orders Page
@@ -32,6 +33,10 @@ public sealed partial class OrdersPage : Page
     }
     #endregion Properties
 
+    #region Fields
+    private readonly ReportGenerator reportGenerator;
+    #endregion Fields
+
     #region Constructors
     /// <summary>
     /// Initializes an instance of OrdersPage
@@ -39,6 +44,7 @@ public sealed partial class OrdersPage : Page
     public OrdersPage()
     {
         ViewModel = App.GetService<OrdersPageViewModel>();
+        reportGenerator = new();
         InitializeComponent();       
     }
     #endregion Constructors
@@ -90,7 +96,7 @@ public sealed partial class OrdersPage : Page
 
         if (ViewModel.SelectedOrder.OrderStatus == Models.Enums.OrderStatus.Ordered)
         {
-            var filePath = ReportGenerator.GeneratePickList(ViewModel.SelectedOrder);
+            var filePath = reportGenerator.GeneratePickList(ViewModel.SelectedOrder);
             LauncherOptions options = new()
             {
                 ContentType = "application/pdf"
@@ -101,7 +107,7 @@ public sealed partial class OrdersPage : Page
         }
         else if (ViewModel.SelectedOrder.OrderStatus >= Models.Enums.OrderStatus.Filled)
         {
-            var filePath = ReportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
+            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
             LauncherOptions options = new()
             {
                 ContentType = "application/pdf"
