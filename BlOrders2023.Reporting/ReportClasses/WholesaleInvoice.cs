@@ -32,6 +32,7 @@ public class WholesaleInvoice : IReport
     {
         container.Page(page =>
                 {
+                    page.Size(PageSizes.Letter);
                     if(_order.OrderStatus >= Models.Enums.OrderStatus.Invoiced) {
                         page.Background().AlignCenter().AlignMiddle()
                         .TranslateX(50)
@@ -42,7 +43,7 @@ public class WholesaleInvoice : IReport
                         .Text("COPY").FontColor(Colors.Grey.Lighten4).FontSize(200).ExtraBold();
                     }
 
-                    page.Margin(10);
+                    page.Margin(20);
 
                     page.Header().Height(100).Background(Colors.Grey.Lighten1);
                     page.Header().Element(ComposeHeader);
@@ -107,7 +108,7 @@ public class WholesaleInvoice : IReport
                 //Ship To:
                 row.RelativeItem(9).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                 {
-                    column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Ship To:");
+                    column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Bill To:");
                     column.Item().PaddingLeft(3).Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
                     column.Item().Row(row =>
                     {
@@ -133,7 +134,7 @@ public class WholesaleInvoice : IReport
                 row.RelativeItem(9).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                 {
 
-                    column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Bill To:");
+                    column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Ship To:");
                     column.Item().PaddingLeft(3).Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
                     column.Item().Row(row =>
                     {
@@ -267,7 +268,7 @@ public class WholesaleInvoice : IReport
         {
             if (!(_order.Memo_Totl == null || _order.Memo_Totl == 0))
             {
-                column.Item().AlignRight().Text($"{_order.Memo_Totl:C}");
+                column.Item().AlignRight().Text($"Memo Total:{_order.Memo_Totl:C}");
             }
             column.Item().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Invoice Total: {_order.GetInvoiceTotal():C}").Bold();
 

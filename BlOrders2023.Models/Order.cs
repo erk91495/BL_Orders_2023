@@ -67,6 +67,7 @@ public class Order
     public bool CanFillOrder => (OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled);
     public bool CanEditOrder => OrderStatus == OrderStatus.Ordered;
     public bool CanPrintInvoice => OrderStatus == OrderStatus.Filled;
+    public bool CanPrintOrder => OrderStatus == OrderStatus.Ordered;
     #endregion Properties
 
     #region Methods

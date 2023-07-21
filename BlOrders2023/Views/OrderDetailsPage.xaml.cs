@@ -19,9 +19,7 @@ using Microsoft.UI.Dispatching;
 using System.Media;
 using Microsoft.EntityFrameworkCore;
 using BlOrders2023.Reporting;
-using System.Diagnostics;
-using Windows.Graphics.Printing;
-using Spire.Pdf;
+using System.Drawing.Printing;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -60,6 +58,7 @@ public sealed partial class OrderDetailsPage : Page
         //SetMemoWeightFormatter();
         PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
         OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
+        this.DataContext = this;
     }
 
     #endregion Constructors
@@ -531,19 +530,6 @@ public sealed partial class OrderDetailsPage : Page
         ProductEntryBox.IsSuggestionListOpen = false;
     }
 
-    private void OrderStatusCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-
-        if ((ComboBox)sender == OrderStatusCombo)
-        {
-            var selection = e.AddedItems.First();
-            if (selection != null && selection is OrderStatus)
-            {
-                ViewModel.DetachedOrderStatus = (OrderStatus)selection;
-            }
-        }
-    }
-
     private async void StatusFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
         ContentDialog contentDialog = new ContentDialog()
@@ -578,41 +564,46 @@ public sealed partial class OrderDetailsPage : Page
 
     private async Task PrintInvoiceAsync()
     {
-        if (!ViewModel.Order.CanPrintInvoice) 
-        {
-            ContentDialog contentDialog= new ContentDialog()
+        if(ViewModel.CanPrintInvoice) {
+            if (ViewModel.OrderStatus > OrderStatus.Filled) 
             {
-                XamlRoot = XamlRoot,
-                Content = "This invoice has already been printed. To print a copy press continue",
-                PrimaryButtonText = "Continue",
-                CloseButtonText = "Cancel",
+                ContentDialog contentDialog= new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "This invoice has already been printed. To print a copy press continue",
+                    PrimaryButtonText = "Continue",
+                    CloseButtonText = "Cancel",
+                };
+                var res = await contentDialog.ShowAsync();
+                if(res != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+            }
+            var filePath = ReportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
+
+            Windows.System.LauncherOptions options = new()
+            {
+                ContentType = "application/pdf"
             };
-            var res = await contentDialog.ShowAsync();
-            if(res != ContentDialogResult.Primary)
-            {
-                return;
+            _ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 1;
+            var printer = new PDFPrinterService(filePath);
+            printer.PrintPdf(printSettings);
+
+            if(ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled){
+                ViewModel.OrderStatus = OrderStatus.Invoiced;
+                _ = ViewModel.SaveCurrentOrderAsync();
             }
         }
-        var filePath = ReportGenerator.GeneratePickList(ViewModel.Order);
-        //Windows.System.LauncherOptions options = new()
-        //{
-        //    ContentType = "application/pdf"
-        //};
-        //_ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
-        PdfDocument pdfdocument = new PdfDocument();
-        pdfdocument.LoadFromFile(filePath);
-        pdfdocument.PrintSettings.Copies = 2;
-        pdfdocument.Print();
-        pdfdocument.Dispose();
-
-        ViewModel.OrderStatus = OrderStatus.Filling;
-        _ = ViewModel.SaveCurrentOrderAsync();
 
     }
 
     private async Task PrintOrderAsync()
     {
-        if (ViewModel.Order.CanPrintInvoice)
+        if (ViewModel.CanPrintOrder)
         {
 
         }

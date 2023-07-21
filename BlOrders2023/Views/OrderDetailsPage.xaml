@@ -78,8 +78,8 @@
                 <SymbolIcon Symbol="More"/>
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Text="Print Order" Click="PrintOrderFlyoutItem_Click"/>
-                        <MenuFlyoutItem Text="Print Invoice" Click="PrintInvoiceFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Print Order" Icon="Print" Click="PrintOrderFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintOrder, Mode=OneWay}"/>
+                        <MenuFlyoutItem Text="Print Invoice" Icon="Print" Click="PrintInvoiceFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintInvoice, Mode=OneWay}"/>
                         <MenuFlyoutItem Text="Save Order" Icon="Save" Click="SaveOrderFlyoutItem_Click" KeyboardAcceleratorPlacementMode="Auto">
                             <MenuFlyoutItem.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="S" Modifiers="Control"/>
@@ -103,8 +103,7 @@
                 <ComboBox x:Name="OrderStatusCombo"                  
                       xmlns:ui="using:CommunityToolkit.WinUI.UI"
                       ItemsSource="{ui:EnumValues Type=enums:OrderStatus}"
-                      SelectionChanged="OrderStatusCombo_SelectionChanged"
-                      SelectedItem="{x:Bind ViewModel.OrderStatus, Mode=OneTime}"
+                      SelectedItem="{Binding ViewModel.OrderStatus, Mode=TwoWay}"
                       Margin="0,50,0,0"
                       IsEnabled="False"
                       FontSize="20"/>
