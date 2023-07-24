@@ -47,53 +47,9 @@ namespace BlOrders2023.Views
         #endregion Constructors
 
         #region Methods
-        #endregion Methods
-
         private void CustomerClassesGrid_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.DataGrid.AddNewRowInitiatingEventArgs e)
         {
 
-        }
-        private void CustomerClassesGrid_CurrentCellValidating(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValidatingEventArgs e)
-        {
-            if (e.RowData is CustomerClass custClass)
-            {
-
-                switch (e.Column.MappingName)
-                {
-                    case "Class":
-                        {
-                            if (custClass.Class.IsNullOrEmpty())
-                            {
-                                e.IsValid = false;
-                                e.ErrorMessage = "The Class cannot be empty";
-                            }
-                            else if(custClass.Class.Length > 30)
-                            {
-                                e.IsValid = false;
-                                e.ErrorMessage = "30 character max length";
-                            }
-                            break;
-                        }
-                    case "DiscountPercent":
-                        {
-                            if(custClass.DiscountPercent > 100)
-                            {
-                                e.IsValid = false;
-                                e.ErrorMessage = "The discount cannont be larger than 100%";
-                            }
-                            else if(custClass.DiscountPercent < 0)
-                            {
-                                e.IsValid = false;
-                                e.ErrorMessage = "The discount cannont be less than 0%";
-                            }
-                            break;
-                        }
-                    default:
-                        {
-                            break;
-                        }
-                }
-            }
         }
 
         private void CustomerClassesGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
@@ -113,5 +69,6 @@ namespace BlOrders2023.Views
                 }
             }
         }
+        #endregion Methods
     }
 }
