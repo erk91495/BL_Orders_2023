@@ -12,12 +12,12 @@ using System.ComponentModel.Design;
 
 namespace BlOrders2023.Core.Data.SQL;
 
-public class ProductsTable : IProductsTable
+internal class SqlProductsTable : IProductsTable
 {
 
-    private readonly BLOrdersDBContext _db;
+    private readonly SqlBLOrdersDBContext _db;
 
-    public ProductsTable(BLOrdersDBContext db)
+    public SqlProductsTable(SqlBLOrdersDBContext db)
     {
         _db = db;
     }

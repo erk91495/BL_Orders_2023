@@ -35,6 +35,8 @@ public class OrderItem
     public int QuantityReceived => CalcQuantityReceived();
     public float? QuanAllocated { get; set; }
 
+    //Not in DB used for allocation
+    public int ExtraNeeded { get; set; }
     #endregion Properties
 
     #region Fields
@@ -55,6 +57,7 @@ public class OrderItem
         ActualCustPrice = Helpers.Helpers.CalculateCustomerPrice(product, order.Customer);
         //QuanRcvd = 0;
         ProdEntryDate = DateTime.Now;
+        ExtraNeeded = 0;
     }
     #endregion Constructors 
 

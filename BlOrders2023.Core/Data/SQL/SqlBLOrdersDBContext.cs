@@ -8,9 +8,9 @@ using BlOrders2023.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlOrders2023.Core.Data.SQL;
-public class BLOrdersDBContext : DbContext
+public class SqlBLOrdersDBContext : DbContext
 {
-    public BLOrdersDBContext(DbContextOptions<BLOrdersDBContext> options) : base(options)
+    public SqlBLOrdersDBContext(DbContextOptions<SqlBLOrdersDBContext> options) : base(options)
     { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

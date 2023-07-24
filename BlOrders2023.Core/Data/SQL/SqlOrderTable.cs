@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlOrders2023.Core.Data.SQL;
 
-public class OrderTable : IOrderTable
+internal class SqlOrderTable : IOrderTable
 {
     #region Properties
     #endregion Properties
@@ -15,7 +15,7 @@ public class OrderTable : IOrderTable
     /// <summary>
     /// The DB context for the Bl orders database
     /// </summary>
-    private readonly BLOrdersDBContext _db;
+    private readonly SqlBLOrdersDBContext _db;
     #endregion Fields
 
     #region Constructors
@@ -23,7 +23,7 @@ public class OrderTable : IOrderTable
     /// Creates a new instance of the OrderTable
     /// </summary>
     /// <param name="db">The Db context for the ordres database</param>
-    public OrderTable(BLOrdersDBContext db)
+    public SqlOrderTable(SqlBLOrdersDBContext db)
     {
         _db = db;
     }

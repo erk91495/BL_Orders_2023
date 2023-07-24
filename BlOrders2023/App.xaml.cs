@@ -49,7 +49,7 @@ public partial class App : Application
 
     public static WindowEx MainWindow { get; } = new MainWindow();
 
-    public static DbContextOptions<BLOrdersDBContext>? DBOptions { get; private set; }
+    public static DbContextOptions<SqlBLOrdersDBContext>? DBOptions { get; private set; }
 
     public App()
     {
@@ -127,7 +127,7 @@ public partial class App : Application
         //var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
         var dbServer = "ERIC-PC";
         var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
-        var dbOptions = new DbContextOptionsBuilder<BLOrdersDBContext>();
+        var dbOptions = new DbContextOptionsBuilder<SqlBLOrdersDBContext>();
         dbOptions.UseLazyLoadingProxies()
                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                .EnableSensitiveDataLogging()
