@@ -3,13 +3,16 @@ using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.UI.Controls;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Dispatching;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,6 +59,8 @@ namespace BlOrders2023.ViewModels
         private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         private bool _isLoading;
         private ObservableCollection<Product> _products;
+
+        
         #endregion Fields
 
         #region Constructors
@@ -113,10 +118,10 @@ namespace BlOrders2023.ViewModels
             var products = await Task.Run(() => table.UpsertAsync(p));
         }
 
-        internal Task DeleteItem(Product p) 
+        internal async Task DeleteItem(Product p) 
         {
             IProductsTable table = App.GetNewDatabase().Products;
-            throw new NotImplementedException();
+            await table.DeleteAsync(p);
         }
 
         /// <summary>

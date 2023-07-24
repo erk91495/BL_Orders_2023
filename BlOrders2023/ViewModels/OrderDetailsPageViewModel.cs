@@ -70,14 +70,16 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         set 
         { 
             _order.OrderStatus = value; 
-            OnPropertyChanged(nameof(OrderStatus)); 
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(CanPrintInvoice));
+            OnPropertyChanged(nameof(CanPrintOrder));
+            OnPropertyChanged(nameof(CanDeleteItems));
+            OnPropertyChanged(nameof(CanAddItems));
+            //check if we have errors for loading in a new order
+            if(!HasErrors){
+                SaveCurrentOrder();
+            }
         }
-    }
-
-    public OrderStatus DetachedOrderStatus
-    {
-        get => _order.OrderStatus;
-        set => _order.OrderStatus = value;
     }
 
     public string? PO_Number
@@ -197,11 +199,18 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         }
     }
 
+    public Order Order => _order;
+
     public bool HasNextOrder { get; set; } = false;
     public bool HasPreviousOrder { get; set; } = false;
 
     public bool CanAddItems => !HasErrors && _order.OrderStatus == OrderStatus.Ordered;
     public bool CanDeleteItems => _order.OrderStatus < OrderStatus.Invoiced;
+
+    public bool CanPrintInvoice => _order.CanPrintInvoice;
+    public bool CanPrintOrder => _order.CanPrintOrder;
+    public bool AllItemsScanned => _order.AllItemsReceived;
+
     #endregion Properties
 
     #region Fields

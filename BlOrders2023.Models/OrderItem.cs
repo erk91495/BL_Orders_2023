@@ -33,6 +33,8 @@ public class OrderItem
     public virtual Product Product { get; set; } = null!;
 
     public int QuantityReceived => CalcQuantityReceived();
+    public float? QuanAllocated { get; set; }
+
     #endregion Properties
 
     #region Fields
@@ -55,6 +57,7 @@ public class OrderItem
         ProdEntryDate = DateTime.Now;
     }
     #endregion Constructors 
+
     #region Methods
     private int CalcQuantityReceived()
     {

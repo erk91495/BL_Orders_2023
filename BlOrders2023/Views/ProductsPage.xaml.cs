@@ -23,6 +23,8 @@ using Microsoft.UI.Dispatching;
 using Syncfusion.UI.Xaml.DataGrid;
 using Windows.Globalization.NumberFormatting;
 using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -56,33 +58,15 @@ namespace BlOrders2023.Views
 
         private void ProductsGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
         {
-
-        }
-
-        private void ProductsGrid_CurrentCellValueChanged(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValueChangedEventArgs e)
-        {
-            if (e.Record is Product p)
+            foreach(Product item in e.Items)
             {
-                ViewModel.SaveItem(p);
+                ViewModel.DeleteItem(item);
             }
         }
 
         private void ProductsGrid_AddNewRowInitiating(object sender, AddNewRowInitiatingEventArgs e)
         {
 
-        }
-
-        private void ProductsGrid_RowValidating(object sender, RowValidatingEventArgs e)
-        {
-            //if (ProductsGrid.IsAddNewIndex(e.RowIndex))
-            //{
-            //    var productToAdd = e.RowData as Product;
-            //    if (await ViewModel.productIDExists(productToAdd.ProductID))
-            //    {
-            //        e.IsValid = false;
-            //        e.ErrorMessages.Add("ProductID", "Product ID must be unique");
-            //    }
-            //}
         }
 
         private void ProductsGrid_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
@@ -115,6 +99,19 @@ namespace BlOrders2023.Views
                         {
                             break;
                         }
+                }
+            }
+        }
+
+        private void ProductsGrid_CurrentCellValidated(object sender, CurrentCellValidatedEventArgs e)
+        {
+            if(e.RowData is Product p)
+            {
+                Collection<ValidationResult> result = new();
+                ValidationContext context = new(p);
+                if(Validator.TryValidateObject(p, context, result,true))
+                {
+                    ViewModel.SaveItem(p);
                 }
             }
         }

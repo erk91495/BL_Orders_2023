@@ -57,13 +57,31 @@ public class Order
     public bool? Printed { get; set; }
     public bool? OKToProcess { get; set; }
     public bool? Paid { get; set; }
+    public bool? Allocated { get; set; }
     public OrderStatus OrderStatus { get; set; }
     public virtual List<OrderItem> Items { get; set; } = new();
     public virtual List<ShippingItem> ShippingItems { get; set; } = new();
     public virtual List<Payment> Payments { get; set; } = new();
+
+    //Todo should this be a helper class?
     public bool CanFillOrder => (OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled);
     public bool CanEditOrder => OrderStatus == OrderStatus.Ordered;
     public bool CanPrintInvoice => OrderStatus == OrderStatus.Filled;
+    public bool CanPrintOrder => OrderStatus == OrderStatus.Ordered;
+    public bool AllItemsReceived
+    {
+        get
+        {
+            if ((bool)Allocated)
+            {
+                return Items.All(i => i.QuanAllocated == i.QuantityReceived);
+            }
+            else
+            {
+                return Items.All(i => i.Quantity == i .QuantityReceived);
+            }
+        }
+    }
     #endregion Properties
 
     #region Methods

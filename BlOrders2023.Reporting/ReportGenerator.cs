@@ -2,118 +2,132 @@
 // Licensed under the MIT License.
 
 using BlOrders2023.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
 using BlOrders2023.Reporting.ReportClasses;
 using QuestPDF.Fluent;
-using System.IO;
-using Windows.System;
+using System.Diagnostics;
 
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace BlOrders2023.Reporting
+namespace BlOrders2023.Reporting;
+
+public class ReportGenerator
 {
-    public static class ReportGenerator
+    private readonly string TempPath = Path.GetTempPath() + "BLOrders2023";
+
+    public ReportGenerator()
     {
-        public static string GenerateWholesaleInvoice(Order order)
+        if(Directory.Exists(TempPath)) 
         {
-            var report =  new WholesaleInvoice(order);
-
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + order.OrderID + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
+            //This is where we cleanup the files in the tempdir
+            foreach(var file in Directory.GetFiles(TempPath))
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                //the file is probably open so just log it and move on
+                catch( Exception e)                    
+                {
+                    Debug.WriteLine(e.Message);
+                }
+            }
         }
-
-        public static string GenerateWholesaleOrderPickupRecap(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+        else
         {
-            var report = new WholesaleOrderPickupRecap(orders, startDate, endDate);
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "WholesaleOrderPickupRecap" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
+            Directory.CreateDirectory(TempPath);
         }
+    }
 
-        public static string GenerateWholesaleOrderTotals(IEnumerable<OrderTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
-        {
-            var report = new WholesaleOrderTotals(items, startDate, endDate);
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "WholesaleOrderTotals" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
+    public string GenerateWholesaleInvoice(Order order)
+    {
+        var report =  new WholesaleInvoice(order);
+        var filePath = TempPath + Path.DirectorySeparatorChar + order.OrderID + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
 
-        }
+    public string GenerateWholesaleOrderPickupRecap(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new WholesaleOrderPickupRecap(orders, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + "WholesaleOrderPickupRecap" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
 
-        public static string GenerateWholesalePaymentsReport(IEnumerable<Payment> payments, DateTimeOffset startDate, DateTimeOffset endDate)
-        {
-            var report = new WholesalePaymentsReport(payments, startDate, endDate);
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "WholesalePaymentsReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
-        }
+    public string GenerateWholesaleOrderTotals(IEnumerable<OrderTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new WholesaleOrderTotals(items, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + "WholesaleOrderTotals" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
 
-        public static string GenerateUnpaidInvoicesReport(IEnumerable<Order> orders)
-        {
-            var report = new UnpaidInvoicesReport(orders);
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "UnpaidInvoicesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
-        }
+    }
 
-        public static string GenerateShippingList(Order order)
-        {
-            var report = new ShippingList(order);
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "ShippingList" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
-        }
+    public string GenerateWholesalePaymentsReport(IEnumerable<Payment> payments, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new WholesalePaymentsReport(payments, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + "WholesalePaymentsReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
 
-        public static string GenerateAggregateInvoiceReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
-        {
-            var report = new AggregateInvoiceReport(orders, startDate, endDate);
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "AggregateInvoiceReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
+    public string GenerateUnpaidInvoicesReport(IEnumerable<Order> orders)
+    {
+        var report = new UnpaidInvoicesReport(orders);
+        var filePath = TempPath + Path.DirectorySeparatorChar + "UnpaidInvoicesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
 
-        }
+    public string GenerateShippingList(Order order)
+    {
+        var report = new ShippingList(order);
+        var filePath = TempPath + Path.DirectorySeparatorChar + "ShippingList" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
 
-        public static string GenerateOutstandingBalancesReport(IEnumerable<Order> orders)
-        {
-            var report = new OutstandingBalancesReport(orders);
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "OutstandingBalancesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
+    public string GenerateAggregateInvoiceReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new AggregateInvoiceReport(orders, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + "AggregateInvoiceReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
 
-        }
+    }
 
-        public static string GenerateQuarterlySalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate) 
-        {
-            var report = new QuarterlySalesReport(orders, startDate, endDate);
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "QuarterlySalesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
-        }
+    public string GenerateOutstandingBalancesReport(IEnumerable<Order> orders)
+    {
+        var report = new OutstandingBalancesReport(orders);
+        var filePath = TempPath + Path.DirectorySeparatorChar + "OutstandingBalancesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
 
-        public static string GenerateFrozenOrdersReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
-        {
-            var report = new FrozenOrdersReport(orders, startDate, endDate);
-            Directory.CreateDirectory(Path.GetTempPath() + "\\BLOrders2023");
-            var filePath = Path.GetTempPath() + "BLOrders2023\\" + "FrozenOrdersReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-            report.GeneratePdf(filePath);
-            return filePath;
-        }
+    }
+
+    public string GenerateQuarterlySalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate) 
+    {
+        var report = new QuarterlySalesReport(orders, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + "QuarterlySalesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
+
+    public string GenerateFrozenOrdersReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new FrozenOrdersReport(orders, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + "FrozenOrdersReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
+
+    public string GeneratePickList(Order order)
+    {
+        var report = new PickList(order);
+        var filePath = TempPath + Path.DirectorySeparatorChar + $"{order.OrderID}_PickList" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
     }
 }

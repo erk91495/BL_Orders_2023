@@ -13,6 +13,7 @@ using QuestPDF.Infrastructure;
 using Windows.Storage;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace BlOrders2023.Views;
 
@@ -21,6 +22,7 @@ namespace BlOrders2023.Views;
 /// </summary>
 public sealed partial class OrdersPage : Page
 {
+    
     #region Properties
     /// <summary>
     /// Gets the view model for the Orders Page
@@ -31,6 +33,10 @@ public sealed partial class OrdersPage : Page
     }
     #endregion Properties
 
+    #region Fields
+    private readonly ReportGenerator reportGenerator;
+    #endregion Fields
+
     #region Constructors
     /// <summary>
     /// Initializes an instance of OrdersPage
@@ -38,7 +44,8 @@ public sealed partial class OrdersPage : Page
     public OrdersPage()
     {
         ViewModel = App.GetService<OrdersPageViewModel>();
-        InitializeComponent();        
+        reportGenerator = new();
+        InitializeComponent();       
     }
     #endregion Constructors
 
@@ -86,19 +93,33 @@ public sealed partial class OrdersPage : Page
 
     private void PrintInvoice_Click(object _sender, RoutedEventArgs e)
     {
-        var filePath = ReportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
-        LauncherOptions options = new()
-        {
-            ContentType = "application/pdf"
-        };
-        _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
 
-        if (ViewModel.SelectedOrder.OrderStatus <= Models.Enums.OrderStatus.Filled)
+        if (ViewModel.SelectedOrder.OrderStatus == Models.Enums.OrderStatus.Ordered)
         {
-            ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Invoiced;
+            var filePath = reportGenerator.GeneratePickList(ViewModel.SelectedOrder);
+            LauncherOptions options = new()
+            {
+                ContentType = "application/pdf"
+            };
+            _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+            ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Filling;
             _ = ViewModel.SaveCurrentOrderAsync();
         }
+        else if (ViewModel.SelectedOrder.OrderStatus >= Models.Enums.OrderStatus.Filled)
+        {
+            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
+            LauncherOptions options = new()
+            {
+                ContentType = "application/pdf"
+            };
+            _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
 
+            if (ViewModel.SelectedOrder.OrderStatus <= Models.Enums.OrderStatus.Filled)
+            {
+                ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Invoiced;
+                _ = ViewModel.SaveCurrentOrderAsync();
+            }
+        }
     }
 
     #endregion Pane Buttons
@@ -278,4 +299,24 @@ public sealed partial class OrdersPage : Page
 
     }
     #endregion Methods
+
+    private void OrdersGrid_SelectionChanged(object sender, Syncfusion.UI.Xaml.Grids.GridSelectionChangedEventArgs e)
+    {
+        switch (ViewModel.SelectedOrder.OrderStatus)
+        {
+            case Models.Enums.OrderStatus.Ordered:
+                Order_BtnPrintInvoice.Content = "Print Order";
+                break;
+            case Models.Enums.OrderStatus.Filling:
+            case Models.Enums.OrderStatus.Filled:
+                Order_BtnPrintInvoice.Content = "Print Invoice";
+                break;
+            case Models.Enums.OrderStatus.Invoiced:
+            case Models.Enums.OrderStatus.Complete:
+                Order_BtnPrintInvoice.Content = "Reprint Invoice";
+                break;
+            default:
+                break;
+        }
+    }
 }

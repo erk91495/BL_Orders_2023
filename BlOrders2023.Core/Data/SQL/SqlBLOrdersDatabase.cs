@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BlOrders2023.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -32,6 +33,8 @@ namespace BlOrders2023.Core.Data.SQL
         public IShipDetailsTable ShipDetails => new ShipDetailsTable(_dbContext);
 
         public IPaymentsTable Payments => new PaymentsTable(_dbContext);
+
+        public ICustomerClassesTable CustomerClasses => new CustomerClassesTable(_dbContext);
 
         public Version dbVersion 
         {

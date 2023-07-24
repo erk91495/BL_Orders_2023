@@ -101,6 +101,8 @@ public partial class App : Application
             services.AddTransient<CustomerDataInputControlViewModel>();
             services.AddTransient<ShippingItemDataInputControlViewModel>();
             services.AddTransient<MultipleCustomerSelectionDialogViewModel>();
+            services.AddTransient<CustomerClassesPageViewModel>();
+            services.AddTransient<CustomerClassesPage>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

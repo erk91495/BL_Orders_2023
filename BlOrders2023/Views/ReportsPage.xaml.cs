@@ -43,6 +43,7 @@ public sealed partial class ReportsPage : Page
     #endregion Properties
 
     #region Fields
+    private readonly ReportGenerator reportGenerator;
     #endregion Fields
 
     #region Constructors
@@ -50,6 +51,7 @@ public sealed partial class ReportsPage : Page
     {
         this.InitializeComponent();
         ViewModel = App.GetService<ReportsPageViewModel>();
+        reportGenerator = new();
 
 
         ReportsList = new();
@@ -101,7 +103,7 @@ public sealed partial class ReportsPage : Page
                         var order = ViewModel.GetOrder(id);
                         if (order != null)
                         {
-                            reportPath = ReportGenerator.GenerateWholesaleInvoice(order);
+                            reportPath = reportGenerator.GenerateWholesaleInvoice(order);
                         }
                         else
                         {
@@ -126,7 +128,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     var values = ViewModel.GetOrderTotals(startDate, endDate);
-                    reportPath = ReportGenerator.GenerateWholesaleOrderTotals(values, startDate, endDate);
+                    reportPath = reportGenerator.GenerateWholesaleOrderTotals(values, startDate, endDate);
                     
                     ContentDialog d = new()
                     {
@@ -140,7 +142,7 @@ public sealed partial class ReportsPage : Page
 
 
                     var orders = res == ContentDialogResult.Primary ? ViewModel.GetOrdersByPickupDate(startDate,endDate) : ViewModel.GetOrdersByPickupDateThenName(startDate, endDate);
-                    reportPath = ReportGenerator.GenerateWholesaleOrderPickupRecap(orders, startDate, endDate);
+                    reportPath = reportGenerator.GenerateWholesaleOrderPickupRecap(orders, startDate, endDate);
                 }
             }
             else if(control.ReportType == typeof(WholesaleOrderTotals))
@@ -152,7 +154,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     var values = ViewModel.GetOrderTotals(startDate, endDate);
-                    reportPath = ReportGenerator.GenerateWholesaleOrderTotals(values, startDate, endDate);
+                    reportPath = reportGenerator.GenerateWholesaleOrderTotals(values, startDate, endDate);
                 }
             }
             else if(control.ReportType == typeof(WholesalePaymentsReport))
@@ -164,7 +166,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     var values = ViewModel.GetWholesalePayments(startDate, endDate);
-                    reportPath = ReportGenerator.GenerateWholesalePaymentsReport(values, startDate, endDate);
+                    reportPath = reportGenerator.GenerateWholesalePaymentsReport(values, startDate, endDate);
                 }
             }
             else if(control.ReportType == typeof(ShippingList))
@@ -199,7 +201,7 @@ public sealed partial class ReportsPage : Page
                         var order = ViewModel.GetOrder(id);
                         if (order != null)
                         {
-                            reportPath = ReportGenerator.GenerateShippingList(order);
+                            reportPath = reportGenerator.GenerateShippingList(order);
                         }
                         else
                         {
@@ -228,7 +230,7 @@ public sealed partial class ReportsPage : Page
                 {
                     customer = custDialog.ViewModel.SelectedCustomer;
                     var values = ViewModel.GetUnpaidInvoices(customer);
-                    reportPath = ReportGenerator.GenerateUnpaidInvoicesReport(values);
+                    reportPath = reportGenerator.GenerateUnpaidInvoicesReport(values);
                     
                 }
             }
@@ -269,7 +271,7 @@ public sealed partial class ReportsPage : Page
                                 };
                                 await d.ShowAsync();
                             }
-                            reportPath = ReportGenerator.GenerateAggregateInvoiceReport(values, startDate, endDate);
+                            reportPath = reportGenerator.GenerateAggregateInvoiceReport(values, startDate, endDate);
                         }
 
                     }
@@ -278,7 +280,7 @@ public sealed partial class ReportsPage : Page
             else if(control.ReportType == typeof(OutstandingBalancesReport))
             {
                 var values = await ViewModel.GetOutstandingOrdersAsync();
-                reportPath = ReportGenerator.GenerateOutstandingBalancesReport(values);
+                reportPath = reportGenerator.GenerateOutstandingBalancesReport(values);
             }
             else if(control.ReportType == typeof(QuarterlySalesReport))
             {
@@ -289,7 +291,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     var values = ViewModel.GetOrdersByPickupDate(startDate, endDate);
-                    reportPath = ReportGenerator.GenerateQuarterlySalesReport(values, startDate, endDate);
+                    reportPath = reportGenerator.GenerateQuarterlySalesReport(values, startDate, endDate);
                 }
             }
             else if(control.ReportType == typeof(FrozenOrdersReport))
@@ -301,12 +303,68 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     var values = ViewModel.GetFrozenOrders(startDate, endDate);
-                    reportPath = ReportGenerator.GenerateFrozenOrdersReport(values, startDate, endDate);
+                    reportPath = reportGenerator.GenerateFrozenOrdersReport(values, startDate, endDate);
+                }
+            }
+            else if (control.ReportType == typeof(PickList))
+            {
+                SingleValueInputDialog dialog = new SingleValueInputDialog()
+                {
+                    Title = "Order ID",
+                    Prompt = "Please Enter An Order ID",
+                    XamlRoot = XamlRoot,
+                    PrimaryButtonText = "Submit",
+                    SecondaryButtonText = "Cancel",
+                    ValidateValue = ValidateOrderID,
+                };
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    var res = int.TryParse(dialog.Value ?? "", out var id);
+                    if (!res)
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "User Error",
+                            Content = $"Invalid Order ID {dialog.Value}.\r\n " +
+                            $"Please enter a numeric value",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
+                    }
+                    else
+                    {
+                        var order = ViewModel.GetOrder(id);
+                        if (order != null)
+                        {
+                            reportPath = reportGenerator.GeneratePickList(order);
+                        }
+                        else
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"No order with the order id {id} found.",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
+                    }
                 }
             }
             else
             {
-                throw new Exception("Report Type Not Found ask the programmer if they forgot something");
+                ContentDialog d = new()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Error",
+                    Content = $"Sorry the person writing ths progam made a mistake because the Report Type \"{control.ReportType}\" " +
+                    $"was not found. \r\n Please ask the programmer nicely if they forgot something.",
+                    PrimaryButtonText = "ok",
+                };
+                await d.ShowAsync();
             }
 
             if (reportPath != string.Empty)

@@ -18,8 +18,9 @@ using BlOrders2023.Services;
 using Microsoft.UI.Dispatching;
 using System.Media;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
+using BlOrders2023.Reporting;
+using System.Drawing.Printing;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -42,6 +43,7 @@ public sealed partial class OrderDetailsPage : Page
     private OrderItem? _doomed;
     private bool _deleteOrder;
     private bool _canLeave = false;
+    private readonly ReportGenerator reportGenerator;
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     #endregion Fields
 
@@ -52,11 +54,13 @@ public sealed partial class OrderDetailsPage : Page
     public OrderDetailsPage()
     {
         ViewModel = App.GetService<OrderDetailsPageViewModel>();
+        reportGenerator = new();
         this.InitializeComponent();
         SetMemoTotalFormatter();
         //SetMemoWeightFormatter();
         PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
         OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
+        this.DataContext = this;
     }
 
     #endregion Constructors
@@ -475,6 +479,14 @@ public sealed partial class OrderDetailsPage : Page
             if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
             {
                 ViewModel.AddItem(productToAdd);
+                if(ViewModel.OrderStatus == OrderStatus.Ordered)
+                {
+                    ViewModel.OrderStatus = OrderStatus.Filling;
+                }
+                if (ViewModel.AllItemsScanned)
+                {
+                    ViewModel.OrderStatus = OrderStatus.Filled;
+                }
             }
             else if (productToAdd != null)
             {
@@ -528,19 +540,6 @@ public sealed partial class OrderDetailsPage : Page
         ProductEntryBox.IsSuggestionListOpen = false;
     }
 
-    private void OrderStatusCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-
-        if ((ComboBox)sender == OrderStatusCombo)
-        {
-            var selection = e.AddedItems.First();
-            if (selection != null && selection is OrderStatus)
-            {
-                ViewModel.DetachedOrderStatus = (OrderStatus)selection;
-            }
-        }
-    }
-
     private async void StatusFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
         ContentDialog contentDialog = new ContentDialog()
@@ -562,4 +561,95 @@ public sealed partial class OrderDetailsPage : Page
     #endregion Event Handlers
 
     #endregion Methods
+
+    private void PrintOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        _ = PrintOrderAsync();
+    }
+
+    private void PrintInvoiceFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        _= PrintInvoiceAsync();
+    }
+
+    private async Task PrintInvoiceAsync()
+    {
+        if(ViewModel.CanPrintInvoice) {
+            if (ViewModel.OrderStatus > OrderStatus.Filled) 
+            {
+                ContentDialog contentDialog= new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "This invoice has already been printed. To print a copy press continue",
+                    PrimaryButtonText = "Continue",
+                    CloseButtonText = "Cancel",
+                };
+                var res = await contentDialog.ShowAsync();
+                if(res != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+            }
+            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
+
+            //Windows.System.LauncherOptions options = new()
+            //{
+            //    ContentType = "application/pdf"
+            //};
+            //_ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 2;
+            var printer = new PDFPrinterService(filePath);
+            printer.PrintPdf(printSettings);
+
+            if(ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled){
+                ViewModel.OrderStatus = OrderStatus.Invoiced;
+                _ = ViewModel.SaveCurrentOrderAsync();
+            }
+        }
+
+    }
+
+    private async Task PrintOrderAsync()
+    {
+        if (ViewModel.CanPrintOrder)
+        {
+            if (ViewModel.OrderStatus > OrderStatus.Ordered)
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "This order has already been printed. To print a copy press continue",
+                    PrimaryButtonText = "Continue",
+                    CloseButtonText = "Cancel",
+                };
+                var res = await contentDialog.ShowAsync();
+                if (res != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+            }
+            var filePath = reportGenerator.GeneratePickList(ViewModel.Order);
+
+            //Windows.System.LauncherOptions options = new()
+            //{
+            //    ContentType = "application/pdf"
+            //};
+            //_ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 1;
+            var printer = new PDFPrinterService(filePath);
+            printer.PrintPdf(printSettings);
+
+            if (ViewModel.OrderStatus == OrderStatus.Ordered)
+            {
+                ViewModel.OrderStatus = OrderStatus.Filling;
+                _ = ViewModel.SaveCurrentOrderAsync();
+            }
+        }
+    }
+
+
 }
