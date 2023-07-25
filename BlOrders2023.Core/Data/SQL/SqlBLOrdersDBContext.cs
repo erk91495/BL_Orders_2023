@@ -34,8 +34,8 @@ public class SqlBLOrdersDBContext : DbContext
         modelBuilder.Entity<WholesaleCustomer>()
             .Property(e => e.AllocationType)
             .HasConversion(
-            v => v == AllocationType.Grocer,
-            v => v ? AllocationType.Grocer : AllocationType.Gift
+            v => v == CustomerAllocationType.Grocer,
+            v => v ? CustomerAllocationType.Grocer : CustomerAllocationType.Gift
             );
     }
 

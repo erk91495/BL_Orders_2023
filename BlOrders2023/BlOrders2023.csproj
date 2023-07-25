@@ -50,6 +50,9 @@
 	<None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="Views\AllocatorPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
   </ItemGroup>
 	
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
@@ -62,5 +65,9 @@
   
   <ItemGroup>
     <PRIResource Remove="Themes\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="Views\AllocatorPage.xaml" />
   </ItemGroup>
 </Project>

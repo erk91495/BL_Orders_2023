@@ -1,4 +1,5 @@
 ﻿using BlOrders2023.Models;
+using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace BlOrders2023.Core.Data
     {
         Task<IEnumerable<Order>> GetAsync(bool tracking = true);
         Task<IEnumerable<Order>> GetAsync(int orderID, bool tracking = true);
+        Task<IEnumerable<Order>> GetAsync(IEnumerable<int> ids, bool tracking = true);
         IEnumerable<Order> Get(int orderID);
         IEnumerable<Order> GetFrozenOrdersByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
         IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);

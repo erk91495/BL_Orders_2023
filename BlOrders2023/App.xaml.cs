@@ -20,6 +20,9 @@ using Microsoft.UI.Xaml.Controls;
 using QuestPDF.Infrastructure;
 
 using Windows.ApplicationModel;
+using Microsoft.UI.Dispatching;
+using BlOrders2023.Core.Contracts;
+using BlOrders2023.Core.Helpers;
 
 namespace BlOrders2023;
 
@@ -103,6 +106,8 @@ public partial class App : Application
             services.AddTransient<MultipleCustomerSelectionDialogViewModel>();
             services.AddTransient<CustomerClassesPageViewModel>();
             services.AddTransient<CustomerClassesPage>();
+            services.AddTransient<AllocatorPage>();
+            services.AddTransient<AllocatorPageViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
@@ -147,6 +152,16 @@ public partial class App : Application
             System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
             Exit();
         }
+
+        //IAllocatorService allocator = new OrderAllocator(GetNewDatabase());
+        //IAllocatorConfig config = new OrderAllocatorConfiguration()
+        //{
+        //    CustomerAllocationType = Models.Enums.CustomerAllocationType.Grocer,
+        //    IDs = new() {67662, 67663}
+        //};
+        //_ = CommunityToolkit.WinUI.DispatcherQueueExtensions.EnqueueAsync(DispatcherQueue.GetForCurrentThread(), () => allocator.Allocate(config));
+
+
         await App.GetService<IActivationService>().ActivateAsync(args);
 
     }

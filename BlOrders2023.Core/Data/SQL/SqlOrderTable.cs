@@ -137,7 +137,33 @@ internal class SqlOrderTable : IOrderTable
             .ToListAsync();
         }
     }
-        
+    /// <summary>
+    /// Gets the Order matching the given OrderID
+    /// </summary>
+    /// <param name="ids">The IDs of the Orders to get</param>
+    /// <returns>An Order with the given id</returns>
+    public async Task<IEnumerable<Order>> GetAsync(IEnumerable<int> ids, bool tracking = true)
+    {
+        if (tracking)
+        {
+            return await _db.Orders
+            .Include(order => order.Items)
+            .Include(order => order.Customer)
+            .Include(order => order.ShippingItems)
+            .Where(order => ids.Contains(order.OrderID))
+            .ToListAsync();
+        }
+        else
+        {
+            return await _db.Orders
+            .Include(order => order.Items)
+            .Include(order => order.Customer)
+            .Include(order => order.ShippingItems)
+            .Where(order => ids.Contains(order.OrderID))
+            .AsNoTracking()
+            .ToListAsync();
+        }
+    }
 
     public IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
     {

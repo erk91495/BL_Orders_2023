@@ -80,10 +80,17 @@ namespace BlOrders2023.Models.Enums
         WY
     }
 
-    public enum AllocationType
+    public enum CustomerAllocationType
     {
         Grocer = -1,
         Gift,
-        
+    }
+
+    public enum  AllocatorMode
+    {
+        Test,
+        Gift,
+        Grocer,
+        Both,
     }
 }
