@@ -117,6 +117,19 @@ public class Order
         }
     }
 
+    public int GetTotalAllocated()
+    {
+        if (Items.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            var total = Items.Sum(item => (int)(item.QuanAllocated ?? 0));
+            return total;
+        }
+    }
+
     public decimal GetTotalPayments()
     {
         if (Payments.IsNullOrEmpty())

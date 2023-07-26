@@ -43,7 +43,7 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
     {
         AllocatorConfig = new OrderAllocatorConfiguration();
         AllocatorService = new OrderAllocator(App.GetNewDatabase());
-        AllocatedOrders = new List<Order>();
+        AllocatedOrders = new();
     }
     #endregion Constructors
 

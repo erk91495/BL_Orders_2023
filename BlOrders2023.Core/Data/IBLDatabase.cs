@@ -14,8 +14,8 @@ namespace BlOrders2023.Core.Data
         public IShipDetailsTable ShipDetails { get; }
         public IPaymentsTable Payments { get; }
         public ICustomerClassesTable CustomerClasses { get; }
-
         public IInventoryTable Inventory { get; }
+        public IAllocationTable Allocation { get; }
         public Version dbVersion { get; }
     }
 }

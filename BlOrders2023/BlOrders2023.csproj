@@ -70,4 +70,6 @@
   <ItemGroup>
     <None Remove="Views\AllocatorPage.xaml" />
   </ItemGroup>
+  
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>

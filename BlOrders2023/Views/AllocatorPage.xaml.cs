@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -43,6 +44,7 @@ public sealed partial class AllocatorPage : Page
 
     #region Properties
     public AllocatorPageViewModel ViewModel { get; }
+    public DataTable AllocationTable { get; set; }
     #endregion Properties
 
     #region Constructors
@@ -52,6 +54,7 @@ public sealed partial class AllocatorPage : Page
         ViewModel = App.GetService<AllocatorPageViewModel>();
         this.InitializeComponent();
         _navigationService = App.GetService<INavigationService>() as NavigationService;
+        AllocationTable = new("Allocation");
     }
     #endregion Constructors
 
@@ -179,6 +182,10 @@ public sealed partial class AllocatorPage : Page
                 _navigationService.GoBack();
             }
         }
+    }
+
+    private void CreateAllocationTable()
+    {
     }
     #endregion Methods
 

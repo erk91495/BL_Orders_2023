@@ -38,6 +38,8 @@ public class SqlBLOrdersDatabase : IBLDatabase
 
     public IInventoryTable Inventory => new SqlInventoryTable(_dbContext);
 
+    public IAllocationTable Allocation => new SqlAllocationTable(_dbContext);
+
     public Version dbVersion 
     {
         get

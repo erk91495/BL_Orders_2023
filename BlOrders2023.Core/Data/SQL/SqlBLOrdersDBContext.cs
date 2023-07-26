@@ -37,6 +37,12 @@ public class SqlBLOrdersDBContext : DbContext
             v => v == CustomerAllocationType.Grocer,
             v => v ? CustomerAllocationType.Grocer : CustomerAllocationType.Gift
             );
+        modelBuilder.Entity<AllocationGroup>()
+            .Property(e => e.ProductIDs)
+            .HasConversion(
+            v => string.Join(',',v.Select(x => x.ToString())),
+            v => v.Split(",", StringSplitOptions.TrimEntries).Select(int.Parse).ToList()
+            );
     }
 
     public DbSet<InventoryItem> Inventory { get; set; }
@@ -49,4 +55,5 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<OrderTotalsItem> OrderTotalsItems { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
+    public DbSet<AllocationGroup> AllocationGroups { get; set; }
 }
