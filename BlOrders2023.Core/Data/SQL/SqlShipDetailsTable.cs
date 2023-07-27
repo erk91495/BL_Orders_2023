@@ -51,7 +51,7 @@ internal class SqlShipDetailsTable : IShipDetailsTable
     {
         if (items.Count > 0)
         {
-            var orderId = items.FirstOrDefault().OrderID;
+            //var orderId = items.FirstOrDefault().OrderID;
             _db.UpdateRange(items);
             await _db.SaveChangesAsync();
         }

@@ -79,7 +79,7 @@ internal class SqlWholesaleCustomerTable : IWholesaleCustomerTable
                 entry.OriginalValues.SetValues(entry.GetDatabaseValues());
             }
         }
-        int res = _db.SaveChanges();
+        var res = _db.SaveChanges();
         return customer;
     }
 

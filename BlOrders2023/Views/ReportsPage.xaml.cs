@@ -183,7 +183,7 @@ public sealed partial class ReportsPage : Page
                 var result = await dialog.ShowAsync();
                 if(result == ContentDialogResult.Primary)
                 {
-                    var res = int.TryParse(dialog.Value ?? "", out int id);
+                    var res = int.TryParse(dialog.Value ?? "", out var id);
                     if (!res)
                     {
                         ContentDialog d = new()
@@ -381,7 +381,7 @@ public sealed partial class ReportsPage : Page
 
     private bool ValidateOrderID(string? value)
     {
-        return int.TryParse(value, out var id);
+        return int.TryParse(value, out _);
     }
 
     private async Task<(DateTimeOffset?, DateTimeOffset?)> ShowDateRangeSelectionAsync()

@@ -91,7 +91,8 @@ public sealed partial class FillOrdersPage : Page
         {
             await ViewModel.ReceiveItemAsync(item);
             OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
-            OrderedItems.ColumnSizer.Refresh();
+            OrderedItems.ColumnSizer.Refresh(); 
+            OrderedVsReceivedGrid.View.Refresh();
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -214,6 +215,7 @@ public sealed partial class FillOrdersPage : Page
             foreach (ShippingItem item in e.Items.Cast<ShippingItem>())
             {
                 await ViewModel.DeleteShippingItemAsync(item);
+                OrderedVsReceivedGrid.View.Refresh();
             }
         }
     }

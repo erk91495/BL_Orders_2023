@@ -77,6 +77,7 @@ public sealed partial class AllocatorPage : Page
         ComboBox comboBox = new ComboBox()
         {
             ItemsSource = Enum.GetValues(typeof(AllocatorMode)),
+            SelectedIndex = 0,
         };
         mainStack.Children.Add(comboBox);
         ContentDialog dialog = new()

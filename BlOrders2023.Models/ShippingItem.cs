@@ -37,7 +37,6 @@ namespace BlOrders2023.Models
             return obj is ShippingItem item &&
                    SD_ID == item.SD_ID &&
                    OrderID == item.OrderID &&
-                   EqualityComparer<Order>.Default.Equals(order, item.order) &&
                    ProductID == item.ProductID &&
                    QuanRcvd == item.QuanRcvd &&
                    PickWeight == item.PickWeight &&
@@ -45,8 +44,8 @@ namespace BlOrders2023.Models
                    Scanline == item.Scanline &&
                    PackageSerialNumber == item.PackageSerialNumber &&
                    ScanDate == item.ScanDate &&
-                   PackDate == item.PackDate &&
-                   EqualityComparer<Product>.Default.Equals(Product, item.Product);
+                   PackDate == item.PackDate;
+                   
         }
 
         public override int GetHashCode()
@@ -54,7 +53,6 @@ namespace BlOrders2023.Models
             HashCode hash = new HashCode();
             hash.Add(SD_ID);
             hash.Add(OrderID);
-            hash.Add(order);
             hash.Add(ProductID);
             hash.Add(QuanRcvd);
             hash.Add(PickWeight);
@@ -63,7 +61,6 @@ namespace BlOrders2023.Models
             hash.Add(PackageSerialNumber);
             hash.Add(ScanDate);
             hash.Add(PackDate);
-            hash.Add(Product);
             return hash.ToHashCode();
         }
     }

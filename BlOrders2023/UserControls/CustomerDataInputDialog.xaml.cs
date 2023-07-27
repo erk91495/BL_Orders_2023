@@ -70,7 +70,7 @@ public sealed partial class CustomerDataInputDialog : ContentDialog
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        var i = 0;
+        System.Diagnostics.Debugger.Break();
     }
 
     private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

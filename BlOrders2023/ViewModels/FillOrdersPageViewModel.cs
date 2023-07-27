@@ -7,6 +7,7 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Newtonsoft.Json.Bson;
+using ServiceStack.DataAnnotations;
 using System.Collections.ObjectModel;
 using Windows.UI.Text;
 
@@ -19,11 +20,8 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     public WholesaleCustomer Customer { get; set; }
     public Order? Order { get => _order; set => _order = value; }
     public ObservableCollection<ShippingItem> Items { get; set; }
-
     public ObservableCollection<Order> FillableOrders { get; set; }
     public ObservableCollection<Order> FillableOrdersMasterList { get; set; }
-
-    public ObservableCollection<OrderedVsReceivedItem> OrderedVsReceivedItems { get; set; }
     #endregion Properties
 
     #region Fields
@@ -40,7 +38,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         Items = new();
         FillableOrders = new();
         FillableOrdersMasterList = new();
-        OrderedVsReceivedItems = new();
+
     }
     #endregion Constructors
 
@@ -81,82 +79,11 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         {
             _order = order.First();
             Customer = _order.Customer;
-            Items = new ObservableCollection<ShippingItem>( _order.ShippingItems);
-
-            ReCalculateOrderdVsReceived();
+            Items = new ObservableCollection<ShippingItem>( _order.ShippingItems.ToList());
+            //ReCalculateOrderdVsReceived();
             OnAllPropertiesChanged();  
         });
 
-    }
-
-    private void ReCalculateOrderdVsReceived()
-    {
-        OrderedVsReceivedItems.Clear();
-
-        //Calculate ordered
-        foreach(var item in _order!.Items)
-        {
-            //If i would just build an observable dictionary i wouldnt have to do this 
-            if (OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault() != null)
-            {
-                OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Ordered += (int)item.Quantity;
-            }
-            else
-            {
-                OrderedVsReceivedItem ovsr = new()
-                {
-                    ProductID = item.ProductID,
-                    Ordered = (int)item.Quantity,
-                    Received = 0
-                };
-                OrderedVsReceivedItems.Add(ovsr);
-            }
-        }
-        //Calculate Received
-        foreach(var item in _order.ShippingItems)
-        {
-           IncrementReceivedItem(item);
-        }
-        OnPropertyChanged(nameof(OrderedVsReceivedItems));
-    }
-
-    private void IncrementReceivedItem(ShippingItem item)
-    {
-        if (OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault() != null)
-        {
-            OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Received += (int)(item.QuanRcvd ?? 0);
-            OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).First().Weight += item.PickWeight ?? 0;
-        }
-        else
-        {
-            OrderedVsReceivedItem ovsr = new()
-            {
-                ProductID = item.ProductID,
-                Ordered = 0,
-                Received = (int)(item.QuanRcvd ?? 0),
-                Weight = item.PickWeight ?? 0,
-            };
-            OrderedVsReceivedItems.Add(ovsr);
-        }
-        OnPropertyChanged(nameof(OrderedVsReceivedItems));
-        
-    }
-    private void DecrementReceivedItem(ShippingItem item)
-    {
-        var foundItem = OrderedVsReceivedItems.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
-        if (foundItem != null)
-        {
-            // pre-decrement should make this so that when i get to zero the item is removed from the list
-            if(--foundItem.Received <= 0 && foundItem.Ordered <= 0)
-            {
-                OrderedVsReceivedItems.Remove(foundItem);
-            }
-            else
-            {
-                foundItem.Weight -= item.PickWeight ?? 0;
-            }
-        }
-        OnPropertyChanged(nameof(OrderedVsReceivedItems));
     }
 
     private void OnAllPropertiesChanged()
@@ -167,7 +94,6 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         OnPropertyChanged(nameof(HasOrder));
         OnPropertyChanged(nameof(FillableOrders));
         OnPropertyChanged(nameof(FillableOrdersMasterList));
-        OnPropertyChanged(nameof(OrderedVsReceivedItems));
     }
 
     internal void QueryFillableOrders(string text)
@@ -203,8 +129,6 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
             _order?.ShippingItems.Add(item);
             IncremantOrderedItem(item);
             await _orderDB.Orders.UpsertAsync(_order);
-            IncrementReceivedItem(item);
-            
             
         }
         else
@@ -225,13 +149,9 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
             {
                 DecrementOrderedItem(item);
                 await _orderDB.Orders.UpsertAsync(_order);
-                DecrementReceivedItem(item);
             }
             OnPropertyChanged(nameof(Items));
         }
-        
-        
-
 
     }
 

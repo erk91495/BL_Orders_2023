@@ -18,7 +18,7 @@ public class OrderAllocator : IAllocatorService
     #endregion Properties
 
     #region Fields
-    private IBLDatabase _db;
+    private readonly IBLDatabase _db;
     private Dictionary<int, float> ordered = new();
     private IList<Order> _orders;
     private IEnumerable<InventoryItem> _ineventory;
@@ -36,8 +36,6 @@ public class OrderAllocator : IAllocatorService
 
     public async Task<bool> Allocate(IAllocatorConfig config)
     {
-        //give me a sec
-        await Task.Delay(1000);
         if (config is not OrderAllocatorConfiguration || config == null) throw new ArgumentNullException("Invalid Configuration");
 
         //Task<IEnumerable<Order>> ordersTask = _db.Orders.GetAsync();

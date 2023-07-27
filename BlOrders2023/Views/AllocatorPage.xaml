@@ -8,17 +8,76 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="AllocatorPage_Loaded">
 
-    <Grid>
-        <sf:SfDataGrid x:Name="dataGrid" 
+    <StackPanel Orientation="Vertical">
+        <controls:DataGrid
+            ItemsSource="{x:Bind ViewModel.AllocatedOrders, Mode=TwoWay}"
+            AutoGenerateColumns="False"
+            RowDetailsVisibilityMode="Visible">
+
+            <controls:DataGrid.Columns>
+                <controls:DataGridTemplateColumn Header="Order ID" Width="Auto">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="models:Order">
+                            <TextBlock Text="{x:Bind OrderID}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
+                <controls:DataGridTemplateColumn Header="Customer" Width="Auto">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="models:Order">
+                            <TextBlock Text="{x:Bind Customer.CustomerName}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
+                <controls:DataGridTemplateColumn Header="Total Ordered" Width="Auto">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="models:Order">
+                            <TextBlock Text="{x:Bind GetTotalOrdered()}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
+
+                <controls:DataGridTemplateColumn Header="Total Allocated" Width="Auto">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="models:Order">
+                            <TextBlock Text="{x:Bind GetTotalAllocated()}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+            </controls:DataGrid.Columns>
+
+            <controls:DataGrid.RowDetailsTemplate>
+                <DataTemplate x:DataType="models:Order">
+                    <StackPanel>
+                        <sf:SfDataGrid x:Name="Items" AutoGenerateColumns="False" ItemsSource="{x:Bind Items}">
+                            <sf:SfDataGrid.Columns>
+                                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" IsReadOnly="True"/>
+                                <sf:GridNumericColumn HeaderText="Ordered" MappingName="Quantity" IsReadOnly="True"/>
+                                <sf:GridNumericColumn HeaderText="Allocated" MappingName="QuanAllocated" IsReadOnly="True"/>
+                            </sf:SfDataGrid.Columns>
+                        </sf:SfDataGrid>
+                    </StackPanel>
+                </DataTemplate>
+            </controls:DataGrid.RowDetailsTemplate>
+        </controls:DataGrid>
+        
+        <!--<sf:SfDataGrid x:Name="dataGrid" 
                            ItemsSource="{x:Bind ViewModel.AllocatedOrders, Mode=TwoWay}"
                            AutoGenerateColumns="False"
                            SourceType="models:Order">
             <sf:SfDataGrid.Columns>
-                <sf:GridNumericColumn MappingName="OrderID" IsReadOnly="True"/>
+                <sf:GridNumericColumn HeaderText="Order ID" MappingName="OrderID" IsReadOnly="True"/>
+                <sf:GridTextColumn HeaderText="Customer" MappingName="Customer.CustomerName" IsReadOnly="True"/>
+                <sf:GridNumericColumn HeaderText="Total Ordered" MappingName="GetTotalOrdered" IsReadOnly="True"/>
+                <sf:GridNumericColumn HeaderText="Total Allocated" IsReadOnly="True"/>
             </sf:SfDataGrid.Columns>
 
             <sf:SfDataGrid.DetailsViewDefinition>
@@ -26,15 +85,14 @@
                     <sf:GridViewDefinition.DataGrid>
                         <sf:SfDataGrid x:Name="Items" AutoGenerateColumns="False">
                             <sf:SfDataGrid.Columns>
-                                <sf:GridNumericColumn MappingName="ProductID" IsReadOnly="True"/>
-                                <sf:GridNumericColumn MappingName="Quantity" IsReadOnly="True"/>
-                                <sf:GridNumericColumn MappingName="QuanAllocated" IsReadOnly="True"/>
+                                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" IsReadOnly="True"/>
+                                <sf:GridNumericColumn HeaderText="Ordered" MappingName="Quantity" IsReadOnly="True"/>
                             </sf:SfDataGrid.Columns>
                         </sf:SfDataGrid>
                     </sf:GridViewDefinition.DataGrid>
                 </sf:GridViewDefinition>
             </sf:SfDataGrid.DetailsViewDefinition>
             
-        </sf:SfDataGrid>
-    </Grid>
+        </sf:SfDataGrid>--> 
+    </StackPanel>
 </Page>

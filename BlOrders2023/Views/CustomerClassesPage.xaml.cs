@@ -24,51 +24,50 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace BlOrders2023.Views
+namespace BlOrders2023.Views;
+
+/// <summary>
+/// An empty page that can be used on its own or navigated to within a Frame.
+/// </summary>
+public sealed partial class CustomerClassesPage : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class CustomerClassesPage : Page
+    #region Properties
+    #endregion Properties
+
+    #region Fields
+    CustomerClassesPageViewModel ViewModel { get; }
+    #endregion Fields
+
+    #region Constructors
+    public CustomerClassesPage()
     {
-        #region Properties
-        #endregion Properties
+        ViewModel = App.GetService<CustomerClassesPageViewModel>();
+        this.InitializeComponent();
+    }
+    #endregion Constructors
 
-        #region Fields
-        CustomerClassesPageViewModel ViewModel { get; }
-        #endregion Fields
+    #region Methods
+    private void CustomerClassesGrid_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.DataGrid.AddNewRowInitiatingEventArgs e)
+    {
 
-        #region Constructors
-        public CustomerClassesPage()
+    }
+
+    private void CustomerClassesGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
+    {
+
+    }
+
+    private void CustomerClassesGrid_CurrentCellValidated(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValidatedEventArgs e)
+    {
+        if (e.RowData is CustomerClass p)
         {
-            ViewModel = App.GetService<CustomerClassesPageViewModel>();
-            this.InitializeComponent();
-        }
-        #endregion Constructors
-
-        #region Methods
-        private void CustomerClassesGrid_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.DataGrid.AddNewRowInitiatingEventArgs e)
-        {
-
-        }
-
-        private void CustomerClassesGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
-        {
-
-        }
-
-        private void CustomerClassesGrid_CurrentCellValidated(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValidatedEventArgs e)
-        {
-            if (e.RowData is CustomerClass p)
+            Collection<ValidationResult> result = new();
+            ValidationContext context = new(p);
+            if (Validator.TryValidateObject(p, context, result, true))
             {
-                Collection<ValidationResult> result = new();
-                ValidationContext context = new(p);
-                if (Validator.TryValidateObject(p, context, result, true))
-                {
-                    ViewModel.SaveItem(p);
-                }
+                ViewModel.SaveItem(p);
             }
         }
-        #endregion Methods
     }
+    #endregion Methods
 }

@@ -137,7 +137,7 @@ internal class SqlProductsTable : IProductsTable
             //TODO: Concurrency checks maybe here
             _db.Entry(exists).CurrentValues.SetValues(product);
         }
-        int res = await _db.SaveChangesAsync();
+        var res = await _db.SaveChangesAsync();
         return product;
     }
 }
