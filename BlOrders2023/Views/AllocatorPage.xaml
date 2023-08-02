@@ -12,7 +12,6 @@
     xmlns:uc="using:BlOrders2023.UserControls"
     xmlns:wctprimitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
     mc:Ignorable="d"
-    Name="AllocationPage"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="AllocatorPage_Loaded">
 
@@ -73,31 +72,5 @@
                 </DataTemplate>
             </controls:DataGrid.RowDetailsTemplate>
         </controls:DataGrid>
-        
-        <!--<sf:SfDataGrid x:Name="dataGrid" 
-                           ItemsSource="{x:Bind ViewModel.AllocatedOrders, Mode=TwoWay}"
-                           AutoGenerateColumns="False"
-                           SourceType="models:Order">
-            <sf:SfDataGrid.Columns>
-                <sf:GridNumericColumn HeaderText="Order ID" MappingName="OrderID" IsReadOnly="True"/>
-                <sf:GridTextColumn HeaderText="Customer" MappingName="Customer.CustomerName" IsReadOnly="True"/>
-                <sf:GridNumericColumn HeaderText="Total Ordered" MappingName="GetTotalOrdered" IsReadOnly="True"/>
-                <sf:GridNumericColumn HeaderText="Total Allocated" IsReadOnly="True"/>
-            </sf:SfDataGrid.Columns>
-
-            <sf:SfDataGrid.DetailsViewDefinition>
-                <sf:GridViewDefinition RelationalColumn="Items">
-                    <sf:GridViewDefinition.DataGrid>
-                        <sf:SfDataGrid x:Name="Items" AutoGenerateColumns="False">
-                            <sf:SfDataGrid.Columns>
-                                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" IsReadOnly="True"/>
-                                <sf:GridNumericColumn HeaderText="Ordered" MappingName="Quantity" IsReadOnly="True"/>
-                            </sf:SfDataGrid.Columns>
-                        </sf:SfDataGrid>
-                    </sf:GridViewDefinition.DataGrid>
-                </sf:GridViewDefinition>
-            </sf:SfDataGrid.DetailsViewDefinition>
-            
-        </sf:SfDataGrid>--> 
     </StackPanel>
 </Page>
