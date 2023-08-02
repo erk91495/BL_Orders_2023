@@ -479,14 +479,6 @@ public sealed partial class OrderDetailsPage : Page
             if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
             {
                 ViewModel.AddItem(productToAdd);
-                if(ViewModel.OrderStatus == OrderStatus.Ordered)
-                {
-                    ViewModel.OrderStatus = OrderStatus.Filling;
-                }
-                if (ViewModel.AllItemsScanned)
-                {
-                    ViewModel.OrderStatus = OrderStatus.Filled;
-                }
             }
             else if (productToAdd != null)
             {

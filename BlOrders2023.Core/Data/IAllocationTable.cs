@@ -8,5 +8,6 @@ using BlOrders2023.Models;
 namespace BlOrders2023.Core.Data;
 public interface IAllocationTable
 {
+    IEnumerable<AllocationGroup> GetAllocationGroups();
     public Task<IEnumerable<AllocationGroup>> GetAllocationGroupsAsync();
 }

@@ -24,6 +24,8 @@ internal class SqlAllocationTable : IAllocationTable
     {
         _db = db;
     }
+
+    public IEnumerable<AllocationGroup> GetAllocationGroups() => _db.AllocationGroups.ToList();
     #endregion Constructors
 
     #region Methods

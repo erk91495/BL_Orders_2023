@@ -16,6 +16,7 @@ using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
 using Microsoft.Identity.Client;
 using Microsoft.EntityFrameworkCore;
+using BlOrders2023.Models.Enums;
 
 namespace BlOrders2023.Views;
 
@@ -93,6 +94,15 @@ public sealed partial class FillOrdersPage : Page
             OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
             OrderedItems.ColumnSizer.Refresh(); 
             OrderedVsReceivedGrid.View.Refresh();
+            if (ViewModel.Order?.OrderStatus == OrderStatus.Ordered)
+            {
+                ViewModel.Order.OrderStatus = OrderStatus.Filling;
+            }
+            if (ViewModel.Order.AllItemsReceived)
+            {
+                ViewModel.Order.OrderStatus = OrderStatus.Filled;
+            }
+            await ViewModel.SaveOrderAsync();
         }
         catch (DbUpdateConcurrencyException ex)
         {

@@ -50,6 +50,15 @@
 	<None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="Styles\AllocationDataGridStyle.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
+	<Page Update="UserControls\AllocatedItemsGridControl.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
+	<Page Update="UserControls\AllocatedOrderControl.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="Views\AllocatorPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -64,11 +73,14 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PRIResource Remove="Themes\**" />
+    <None Remove="Styles\AllocationDataGridStyle.xaml" />
+    <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
+    <None Remove="UserControls\AllocatedOrderControl.xaml" />
+    <None Remove="Views\AllocatorPage.xaml" />
   </ItemGroup>
   
   <ItemGroup>
-    <None Remove="Views\AllocatorPage.xaml" />
+    <Folder Include="Themes\" />
   </ItemGroup>
   
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

@@ -9,15 +9,27 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:uc="using:BlOrders2023.UserControls"
+    xmlns:wctprimitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
     mc:Ignorable="d"
+    Name="AllocationPage"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="AllocatorPage_Loaded">
 
+
     <StackPanel Orientation="Vertical">
+
         <controls:DataGrid
+            x:Name="OrdersGrid"
             ItemsSource="{x:Bind ViewModel.AllocatedOrders, Mode=TwoWay}"
             AutoGenerateColumns="False"
-            RowDetailsVisibilityMode="Visible">
+            Style="{StaticResource AllocationDataGridStyle}"
+            ColumnHeaderStyle="{StaticResource AllocationDataGridColumnHeaderStyle}"
+            RowStyle="{StaticResource AllocationDataGridRowStyle}"
+            CellStyle="{StaticResource AllocationDataGridCellStyle}"
+            RowDetailsVisibilityMode="Visible"
+            Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}"
+            GridLinesVisibility="All">
 
             <controls:DataGrid.Columns>
                 <controls:DataGridTemplateColumn Header="Order ID" Width="Auto">
@@ -27,6 +39,7 @@
                         </DataTemplate>
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>
+
 
                 <controls:DataGridTemplateColumn Header="Customer" Width="Auto">
                     <controls:DataGridTemplateColumn.CellTemplate>
@@ -56,15 +69,7 @@
 
             <controls:DataGrid.RowDetailsTemplate>
                 <DataTemplate x:DataType="models:Order">
-                    <StackPanel>
-                        <sf:SfDataGrid x:Name="Items" AutoGenerateColumns="False" ItemsSource="{x:Bind Items}">
-                            <sf:SfDataGrid.Columns>
-                                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" IsReadOnly="True"/>
-                                <sf:GridNumericColumn HeaderText="Ordered" MappingName="Quantity" IsReadOnly="True"/>
-                                <sf:GridNumericColumn HeaderText="Allocated" MappingName="QuanAllocated" IsReadOnly="True"/>
-                            </sf:SfDataGrid.Columns>
-                        </sf:SfDataGrid>
-                    </StackPanel>
+                    <uc:AllocatedItemsGridControl Items="{x:Bind Items, Mode=TwoWay}"/>
                 </DataTemplate>
             </controls:DataGrid.RowDetailsTemplate>
         </controls:DataGrid>

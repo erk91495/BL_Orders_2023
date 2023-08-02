@@ -199,6 +199,8 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         //ReCalculateOrderdVsReceived();
 
     }
+
+    internal async Task SaveOrderAsync() => await _orderDB.Orders.UpsertAsync(_order);
     #endregion Methods
 
 
