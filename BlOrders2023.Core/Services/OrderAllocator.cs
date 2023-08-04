@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using BlOrders2023.Core.Contracts;
 using BlOrders2023.Core.Contracts.Services;
 using BlOrders2023.Core.Data;
@@ -21,7 +22,7 @@ public class OrderAllocator : IAllocatorService
     private readonly IBLDatabase _db;
     private Dictionary<int, float> ordered = new();
     private IList<Order> _orders;
-    private IEnumerable<InventoryItem> _ineventory;
+    private IEnumerable<InventoryItem> _inventory;
     private ReadOnlyDictionary<int, int> _startingInventory;
     private Dictionary<int, int> _remainingInventory = new();
     private IEnumerable<AllocationGroup> _allocationGroups;
@@ -43,12 +44,12 @@ public class OrderAllocator : IAllocatorService
         //await Task.WhenAll(ordersTask, inventoryTask);
 
         //_orders = ordersTask.Result.ToList();
-        //_ineventory = inventoryTask.Result;
+        //_inventory = inventoryTask.Result;
 
 
         var temporder = await _db.Orders.GetAsync(config.IDs);
         _orders = temporder.ToList();
-        _ineventory = await _db.Inventory.GetInventoryAsync();
+        _inventory = await _db.Inventory.GetInventoryAsync();
         _allocationGroups = await _db.Allocation.GetAllocationGroupsAsync();
 
         CalculateTotalOrdered();
@@ -70,6 +71,7 @@ public class OrderAllocator : IAllocatorService
         }
         else if (config.AllocationType == Models.Enums.AllocatorMode.Both)
         {
+            throw new NotImplementedException();
             AllocateGift();
             AllocateGrocer();
         }
@@ -88,7 +90,91 @@ public class OrderAllocator : IAllocatorService
         return true;
     }
 
-    private void AllocateGift() => throw new NotImplementedException();
+    private void AllocateGift()
+    {
+        foreach (var group in _allocationGroups)
+        {
+            var productIDs = group.ProductIDs;
+            for (int idIndex = 0; idIndex < productIDs.Count; idIndex++)
+            {
+                int currentProductID = productIDs[idIndex];
+                int totalExtraNeeded = 0;
+
+                //First Make Sure the key is inventory and orderd lists
+                if (_remainingInventory.ContainsKey(currentProductID))
+                {
+                    foreach(var order in _orders)
+                    {
+                        var orderedItem = order.Items.Where(e => e.ProductID == currentProductID).FirstOrDefault();
+                        if (orderedItem != null)
+                        {
+                            var quantityNeeded = orderedItem.Quantity;
+                            if(quantityNeeded >= _remainingInventory[currentProductID])
+                            {
+                                orderedItem.QuanAllocated = quantityNeeded;
+                                orderedItem.Allocated = true;
+                            }
+                            //Up one
+                            else if (idIndex + 1 < productIDs.Count && quantityNeeded >= _remainingInventory[productIDs[idIndex + 1]])
+                            {
+                                orderedItem = order.Items.Where(e => e.ProductID == productIDs[idIndex + 1]).FirstOrDefault();
+                                if(orderedItem != null)
+                                {
+                                    orderedItem.QuanAllocated += quantityNeeded;
+                                }
+                                else
+                                {
+                                    OrderItem item = new()
+                                    {
+                                        ProductID = productIDs[idIndex + 1],
+                                        Quantity = 0,
+                                        QuanAllocated = quantityNeeded,
+                                        Allocated = true
+                                    };
+                                }
+                            }
+                            //down one
+                            else if (idIndex > 0 && quantityNeeded >= _remainingInventory[productIDs[idIndex -1 ]])
+                            {
+                                orderedItem = order.Items.Where(e => e.ProductID == productIDs[idIndex - 1]).FirstOrDefault();
+                                if (orderedItem != null)
+                                {
+                                    orderedItem.QuanAllocated += quantityNeeded;
+                                }
+                                else
+                                {
+                                    OrderItem item = new()
+                                    {
+                                        ProductID = productIDs[idIndex - 1],
+                                        Quantity = 0,
+                                        QuanAllocated = quantityNeeded,
+                                        Allocated = true
+                                    };
+                                }
+                            }
+                            else
+                            {
+                                throw new AllocationFailedException($"Could Not Allocate {currentProductID}. Insufficent Quantity: Needed {quantityNeeded}");
+                            }
+                        }
+                    }
+
+                }// end for each order
+
+                else
+                {
+                    //TODO: fixme
+                    if (ordered.ContainsKey(currentProductID))
+                    {
+                        Debug.WriteLine($"Item not in inventory: {currentProductID}");
+                        throw new AllocationFailedException($"Item not in inventory: {currentProductID}");
+                    }
+                }
+
+            }// end for each product id
+        }
+
+    }
 
     private void MarkOrdersAllocated()
     {
@@ -101,7 +187,7 @@ public class OrderAllocator : IAllocatorService
 
     private void CalculateInventory()
     {
-        foreach(var item in _ineventory)
+        foreach(var item in _inventory)
         {
             _remainingInventory.Add(item.ProductID, item.QuantityOnHand);
         }
@@ -114,7 +200,6 @@ public class OrderAllocator : IAllocatorService
         foreach(var group in _allocationGroups)
         {
             var productIDs = group.ProductIDs;
-            //TODO: decide how we are going to get the groups
             for (int idIndex = 0; idIndex < productIDs.Count; idIndex++)
             {
                 int currentProductID = productIDs[idIndex];
