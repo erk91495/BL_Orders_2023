@@ -2,6 +2,7 @@
 using BlOrders2023.Core.Data;
 using BlOrders2023.Exceptions;
 using BlOrders2023.Models;
+using BlOrders2023.Models.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +23,19 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     public ObservableCollection<ShippingItem> Items { get; set; }
     public ObservableCollection<Order> FillableOrders { get; set; }
     public ObservableCollection<Order> FillableOrdersMasterList { get; set; }
+    public OrderStatus OrderStatus
+    {
+        get => _order.OrderStatus;
+        set
+        {
+            _order.OrderStatus = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(CanPrintInvoice));
+            OnPropertyChanged(nameof(CanPrintOrder));
+        }
+    }
+    public bool CanPrintInvoice => _order?.CanPrintInvoice ?? false;
+    public bool CanPrintOrder => _order?.CanPrintOrder ?? false;
     #endregion Properties
 
     #region Fields
@@ -94,6 +108,8 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         OnPropertyChanged(nameof(HasOrder));
         OnPropertyChanged(nameof(FillableOrders));
         OnPropertyChanged(nameof(FillableOrdersMasterList));
+        OnPropertyChanged(nameof(CanPrintInvoice));
+        OnPropertyChanged(nameof(CanPrintOrder));
     }
 
     internal void QueryFillableOrders(string text)
@@ -189,14 +205,25 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    internal Task DeleteAllShippingItemsAsync()
+    internal async Task DeleteAllShippingItemsAsync()
     {
-        throw new NotImplementedException();
-        //need to handle order items
-        //Items.Clear();
-        //_order.ShippingItems.Clear();
-        //await App.GetNewDatabase().ShipDetails.UpsertAsync(_order.ShippingItems);
-        //ReCalculateOrderdVsReceived();
+        foreach( var item in Items)
+        {
+            if (!Items.Remove(item))
+            {
+                if (!_order!.ShippingItems.Remove(item))
+                {
+                    //throw new Exception();
+                }
+                else
+                {
+                    DecrementOrderedItem(item);
+                }
+                
+            }
+        }
+        await SaveOrderAsync();
+        OnPropertyChanged(nameof(Items));
 
     }
 

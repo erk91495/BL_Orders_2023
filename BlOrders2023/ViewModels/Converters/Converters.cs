@@ -206,7 +206,7 @@ namespace BlOrders2023.ViewModels.Converters
         {
             if (value is DateTime date)
             {
-                return date.ToString("MM/dd/yyyy");
+                return date.ToString("M/d/yyyy");
             }
             else
             {

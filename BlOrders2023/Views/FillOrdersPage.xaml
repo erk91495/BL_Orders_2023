@@ -133,6 +133,8 @@
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem x:Name="DeleteAll" Text="Remove All Items" Icon="Delete" Click="DeleteAll_Click"/>
+                                <MenuFlyoutItem Text="Print Order" Icon="Print" Click="PrintOrderFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintOrder, Mode=OneWay}"/>
+                                <MenuFlyoutItem Text="Print Invoice" Icon="Print" Click="PrintInvoiceFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintInvoice, Mode=OneWay}"/>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
@@ -145,7 +147,7 @@
                                 Padding="0,20,10,0">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Order Date:"/>
-                            <TextBlock Text="{x:Bind ViewModel.Order.OrderDate}"
+                            <TextBlock Text="{x:Bind ViewModel.Order.OrderDate.ToString(), Mode=OneWay}"
                                        Padding="10,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">

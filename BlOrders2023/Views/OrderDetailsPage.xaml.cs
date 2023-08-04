@@ -566,41 +566,62 @@ public sealed partial class OrderDetailsPage : Page
 
     private async Task PrintInvoiceAsync()
     {
+        var printInvoice = false;
         if(ViewModel.CanPrintInvoice) {
+            //Invoice already printed print copy
             if (ViewModel.OrderStatus > OrderStatus.Filled) 
             {
                 ContentDialog contentDialog= new ContentDialog()
                 {
                     XamlRoot = XamlRoot,
-                    Content = "This invoice has already been printed. To print a copy press continue",
-                    PrimaryButtonText = "Continue",
+                    Content = "This invoice has already been printed. To print a copy press Reprint",
+                    PrimaryButtonText = "Reprint",
                     CloseButtonText = "Cancel",
                 };
                 var res = await contentDialog.ShowAsync();
-                if(res != ContentDialogResult.Primary)
+                if(res == ContentDialogResult.Primary)
                 {
-                    return;
+                    printInvoice = true;
                 }
             }
-            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
+            //Print invoice
+            else
+            {
+                printInvoice = true;
+            }
+        }
+        else if( ViewModel.OrderStatus == OrderStatus.Filling)
+        {
+            ContentDialog contentDialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Content = "All items ordered have not been received. Would you still like to print?",
+                PrimaryButtonText = "Print",
+                CloseButtonText = "Cancel",
+            };
+            SystemSounds.Asterisk.Play();
+            var res = await contentDialog.ShowAsync();
+            if (res == ContentDialogResult.Primary)
+            {
+                printInvoice= true;
+            }
+        }
 
-            //Windows.System.LauncherOptions options = new()
-            //{
-            //    ContentType = "application/pdf"
-            //};
-            //_ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+        if (printInvoice)
+        {
+            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
 
             PrinterSettings printSettings = new();
             printSettings.Copies = 2;
             var printer = new PDFPrinterService(filePath);
             printer.PrintPdf(printSettings);
 
-            if(ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled){
+            if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
+            {
                 ViewModel.OrderStatus = OrderStatus.Invoiced;
                 _ = ViewModel.SaveCurrentOrderAsync();
             }
         }
-
     }
 
     private async Task PrintOrderAsync()
