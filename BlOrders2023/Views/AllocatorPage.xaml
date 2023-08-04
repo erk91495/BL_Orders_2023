@@ -68,9 +68,12 @@
 
             <controls:DataGrid.RowDetailsTemplate>
                 <DataTemplate x:DataType="models:Order">
-                    <uc:AllocatedItemsGridControl Items="{x:Bind Items, Mode=TwoWay}"/>
+                    <uc:AllocatedItemsGridControl Items="{x:Bind Items, Mode=OneWay}"/>
                 </DataTemplate>
             </controls:DataGrid.RowDetailsTemplate>
         </controls:DataGrid>
+
+
+        <Button Content="Test" Click="Button_Click"/>
     </StackPanel>
 </Page>

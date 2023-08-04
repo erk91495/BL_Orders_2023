@@ -56,9 +56,6 @@
 	<Page Update="UserControls\AllocatedItemsGridControl.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
-	<Page Update="UserControls\AllocatedOrderControl.xaml">
-	  <Generator>MSBuild:Compile</Generator>
-	</Page>
 	<Page Update="Views\AllocatorPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -75,7 +72,6 @@
   <ItemGroup>
     <None Remove="Styles\AllocationDataGridStyle.xaml" />
     <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
-    <None Remove="UserControls\AllocatedOrderControl.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
   </ItemGroup>
   

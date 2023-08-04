@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using BlOrders2023.Models;
+using BlOrders2023.ViewModels.Converters;
 using CommunityToolkit.WinUI.UI.Controls;
 using CommunityToolkit.WinUI.UI.Controls.Primitives;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -17,6 +20,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Syncfusion.UI.Xaml.Data;
+using Syncfusion.UI.Xaml.DataGrid;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
@@ -67,42 +71,62 @@ public sealed partial class AllocatedItemsGridControl : UserControl
     {
         MainStack.Children.Clear();
         foreach(var Ids in App.GetNewDatabase().Allocation.GetAllocationGroups().Select(e => e.ProductIDs)) {
-            DataGrid d = new DataGrid()
+            SfDataGrid d = new SfDataGrid()
             {
                 AutoGenerateColumns= false,
-                ItemsSource = Items.Where(e => Ids.Contains( e.ProductID)),
-                Style = (Style)App.Current.Resources["AllocationDataGridStyle"],
-                ColumnHeaderStyle = (Style)App.Current.Resources["AllocationDataGridColumnHeaderStyle"],
-                RowStyle = (Style)App.Current.Resources["AllocationDataGridRowStyle"],
-                CellStyle = (Style)App.Current.Resources["AllocationDataGridCellStyle"],
+                ItemsSource = Items.Where(e => Ids.Contains(e.ProductID)),
+                IsReadOnly=false,
+
             };
 
-            DataGridColumn ProductIDColumn = new DataGridTextColumn()
+            GridTextColumn ProductIDColumn = new GridTextColumn()
             { 
-                Header="Product", 
-                Binding = new(){ Path = new("ProductID"), Mode=BindingMode.TwoWay},
+                HeaderText="Product", 
+                MappingName = "ProductID",
+                IsReadOnly=true,
             };
 
-            DataGridColumn OrderedColumn = new DataGridTextColumn()
+            GridTextColumn OrderedColumn = new GridTextColumn()
             {
-                Header = "Ordered",
-                Binding = new() { Path = new("Quantity"), Mode = BindingMode.TwoWay },
+                HeaderText = "Ordered",
+                MappingName = "Quantity",
+                IsReadOnly=true,
             };
 
-            DataGridColumn AllocatedColumn = new DataGridTextColumn()
+            GridNumericColumn AllocatedColumn = new GridNumericColumn()
             {
-                Header = "Allocated",
-                Binding = new() { Path = new("QuanAllocated"), Mode = BindingMode.TwoWay },
+                HeaderText = "Allocated",
+                MappingName = "QuanAllocated",
+                //DisplayBinding = new Binding() { Path = new("QuanAllocated"), Converter = new FloatToStringConverter()},
+                //ValueBinding = new Binding() { Path = new("QuanAllocated"), Mode=BindingMode.TwoWay, Converter= new FloatToDecimalConverter() },
+                IsReadOnly = false,
+                AllowEditing = true,
+                UseBindingValue = true,
             };
 
             d.Columns.Add(ProductIDColumn);
             d.Columns.Add(OrderedColumn);
             d.Columns.Add(AllocatedColumn);
-            if(!d.ItemsSource.ToList<OrderItem>().IsNullOrEmpty())
+            if(d.ItemsSource is IEnumerable<OrderItem> source && !source.IsNullOrEmpty())
             {
                 MainStack.Children.Add(d);
             }
         }
     }
-    #endregion  Methods
+
+    private void cellEditEnded(object? sender, DataGridCellEditEndedEventArgs e)
+    {
+        if(sender is DataGrid dg)
+        {
+            if(e.Column.Header.ToString() == ("Allocated") && dg.SelectedItem is OrderItem item)
+            {
+                var cell = e.Column.GetCellContent(e.Row) as TextBlock;
+                if (cell != null && !int.TryParse(cell.Text, out _))
+                {
+                    //todo validate input
+                }
+            }
+        }
+    }
+    #endregion Methods
 }

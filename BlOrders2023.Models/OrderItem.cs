@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
