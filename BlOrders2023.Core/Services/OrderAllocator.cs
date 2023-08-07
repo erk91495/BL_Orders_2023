@@ -7,6 +7,7 @@ using BlOrders2023.Core.Data;
 using BlOrders2023.Core.Helpers;
 using BlOrders2023.Exceptions;
 using BlOrders2023.Models;
+using BlOrders2023.Models.Enums;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.IdentityModel.Tokens;
 
@@ -52,27 +53,31 @@ public class OrderAllocator : IAllocatorService
         _inventory = await _db.Inventory.GetInventoryAsync();
         _allocationGroups = await _db.Allocation.GetAllocationGroupsAsync();
 
-        CalculateTotalOrdered();
+        
         CalculateInventory();
 
 
         //for debug and testing. do what you want
         if (config.AllocationType == Models.Enums.AllocatorMode.Test)
         {
+            CalculateTotalOrdered(CustomerAllocationType.Grocer);
             AllocateGrocer();
         }
         else if(config.AllocationType == Models.Enums.AllocatorMode.Grocer)
         {
+            CalculateTotalOrdered(CustomerAllocationType.Grocer);
             AllocateGrocer();
         }
         else if (config.AllocationType == Models.Enums.AllocatorMode.Gift)
         {
+            CalculateTotalOrdered(CustomerAllocationType.Gift);
             AllocateGift();
         }
         else if (config.AllocationType == Models.Enums.AllocatorMode.Both)
         {
-            throw new NotImplementedException();
+            CalculateTotalOrdered(CustomerAllocationType.Gift);
             AllocateGift();
+            CalculateTotalOrdered(CustomerAllocationType.Grocer);
             AllocateGrocer();
         }
         else
@@ -103,7 +108,7 @@ public class OrderAllocator : IAllocatorService
                 //First Make Sure the key is inventory and orderd lists
                 if (_remainingInventory.ContainsKey(currentProductID))
                 {
-                    foreach(var order in _orders)
+                    foreach(var order in _orders.Where(o => o.Customer.AllocationType == Models.Enums.CustomerAllocationType.Gift))
                     {
                         var orderedItem = order.Items.Where(e => e.ProductID == currentProductID).FirstOrDefault();
                         if (orderedItem != null)
@@ -196,7 +201,7 @@ public class OrderAllocator : IAllocatorService
 
     private bool AllocateGrocer()
     {
-
+        var grocerOrders = _orders.Where(o => o.Customer.AllocationType == CustomerAllocationType.Grocer).ToList();
         foreach(var group in _allocationGroups)
         {
             var productIDs = group.ProductIDs;
@@ -211,9 +216,9 @@ public class OrderAllocator : IAllocatorService
                     float portion = (float)_remainingInventory[currentProductID] / (float)ordered[currentProductID];
                     portion = portion > 1 ? 1 : portion;
                     // Give Portion to each order
-                    for (int orderIndex = 0; orderIndex < _orders.Count(); orderIndex++)
+                    for (int orderIndex = 0; orderIndex < grocerOrders.Count(); orderIndex++)
                     {
-                        Order currentOrder = _orders[orderIndex];
+                        Order currentOrder = grocerOrders[orderIndex];
                         var currentItemIndex = currentOrder.Items.IndexOf(currentOrder.Items.Where(i => i.ProductID == currentProductID).FirstOrDefault());
                         var currentOrderItem = currentOrder.Items.Where(i => i.ProductID == currentProductID).FirstOrDefault();
 
@@ -227,15 +232,15 @@ public class OrderAllocator : IAllocatorService
                             currentOrderItem.ExtraNeeded += extra;
                             currentOrderItem.Allocated = true;
                         }
-                        //_orders[orderIndex].Items[currentItemIndex] = currentOrderItem;
+                        //grocerOrders[orderIndex].Items[currentItemIndex] = currentOrderItem;
                     }// end for each order
 
 
 
                     //Give Exra to each order
-                    for (int orderIndex = 0; orderIndex < _orders.Count(); orderIndex++)
+                    for (int orderIndex = 0; orderIndex < grocerOrders.Count(); orderIndex++)
                     {
-                        Order currentOrder = _orders[orderIndex];
+                        Order currentOrder = grocerOrders[orderIndex];
                         var currentOrderItem = currentOrder.Items.Where(i => i.ProductID == currentProductID).FirstOrDefault();
                         if(currentOrderItem != null){
                             //If I can't portion up set portion to 0 it should sort itself out when we try to go down
@@ -340,11 +345,12 @@ public class OrderAllocator : IAllocatorService
         return true;
     }
 
-    private void CalculateTotalOrdered()
+    private void CalculateTotalOrdered(CustomerAllocationType allocationType)
     {
-        foreach (var id in _orders.SelectMany(o => o.Items).Select(i => i.ProductID).Distinct())
+        var ordesByAllocationType = _orders.Where(o => o.Customer.AllocationType == allocationType);
+        foreach (var id in ordesByAllocationType.SelectMany(o => o.Items).Select(i => i.ProductID).Distinct())
         {
-            ordered.Add(id, _orders.SelectMany(o => o.Items).Where(i => i.ProductID == id).Sum(i => i.Quantity));
+            ordered.Add(id, ordesByAllocationType.SelectMany(o => o.Items).Where(i => i.ProductID == id).Sum(i => i.Quantity));
         }
     }
 
