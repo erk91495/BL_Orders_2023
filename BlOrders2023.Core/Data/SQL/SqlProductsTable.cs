@@ -12,12 +12,12 @@ using System.ComponentModel.Design;
 
 namespace BlOrders2023.Core.Data.SQL;
 
-public class ProductsTable : IProductsTable
+internal class SqlProductsTable : IProductsTable
 {
 
-    private readonly BLOrdersDBContext _db;
+    private readonly SqlBLOrdersDBContext _db;
 
-    public ProductsTable(BLOrdersDBContext db)
+    public SqlProductsTable(SqlBLOrdersDBContext db)
     {
         _db = db;
     }
@@ -137,7 +137,7 @@ public class ProductsTable : IProductsTable
             //TODO: Concurrency checks maybe here
             _db.Entry(exists).CurrentValues.SetValues(product);
         }
-        int res = await _db.SaveChangesAsync();
+        var res = await _db.SaveChangesAsync();
         return product;
     }
 }

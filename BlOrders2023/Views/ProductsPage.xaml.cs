@@ -29,90 +29,89 @@ using System.Collections.ObjectModel;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace BlOrders2023.Views
+namespace BlOrders2023.Views;
+
+/// <summary>
+/// A page to display _products
+/// </summary>
+public sealed partial class ProductsPage : Page
 {
-    /// <summary>
-    /// A page to display _products
-    /// </summary>
-    public sealed partial class ProductsPage : Page
+    #region Properties
+    public ProductsPageViewModel ViewModel { get; }
+    #endregion Properties
+
+    #region Fields
+    #endregion Fields
+
+    #region Constructors
+    public ProductsPage()
     {
-        #region Properties
-        public ProductsPageViewModel ViewModel { get; }
-        #endregion Properties
+        this.InitializeComponent();
+        ViewModel = App.GetService<ProductsPageViewModel>();
+        ColumnWholesalePrice.NumberFormatter = new DecimalFormatter();
+    }
+    #endregion Constructors
 
-        #region Fields
-        #endregion Fields
+    #region Methods
 
-        #region Constructors
-        public ProductsPage()
+    #endregion Methods
+
+    private void ProductsGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
+    {
+        foreach(Product item in e.Items)
         {
-            this.InitializeComponent();
-            ViewModel = App.GetService<ProductsPageViewModel>();
-            ColumnWholesalePrice.NumberFormatter = new DecimalFormatter();
+            ViewModel.DeleteItem(item);
         }
-        #endregion Constructors
+    }
 
-        #region Methods
+    private void ProductsGrid_AddNewRowInitiating(object sender, AddNewRowInitiatingEventArgs e)
+    {
 
-        #endregion Methods
+    }
 
-        private void ProductsGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
+    private void ProductsGrid_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
+    {
+        if (e.RowData is Product prod)
         {
-            foreach(Product item in e.Items)
+
+            switch (e.Column.MappingName)
             {
-                ViewModel.DeleteItem(item);
+                case "ProductID":
+                    {
+                        Task<bool> dupCheck = Task.Run<bool>(async () => await ProductsPageViewModel.ProductIDExists(prod.ProductID));
+                        if (dupCheck.Result)
+                        {
+                            e.IsValid = false;
+                            e.ErrorMessage = "Product ID must be unique";
+                        }
+                        break;
+                    }
+                case "ProductName":
+                    {
+                        if (prod.ProductName.IsNullOrEmpty())
+                        {
+                            e.IsValid = false;
+                            e.ErrorMessage = "The Product Name cannot be empty";
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
             }
         }
+    }
 
-        private void ProductsGrid_AddNewRowInitiating(object sender, AddNewRowInitiatingEventArgs e)
+    private void ProductsGrid_CurrentCellValidated(object sender, CurrentCellValidatedEventArgs e)
+    {
+        if(e.RowData is Product p)
         {
-
-        }
-
-        private void ProductsGrid_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
-        {
-            if (e.RowData is Product prod)
+            Collection<ValidationResult> result = new();
+            ValidationContext context = new(p);
+            if(Validator.TryValidateObject(p, context, result,true))
             {
-
-                switch (e.Column.MappingName)
-                {
-                    case "ProductID":
-                        {
-                            Task<bool> dupCheck = Task.Run<bool>(async () => await ProductsPageViewModel.ProductIDExists(prod.ProductID));
-                            if (dupCheck.Result)
-                            {
-                                e.IsValid = false;
-                                e.ErrorMessage = "Product ID must be unique";
-                            }
-                            break;
-                        }
-                    case "ProductName":
-                        {
-                            if (prod.ProductName.IsNullOrEmpty())
-                            {
-                                e.IsValid = false;
-                                e.ErrorMessage = "The Product Name cannot be empty";
-                            }
-                            break;
-                        }
-                    default:
-                        {
-                            break;
-                        }
-                }
-            }
-        }
-
-        private void ProductsGrid_CurrentCellValidated(object sender, CurrentCellValidatedEventArgs e)
-        {
-            if(e.RowData is Product p)
-            {
-                Collection<ValidationResult> result = new();
-                ValidationContext context = new(p);
-                if(Validator.TryValidateObject(p, context, result,true))
-                {
-                    ViewModel.SaveItem(p);
-                }
+                ViewModel.SaveItem(p);
             }
         }
     }

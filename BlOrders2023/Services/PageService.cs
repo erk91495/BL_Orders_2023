@@ -20,6 +20,7 @@ public class PageService : IPageService
         Configure<ProductsPageViewModel, ProductsPage>();
         Configure<FillOrdersPageViewModel, FillOrdersPage>();
         Configure<WholesaleCustomersViewModel, WholesaleCustomersPage>();
+        Configure<AllocatorPageViewModel, AllocatorPage>();
     }
 
     public Type GetPageType(string key)

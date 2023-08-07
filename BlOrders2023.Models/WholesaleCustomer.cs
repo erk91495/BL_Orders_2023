@@ -43,7 +43,7 @@ namespace BlOrders2023.Models
         public bool UseSameAddress { get; set; }
         
         [Column("isGrocer")]
-        public AllocationType AllocationType { get; set; }
+        public CustomerAllocationType AllocationType { get; set; }
         
         [ForeignKey("CustomerClassID")]
         public virtual CustomerClass CustomerClass
@@ -68,7 +68,7 @@ namespace BlOrders2023.Models
         {
             CustomerName = "";
             Phone = "";
-            AllocationType = AllocationType.Grocer;
+            AllocationType = CustomerAllocationType.Grocer;
             Inactive = false;
             SingleProdPerPallet = false;
             _customerClass = new();

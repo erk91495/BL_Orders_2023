@@ -8,9 +8,12 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:vm="using:BlOrders2023.ViewModels.Converters"
     xmlns:enums="using:BlOrders2023.Models.Enums"
+    xmlns:uiConverters="using:CommunityToolkit.WinUI.UI.Converters"
     mc:Ignorable="d">
 
     <Page.Resources>
+        <uiConverters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        
         <MenuFlyout x:Key="DataGridContextMenu">
             <MenuFlyoutItem
                 Click="MenuFlyoutViewDetails_Click"
@@ -63,7 +66,7 @@
         <SplitView x:Name="ListSplitView"
                    DisplayMode="Inline"
                    IsPaneOpen="{x:Bind vm:Converters.IsNotNull(ViewModel.SelectedOrder), Mode=OneWay}"
-                   OpenPaneLength="750"
+                   OpenPaneLength="800"
                    PanePlacement="Right"
                    PaneBackground="Transparent"
                    HorizontalAlignment="Stretch"
@@ -171,7 +174,8 @@
                             <sf:GridTextColumn HeaderText="Product  #" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" TextWrapping="WrapWholeWords"/>
                             <sf:GridTextColumn HeaderText="Ordered" MappingName="Quantity"/>
-                            <sf:GridTextColumn HeaderText="Received" MappingName="QuantityReceived"/>
+                            <sf:GridTextColumn HeaderText="Allocated" MappingName="QuanAllocated"/>
+                            <sf:GridTextColumn HeaderText="Received" MappingName="QuantityReceived" IsHidden="{x:Bind ViewModel.SelectedOrder.Allocated, Mode=OneWay,Converter={StaticResource BoolNegationConverter}}"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
 
@@ -227,7 +231,8 @@
                                    ContextFlyout="{StaticResource DataGridContextMenu}"
                                    EnableDataVirtualization="True"
                                    IsDynamicItemsSource="True"
-                                   AllowFiltering="True"
+                                   AllowFiltering="False"
+                                   AllowSorting="False"
                                    SelectionMode="Single"
                                    NavigationMode="Row"
                                    SelectionChanged="OrdersGrid_SelectionChanged">

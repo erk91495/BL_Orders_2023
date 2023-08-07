@@ -7,6 +7,7 @@
     xmlns:models="using:BlOrders2023.Models"
     xmlns:vm="using:BlOrders2023.ViewModels"
     xmlns:converters="using:BlOrders2023.ViewModels.Converters"
+    xmlns:uiConverters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     mc:Ignorable="d">
     <Page.Resources>
@@ -14,6 +15,7 @@
         <converters:DateFormatConverter x:Key="DateFormatConverter"/>
         <converters:TimeFormatConverter x:Key="TimeFormatConverter"/>
         <converters:WeightFormatConverter x:Key="WeightFormatConverter"/>
+        <uiConverters:BoolNegationConverter x:Key="BoolNegationConverter"/>
 
         <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
             <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
@@ -62,9 +64,10 @@
                 <RelativePanel Background="{ThemeResource SystemAltMediumLowColor}"
                                CornerRadius="20,0,0,20" VerticalAlignment="Stretch">
 
-                    <sf:SfDataGrid IsReadOnly="True"
+                    <sf:SfDataGrid x:Name="OrderedVsReceivedGrid"
+                                       IsReadOnly="True"
                                        AutoGenerateColumns="False"
-                                       ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=TwoWay}"
+                                       ItemsSource="{x:Bind ViewModel.Order.Items, Mode=OneWay}"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.AlignTopWithPanel="True"
@@ -78,9 +81,10 @@
                                        BorderThickness="0">
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
-                            <sf:GridNumericColumn HeaderText="Ordered" MappingName="Ordered"/>
-                            <sf:GridNumericColumn HeaderText="Received" MappingName="Received"/>
-                            <sf:GridNumericColumn HeaderText="Total Weight" MappingName="Weight" DisplayNumberFormat="N2"/>
+                            <sf:GridNumericColumn HeaderText="Ordered" MappingName="Quantity"/>
+                            <sf:GridNumericColumn HeaderText="Allocated" MappingName="QuanAllocated" IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                            <sf:GridNumericColumn HeaderText="Received" MappingName="QuantityReceived"/>
+                            <sf:GridNumericColumn HeaderText="Total Weight" MappingName="PickWeight" DisplayNumberFormat="N2"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
                     <!--<controls:DataGrid ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=OneWay}"
@@ -129,6 +133,8 @@
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem x:Name="DeleteAll" Text="Remove All Items" Icon="Delete" Click="DeleteAll_Click"/>
+                                <MenuFlyoutItem Text="Print Order" Icon="Print" Click="PrintOrderFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintOrder, Mode=OneWay}"/>
+                                <MenuFlyoutItem Text="Print Invoice" Icon="Print" Click="PrintInvoiceFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintInvoice, Mode=OneWay}"/>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
@@ -141,7 +147,7 @@
                                 Padding="0,20,10,0">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Order Date:"/>
-                            <TextBlock Text="{x:Bind ViewModel.Order.OrderDate}"
+                            <TextBlock Text="{x:Bind ViewModel.Order.OrderDate.ToString(), Mode=OneWay}"
                                        Padding="10,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">

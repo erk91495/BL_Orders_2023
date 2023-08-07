@@ -311,7 +311,7 @@ public class CustomerDataInputControlViewModel : ObservableValidator
     public bool CheckIfUnique { get; set; }
     public ObservableCollection<CustomerClass> Classes { get; } = new();
 
-    public static IEnumerable<AllocationType> AllocationTypes => Enum.GetValues(typeof(AllocationType)).Cast<AllocationType>();
+    public static IEnumerable<CustomerAllocationType> AllocationTypes => Enum.GetValues(typeof(CustomerAllocationType)).Cast<CustomerAllocationType>();
     public WholesaleCustomer Customer => _customer;
     #endregion Properties
     #region Fields

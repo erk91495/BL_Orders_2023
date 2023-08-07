@@ -133,7 +133,6 @@ public sealed partial class ShellPage : Page
         var navigationService = App.GetService<INavigationService>();
         navigationService?.Frame?.Navigate(typeof(ProductsPage));
     }
-    #endregion Methods
 
     private void MenuFlyoutProducts_Click(object sender, RoutedEventArgs e)
     {
@@ -145,5 +144,12 @@ public sealed partial class ShellPage : Page
         var navigationService = App.GetService<INavigationService>();
         navigationService?.Frame?.Navigate(typeof(CustomerClassesPage));
     }
+
+    private void MenuFlyoutItemAllocation_Click(object sender, RoutedEventArgs e)
+    {
+        var navigationService = App.GetService<INavigationService>();
+        navigationService?.Frame?.Navigate(typeof(AllocatorPage));
+    }
+
+    #endregion Methods
 }
- 

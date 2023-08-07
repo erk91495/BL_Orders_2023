@@ -16,6 +16,10 @@ using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
 using Microsoft.Identity.Client;
 using Microsoft.EntityFrameworkCore;
+using BlOrders2023.Models.Enums;
+using BlOrders2023.Reporting;
+using BlOrders2023.Services;
+using System.Drawing.Printing;
 
 namespace BlOrders2023.Views;
 
@@ -23,6 +27,7 @@ public sealed partial class FillOrdersPage : Page
 {
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    private readonly ReportGenerator reportGenerator;
     #endregion Fields
     public FillOrdersPageViewModel ViewModel
     {
@@ -33,6 +38,7 @@ public sealed partial class FillOrdersPage : Page
     {
         ViewModel = App.GetService<FillOrdersPageViewModel>();
         InitializeComponent();
+        reportGenerator = new();
 
         //TODO: Is this the way to handle setting the default focus?
         dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low,
@@ -91,7 +97,17 @@ public sealed partial class FillOrdersPage : Page
         {
             await ViewModel.ReceiveItemAsync(item);
             OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
-            OrderedItems.ColumnSizer.Refresh();
+            OrderedItems.ColumnSizer.Refresh(); 
+            OrderedVsReceivedGrid.View.Refresh();
+            if (ViewModel.Order?.OrderStatus == OrderStatus.Ordered)
+            {
+                ViewModel.Order.OrderStatus = OrderStatus.Filling;
+            }
+            if (ViewModel.Order.AllItemsReceived)
+            {
+                ViewModel.Order.OrderStatus = OrderStatus.Filled;
+            }
+            await ViewModel.SaveOrderAsync();
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -214,6 +230,7 @@ public sealed partial class FillOrdersPage : Page
             foreach (ShippingItem item in e.Items.Cast<ShippingItem>())
             {
                 await ViewModel.DeleteShippingItemAsync(item);
+                OrderedVsReceivedGrid.View.Refresh();
             }
         }
     }
@@ -231,5 +248,116 @@ public sealed partial class FillOrdersPage : Page
     private async void DeleteAll_Click(object sender, RoutedEventArgs e)
     {
         await ViewModel.DeleteAllShippingItemsAsync();
+    }
+
+    private void PrintOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        _ = PrintOrderAsync();
+    }
+
+    private void PrintInvoiceFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        _ = PrintInvoiceAsync();
+    }
+
+    private async Task PrintInvoiceAsync()
+    {
+        var printInvoice = false;
+        if (ViewModel.CanPrintInvoice)
+        {
+            //Invoice already printed print copy
+            if (ViewModel.OrderStatus > OrderStatus.Filled)
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "This invoice has already been printed. To print a copy press Reprint",
+                    PrimaryButtonText = "Reprint",
+                    CloseButtonText = "Cancel",
+                };
+                var res = await contentDialog.ShowAsync();
+                if (res == ContentDialogResult.Primary)
+                {
+                    printInvoice = true;
+                }
+            }
+            //Print invoice
+            else
+            {
+                printInvoice = true;
+            }
+        }
+        else if (ViewModel.OrderStatus == OrderStatus.Filling)
+        {
+            ContentDialog contentDialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Content = "All items ordered have not been received. Would you still like to print?",
+                PrimaryButtonText = "Print",
+                CloseButtonText = "Cancel",
+            };
+            SystemSounds.Asterisk.Play();
+            var res = await contentDialog.ShowAsync();
+            if (res == ContentDialogResult.Primary)
+            {
+                printInvoice = true;
+            }
+        }
+
+        if (printInvoice)
+        {
+            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 2;
+            var printer = new PDFPrinterService(filePath);
+            printer.PrintPdf(printSettings);
+
+            if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
+            {
+                ViewModel.OrderStatus = OrderStatus.Invoiced;
+                _ = ViewModel.SaveOrderAsync();
+            }
+        }
+    }
+
+    private async Task PrintOrderAsync()
+    {
+        if (ViewModel.CanPrintOrder)
+        {
+            if (ViewModel.OrderStatus > OrderStatus.Ordered)
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "This order has already been printed. To print a copy press continue",
+                    PrimaryButtonText = "Continue",
+                    CloseButtonText = "Cancel",
+                };
+                var res = await contentDialog.ShowAsync();
+                if (res != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+            }
+            var filePath = reportGenerator.GeneratePickList(ViewModel.Order);
+
+            //Windows.System.LauncherOptions options = new()
+            //{
+            //    ContentType = "application/pdf"
+            //};
+            //_ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 1;
+            var printer = new PDFPrinterService(filePath);
+            printer.PrintPdf(printSettings);
+
+            if (ViewModel.OrderStatus == OrderStatus.Ordered)
+            {
+                ViewModel.OrderStatus = OrderStatus.Filling;
+                _ = ViewModel.SaveOrderAsync();
+            }
+        }
     }
 }

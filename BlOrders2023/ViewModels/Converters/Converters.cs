@@ -106,6 +106,26 @@ namespace BlOrders2023.ViewModels.Converters
         }
     }
 
+    public class FloatToDecimalConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value != null && value is float f)
+            {
+                return (decimal)f;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return System.Convert.ToSingle(value);
+        }
+    }
+
     public class EnumToBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
@@ -186,7 +206,7 @@ namespace BlOrders2023.ViewModels.Converters
         {
             if (value is DateTime date)
             {
-                return date.ToString("MM/dd/yyyy");
+                return date.ToString("M/d/yyyy");
             }
             else
             {
@@ -244,5 +264,34 @@ namespace BlOrders2023.ViewModels.Converters
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class FloatToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if(value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+            return value.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+            if (value.GetType() != typeof(string))
+            {
+                throw new ArgumentException();
+            }
+            else
+            {
+                return float.Parse(value as string);
+            }
+        }
+
     }
 }

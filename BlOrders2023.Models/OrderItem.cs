@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,6 +14,7 @@ namespace BlOrders2023.Models;
 [Table("tblOrderDetails_2")]
 public class OrderItem
 {
+    private float? quanAllocated;
 
     #region Properties
     public int OrderID { get; set; }
@@ -33,8 +35,16 @@ public class OrderItem
     public virtual Product Product { get; set; } = null!;
 
     public int QuantityReceived => CalcQuantityReceived();
-    public float? QuanAllocated { get; set; }
+    public float? QuanAllocated
+    {
+        get => quanAllocated ?? 0; set => quanAllocated = value;
+    }
 
+    public bool? Allocated { get; set; }
+
+    //Not in DB used for allocation
+    [NotMapped]
+    public int ExtraNeeded { get; set; }
     #endregion Properties
 
     #region Fields
@@ -55,6 +65,8 @@ public class OrderItem
         ActualCustPrice = Helpers.Helpers.CalculateCustomerPrice(product, order.Customer);
         //QuanRcvd = 0;
         ProdEntryDate = DateTime.Now;
+        ExtraNeeded = 0;
+        Allocated = false;
     }
     #endregion Constructors 
 

@@ -52,6 +52,7 @@
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyoutItem Icon="Setting" Text="Products" Click="MenuFlyoutProducts_Click"/>
                             <MenuFlyoutItem Icon="ContactInfo" Text="Customer Classes" Click="MenuFlyoutCustomerClasses_Click"/>
+                            <MenuFlyoutItem Icon="Shuffle" Text="Allocation" Click="MenuFlyoutItemAllocation_Click"/>
                             <MenuFlyoutItem Icon="Setting" Text="Settings"/>
                         </MenuFlyout>
                     </AppBarButton.Flyout>

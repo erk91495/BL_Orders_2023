@@ -8,51 +8,54 @@ using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace BlOrders2023.Core.Data.SQL
+namespace BlOrders2023.Core.Data.SQL;
+
+public class SqlBLOrdersDatabase : IBLDatabase
 {
-    public class SqlBLOrdersDatabase : IBLDatabase
+
+    private readonly DbContextOptions<SqlBLOrdersDBContext> _dbOptions;
+    private readonly SqlBLOrdersDBContext _dbContext;
+
+    public SqlBLOrdersDatabase(DbContextOptions<SqlBLOrdersDBContext> dbOptionBuilder)
     {
+        _dbOptions = (DbContextOptions<SqlBLOrdersDBContext>)dbOptionBuilder;
+        _dbContext = new SqlBLOrdersDBContext(_dbOptions);
+        _dbContext.Database.EnsureCreated();
 
-        private readonly DbContextOptions<BLOrdersDBContext> _dbOptions;
-        private readonly BLOrdersDBContext _dbContext;
+    }
 
-        public SqlBLOrdersDatabase(DbContextOptions<BLOrdersDBContext> dbOptionBuilder)
+    public IOrderTable Orders => new SqlOrderTable(_dbContext);
+
+    public IWholesaleCustomerTable Customers => new SqlWholesaleCustomerTable(_dbContext);
+
+    public IProductsTable Products => new SqlProductsTable(_dbContext);
+
+    public IShipDetailsTable ShipDetails => new SqlShipDetailsTable(_dbContext);
+
+    public IPaymentsTable Payments => new SqlPaymentsTable(_dbContext);
+
+    public ICustomerClassesTable CustomerClasses => new SqlCustomerClassesTable(_dbContext);
+
+    public IInventoryTable Inventory => new SqlInventoryTable(_dbContext);
+
+    public IAllocationTable Allocation => new SqlAllocationTable(_dbContext);
+
+    public Version dbVersion 
+    {
+        get
         {
-            _dbOptions = (DbContextOptions<BLOrdersDBContext>)dbOptionBuilder;
-            _dbContext = new BLOrdersDBContext(_dbOptions);
-            _dbContext.Database.EnsureCreated();
+            using var command = _dbContext.Database.GetDbConnection().CreateCommand();
+            command.CommandText = "SELECT TOP (1) [Version_Major], [Version_Minor],[Version_Build] FROM [dbo].[tbl_DBVersion]";
+            command.CommandType = CommandType.Text;
 
-        }
+            _dbContext.Database.OpenConnection();
 
-        public IOrderTable Orders => new OrderTable(_dbContext);
-
-        public IWholesaleCustomerTable Customers => new WholesaleCustomerTable(_dbContext);
-
-        public IProductsTable Products => new ProductsTable(_dbContext);
-
-        public IShipDetailsTable ShipDetails => new ShipDetailsTable(_dbContext);
-
-        public IPaymentsTable Payments => new PaymentsTable(_dbContext);
-
-        public ICustomerClassesTable CustomerClasses => new CustomerClassesTable(_dbContext);
-
-        public Version dbVersion 
-        {
-            get
+            using var result = command.ExecuteReader();
+            if (result.Read())
             {
-                using var command = _dbContext.Database.GetDbConnection().CreateCommand();
-                command.CommandText = "SELECT TOP (1) [Version_Major], [Version_Minor],[Version_Build] FROM [dbo].[tbl_DBVersion]";
-                command.CommandType = CommandType.Text;
-
-                _dbContext.Database.OpenConnection();
-
-                using var result = command.ExecuteReader();
-                if (result.Read())
-                {
-                    return new Version(int.Parse(result[0].ToString()), int.Parse(result[1].ToString()), int.Parse(result[2].ToString()));
-                }
-                return new Version(0, 0, 0);
+                return new Version(int.Parse(result[0].ToString()), int.Parse(result[1].ToString()), int.Parse(result[2].ToString()));
             }
+            return new Version(0, 0, 0);
         }
     }
 }

@@ -20,8 +20,7 @@ using System.Media;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-
-
+using Windows.Globalization.NumberFormatting;
 
 namespace BlOrders2023.UserControls
 {
@@ -59,6 +58,19 @@ namespace BlOrders2023.UserControls
             };
             _dialog.SetBinding(ContentDialog.IsPrimaryButtonEnabledProperty, b);
 
+
+            IncrementNumberRounder NetWtRounder = new IncrementNumberRounder()
+            {
+                Increment = .001,
+                RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp,
+            };
+
+            DecimalFormatter NetWtFormatter = new()
+            {
+                FractionDigits = 2,
+                NumberRounder = NetWtRounder,
+            };
+            NetWeight.NumberFormatter = NetWtFormatter;
             
         }
         #endregion Constructors

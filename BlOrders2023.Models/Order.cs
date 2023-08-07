@@ -9,27 +9,6 @@ namespace BlOrders2023.Models;
 [Table("tblOrdersWholesale")]
 public class Order
 {
-    #region Constructors
-    public Order() 
-    {
-        Memo_Totl = 0M;
-        Memo_Weight = 0;
-        OrderDate = DateTime.Now;
-        Frozen = false;
-        //Set the date for today so that sql will accept the time
-        PickupDate = DateTime.Today;
-        PickupTime = DateTime.MinValue;
-        OrderStatus = OrderStatus.Ordered;
-    }
-    
-    public Order(WholesaleCustomer customer)
-        : this()
-    {
-        Customer = customer;
-        CustID = customer.CustID;
-    }
-    #endregion Constructors
-
     #region Properties
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -72,7 +51,8 @@ public class Order
     {
         get
         {
-            if ((bool)Allocated)
+            if(Items.IsNullOrEmpty()) return false;
+            if (Allocated ?? false)
             {
                 return Items.All(i => i.QuanAllocated == i.QuantityReceived);
             }
@@ -83,6 +63,31 @@ public class Order
         }
     }
     #endregion Properties
+
+    #region Fields
+    #endregion Fields
+
+    #region Constructors
+    public Order()
+    {
+        Memo_Totl = 0M;
+        Memo_Weight = 0;
+        OrderDate = DateTime.Now;
+        Frozen = false;
+        //Set the date for today so that sql will accept the time
+        PickupDate = DateTime.Today;
+        PickupTime = DateTime.Today.AddHours(12);
+        OrderStatus = OrderStatus.Ordered;
+    }
+
+    public Order(WholesaleCustomer customer)
+        : this()
+    {
+        Customer = customer;
+        CustID = customer.CustID;
+    }
+    #endregion Constructors
+
 
     #region Methods
     public decimal GetInvoiceTotal()
@@ -108,6 +113,19 @@ public class Order
         else
         {
             var total =  Items.Sum(item => (int)item.Quantity);
+            return total;
+        }
+    }
+
+    public int GetTotalAllocated()
+    {
+        if (Items.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            var total = Items.Sum(item => (int)(item.QuanAllocated ?? 0));
             return total;
         }
     }

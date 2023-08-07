@@ -3,17 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Core.Data.SQL;
-public class CustomerClassesTable : ICustomerClassesTable
+internal class SqlCustomerClassesTable : ICustomerClassesTable
 {
     #region Fields
     /// <summary>
     /// The DB context for the Bl orders database
     /// </summary>
-    private readonly BLOrdersDBContext _db;
+    private readonly SqlBLOrdersDBContext _db;
     #endregion Fields
 
     #region Constructors
-    public CustomerClassesTable(BLOrdersDBContext db)
+    public SqlCustomerClassesTable(SqlBLOrdersDBContext db)
     {
         _db = db;
     }

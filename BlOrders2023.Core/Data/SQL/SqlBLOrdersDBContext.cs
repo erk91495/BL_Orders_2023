@@ -8,9 +8,9 @@ using BlOrders2023.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlOrders2023.Core.Data.SQL;
-public class BLOrdersDBContext : DbContext
+public class SqlBLOrdersDBContext : DbContext
 {
-    public BLOrdersDBContext(DbContextOptions<BLOrdersDBContext> options) : base(options)
+    public SqlBLOrdersDBContext(DbContextOptions<SqlBLOrdersDBContext> options) : base(options)
     { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,8 +34,14 @@ public class BLOrdersDBContext : DbContext
         modelBuilder.Entity<WholesaleCustomer>()
             .Property(e => e.AllocationType)
             .HasConversion(
-            v => v == AllocationType.Grocer,
-            v => v ? AllocationType.Grocer : AllocationType.Gift
+            v => v == CustomerAllocationType.Grocer,
+            v => v ? CustomerAllocationType.Grocer : CustomerAllocationType.Gift
+            );
+        modelBuilder.Entity<AllocationGroup>()
+            .Property(e => e.ProductIDs)
+            .HasConversion(
+            v => string.Join(',',v.Select(x => x.ToString())),
+            v => v.Split(",", StringSplitOptions.TrimEntries).Select(int.Parse).ToList()
             );
     }
 
@@ -49,4 +55,5 @@ public class BLOrdersDBContext : DbContext
     public DbSet<OrderTotalsItem> OrderTotalsItems { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
+    public DbSet<AllocationGroup> AllocationGroups { get; set; }
 }
