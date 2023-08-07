@@ -21,16 +21,16 @@ public class OrderAllocator : IAllocatorService
 
     #region Fields
     private readonly IBLDatabase _db;
-    private Dictionary<int, float> ordered = new();
+    private readonly Dictionary<int, float> ordered = new();
     private IList<Order> _orders;
     private IEnumerable<InventoryItem> _inventory;
     private ReadOnlyDictionary<int, int> _startingInventory;
-    private Dictionary<int, int> _remainingInventory = new();
+    private readonly Dictionary<int, int> _remainingInventory = new();
     private IEnumerable<AllocationGroup> _allocationGroups;
     #endregion Fields
 
     #region Constructors
-    public OrderAllocator( IBLDatabase db)
+    public OrderAllocator(IBLDatabase db)
     {
         _db = db;
     }
@@ -100,10 +100,9 @@ public class OrderAllocator : IAllocatorService
         foreach (var group in _allocationGroups)
         {
             var productIDs = group.ProductIDs;
-            for (int idIndex = 0; idIndex < productIDs.Count; idIndex++)
+            for (var idIndex = 0; idIndex < productIDs.Count; idIndex++)
             {
-                int currentProductID = productIDs[idIndex];
-                int totalExtraNeeded = 0;
+                var currentProductID = productIDs[idIndex];
 
                 //First Make Sure the key is inventory and orderd lists
                 if (_remainingInventory.ContainsKey(currentProductID))
@@ -205,27 +204,27 @@ public class OrderAllocator : IAllocatorService
         foreach(var group in _allocationGroups)
         {
             var productIDs = group.ProductIDs;
-            for (int idIndex = 0; idIndex < productIDs.Count; idIndex++)
+            for (var idIndex = 0; idIndex < productIDs.Count; idIndex++)
             {
-                int currentProductID = productIDs[idIndex];
-                int totalExtraNeeded = 0;
+                var currentProductID = productIDs[idIndex];
+                var totalExtraNeeded = 0;
 
                 //First Make Sure the key is inventory orderd lists
                 if (_remainingInventory.ContainsKey(currentProductID) && ordered.ContainsKey(currentProductID))
                 {
-                    float portion = (float)_remainingInventory[currentProductID] / (float)ordered[currentProductID];
+                    var portion = (float)_remainingInventory[currentProductID] / (float)ordered[currentProductID];
                     portion = portion > 1 ? 1 : portion;
                     // Give Portion to each order
-                    for (int orderIndex = 0; orderIndex < grocerOrders.Count(); orderIndex++)
+                    for (var orderIndex = 0; orderIndex < grocerOrders.Count(); orderIndex++)
                     {
-                        Order currentOrder = grocerOrders[orderIndex];
+                        var currentOrder = grocerOrders[orderIndex];
                         var currentItemIndex = currentOrder.Items.IndexOf(currentOrder.Items.Where(i => i.ProductID == currentProductID).FirstOrDefault());
                         var currentOrderItem = currentOrder.Items.Where(i => i.ProductID == currentProductID).FirstOrDefault();
 
                         if (currentOrderItem != null)
                         {
-                            int quantToGive = (int)(currentOrderItem.Quantity * portion);
-                            int extra = (int)currentOrderItem.Quantity - quantToGive;
+                            var quantToGive = (int)(currentOrderItem.Quantity * portion);
+                            var extra = (int)currentOrderItem.Quantity - quantToGive;
                             totalExtraNeeded += extra;
                             _remainingInventory[currentProductID] -= quantToGive;
                             currentOrderItem.QuanAllocated += quantToGive;
@@ -238,9 +237,9 @@ public class OrderAllocator : IAllocatorService
 
 
                     //Give Exra to each order
-                    for (int orderIndex = 0; orderIndex < grocerOrders.Count(); orderIndex++)
+                    for (var orderIndex = 0; orderIndex < grocerOrders.Count(); orderIndex++)
                     {
-                        Order currentOrder = grocerOrders[orderIndex];
+                        var currentOrder = grocerOrders[orderIndex];
                         var currentOrderItem = currentOrder.Items.Where(i => i.ProductID == currentProductID).FirstOrDefault();
                         if(currentOrderItem != null){
                             //If I can't portion up set portion to 0 it should sort itself out when we try to go down
@@ -252,8 +251,8 @@ public class OrderAllocator : IAllocatorService
 
 
                             extraPortion = extraPortion > 1 ? 1 : extraPortion;
-                            int quantToGive = (int)(currentOrderItem.ExtraNeeded * extraPortion);
-                            int extra = (int)(currentOrderItem.ExtraNeeded) - quantToGive;
+                            var quantToGive = (int)(currentOrderItem.ExtraNeeded * extraPortion);
+                            var extra = (int)(currentOrderItem.ExtraNeeded) - quantToGive;
                             if (quantToGive > 0)
                             {
                                 //up one
