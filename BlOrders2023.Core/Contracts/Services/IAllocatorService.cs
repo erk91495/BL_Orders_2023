@@ -9,6 +9,6 @@ namespace BlOrders2023.Core.Contracts.Services;
 public interface IAllocatorService
 {
     public IEnumerable<Order> Orders { get; }
-    public Dictionary<int, int> Inventory { get; }
+    public IEnumerable<InventoryItem> Inventory { get; }
     public Task<bool> Allocate(IAllocatorConfig config);
 }

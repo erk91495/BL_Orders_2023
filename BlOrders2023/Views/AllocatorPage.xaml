@@ -14,66 +14,128 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="AllocatorPage_Loaded">
+    <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <SplitView 
+            RelativePanel.AlignTopWithPanel="True" 
+            RelativePanel.AlignBottomWithPanel="True" 
+            RelativePanel.AlignLeftWithPanel="True" 
+            RelativePanel.AlignRightWithPanel="True"
+            DisplayMode="Inline"
+            IsPaneOpen="True"
+            PanePlacement="Right"
+            OpenPaneLength="300"
+            CornerRadius="1">
+            <SplitView.Pane>
+                <RelativePanel x:Name="PaneArea" 
+                               Background="{ThemeResource SystemAltMediumLowColor}"
+                               CornerRadius="20,0,0,20">
+
+                    <controls:DataGrid Padding="20,20,0,20"
+                                   BorderBrush="Transparent"
+                                   ItemsSource="{x:Bind ViewModel.CurrentInventory, Mode=OneWay}"
+                                   AutoGenerateColumns="False"
+                                   RelativePanel.AlignTopWithPanel="True"
+                                   RelativePanel.AlignLeftWithPanel="True"
+                                   RelativePanel.AlignRightWithPanel="True"
+                                   RelativePanel.Above="ButtonsGrid"
+                                   IsReadOnly="True">
+                        <controls:DataGrid.Columns>
+                            <controls:DataGridTemplateColumn Header="ID" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:InventoryItem">
+                                        <TextBlock Text="{x:Bind ProductID, Mode=OneWay}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                            <controls:DataGridTemplateColumn Header="On Hand" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:InventoryItem">
+                                        <TextBlock Text="{x:Bind QuantityOnHand, Mode=OneWay}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+
+                        </controls:DataGrid.Columns>
+                        
+                    </controls:DataGrid>
+                    <Grid x:Name="ButtonsGrid"
+                          RelativePanel.AlignBottomWithPanel="True"
+                          RelativePanel.AlignLeftWithPanel="True"
+                          RelativePanel.AlignRightWithPanel="True"
+                          Padding="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="btn_Save" Content="Save" Click="btn_Save_Click" Grid.Column="0" HorizontalAlignment="Center" Width="120"/>
+                        <Button x:Name="btn_SavePrint" Content="Save and Print" Click="btn_SavePrint_Click" Grid.Column="1" HorizontalAlignment="Center" Width="120"/>
+                    </Grid>
+                </RelativePanel>
+            </SplitView.Pane>
+
+            <SplitView.Content>
+                <RelativePanel x:Name="ContentArea">
+                    <controls:DataGrid
+                        RelativePanel.AlignTopWithPanel="True" 
+                        RelativePanel.AlignBottomWithPanel="True" 
+                        RelativePanel.AlignLeftWithPanel="True" 
+                        RelativePanel.AlignRightWithPanel="True"
+                        x:Name="OrdersGrid"
+                        ItemsSource="{x:Bind ViewModel.AllocatedOrders, Mode=TwoWay}"
+                        AutoGenerateColumns="False"
+                        Style="{StaticResource AllocationDataGridStyle}"
+                        ColumnHeaderStyle="{StaticResource AllocationDataGridColumnHeaderStyle}"
+                        RowStyle="{StaticResource AllocationDataGridRowStyle}"
+                        CellStyle="{StaticResource AllocationDataGridCellStyle}"
+                        RowDetailsVisibilityMode="Visible"
+                        Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}"
+                        GridLinesVisibility="All">
+
+                        <controls:DataGrid.Columns>
+                            <controls:DataGridTemplateColumn Header="Order ID" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Order">
+                                        <TextBlock Text="{x:Bind OrderID}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
 
 
-    <StackPanel Orientation="Vertical">
+                            <controls:DataGridTemplateColumn Header="Customer" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Order">
+                                        <TextBlock Text="{x:Bind Customer.CustomerName}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
 
-        <controls:DataGrid
-            x:Name="OrdersGrid"
-            ItemsSource="{x:Bind ViewModel.AllocatedOrders, Mode=TwoWay}"
-            AutoGenerateColumns="False"
-            Style="{StaticResource AllocationDataGridStyle}"
-            ColumnHeaderStyle="{StaticResource AllocationDataGridColumnHeaderStyle}"
-            RowStyle="{StaticResource AllocationDataGridRowStyle}"
-            CellStyle="{StaticResource AllocationDataGridCellStyle}"
-            RowDetailsVisibilityMode="Visible"
-            Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}"
-            GridLinesVisibility="All">
-
-            <controls:DataGrid.Columns>
-                <controls:DataGridTemplateColumn Header="Order ID" Width="Auto">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="models:Order">
-                            <TextBlock Text="{x:Bind OrderID}"/>
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="Total Ordered" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Order">
+                                        <TextBlock Text="{x:Bind GetTotalOrdered()}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
 
 
-                <controls:DataGridTemplateColumn Header="Customer" Width="Auto">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="models:Order">
-                            <TextBlock Text="{x:Bind Customer.CustomerName}"/>
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="Total Allocated" Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Order">
+                                        <TextBlock Text="{x:Bind GetTotalAllocated()}"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                        </controls:DataGrid.Columns>
 
-                <controls:DataGridTemplateColumn Header="Total Ordered" Width="Auto">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="models:Order">
-                            <TextBlock Text="{x:Bind GetTotalOrdered()}"/>
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-
-
-                <controls:DataGridTemplateColumn Header="Total Allocated" Width="Auto">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="models:Order">
-                            <TextBlock Text="{x:Bind GetTotalAllocated()}"/>
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-            </controls:DataGrid.Columns>
-
-            <controls:DataGrid.RowDetailsTemplate>
-                <DataTemplate x:DataType="models:Order">
-                    <uc:AllocatedItemsGridControl Items="{x:Bind Items, Mode=OneWay}"/>
-                </DataTemplate>
-            </controls:DataGrid.RowDetailsTemplate>
-        </controls:DataGrid>
-
-
-        <Button Content="Test" Click="Button_Click"/>
-    </StackPanel>
+                        <controls:DataGrid.RowDetailsTemplate>
+                            <DataTemplate x:DataType="models:Order">
+                                <uc:AllocatedItemsGridControl Items="{x:Bind Items, Mode=OneWay}" ValidateCell="AllocatedItemsGridControl_ValidateCell"/>
+                            </DataTemplate>
+                        </controls:DataGrid.RowDetailsTemplate>
+                    </controls:DataGrid>
+                </RelativePanel>
+            </SplitView.Content>
+        </SplitView>
+    </RelativePanel>
 </Page>

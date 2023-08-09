@@ -20,6 +20,8 @@ using System.Media;
 using Microsoft.EntityFrameworkCore;
 using BlOrders2023.Reporting;
 using System.Drawing.Printing;
+using BlOrders2023.UserControls;
+using CommunityToolkit.WinUI;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -233,21 +235,6 @@ public sealed partial class OrderDetailsPage : Page
     }
 
     #region Events Handlers
-
-    /// <summary>
-    /// Triggers when the collection changes
-    /// </summary>
-    /// <param name="sender">the data grid</param>
-    /// <param name="e">event args</param>
-    private void Records_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-        //If we added an item then enqueue a task to focus it and edit the quantity 
-        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-        {
-            dispatcherQueue.TryEnqueue(() => FocusEditLastCell());
-        }
-    }
-
     /// <summary>
     /// Handles click events for the email hyperlink button. Creates a mailto: event
     /// </summary>
@@ -266,13 +253,13 @@ public sealed partial class OrderDetailsPage : Page
     /// <param name="args">the text changed event args</param>
     private void ProductEntryBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput || args.Reason == AutoSuggestionBoxTextChangeReason.ProgrammaticChange)
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
-            ViewModel.QueryProducts(sender.Text);
+            _ = ViewModel.QueryProducts(sender.Text);
         }
         else if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
         {
-            ProductEntryBox.Text = null;
+            
         }
     }
     /// <summary>
@@ -452,12 +439,9 @@ public sealed partial class OrderDetailsPage : Page
         if (args.ChosenSuggestion != null && args.ChosenSuggestion is Product p)
         {
 
-            //User selected an item, take an action
+            //User selected an item, take an action           
             productToAdd = p;
-            if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
-            {
-                ViewModel.AddItem(productToAdd);
-            }
+
         }
         else if (!string.IsNullOrEmpty(args.QueryText))
         {
@@ -465,7 +449,6 @@ public sealed partial class OrderDetailsPage : Page
             ProductEntryBox.Text = null;
             var result = Int32.TryParse(id, out var prodcode);
             var toAdd = ViewModel.SuggestedProducts.FirstOrDefault(prod => prod.ProductID == prodcode);
-
             if (result && toAdd != null)
             {
                 //The text matched a productcode
@@ -476,12 +459,14 @@ public sealed partial class OrderDetailsPage : Page
                 productToAdd = null;
                 return;
             }
-            if (productToAdd != null && !ViewModel.OrderItemsContains(productToAdd.ProductID))
+        }
+
+        if(productToAdd != null)
+        {
+
+            if (ViewModel.OrderItemsContains(productToAdd.ProductID))
             {
-                ViewModel.AddItem(productToAdd);
-            }
-            else if (productToAdd != null)
-            {
+                productToAdd = null;
                 ContentDialog dialog = new()
                 {
                     Title = "Duplicate Product",
@@ -492,10 +477,16 @@ public sealed partial class OrderDetailsPage : Page
                 SystemSounds.Exclamation.Play();
                 await dialog.ShowAsync();
             }
-        }
-        if(productToAdd != null)
-        {
-            DispatcherQueue.TryEnqueue(FocusEditLastCell);
+            else
+            {
+                var quantity = await PromptQuantityOrderdAsync(productToAdd);
+                if (quantity != int.MaxValue)
+                {
+                    ViewModel.AddItem(productToAdd, quantity);
+                }
+            }
+
+            DispatcherQueue.TryEnqueue(async () => await ResetProductEntryBox());
         }
     }
 
@@ -664,5 +655,42 @@ public sealed partial class OrderDetailsPage : Page
         }
     }
 
+    private async Task<int> PromptQuantityOrderdAsync(Product p)
+    {
+        SingleValueInputDialog inputControl = new()
+        {
+            XamlRoot = XamlRoot,
+            Title = $"{p.ProductID}  {p.ProductName}",
+            PrimaryButtonText = "Submit",
+            Prompt = "Quantity?",
+            ValidateValue = delegate (string? value)
+            {
+                if (value != null)
+                {
+                    if (int.TryParse(value, out var result) && result != 0)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            },
+        };
+        var res = await inputControl.ShowAsync();
+        if (res == ContentDialogResult.Primary && inputControl.Value != null)
+        {
+            return int.Parse(inputControl?.Value!);
+        }
+        else
+        {
+            //User canceled out
+            return int.MaxValue;
+        }
+    }
 
+    private async Task ResetProductEntryBox()
+    {
+        await ViewModel.QueryProducts();
+        ProductEntryBox.Text = null;
+        ProductEntryBox.IsSuggestionListOpen = false;
+    }
 }

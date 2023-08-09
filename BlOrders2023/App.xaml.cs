@@ -140,7 +140,7 @@ public partial class App : Application
                .UseSqlServer(connectionString: $"Data Source={dbServer}; Database={dbName};Integrated Security=true; Trust Server Certificate=true");
         App.DBOptions = dbOptions.Options;
 
-        var SupportedDBVersion = new Version(0, 0, 1);
+        var SupportedDBVersion = new Version(0, 0, 2);
         var DBVersion = App.GetNewDatabase().dbVersion;
         if (!SupportedDBVersion.Equals(DBVersion))
         {

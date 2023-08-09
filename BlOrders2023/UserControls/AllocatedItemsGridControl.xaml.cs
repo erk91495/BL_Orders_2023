@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -33,6 +34,8 @@ public sealed partial class AllocatedItemsGridControl : UserControl
 {
 
     #region Properties
+    public event EventHandler<CurrentCellValidatingEventArgs>? ValidateCell;
+
     public static readonly DependencyProperty ItemsProperty = DependencyProperty.Register("Items", typeof(List<OrderItem>), typeof(AllocatedItemsGridControl), new PropertyMetadata(null));
     public List<OrderItem> Items
     {
@@ -76,8 +79,8 @@ public sealed partial class AllocatedItemsGridControl : UserControl
                 AutoGenerateColumns= false,
                 ItemsSource = Items.Where(e => Ids.Contains(e.ProductID)),
                 IsReadOnly=false,
-
             };
+            d.CurrentCellValidating += ValidateCell;
 
             GridTextColumn ProductIDColumn = new GridTextColumn()
             { 
@@ -93,12 +96,11 @@ public sealed partial class AllocatedItemsGridControl : UserControl
                 IsReadOnly=true,
             };
 
-            GridNumericColumn AllocatedColumn = new GridNumericColumn()
+            GridNumericColumn AllocatedColumn = new FloatGridNumericColumn()
             {
                 HeaderText = "Allocated",
                 MappingName = "QuanAllocated",
-                //DisplayBinding = new Binding() { Path = new("QuanAllocated"), Converter = new FloatToStringConverter()},
-                //ValueBinding = new Binding() { Path = new("QuanAllocated"), Mode=BindingMode.TwoWay, Converter= new FloatToDecimalConverter() },
+                DataValidationMode = Syncfusion.UI.Xaml.Grids.GridValidationMode.InView,
                 IsReadOnly = false,
                 AllowEditing = true,
                 UseBindingValue = true,
@@ -110,21 +112,6 @@ public sealed partial class AllocatedItemsGridControl : UserControl
             if(d.ItemsSource is IEnumerable<OrderItem> source && !source.IsNullOrEmpty())
             {
                 MainStack.Children.Add(d);
-            }
-        }
-    }
-
-    private void cellEditEnded(object? sender, DataGridCellEditEndedEventArgs e)
-    {
-        if(sender is DataGrid dg)
-        {
-            if(e.Column.Header.ToString() == ("Allocated") && dg.SelectedItem is OrderItem item)
-            {
-                var cell = e.Column.GetCellContent(e.Row) as TextBlock;
-                if (cell != null && !int.TryParse(cell.Text, out _))
-                {
-                    //todo validate input
-                }
             }
         }
     }
