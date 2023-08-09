@@ -241,7 +241,7 @@
                        RelativePanel.Below="ProductEntryErrorMessage"
                        RelativePanel.Above="NavigationButtonGrid"
                        GridLinesVisibility="Both"
-                       IsReadOnly="False"
+                       IsEnabled="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
                        AutoGenerateColumns="False"
                        RelativePanel.AlignLeftWithPanel="True"
                        RelativePanel.AlignRightWithPanel="True"
