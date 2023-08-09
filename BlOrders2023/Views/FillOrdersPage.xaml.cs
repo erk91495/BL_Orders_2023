@@ -360,4 +360,14 @@ public sealed partial class FillOrdersPage : Page
             }
         }
     }
+
+    private void OrderLookup_GotFocus(object sender, RoutedEventArgs e)
+    {
+        OrderLookup.IsSuggestionListOpen = true;
+    }
+
+    private void OrderLookup_LostFocus(object sender, RoutedEventArgs e)
+    {
+        OrderLookup.IsSuggestionListOpen = false;
+    }
 }

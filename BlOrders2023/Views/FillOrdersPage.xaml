@@ -108,6 +108,8 @@
                                     ItemsSource="{x:Bind ViewModel.FillableOrders}"
                                     TextChanged="OrderLookup_TextChanged"
                                     QuerySubmitted="OrderLookup_QuerySubmitted"
+                                    GotFocus="OrderLookup_GotFocus"
+                                    LostFocus="OrderLookup_LostFocus"
                                     >
                         <AutoSuggestBox.ItemTemplate>
                             <DataTemplate x:DataType="models:Order">
