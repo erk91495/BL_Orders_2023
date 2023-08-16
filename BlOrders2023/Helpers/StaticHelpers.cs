@@ -1,12 +1,11 @@
 ﻿using Windows.System;
 
-namespace BlOrders2023.Helpers
+namespace BlOrders2023.Helpers;
+
+public static class Helpers
 {
-    public static class Helpers
+    public static async Task SendEmailAsync(string email)
     {
-        public static async Task SendEmailAsync(string email)
-        {
-            await Launcher.LaunchUriAsync(new Uri(String.Format("mailto:{0}", email)));
-        }
+        await Launcher.LaunchUriAsync(new Uri(String.Format("mailto:{0}", email)));
     }
 }

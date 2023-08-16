@@ -5,27 +5,31 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlOrders2023.Exceptions
+namespace BlOrders2023.Exceptions;
+
+public class InvalidBarcodeExcption : Exception
 {
-    public class InvalidBarcodeExcption : Exception
+    public InvalidBarcodeExcption() : base("Invalid Barcode")
     {
-        public InvalidBarcodeExcption() : base("Invalid Barcode")
-        {
-        }
+    }
 
-        public InvalidBarcodeExcption(string message, string ai = null, string scanline = null, string location = null) : base(message)
-        {
-            Data.Add("AI", ai);
-            Data.Add("Scanline", scanline);
-            Data.Add("Location", location);
-        }
+    public InvalidBarcodeExcption(string message) : base(message)
+    {
+    }
 
-        public InvalidBarcodeExcption(string message, Exception innerException, string ai = null, string scanline = null, string location = null) : 
-            base(message, innerException)
-        {
-            Data.Add("AI", ai);
-            Data.Add("Scanline", scanline);
-            Data.Add("Location", location);
-        }
+
+    public InvalidBarcodeExcption(string message, string ai = null, string scanline = null, string location = null) : base(message)
+    {
+        Data.Add("AI", ai);
+        Data.Add("Scanline", scanline);
+        Data.Add("Location", location);
+    }
+
+    public InvalidBarcodeExcption(string message, Exception innerException, string ai = null, string scanline = null, string location = null) : 
+        base(message, innerException)
+    {
+        Data.Add("AI", ai);
+        Data.Add("Scanline", scanline);
+        Data.Add("Location", location);
     }
 }

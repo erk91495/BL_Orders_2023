@@ -31,7 +31,8 @@ namespace BlOrders2023.Models
         public DateTime? PackDate { get; set; }
         [ForeignKey("ProductID")]
         public virtual Product Product { get; set; } = null!;
-
+        [NotMapped]
+        public IBarcode? Barcode { get; set; }
         public override bool Equals(object? obj)
         {
             return obj is ShippingItem item &&

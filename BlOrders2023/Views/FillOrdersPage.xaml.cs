@@ -41,11 +41,11 @@ public sealed partial class FillOrdersPage : Page
         reportGenerator = new();
 
         //TODO: Is this the way to handle setting the default focus?
-        dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low,
-        new DispatcherQueueHandler(() =>
-        {
-            OrderLookup.Focus(FocusState.Programmatic);
-        }));
+        //dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low,
+        //new DispatcherQueueHandler(() =>
+        //{
+        //    OrderLookup.Focus(FocusState.Programmatic);
+        //}));
     }
 
     private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
@@ -62,6 +62,7 @@ public sealed partial class FillOrdersPage : Page
                     QuanRcvd = 1,
                     ScanDate = DateTime.Now,
                     Scanline = scanline,
+                    order = ViewModel.Order,
                 };
                 try
                 {
@@ -94,8 +95,13 @@ public sealed partial class FillOrdersPage : Page
     private async Task AddShippingItemAsync(ShippingItem item)
     {
         try
-        {
-            await ViewModel.ReceiveItemAsync(item);
+        {   
+            var isFixedBarcode = item.Barcode?.GetType() == typeof(GTIN14Barcode);
+            //if(isFixedBarcode)
+            //{
+            //    item.Scanline += "_" + DateTime.Now.ToString("ddMMMMyyyyHHmmssff");
+            //}
+            await ViewModel.ReceiveItemAsync(item,!isFixedBarcode);
             OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
             OrderedItems.ColumnSizer.Refresh(); 
             OrderedVsReceivedGrid.View.Refresh();
@@ -232,6 +238,8 @@ public sealed partial class FillOrdersPage : Page
                 await ViewModel.DeleteShippingItemAsync(item);
                 OrderedVsReceivedGrid.View.Refresh();
             }
+            await ViewModel.SaveOrderAsync();
+            OrderedItems.View.Refresh();
         }
     }
 
@@ -239,6 +247,7 @@ public sealed partial class FillOrdersPage : Page
     {
         ShippingItemDataInputDialog dialog = new(XamlRoot);
         var result = await dialog.ShowAsync();
+        result.order = ViewModel.Order;
         if (result != null)
         {
             await AddShippingItemAsync(result);

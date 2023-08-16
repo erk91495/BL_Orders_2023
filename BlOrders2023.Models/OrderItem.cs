@@ -24,7 +24,8 @@ public class OrderItem
     public int ProductID { get; set; }
     [ConcurrencyCheck]
     public float Quantity { get; set; }
-    public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight);
+    [NotMapped]
+    public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
     public decimal ActualCustPrice { get; set; }
     //public float QuanRcvd { get; set; }
     [Key]
@@ -33,7 +34,7 @@ public class OrderItem
     public DateTime? ProdEntryDate { get; set; }
     [ForeignKey("ProductID")]
     public virtual Product Product { get; set; } = null!;
-
+    [NotMapped]
     public int QuantityReceived => CalcQuantityReceived();
     public float? QuanAllocated
     {
@@ -62,7 +63,7 @@ public class OrderItem
         Order = order;
         ProductID = product.ProductID;
         Quantity = 0;
-        ActualCustPrice = Helpers.Helpers.CalculateCustomerPrice(product, order.Customer);
+        ActualCustPrice = Helpers.PriceHelpers.CalculateCustomerPrice(product, order.Customer);
         //QuanRcvd = 0;
         ProdEntryDate = DateTime.Now;
         ExtraNeeded = 0;
