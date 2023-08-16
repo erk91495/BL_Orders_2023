@@ -84,7 +84,7 @@ public class GS1_128Barcode : IBarcode
             if (ai.Equals("01"))
             {
                 var newGTIN = _AIValues["01"][..^6] + $"{item.ProductID:D5}";
-                BarcodeHelpers.AppendG10CheckDigit(ref newGTIN);
+                BarcodeHelpers.AppendGTINCheckDigit(ref newGTIN);
                 UpdateAI("01", newGTIN);
             }
             //LOT CODE

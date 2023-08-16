@@ -11,139 +11,95 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-namespace BlOrders2023.Reporting.ReportClasses
+namespace BlOrders2023.Reporting.ReportClasses;
+
+[System.ComponentModel.DisplayName("Shipping List")]
+public class ShippingList : IReport
 {
-    [System.ComponentModel.DisplayName("Shipping List")]
-    public class ShippingList : IReport
+
+    private readonly Order _order;
+
+    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
+    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
+    private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
+    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(8.5f);
+    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(8.5f).SemiBold();
+    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(8.5f);
+
+    public ShippingList(Order order)
     {
+        _order = order;
+    }
 
-        private readonly Order _order;
-
-        private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-        private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-        private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-        private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(8.5f);
-        private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(8.5f).SemiBold();
-        private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(8.5f);
-
-        public ShippingList(Order order)
+    public void Compose(IDocumentContainer container)
+    {
+        container.Page(page =>
         {
-            _order = order;
-        }
+            page.Margin(10);
 
-        public void Compose(IDocumentContainer container)
+            page.Header().Height(100).Background(Colors.Grey.Lighten1);
+            page.Header().Element(ComposeHeader);
+
+            page.Content().Background(Colors.Grey.Lighten3);
+            page.Content().Element(ComposeContent);
+
+            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
+            page.Footer().Element(ComposeFooter);
+
+        });
+    }
+
+    public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
+
+    private void ComposeHeader(IContainer container)
+    {
+        container.Column(headerCol =>
         {
-            container.Page(page =>
+            ///Header Row Contains invoice # Company Name and logo
+            headerCol.Item().AlignCenter().PaddingBottom(10).Row(row =>
             {
-                page.Margin(10);
 
-                page.Header().Height(100).Background(Colors.Grey.Lighten1);
-                page.Header().Element(ComposeHeader);
+                //Logo
+                var res = Assembly.GetExecutingAssembly().GetManifestResourceStream("BlOrders2023.Reporting.Assets.Images.BLLogo.bmp");
+                row.RelativeItem(1).AlignLeft().AlignMiddle().Height(75).Image(res).FitHeight();
 
-                page.Content().Background(Colors.Grey.Lighten3);
-                page.Content().Element(ComposeContent);
-
-                page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-                page.Footer().Element(ComposeFooter);
-
-            });
-        }
-
-        public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
-
-        private void ComposeHeader(IContainer container)
-        {
-            container.Column(headerCol =>
-            {
-                ///Header Row Contains invoice # Company Name and logo
-                headerCol.Item().AlignCenter().PaddingBottom(10).Row(row =>
+                row.RelativeItem(3).AlignCenter().Column(col =>
                 {
+                    col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
+                    col.Item().AlignCenter().Text("6490 Ross Road, New Carlisle, Ohio 45344").Style(subTitleStyle);
+                    col.Item().AlignCenter().Text("Phone: 937-845-9466          Fax: 937-845-9998");
+                    col.Item().AlignCenter().Text("www.bowmanlandes.com");
+                    col.Item().AlignCenter().Text("Shipping List").Style(subTitleStyle);
+                });
 
-                    //Logo
-                    var res = Assembly.GetExecutingAssembly().GetManifestResourceStream("BlOrders2023.Reporting.Assets.Images.BLLogo.bmp");
-                    row.RelativeItem(1).AlignLeft().AlignMiddle().Height(75).Image(res).FitHeight();
-
-                    row.RelativeItem(3).AlignCenter().Column(col =>
+                row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
+                {
+                    //Invoice Number
+                    column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
+                    if (!_order.PO_Number.IsNullOrEmpty())
                     {
-                        col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
-                        col.Item().AlignCenter().Text("6490 Ross Road, New Carlisle, Ohio 45344").Style(subTitleStyle);
-                        col.Item().AlignCenter().Text("Phone: 937-845-9466          Fax: 937-845-9998");
-                        col.Item().AlignCenter().Text("www.bowmanlandes.com");
-                        col.Item().AlignCenter().Text("Shipping List").Style(subTitleStyle);
-                    });
+                        column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
+                    }
 
-                    row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
-                    {
-                        //Invoice Number
-                        column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
-                        if (!_order.PO_Number.IsNullOrEmpty())
-                        {
-                            column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
-                        }
-
-                        column.Item().Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
-                        column.Item().Text($"{_order.Customer.Address}").Style(normalTextStyle);
-                        column.Item().Text($"{_order.Customer.CityStateZip()}").Style(normalTextStyle);
-
-                    });
+                    column.Item().Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
+                    column.Item().Text($"{_order.Customer.Address}").Style(normalTextStyle);
+                    column.Item().Text($"{_order.Customer.CityStateZip()}").Style(normalTextStyle);
 
                 });
 
             });
-        }
 
-        private void ComposeContent(IContainer container)
-        {
+        });
+    }
 
-            container.Column(column => {
+    private void ComposeContent(IContainer container)
+    {
 
-                var idList = _order.ShippingItems.Select(i => i.ProductID).Distinct().OrderBy(i => i);
-                foreach (var id in idList)
-                {
-                    column.Item().Table(table =>
-                    {
-                        table.ColumnsDefinition(column =>
-                        {
-                            column.RelativeColumn(2);
-                            column.RelativeColumn(2);
-                            column.RelativeColumn(2);
+        container.Column(column => {
 
-                        });
-
-                        table.Header(header =>
-                        {
-                            header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
-
-                            header.Cell().Element(CellStyle).Text("Quantity").Style(tableHeaderStyle);
-                            header.Cell().Element(CellStyle).Text("Net Wt").Style(tableHeaderStyle);
-
-                            static IContainer CellStyle(IContainer container)
-                            {
-                                return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
-                            }
-                        });
-
-                        foreach (var item in _order.ShippingItems.Where(i => i.ProductID == id))
-                        {
-
-                            table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
-                            table.Cell().Element(CellStyle).Text($"{item.QuanRcvd}").Style(tableTextStyle);
-                            table.Cell().Element(CellStyle).Text($"{item.PickWeight:F2}").Style(tableTextStyle);
-                            static IContainer CellStyle(IContainer container)
-                            {
-                                return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
-                            }
-                        }
-
-                        table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableTextStyle);
-                        table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableTextStyle);
-                        table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableTextStyle);
-                        static IContainer FooterCellStyle(IContainer container)
-                        {
-                            return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
-                        }
-                    });
-                }
+            var idList = _order.ShippingItems.Select(i => i.ProductID).Distinct().OrderBy(i => i);
+            foreach (var id in idList)
+            {
                 column.Item().Table(table =>
                 {
                     table.ColumnsDefinition(column =>
@@ -154,43 +110,86 @@ namespace BlOrders2023.Reporting.ReportClasses
 
                     });
 
-                    table.Cell().Element(CellStyle).PaddingRight(1).AlignRight().Text("Order Totals: ").Style(tableHeaderStyle);
-                    table.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Sum(i => i.QuanRcvd)}").Style(tableHeaderStyle);
-                    table.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Sum(i => i.PickWeight)}").Style(tableHeaderStyle);
-
-                    static IContainer CellStyle(IContainer container)
+                    table.Header(header =>
                     {
-                        return container.PaddingTop(3).BorderTop(2f).BorderColor(Colors.Black).PaddingVertical(2);
+                        header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
+
+                        header.Cell().Element(CellStyle).Text("Quantity").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Net Wt").Style(tableHeaderStyle);
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                        }
+                    });
+
+                    foreach (var item in _order.ShippingItems.Where(i => i.ProductID == id))
+                    {
+
+                        table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{item.QuanRcvd}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{item.PickWeight:F2}").Style(tableTextStyle);
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                        }
+                    }
+
+                    table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableTextStyle);
+                    table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableTextStyle);
+                    table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableTextStyle);
+                    static IContainer FooterCellStyle(IContainer container)
+                    {
+                        return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
                     }
                 });
-                
-            
-            });
-        }
-
-        private void ComposeFooter(IContainer container)
-        {
-            container.AlignBottom().Column(column =>
+            }
+            column.Item().Table(table =>
             {
-                column.Item().AlignBottom().AlignRight().Row(footer =>
+                table.ColumnsDefinition(column =>
                 {
-                    footer.RelativeItem().AlignLeft().Text(time =>
-                    {
-                        time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                        time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
-                    });
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
 
-                    footer.RelativeItem().AlignRight().Text(page =>
-                    {
-                        page.Span("pg. ").Style(smallFooterStyle);
-                        page.CurrentPageNumber().Style(smallFooterStyle);
-                        page.Span(" of ").Style(smallFooterStyle);
-                        page.TotalPages().Style(smallFooterStyle);
-                    });
                 });
 
+                table.Cell().Element(CellStyle).PaddingRight(1).AlignRight().Text("Order Totals: ").Style(tableHeaderStyle);
+                table.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Sum(i => i.QuanRcvd)}").Style(tableHeaderStyle);
+                table.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Sum(i => i.PickWeight)}").Style(tableHeaderStyle);
+
+                static IContainer CellStyle(IContainer container)
+                {
+                    return container.PaddingTop(3).BorderTop(2f).BorderColor(Colors.Black).PaddingVertical(2);
+                }
+            });
+            
+        
+        });
+    }
+
+    private void ComposeFooter(IContainer container)
+    {
+        container.AlignBottom().Column(column =>
+        {
+            column.Item().AlignBottom().AlignRight().Row(footer =>
+            {
+                footer.RelativeItem().AlignLeft().Text(time =>
+                {
+                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
+                    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
+                });
+
+                footer.RelativeItem().AlignRight().Text(page =>
+                {
+                    page.Span("pg. ").Style(smallFooterStyle);
+                    page.CurrentPageNumber().Style(smallFooterStyle);
+                    page.Span(" of ").Style(smallFooterStyle);
+                    page.TotalPages().Style(smallFooterStyle);
+                });
             });
 
-        }
+        });
+
     }
 }

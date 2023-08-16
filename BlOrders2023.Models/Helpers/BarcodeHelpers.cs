@@ -14,13 +14,13 @@ public static class BarcodeHelpers
     /// </summary>
     /// <param name="gtin">The gtin to calgulate</param>
     /// <returns> True if the calculation is successful</returns>
-    public static bool AppendG10CheckDigit(ref string gtin)
+    public static bool AppendGTINCheckDigit(ref string gtin)
     {
         var success = false;
 
         if (gtin.Length <= 13)
         {
-            gtin += CalculateG10CheckDigit(in gtin);
+            gtin += CalculateGTINCheckDigit(in gtin);
         }
         return success;
     }
@@ -31,7 +31,7 @@ public static class BarcodeHelpers
     /// </summary>
     /// <param name="gtin">the GTIN to calculate</param>
     /// <returns>The check digit for the GTIN</returns>
-    public static string CalculateG10CheckDigit(in string gtin)
+    public static string CalculateGTINCheckDigit(in string gtin)
     {
         var sum = 0;
         //SSCC cheksum is 18 digits

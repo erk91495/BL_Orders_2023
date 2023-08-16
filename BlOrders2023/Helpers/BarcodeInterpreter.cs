@@ -128,7 +128,7 @@ public static class BarcodeInterpreter
         if (item.PackDate != null && item.Product != null ) {
             //Assumes b&L company code 
             var gtin = (item.Product.CompanyCode ?? "90605375") + item.ProductID.ToString("D5");
-            BarcodeHelpers.AppendG10CheckDigit(ref gtin);
+            BarcodeHelpers.AppendGTINCheckDigit(ref gtin);
             var scanline = "01" + gtin +
                 "3202" + ((int)((item.PickWeight ?? 0) * 100)).ToString("D6") + "13" + item.PackDate?.ToString("yyMMdd") +
                 "21" + item.PackageSerialNumber;
