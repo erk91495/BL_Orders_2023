@@ -8,7 +8,8 @@
     mc:Ignorable="d"
     MinWidth="1200"
     CornerRadius="10"
-    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    DefaultButton="Primary">
     <StackPanel Orientation="Vertical">
         <TextBlock x:Name="PromptBlock" Text="{x:Bind Prompt}"/>
         <TextBlock x:Name="Error" Text="Invalid input" Visibility="{x:Bind notValid , Mode=OneWay}" Style="{StaticResource ValidatorTextBlockStyle}"/>

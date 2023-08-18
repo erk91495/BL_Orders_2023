@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -53,7 +54,6 @@ namespace BlOrders2023.UserControls
         /// <param name="propertyName">(optional) The name of the property that changed.</param>
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
