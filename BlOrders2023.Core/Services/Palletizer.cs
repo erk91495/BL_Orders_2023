@@ -100,13 +100,14 @@ public class Palletizer
         }
         //last chance to combine pallets 
         pallets = pallets.Concat(CombinePallets(ref remainder, Config.MixedBoxesPerPallet)).ToList();
-
-        Pallet lastPallet = new(_currentOrder.OrderID);
-        foreach(var item in remainder)
-        {
-            lastPallet.Items.Add(item.Key, item.Value);
+        if(!remainder.IsNullOrEmpty()){
+            Pallet lastPallet = new(_currentOrder.OrderID);
+            foreach(var item in remainder)
+            {
+                lastPallet.Items.Add(item.Key, item.Value);
+            }
+            pallets.Add(lastPallet);
         }
-        pallets.Add(lastPallet);
 
         NumberPallets(pallets);
         return pallets;
@@ -119,31 +120,36 @@ public class Palletizer
         List<Pallet> pallets = new();
         Pallet pallet = new(_currentOrder.OrderID);
         var totalNeeded = remainder.Values.Sum();
-        var enumerator = remainder.GetEnumerator();
+        var enumerator = remainder.Keys.GetEnumerator();
         enumerator.MoveNext();
         var remainingPalletSpace = maxPerPallet;
-        while (totalNeeded >= remainingPalletSpace && enumerator.Current.Key != null)
+        while (totalNeeded >= remainingPalletSpace && enumerator.Current != null)
         {
-            if (enumerator.Current.Value < remainingPalletSpace)
+            if (remainder[enumerator.Current] < remainingPalletSpace)
             {
                 //Add items to pallet
-                pallet.Items.Add(enumerator.Current.Key, enumerator.Current.Value);
-                remainingPalletSpace -= enumerator.Current.Value;
-                totalNeeded -= enumerator.Current.Value;
+                pallet.Items.Add(enumerator.Current, remainder[enumerator.Current]);
+                remainingPalletSpace -= remainder[enumerator.Current];
+                totalNeeded -= remainder[enumerator.Current];
                 //get next item
-                remainder.Remove(enumerator.Current.Key);
+                remainder.Remove(enumerator.Current);
                 enumerator.MoveNext();
             }
             else
             {
                 //Fill out pallet and create another one
-                pallet.Items.Add(enumerator.Current.Key, remainingPalletSpace);
+                pallet.Items.Add(enumerator.Current, remainingPalletSpace);
                 pallets.Add(pallet);
                 pallet = new(_currentOrder.OrderID);
 
                 totalNeeded -= remainingPalletSpace;
                 //decement the item
-                remainder[enumerator.Current.Key] -= remainingPalletSpace;
+                remainder[enumerator.Current] -= remainingPalletSpace;
+                if(remainder[enumerator.Current] <= 0)
+                {
+                    remainder.Remove(enumerator.Current);
+                    enumerator.MoveNext();
+                }
                 remainingPalletSpace = maxPerPallet;
 
             }

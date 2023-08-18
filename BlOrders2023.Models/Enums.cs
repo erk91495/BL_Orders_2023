@@ -22,7 +22,7 @@ public enum ShippingType
 {
     [Description("No Type")]
     NoType,
-    Shipping,
+    Delivery,
     Pickup,
 }
 

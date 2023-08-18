@@ -233,7 +233,6 @@ public class PickList : IReport
                     return container.DefaultTextStyle(x => x.SemiBold()).BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
                 }
             });
-            //Memo Box
 
 
         });

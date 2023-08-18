@@ -152,7 +152,7 @@
                                  IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Pickup}"/>
                     <RadioButton x:Name="RadioDelivery" 
                                  Content="Delivery"
-                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Shipping}"/>
+                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Delivery}"/>
                 </RadioButtons>
 
                 <StackPanel Orientation="Vertical"

@@ -157,7 +157,7 @@
                             <TextBlock Text="Pickup Date:" 
                                        Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup,  FallbackValue=Collapsed, Mode=OneWay}"/>
                             <TextBlock Text="Delivery Date:" 
-                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Shipping, FallbackValue=Collapsed, Mode=OneWay}"/>
+                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Delivery, FallbackValue=Collapsed, Mode=OneWay}"/>
                             <TextBlock Text="{x:Bind ViewModel.Order.PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}"
                                        Padding="10,0,10,0"/>
                             <TextBlock Text="{x:Bind ViewModel.Order.PickupTime, Converter={StaticResource TimeFormatConverter}, Mode=OneWay}"

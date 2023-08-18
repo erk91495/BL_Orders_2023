@@ -139,7 +139,7 @@ public class ReportGenerator
             palletPages.Add( new PalletLoadingReport(order, pallet));
         }
         var filePath = TempPath + Path.DirectorySeparatorChar + $"{order.OrderID}_PalletLoading" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        Document.Merge(palletPages).GeneratePdf(filePath);
+        Document.Merge(palletPages).UseContinuousPageNumbers().GeneratePdf(filePath);
         return filePath;
     }
 }

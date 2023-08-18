@@ -108,7 +108,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                         table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
 
                         table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yyyy")}").Style(tableTextStyle);
-                        if(order.Shipping == Models.Enums.ShippingType.Shipping)
+                        if(order.Shipping == Models.Enums.ShippingType.Delivery)
                         {
                             table.Cell().Element(CellStyle).Text($"Delivery").Style(tableTextStyle).Italic();
                         }

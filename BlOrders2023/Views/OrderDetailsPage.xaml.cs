@@ -277,7 +277,7 @@ public sealed partial class OrderDetailsPage : Page
         }
         else
         {
-            ViewModel.Shipping = ShippingType.Shipping;
+            ViewModel.Shipping = ShippingType.Delivery;
             ViewModel.PickupTime = new(ViewModel.PickupTime.Year, ViewModel.PickupTime.Month, ViewModel.PickupTime.Day, 0, 0, 0, 0);
             PickupTimeStack.Visibility = Visibility.Collapsed;
         }
