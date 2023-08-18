@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ public class Palletizer
 
     #region Constructors
 
-    Palletizer(PalletizerConfig config, Order order)
+    public Palletizer(PalletizerConfig config, Order order)
     {
         Config = config;
         _currentOrder = order;
@@ -50,9 +51,10 @@ public class Palletizer
         return result;
     }
 
-    public async Task<IEnumerable<Pallet>> GenerateFullPalletsAsync()
+    private async Task<IEnumerable<Pallet>> GenerateFullPalletsAsync()
     {
-        List<Pallet> pallets = new List<Pallet>();
+        List<Pallet> pallets = new();
+        Dictionary<Product, int> remainder = new();
         List<List<OrderItem>> GroupedByBox = new()
         {
             _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BBox).ToList(),
@@ -63,40 +65,94 @@ public class Palletizer
 
         foreach(var group in GroupedByBox)
         {
+            Dictionary<Product, int> groupRemainder = new();
             if(! group.IsNullOrEmpty()){
-                var totalNeeded = (int)group.Sum(i => i.Allocated == true ? i.QuanAllocated : i.Quantity );
-                var itemIndex = 0;
-                
-                //should all be in the same group
-                var palletRemaining = GetMaxBoxesPerPallet(group[0].Product);
-                Pallet currentPallet = new(_currentOrder.OrderID);
-                while (totalNeeded > 0) 
+                //All items are grouped by box type so we can just grab the first one
+                var maxPerPallet = GetMaxBoxesPerPallet(group[0].Product);
+                foreach(var item in group)
                 {
-                    var currentItem = group[itemIndex];
-                    var received = (int) (currentItem.Allocated == true ? currentItem.QuanAllocated : currentItem.Quantity);
-                    if(received <= palletRemaining )
+                    var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
+                    //Make Full Pallets
+                    for(var i = 0; i < (int)(quanNeeded / maxPerPallet); i++)
                     {
-                        currentPallet.Items.Add(currentItem.Product, received);
-                        palletRemaining -= received;
-                        itemIndex++;
+                        Pallet p = new(_currentOrder.OrderID);
+                        p.Items.Add(item.Product, maxPerPallet);
+                        pallets.Add(p);
                     }
-                    else
+
+                    //Make Remainder Pallet
+                    if(quanNeeded % maxPerPallet != 0)
                     {
-                        currentPallet.Items.Add(currentItem.Product, palletRemaining);
-                        pallets.Add(currentPallet);
-                        currentPallet = new(_currentOrder.OrderID);
-                        palletRemaining = GetMaxBoxesPerPallet(group[0].Product);
+                        groupRemainder.Add(item.Product, quanNeeded % maxPerPallet);
                     }
+
                 }
+                //try to combine as many pallets as you can for each group
+                pallets = pallets.Concat(CombinePallets(ref groupRemainder, maxPerPallet)).ToList();
+
+                foreach(var item in groupRemainder)
+                {
+                    remainder.Add(item.Key, item.Value);
+                }
+
             }
 
         }
+        //last chance to combine pallets 
+        pallets = pallets.Concat(CombinePallets(ref remainder, Config.MixedBoxesPerPallet)).ToList();
 
+        Pallet lastPallet = new(_currentOrder.OrderID);
+        foreach(var item in remainder)
+        {
+            lastPallet.Items.Add(item.Key, item.Value);
+        }
+        pallets.Add(lastPallet);
+
+        NumberPallets(pallets);
         return pallets;
 
     }
 
-    public async Task<IEnumerable<Pallet>> GenerateSingleProductPalletsAsync()
+    private IEnumerable<Pallet> CombinePallets(ref Dictionary<Product,int> remainder, int maxPerPallet)
+    {
+        //try to combine as many pallets as you can for each group
+        List<Pallet> pallets = new();
+        Pallet pallet = new(_currentOrder.OrderID);
+        var totalNeeded = remainder.Values.Sum();
+        var enumerator = remainder.GetEnumerator();
+        enumerator.MoveNext();
+        var remainingPalletSpace = maxPerPallet;
+        while (totalNeeded >= remainingPalletSpace && enumerator.Current.Key != null)
+        {
+            if (enumerator.Current.Value < remainingPalletSpace)
+            {
+                //Add items to pallet
+                pallet.Items.Add(enumerator.Current.Key, enumerator.Current.Value);
+                remainingPalletSpace -= enumerator.Current.Value;
+                totalNeeded -= enumerator.Current.Value;
+                //get next item
+                remainder.Remove(enumerator.Current.Key);
+                enumerator.MoveNext();
+            }
+            else
+            {
+                //Fill out pallet and create another one
+                pallet.Items.Add(enumerator.Current.Key, remainingPalletSpace);
+                pallets.Add(pallet);
+                pallet = new(_currentOrder.OrderID);
+
+                totalNeeded -= remainingPalletSpace;
+                //decement the item
+                remainder[enumerator.Current.Key] -= remainingPalletSpace;
+                remainingPalletSpace = maxPerPallet;
+
+            }
+        }
+
+        return pallets;
+    }
+
+    private async Task<IEnumerable<Pallet>> GenerateSingleProductPalletsAsync()
     {
         List<Pallet> pallets = new List<Pallet>();
         foreach(var item in _currentOrder.Items)
@@ -127,14 +183,20 @@ public class Palletizer
                 }
             }
         }
-        var palletNumber = 1;
-        foreach(Pallet pallet in pallets)
-        {
-            pallet.PalletIndex = palletNumber++;
-        }
+        NumberPallets(pallets);
         return pallets;
     }
-    
+
+    private void NumberPallets(IEnumerable<Pallet> pallets)
+    {
+        var palletNumber = 1;
+        foreach (Pallet pallet in pallets)
+        {
+            pallet.PalletIndex = palletNumber++;
+            pallet.TotalPallets = pallets.Count();
+        }
+    }
+
     private int GetMaxBoxesPerPallet(Product product)
     {
         var boxType = GetBoxType(product);

@@ -479,7 +479,7 @@ public sealed partial class OrderDetailsPage : Page
             }
             else
             {
-                var quantity = await PromptQuantityOrderdAsync(productToAdd);
+                var quantity = await PromptQuantityOrderdAsync(productToAdd.ProductID, productToAdd.ProductName);
                 if (quantity != int.MaxValue)
                 {
                     ViewModel.AddItem(productToAdd, quantity);
@@ -655,12 +655,12 @@ public sealed partial class OrderDetailsPage : Page
         }
     }
 
-    private async Task<int> PromptQuantityOrderdAsync(Product p)
+    private async Task<int> PromptQuantityOrderdAsync(int ProductID, string ProductName)
     {
         SingleValueInputDialog inputControl = new()
         {
             XamlRoot = XamlRoot,
-            Title = $"{p.ProductID}  {p.ProductName}",
+            Title = $"{ProductID}  {ProductName}",
             PrimaryButtonText = "Submit",
             Prompt = "Quantity?",
             ValidateValue = delegate (string? value)

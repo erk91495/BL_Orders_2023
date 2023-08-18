@@ -7,6 +7,7 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.System.Power;
 using ServiceStack;
 using System.Collections;
 using System.Collections.ObjectModel;

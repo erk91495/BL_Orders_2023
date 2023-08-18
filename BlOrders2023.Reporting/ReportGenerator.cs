@@ -130,4 +130,16 @@ public class ReportGenerator
         report.GeneratePdf(filePath);
         return filePath;
     }
+
+    public string GeneratePalletLoadingReport(Order order, IEnumerable<Pallet> pallets) 
+    {
+        List<IReport> palletPages = new List<IReport>();
+        foreach (var pallet in pallets)
+        {
+            palletPages.Add( new PalletLoadingReport(order, pallet));
+        }
+        var filePath = TempPath + Path.DirectorySeparatorChar + $"{order.OrderID}_PalletLoading" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        Document.Merge(palletPages).GeneratePdf(filePath);
+        return filePath;
+    }
 }

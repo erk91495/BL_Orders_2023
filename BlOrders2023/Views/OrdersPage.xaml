@@ -174,8 +174,8 @@
                             <sf:GridTextColumn HeaderText="Product  #" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" TextWrapping="WrapWholeWords"/>
                             <sf:GridTextColumn HeaderText="Ordered" MappingName="Quantity"/>
-                            <sf:GridTextColumn HeaderText="Allocated" MappingName="QuanAllocated"/>
-                            <sf:GridTextColumn HeaderText="Received" MappingName="QuantityReceived" IsHidden="{x:Bind ViewModel.SelectedOrder.Allocated, Mode=OneWay,Converter={StaticResource BoolNegationConverter}}"/>
+                            <sf:GridTextColumn HeaderText="Allocated" MappingName="QuanAllocated" IsHidden="{x:Bind ViewModel.SelectedOrder.Allocated, Mode=OneWay,Converter={StaticResource BoolNegationConverter}}"/>
+                            <sf:GridTextColumn HeaderText="Received" MappingName="QuantityReceived"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
 

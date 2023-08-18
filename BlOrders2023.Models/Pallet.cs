@@ -10,6 +10,7 @@ public class Pallet
     #region Properties
     public int OrderID { get; set; }
     public int PalletIndex { get; set; }
+    public int TotalPallets { get; set; }
     public Dictionary<Product, int> Items { get; set; }
     #endregion Properties
 
