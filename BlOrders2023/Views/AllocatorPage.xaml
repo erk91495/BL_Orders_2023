@@ -28,9 +28,26 @@
             <SplitView.Pane>
                 <RelativePanel x:Name="PaneArea" 
                                Background="{ThemeResource SystemAltMediumLowColor}"
-                               CornerRadius="20,0,0,20">
+                               CornerRadius="10,0,0,10">
 
-                    <controls:DataGrid Padding="20,20,0,20"
+                    <sf:SfDataGrid x:Name="InventoryGrid" 
+                                       Padding="20,20,0,20"
+                                       BorderBrush="Transparent"
+                                       ItemsSource="{x:Bind ViewModel.CurrentInventory, Mode=OneWay}"
+                                       AutoGenerateColumns="False"
+                                       RelativePanel.AlignTopWithPanel="True"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.Above="ButtonsGrid"
+                                       IsReadOnly="True">
+                        <sf:SfDataGrid.Columns>
+                            <sf:GridTextColumn MappingName="ProductID" HeaderText="ID" IsReadOnly="True"/>
+                            <sf:GridTextColumn MappingName="QuantityOnHand" HeaderText="On Hand" IsReadOnly="True"/>
+                        </sf:SfDataGrid.Columns>
+
+                    </sf:SfDataGrid>
+                    <!--<controls:DataGrid x:Name="InventoryGrid" 
+                                   Padding="20,20,0,20"
                                    BorderBrush="Transparent"
                                    ItemsSource="{x:Bind ViewModel.CurrentInventory, Mode=OneWay}"
                                    AutoGenerateColumns="False"
@@ -58,7 +75,7 @@
 
                         </controls:DataGrid.Columns>
                         
-                    </controls:DataGrid>
+                    </controls:DataGrid>-->
                     <Grid x:Name="ButtonsGrid"
                           RelativePanel.AlignBottomWithPanel="True"
                           RelativePanel.AlignLeftWithPanel="True"

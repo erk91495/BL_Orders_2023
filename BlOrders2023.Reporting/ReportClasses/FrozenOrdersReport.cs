@@ -36,7 +36,8 @@ public class FrozenOrdersReport :IReport
     {
         container.Page(page =>
         {
-            page.Margin(10);
+            page.Margin(20);
+            page.Size(PageSizes.Letter);
 
             page.Header().Height(100).Background(Colors.Grey.Lighten1);
             page.Header().Element(ComposeHeader);

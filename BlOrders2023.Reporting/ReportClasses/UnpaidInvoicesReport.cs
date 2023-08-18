@@ -35,7 +35,8 @@ namespace BlOrders2023.Reporting.ReportClasses
         {
             container.Page(page =>
             {
-                page.Margin(10);
+                page.Margin(20);
+                page.Size(PageSizes.Letter); page.Margin(10);
 
                 page.Header().Height(100).Background(Colors.Grey.Lighten1);
                 page.Header().Element(ComposeHeader);

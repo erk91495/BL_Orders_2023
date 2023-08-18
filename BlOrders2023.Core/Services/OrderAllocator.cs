@@ -361,6 +361,7 @@ public class OrderAllocator : IAllocatorService
 
     private void CalculateTotalOrdered(CustomerAllocationType allocationType)
     {
+        ordered.Clear();
         var ordesByAllocationType = _orders.Where(o => o.Customer.AllocationType == allocationType);
         foreach (var id in ordesByAllocationType.SelectMany(o => o.Items).Select(i => i.ProductID).Distinct())
         {

@@ -189,7 +189,7 @@ public sealed partial class AllocatorPage : Page
 
     private void btn_Save_Click(object sender, RoutedEventArgs e)
     {
-
+        Debugger.Break();
     }
     #endregion Methods
 
@@ -205,10 +205,11 @@ public sealed partial class AllocatorPage : Page
                 if (e.RowData is OrderItem item)
                 {
                     var inventoryItem = ViewModel.CurrentInventory.Where(i => i.ProductID == item.ProductID).FirstOrDefault();
-                    if (inventoryItem != null && inventoryItem.QuantityOnHand >= oldVal - newVal) 
+                    if (inventoryItem != null && inventoryItem.QuantityOnHand >= newVal - oldVal) 
                     {
                         e.IsValid = true;
-                        ViewModel.UpdateInventory(inventoryItem, oldVal - newVal);
+                        ViewModel.UpdateInventory(inventoryItem, (newVal - oldVal) * -1);
+                        InventoryGrid.View.Refresh();
                     }
                     else
                     {

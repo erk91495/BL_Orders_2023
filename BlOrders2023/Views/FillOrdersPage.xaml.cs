@@ -20,6 +20,7 @@ using BlOrders2023.Models.Enums;
 using BlOrders2023.Reporting;
 using BlOrders2023.Services;
 using System.Drawing.Printing;
+using BlOrders2023.Core.Services;
 
 namespace BlOrders2023.Views;
 
@@ -261,12 +262,17 @@ public sealed partial class FillOrdersPage : Page
 
     private void PrintOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
-        _ = PrintOrderAsync();
+        DispatcherQueue.EnqueueAsync(async () => await PrintOrderAsync());
     }
 
     private void PrintInvoiceFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
-        _ = PrintInvoiceAsync();
+        DispatcherQueue.EnqueueAsync(async () => await PrintInvoiceAsync());
+    }
+
+    private void PrintPalletTicketsFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        DispatcherQueue.EnqueueAsync(async () => await PrintPalletTicketsAsync());
     }
 
     private async Task PrintInvoiceAsync()
@@ -368,6 +374,20 @@ public sealed partial class FillOrdersPage : Page
                 _ = ViewModel.SaveOrderAsync();
             }
         }
+    }
+
+    private async Task PrintPalletTicketsAsync()
+    {
+
+        Palletizer palletizer = new(new(), ViewModel.Order);
+        var pallets = await palletizer.PalletizeAsync();
+        var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+
+        PrinterSettings printSettings = new();
+        printSettings.Copies = 1;
+        printSettings.Duplex = Duplex.Simplex;
+        var printer = new PDFPrinterService(filePath);
+        printer.PrintPdf(printSettings);     
     }
 
     private void OrderLookup_GotFocus(object sender, RoutedEventArgs e)
