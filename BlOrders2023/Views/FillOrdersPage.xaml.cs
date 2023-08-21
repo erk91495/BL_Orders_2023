@@ -20,6 +20,7 @@ using BlOrders2023.Models.Enums;
 using BlOrders2023.Reporting;
 using BlOrders2023.Services;
 using System.Drawing.Printing;
+using BlOrders2023.Core.Services;
 
 namespace BlOrders2023.Views;
 
@@ -41,11 +42,11 @@ public sealed partial class FillOrdersPage : Page
         reportGenerator = new();
 
         //TODO: Is this the way to handle setting the default focus?
-        dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low,
-        new DispatcherQueueHandler(() =>
-        {
-            OrderLookup.Focus(FocusState.Programmatic);
-        }));
+        //dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low,
+        //new DispatcherQueueHandler(() =>
+        //{
+        //    OrderLookup.Focus(FocusState.Programmatic);
+        //}));
     }
 
     private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
@@ -62,6 +63,7 @@ public sealed partial class FillOrdersPage : Page
                     QuanRcvd = 1,
                     ScanDate = DateTime.Now,
                     Scanline = scanline,
+                    order = ViewModel.Order,
                 };
                 try
                 {
@@ -94,8 +96,13 @@ public sealed partial class FillOrdersPage : Page
     private async Task AddShippingItemAsync(ShippingItem item)
     {
         try
-        {
-            await ViewModel.ReceiveItemAsync(item);
+        {   
+            var isFixedBarcode = item.Barcode?.GetType() == typeof(GTIN14Barcode);
+            //if(isFixedBarcode)
+            //{
+            //    item.Scanline += "_" + DateTime.Now.ToString("ddMMMMyyyyHHmmssff");
+            //}
+            await ViewModel.ReceiveItemAsync(item,!isFixedBarcode);
             OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
             OrderedItems.ColumnSizer.Refresh(); 
             OrderedVsReceivedGrid.View.Refresh();
@@ -232,6 +239,8 @@ public sealed partial class FillOrdersPage : Page
                 await ViewModel.DeleteShippingItemAsync(item);
                 OrderedVsReceivedGrid.View.Refresh();
             }
+            await ViewModel.SaveOrderAsync();
+            OrderedItems.View.Refresh();
         }
     }
 
@@ -239,6 +248,7 @@ public sealed partial class FillOrdersPage : Page
     {
         ShippingItemDataInputDialog dialog = new(XamlRoot);
         var result = await dialog.ShowAsync();
+        result.order = ViewModel.Order;
         if (result != null)
         {
             await AddShippingItemAsync(result);
@@ -252,12 +262,17 @@ public sealed partial class FillOrdersPage : Page
 
     private void PrintOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
-        _ = PrintOrderAsync();
+        DispatcherQueue.EnqueueAsync(async () => await PrintOrderAsync());
     }
 
     private void PrintInvoiceFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
-        _ = PrintInvoiceAsync();
+        DispatcherQueue.EnqueueAsync(async () => await PrintInvoiceAsync());
+    }
+
+    private void PrintPalletTicketsFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        DispatcherQueue.EnqueueAsync(async () => await PrintPalletTicketsAsync());
     }
 
     private async Task PrintInvoiceAsync()
@@ -359,5 +374,29 @@ public sealed partial class FillOrdersPage : Page
                 _ = ViewModel.SaveOrderAsync();
             }
         }
+    }
+
+    private async Task PrintPalletTicketsAsync()
+    {
+
+        Palletizer palletizer = new(new(), ViewModel.Order);
+        var pallets = await palletizer.PalletizeAsync();
+        var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+
+        PrinterSettings printSettings = new();
+        printSettings.Copies = 1;
+        printSettings.Duplex = Duplex.Simplex;
+        var printer = new PDFPrinterService(filePath);
+        printer.PrintPdf(printSettings);     
+    }
+
+    private void OrderLookup_GotFocus(object sender, RoutedEventArgs e)
+    {
+        OrderLookup.IsSuggestionListOpen = true;
+    }
+
+    private void OrderLookup_LostFocus(object sender, RoutedEventArgs e)
+    {
+        OrderLookup.IsSuggestionListOpen = false;
     }
 }

@@ -160,27 +160,29 @@
                                    FontSize="{StaticResource MediumFontSize}"/>
                         </StackPanel>
                     </StackPanel>
-
-                    <sf:SfDataGrid x:Name="ItemsGrid"
+                    <Grid x:Name="ItemsGridStack"
+                                RelativePanel.AlignRightWithPanel="True"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                RelativePanel.Below="CustomerStack"
+                                RelativePanel.Above="MemoStack">
+                        
+                        <sf:SfDataGrid x:Name="ItemsGrid"
                                    ItemsSource="{x:Bind ViewModel.SelectedOrder.Items, Mode=OneWay}"
                                    AutoGenerateColumns="False"
                                    IsReadOnly="True"
-                                   RelativePanel.Below="CustomerStack"
                                    ColumnWidthMode="AutoLastColumnFill"
-                                   AllowResizingColumns="True"
-                                   RelativePanel.AlignRightWithPanel="True"
-                                   RelativePanel.AlignLeftWithPanel="True">
-                        <sf:SfDataGrid.Columns>
-                            <sf:GridTextColumn HeaderText="Product  #" MappingName="ProductID"/>
-                            <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" TextWrapping="WrapWholeWords"/>
-                            <sf:GridTextColumn HeaderText="Ordered" MappingName="Quantity"/>
-                            <sf:GridTextColumn HeaderText="Allocated" MappingName="QuanAllocated"/>
-                            <sf:GridTextColumn HeaderText="Received" MappingName="QuantityReceived" IsHidden="{x:Bind ViewModel.SelectedOrder.Allocated, Mode=OneWay,Converter={StaticResource BoolNegationConverter}}"/>
-                        </sf:SfDataGrid.Columns>
-                    </sf:SfDataGrid>
+                                   AllowResizingColumns="True">
+                            <sf:SfDataGrid.Columns>
+                                <sf:GridTextColumn HeaderText="Product  #" MappingName="ProductID"/>
+                                <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" TextWrapping="WrapWholeWords"/>
+                                <sf:GridTextColumn HeaderText="Ordered" MappingName="Quantity"/>
+                                <sf:GridTextColumn HeaderText="Allocated" MappingName="QuanAllocated" IsHidden="{x:Bind ViewModel.SelectedOrder.Allocated, Mode=OneWay,Converter={StaticResource BoolNegationConverter}}"/>
+                                <sf:GridTextColumn HeaderText="Received" MappingName="QuantityReceived"/>
+                            </sf:SfDataGrid.Columns>
+                        </sf:SfDataGrid>
 
-
-                    <StackPanel x:Name="MemoStack" Orientation="Vertical"  RelativePanel.Above="ButtonStack" RelativePanel.Below="ItemsGrid"
+                    </Grid>
+                    <StackPanel x:Name="MemoStack" Orientation="Vertical"  RelativePanel.Above="ButtonStack"
                                 VerticalAlignment="Bottom">
                         <TextBlock Text="Memo:"/>
                         <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">

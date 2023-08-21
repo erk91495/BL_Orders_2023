@@ -16,7 +16,7 @@ public class OrderAllocator : IAllocatorService
 {
     #region Properties
     public IEnumerable<Order> Orders => _orders;
-    public Dictionary<int, int> Inventory => _remainingInventory;
+    public IEnumerable<InventoryItem> Inventory => _inventory;
     #endregion Properties
 
     #region Fields
@@ -57,35 +57,39 @@ public class OrderAllocator : IAllocatorService
         CalculateInventory();
 
 
+
+        if(config.AllocationType == AllocatorMode.Grocer)
+        {
+            CalculateTotalOrdered(CustomerAllocationType.Grocer);
+            AllocateGrocer();
+        }
+        else if (config.AllocationType == AllocatorMode.Gift)
+        {
+            CalculateTotalOrdered(CustomerAllocationType.Gift);
+            AllocateGift();
+        }
+        else if (config.AllocationType == AllocatorMode.Both)
+        {
+            CalculateTotalOrdered(CustomerAllocationType.Gift);
+            AllocateGift();
+            CalculateTotalOrdered(CustomerAllocationType.Grocer);
+            AllocateGrocer();
+        }
+#if DEBUG
         //for debug and testing. do what you want
-        if (config.AllocationType == Models.Enums.AllocatorMode.Test)
+        else if (config.AllocationType == AllocatorMode.Test)
         {
             CalculateTotalOrdered(CustomerAllocationType.Grocer);
             AllocateGrocer();
         }
-        else if(config.AllocationType == Models.Enums.AllocatorMode.Grocer)
-        {
-            CalculateTotalOrdered(CustomerAllocationType.Grocer);
-            AllocateGrocer();
-        }
-        else if (config.AllocationType == Models.Enums.AllocatorMode.Gift)
-        {
-            CalculateTotalOrdered(CustomerAllocationType.Gift);
-            AllocateGift();
-        }
-        else if (config.AllocationType == Models.Enums.AllocatorMode.Both)
-        {
-            CalculateTotalOrdered(CustomerAllocationType.Gift);
-            AllocateGift();
-            CalculateTotalOrdered(CustomerAllocationType.Grocer);
-            AllocateGrocer();
-        }
+#endif //DEBUG
         else
         {
             throw new NotImplementedException();
         }
         
         MarkOrdersAllocated();
+        UpdateRemainingInventory();
 #if DEBUG
         if(Debugger.IsAttached)
         {
@@ -94,6 +98,15 @@ public class OrderAllocator : IAllocatorService
 #endif //DEBUG
         return true;
     }
+
+    private void UpdateRemainingInventory()
+    {
+        foreach(var key in _remainingInventory.Keys)
+        {
+            _inventory.Where(p => p.ProductID == key).FirstOrDefault().QuantityOnHand = (short)_remainingInventory[key];
+        }
+    }
+
 
     private void AllocateGift()
     {
@@ -107,19 +120,19 @@ public class OrderAllocator : IAllocatorService
                 //First Make Sure the key is inventory and orderd lists
                 if (_remainingInventory.ContainsKey(currentProductID))
                 {
-                    foreach(var order in _orders.Where(o => o.Customer.AllocationType == Models.Enums.CustomerAllocationType.Gift))
+                    foreach(var order in _orders.Where(o => o.Customer.AllocationType == CustomerAllocationType.Gift))
                     {
                         var orderedItem = order.Items.Where(e => e.ProductID == currentProductID).FirstOrDefault();
                         if (orderedItem != null)
                         {
                             var quantityNeeded = orderedItem.Quantity;
-                            if(quantityNeeded >= _remainingInventory[currentProductID])
+                            if(quantityNeeded <= _remainingInventory[currentProductID])
                             {
-                                orderedItem.QuanAllocated = quantityNeeded;
+                                orderedItem.QuanAllocated += quantityNeeded;
                                 orderedItem.Allocated = true;
                             }
                             //Up one
-                            else if (idIndex + 1 < productIDs.Count && quantityNeeded >= _remainingInventory[productIDs[idIndex + 1]])
+                            else if (idIndex + 1 < productIDs.Count && quantityNeeded <= _remainingInventory[productIDs[idIndex + 1]])
                             {
                                 orderedItem = order.Items.Where(e => e.ProductID == productIDs[idIndex + 1]).FirstOrDefault();
                                 if(orderedItem != null)
@@ -135,10 +148,11 @@ public class OrderAllocator : IAllocatorService
                                         QuanAllocated = quantityNeeded,
                                         Allocated = true
                                     };
+                                    order.Items.Add(item);
                                 }
                             }
                             //down one
-                            else if (idIndex > 0 && quantityNeeded >= _remainingInventory[productIDs[idIndex -1 ]])
+                            else if (idIndex > 0 && quantityNeeded <= _remainingInventory[productIDs[idIndex -1 ]])
                             {
                                 orderedItem = order.Items.Where(e => e.ProductID == productIDs[idIndex - 1]).FirstOrDefault();
                                 if (orderedItem != null)
@@ -154,6 +168,7 @@ public class OrderAllocator : IAllocatorService
                                         QuanAllocated = quantityNeeded,
                                         Allocated = true
                                     };
+                                    order.Items.Add(item);
                                 }
                             }
                             else
@@ -346,6 +361,7 @@ public class OrderAllocator : IAllocatorService
 
     private void CalculateTotalOrdered(CustomerAllocationType allocationType)
     {
+        ordered.Clear();
         var ordesByAllocationType = _orders.Where(o => o.Customer.AllocationType == allocationType);
         foreach (var id in ordesByAllocationType.SelectMany(o => o.Items).Select(i => i.ProductID).Distinct())
         {

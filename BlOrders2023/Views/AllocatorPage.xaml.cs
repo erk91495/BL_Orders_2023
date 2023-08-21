@@ -97,13 +97,10 @@ public sealed partial class AllocatorPage : Page
             {
                 ViewModel.AllocatorConfig.IDs = new() {67662,67663};
                 await StartAllocationAsync();
-                
-                ViewModel.AllocatedOrders = new(ViewModel.AllocatorService.Orders);
-
             }
             else
             {
-                throw new Exception("InvalidDate");
+                TryGoBack();
             }
 
         }
@@ -130,7 +127,9 @@ public sealed partial class AllocatorPage : Page
                 CloseButtonText = "Ok",
             };
             await d.ShowAsync();
+#if !DEBUG
             TryGoBack();
+#endif //!DEBUG
         }
     }
 
@@ -183,10 +182,47 @@ public sealed partial class AllocatorPage : Page
         }
     }
 
-    #endregion Methods
+    private void btn_SavePrint_Click(object sender, RoutedEventArgs e)
+    {
 
-    private void Button_Click(object sender, RoutedEventArgs e)
+    }
+
+    private void btn_Save_Click(object sender, RoutedEventArgs e)
     {
         Debugger.Break();
+    }
+    #endregion Methods
+
+    private void AllocatedItemsGridControl_ValidateCell(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValidatingEventArgs e)
+    {
+        if(e.Column.MappingName == "QuanAllocated")
+        {
+            
+            if((double)e.NewValue % 1 == 0 )
+            {
+                var newVal = (int) (double)(e.NewValue);
+                var oldVal = (int)(double)(e.OldValue);
+                if (e.RowData is OrderItem item)
+                {
+                    var inventoryItem = ViewModel.CurrentInventory.Where(i => i.ProductID == item.ProductID).FirstOrDefault();
+                    if (inventoryItem != null && inventoryItem.QuantityOnHand >= newVal - oldVal) 
+                    {
+                        e.IsValid = true;
+                        ViewModel.UpdateInventory(inventoryItem, (newVal - oldVal) * -1);
+                        InventoryGrid.View.Refresh();
+                    }
+                    else
+                    {
+                        e.IsValid = false;
+                        e.ErrorMessage = "Insufficent inventory";
+                    }
+                }
+            }
+            else
+            {
+                e.IsValid = false;
+                e.ErrorMessage = "Value must be a whole number";
+            }
+        }
     }
 }

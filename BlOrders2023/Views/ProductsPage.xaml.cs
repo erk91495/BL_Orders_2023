@@ -60,7 +60,8 @@ public sealed partial class ProductsPage : Page
     {
         foreach(Product item in e.Items)
         {
-            ViewModel.DeleteItem(item);
+            //TODO: need to handle delete
+            //ViewModel.DeleteItem(item);
         }
     }
 

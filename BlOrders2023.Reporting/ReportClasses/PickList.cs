@@ -35,7 +35,8 @@ public class PickList : IReport
     {
         container.Page(page =>
         {
-            page.Margin(10);
+            page.Margin(20);
+            page.Size(PageSizes.Letter);
 
             page.Header().Height(100).Background(Colors.Grey.Lighten1);
             page.Header().Element(ComposeHeader);
@@ -233,7 +234,6 @@ public class PickList : IReport
                     return container.DefaultTextStyle(x => x.SemiBold()).BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
                 }
             });
-            //Memo Box
 
 
         });

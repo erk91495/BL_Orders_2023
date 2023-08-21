@@ -43,11 +43,11 @@ internal class SqlProductsTable : IProductsTable
         {
             if (productID == null)
             {
-                return _db.Products.AsNoTracking().ToList();
+                return _db.Products.AsNoTrackingWithIdentityResolution().ToList();
             }
             else
             {
-                return _db.Products.Where(product => product.ProductID == productID).AsNoTracking().ToList();
+                return _db.Products.Where(product => product.ProductID == productID).AsNoTrackingWithIdentityResolution().ToList();
             }
         }
     }
@@ -69,11 +69,11 @@ internal class SqlProductsTable : IProductsTable
         {
             if (ProductID == null)
             {
-                return await _db.Products.OrderBy(product => product.ProductID).AsNoTracking().ToListAsync();
+                return await _db.Products.OrderBy(product => product.ProductID).AsNoTrackingWithIdentityResolution().ToListAsync();
             }
             else
             {
-                return await _db.Products.Where(p => p.ProductID == ProductID).AsNoTracking().ToListAsync();
+                return await _db.Products.Where(p => p.ProductID == ProductID).AsNoTrackingWithIdentityResolution().ToListAsync();
             }
         }
         
@@ -99,14 +99,14 @@ internal class SqlProductsTable : IProductsTable
         {
             if (value.IsNullOrEmpty())
             {
-                return await _db.Products.AsNoTracking().ToListAsync();
+                return await _db.Products.AsNoTrackingWithIdentityResolution().ToListAsync();
             }
             else
             {
                 return await _db.Products.Where(product =>
                     product.ProductName.Contains(value) ||
                     product.ProductID.ToString().Contains(value))
-                    .AsNoTracking()
+                    .AsNoTrackingWithIdentityResolution()
                     .ToListAsync();
             }
         }
@@ -115,7 +115,7 @@ internal class SqlProductsTable : IProductsTable
 
     public async Task<bool> IdExists(int productID)
     {
-        var result = await _db.Products.FromSql<Product>($"[dbo].[usp_ProductIDExists] {productID}").AsNoTracking().ToListAsync();
+        var result = await _db.Products.FromSql<Product>($"[dbo].[usp_ProductIDExists] {productID}").AsNoTrackingWithIdentityResolution().ToListAsync();
         if (result.IsNullOrEmpty()){
             return false;
         }

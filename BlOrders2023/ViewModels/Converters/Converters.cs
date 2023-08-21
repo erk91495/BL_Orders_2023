@@ -90,39 +90,45 @@ namespace BlOrders2023.ViewModels.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value != null && value is float f)
+            if (value is float decimalValue)
             {
-                return (double)f;
+                return (double)decimalValue;
             }
-            else
-            {
-                return 0;
-            }
+
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return System.Convert.ToSingle(value);
+            if (value is double doubleValue)
+            {
+                return (float)doubleValue;
+            }
+
+            return value;
         }
     }
 
-    public class FloatToDecimalConverter : IValueConverter
+    public class DecimalToFloatConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value != null && value is float f)
+            if (value is decimal decimalValue)
             {
-                return (decimal)f;
+                return (float)decimalValue;
             }
-            else
-            {
-                return 0;
-            }
+
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return System.Convert.ToSingle(value);
+            if (value is float floatValue)
+            {
+                return (decimal)floatValue;
+            }
+
+            return value;
         }
     }
 

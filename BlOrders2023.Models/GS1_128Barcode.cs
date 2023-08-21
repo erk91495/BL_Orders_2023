@@ -2,61 +2,14 @@
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-
+using BlOrders2023.Models.Helpers;
 namespace BlOrders2023.Models;
 
 
 
 public class GS1_128Barcode : IBarcode
 {
-    #region Helpers
     public const char FNC1 = (char)0x1D; //Group Seperator char
-
-    /// <summary>
-    /// This method caluculates and appends the check digit for the given gtin in accordance with the gs1 standard
-    /// see 
-    /// </summary>
-    /// <param name="gtin">The gtin to calgulate</param>
-    /// <returns> True if the calculation is successful</returns>
-    public static bool AppendG10CheckDigit(ref string gtin)
-    {
-        var success = false;
-
-        if (gtin.Length <= 13)
-        {
-            gtin += CalculateG10CheckDigit(in gtin);
-        }
-        return success;
-    }
-
-    /// <summary>
-    /// Calculates and returns the check digit for the given GTIN 
-    /// see https://www.gs1.org/services/how-calculate-check-digit-manually
-    /// </summary>
-    /// <param name="gtin">the GTIN to calculate</param>
-    /// <returns>The check digit for the GTIN</returns>
-    public static string CalculateG10CheckDigit(in string gtin)
-    {
-        var sum = 0;
-        //SSCC cheksum is 18 digits
-        var j = 0;
-        for (var i = gtin.Length - 1; i >= 0; i--)
-        {
-            var c = gtin[i];
-            if (j % 2 == 0)
-            {
-                sum += int.Parse(c.ToString()) * 3;
-            }
-            else
-            {
-                sum += int.Parse(c.ToString()) * 1;
-            }
-            j++;
-        }
-        var checkDigit = 10 - (sum % 10);
-        return checkDigit.ToString();
-    }
-    #endregion Helpers
 
     #region Properties
     public override string Scanline => GenerateScanline();
@@ -131,7 +84,7 @@ public class GS1_128Barcode : IBarcode
             if (ai.Equals("01"))
             {
                 var newGTIN = _AIValues["01"][..^6] + $"{item.ProductID:D5}";
-                AppendG10CheckDigit(ref newGTIN);
+                BarcodeHelpers.AppendGTINCheckDigit(ref newGTIN);
                 UpdateAI("01", newGTIN);
             }
             //LOT CODE

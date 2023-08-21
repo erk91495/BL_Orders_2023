@@ -1,8 +1,7 @@
 ﻿using QuestPDF.Infrastructure;
 
-namespace BlOrders2023.Reporting.ReportClasses
+namespace BlOrders2023.Reporting.ReportClasses;
+
+public interface IReport : IDocument
 {
-    public interface IReport : IDocument
-    {
-    }
 }

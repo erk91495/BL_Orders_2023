@@ -108,6 +108,9 @@
                                     ItemsSource="{x:Bind ViewModel.FillableOrders}"
                                     TextChanged="OrderLookup_TextChanged"
                                     QuerySubmitted="OrderLookup_QuerySubmitted"
+                                    GotFocus="OrderLookup_GotFocus"
+                                    LostFocus="OrderLookup_LostFocus"
+                                    TabIndex="1"
                                     >
                         <AutoSuggestBox.ItemTemplate>
                             <DataTemplate x:DataType="models:Order">
@@ -135,6 +138,7 @@
                                 <MenuFlyoutItem x:Name="DeleteAll" Text="Remove All Items" Icon="Delete" Click="DeleteAll_Click"/>
                                 <MenuFlyoutItem Text="Print Order" Icon="Print" Click="PrintOrderFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintOrder, Mode=OneWay}"/>
                                 <MenuFlyoutItem Text="Print Invoice" Icon="Print" Click="PrintInvoiceFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintInvoice, Mode=OneWay}"/>
+                                <MenuFlyoutItem Text="Print Pallet Tickets" Icon="Print" Click="PrintPalletTicketsFlyoutItem_Click"/>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
@@ -154,7 +158,7 @@
                             <TextBlock Text="Pickup Date:" 
                                        Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup,  FallbackValue=Collapsed, Mode=OneWay}"/>
                             <TextBlock Text="Delivery Date:" 
-                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Shipping, FallbackValue=Collapsed, Mode=OneWay}"/>
+                                       Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Delivery, FallbackValue=Collapsed, Mode=OneWay}"/>
                             <TextBlock Text="{x:Bind ViewModel.Order.PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}"
                                        Padding="10,0,10,0"/>
                             <TextBlock Text="{x:Bind ViewModel.Order.PickupTime, Converter={StaticResource TimeFormatConverter}, Mode=OneWay}"
@@ -231,7 +235,8 @@
                              AcceptsReturn="True"
                              TextWrapping="NoWrap"
                              TextChanged="Scanline_TextChanged"
-                             IsEnabled="{x:Bind ViewModel.HasOrder, Mode=OneWay}"/>
+                             IsEnabled="{x:Bind ViewModel.HasOrder, Mode=OneWay}"
+                             TabIndex="2"/>
 
                     <Button x:Name="ManualProductAdd" RelativePanel.RightOf="Scanline" RelativePanel.AlignBottomWith="Scanline"
                             Margin="10,0,0,0" Click="ManualProductAdd_Click">

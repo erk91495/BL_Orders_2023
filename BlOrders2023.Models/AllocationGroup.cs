@@ -11,8 +11,8 @@ public class AllocationGroup
 {
     #region Properties
     public int ID { get; set; }
-    public string GroupName { get; set; }
-    public List<int> ProductIDs { get; set; }
+    public string GroupName { get; set; } = "";
+    public List<int> ProductIDs { get; set; } = new();
     public int AllocationOrder { get; set; }
     #endregion Properties
 

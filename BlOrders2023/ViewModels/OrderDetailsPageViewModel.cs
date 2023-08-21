@@ -7,6 +7,7 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.System.Power;
 using ServiceStack;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -286,10 +287,15 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
 
     }
 
-    public void AddItem(Product p)
+    public void AddItem(Product p, int? quantity = null)
     {
         var tracked = _db.Products.Get(p.ProductID, false).First();
         OrderItem item = new(tracked, _order);
+        if(quantity != null) 
+        {
+            item.Quantity = (float)quantity;
+        }
+
         Items.Add(item);
     }
 
@@ -307,7 +313,6 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         OnPropertyChanged(nameof(Frozen));
         OnPropertyChanged(nameof(Memo));
         OnPropertyChanged(nameof(Memo_Totl));
-        OnPropertyChanged(nameof(Items));
         OnPropertyChanged(nameof(HasNextOrder));
         OnPropertyChanged(nameof(HasPreviousOrder));
     }
@@ -385,23 +390,30 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     /// Queries the database for a list of _products that match the given string
     /// </summary>
     /// <param name="query">A string for _products to match</param>
-    public async void QueryProducts(string query)
+    public async Task QueryProducts(string query = null)
     {
-        await dispatcherQueue.EnqueueAsync(() =>
+        if (query.IsNullOrEmpty())
         {
-            SuggestedProducts.Clear();
-        });
-
-        IProductsTable table = _db.Products;
-        var products = await Task.Run(() => table.GetAsync(query, false));
-
-        await dispatcherQueue.EnqueueAsync(() =>
+            LoadProducts();
+        }
+        else
         {
-            foreach (var product in products)
+            await dispatcherQueue.EnqueueAsync(() =>
             {
-                SuggestedProducts.Add(product);
-            }
-        });
+                SuggestedProducts.Clear();
+            });
+
+            IProductsTable table = _db.Products;
+            var products = await Task.Run(() => table.GetAsync(query, false));
+
+            await dispatcherQueue.EnqueueAsync(() =>
+            {
+                foreach (var product in products)
+                {
+                    SuggestedProducts.Add(product);
+                }
+            });
+        }
     }
     /// <summary>
     /// Saves changes to the current Order

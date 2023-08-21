@@ -126,7 +126,7 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    internal async Task ReceiveItemAsync(ShippingItem item)
+    internal async Task ReceiveItemAsync(ShippingItem item, bool checkDuplicate = true)
     {
         var product = _orderDB.Products.Get(item.ProductID).FirstOrDefault();
         if(product == null)
@@ -138,19 +138,18 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
             item.Product = product;
         }
 
-        var duplicate = await _orderDB.ShipDetails.IsDuplicateScanline(item.Scanline);
-        if (!duplicate)
+        if(checkDuplicate)
         {
-            Items.Add(item);
-            _order?.ShippingItems.Add(item);
-            IncremantOrderedItem(item);
-            await _orderDB.Orders.UpsertAsync(_order);
-            
+            var duplicate = await _orderDB.ShipDetails.IsDuplicateScanline(item.Scanline);
+            if (duplicate)
+            {
+                throw new DuplicateBarcodeException("Duplicate Scanline", item.Scanline);
+            } 
         }
-        else
-        {
-            throw new DuplicateBarcodeException("Duplicate Scanline", item.Scanline);
-        }
+        Items.Add(item);
+        _order?.ShippingItems.Add(item);
+        IncremantOrderedItem(item);
+        await _orderDB.Orders.UpsertAsync(_order);
     }
 
     internal async Task DeleteShippingItemAsync(ShippingItem item)
@@ -164,7 +163,6 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
             else
             {
                 DecrementOrderedItem(item);
-                await _orderDB.Orders.UpsertAsync(_order);
             }
             OnPropertyChanged(nameof(Items));
         }

@@ -152,7 +152,7 @@
                                  IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Pickup}"/>
                     <RadioButton x:Name="RadioDelivery" 
                                  Content="Delivery"
-                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Shipping}"/>
+                                 IsChecked="{x:Bind ViewModel.Shipping, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Delivery}"/>
                 </RadioButtons>
 
                 <StackPanel Orientation="Vertical"
@@ -241,7 +241,7 @@
                        RelativePanel.Below="ProductEntryErrorMessage"
                        RelativePanel.Above="NavigationButtonGrid"
                        GridLinesVisibility="Both"
-                       IsReadOnly="False"
+                       IsEnabled="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
                        AutoGenerateColumns="False"
                        RelativePanel.AlignLeftWithPanel="True"
                        RelativePanel.AlignRightWithPanel="True"
@@ -255,10 +255,10 @@
                 <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
                 <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" AllowEditing="False" DisplayNumberFormat="N2"/>
-                <sf:GridNumericColumn HeaderText="Customer Price" MappingName="ActualCustPrice" AllowEditing="True" DisplayNumberFormat="C"/>
+                <sf:GridNumericColumn HeaderText="Customer Price" MappingName="ActualCustPrice" AllowEditing="True" DisplayNumberFormat="C" />
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity" AllowEditing="True"/>
                 <sf:GridNumericColumn HeaderText="Quantity Allocated" MappingName="QuanAllocated" AllowEditing="True" IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
-                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuantityReceived" />
+                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuantityReceived"/>
                 <sf:GridUnboundColumn HeaderText="" UseBindingValue="False" MappingName="UnboundColumn" ColumnWidthMode="SizeToCells" IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
                     <sf:GridUnboundColumn.CellTemplate>
                         <DataTemplate>

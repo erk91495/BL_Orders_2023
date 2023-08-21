@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using BlOrders2023.Core.Helpers;
+using BlOrders2023.Core.Services;
 using BlOrders2023.Models;
 using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
@@ -339,6 +341,56 @@ public sealed partial class ReportsPage : Page
                         if (order != null)
                         {
                             reportPath = reportGenerator.GeneratePickList(order);
+                        }
+                        else
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"No order with the order id {id} found.",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
+                    }
+                }
+            }
+            else if(control.ReportType == typeof(PalletLoadingReport))
+            {
+                SingleValueInputDialog dialog = new SingleValueInputDialog()
+                {
+                    Title = "Order ID",
+                    Prompt = "Please Enter An Order ID",
+                    XamlRoot = XamlRoot,
+                    PrimaryButtonText = "Submit",
+                    SecondaryButtonText = "Cancel",
+                    ValidateValue = ValidateOrderID,
+                };
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    var res = int.TryParse(dialog.Value ?? "", out var id);
+                    if (!res)
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "User Error",
+                            Content = $"Invalid Order ID {dialog.Value}.\r\n " +
+                            $"Please enter a numeric value",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
+                    }
+                    else
+                    {
+                        var order = ViewModel.GetOrder(id);
+                        if (order != null)
+                        {
+                            Palletizer palletizer = new Palletizer(new PalletizerConfig(), order);
+                            IEnumerable<Pallet> pallets = await palletizer.PalletizeAsync();
+                            reportPath = reportGenerator.GeneratePalletLoadingReport(order, pallets);
                         }
                         else
                         {

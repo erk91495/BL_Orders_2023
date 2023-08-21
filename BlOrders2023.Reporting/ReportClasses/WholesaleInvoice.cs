@@ -32,6 +32,7 @@ public class WholesaleInvoice : IReport
     {
         container.Page(page =>
                 {
+                    page.Margin(20);
                     page.Size(PageSizes.Letter);
                     if(_order.OrderStatus >= Models.Enums.OrderStatus.Invoiced) {
                         page.Background().AlignCenter().AlignMiddle()

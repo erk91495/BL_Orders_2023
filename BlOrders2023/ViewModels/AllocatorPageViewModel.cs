@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace BlOrders2023.ViewModels;
 public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
@@ -22,6 +23,7 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
 
     #region Fields
     private ObservableCollection<Order> allocatedOrders;
+    private ObservableCollection<InventoryItem> _currentInventory;
     #endregion Fields
 
     #region Properties
@@ -36,6 +38,16 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
             OnPropertyChanged();
         }
     }
+
+    public ObservableCollection<InventoryItem> CurrentInventory
+    {
+        get => _currentInventory;
+        set
+        {
+            _currentInventory = value;
+            OnPropertyChanged();
+        }
+    }
     #endregion Properties
 
     #region Constructors
@@ -44,6 +56,7 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
         AllocatorConfig = new OrderAllocatorConfiguration();
         AllocatorService = new OrderAllocator(App.GetNewDatabase());
         AllocatedOrders = new();
+        CurrentInventory = new();
     }
     #endregion Constructors
 
@@ -55,6 +68,19 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
     {
         if (AllocatorConfig == null || AllocatorService == null) throw new InvalidOperationException();
         await AllocatorService.Allocate(AllocatorConfig);
+        AllocatedOrders = new(AllocatorService.Orders);
+        CurrentInventory = new(AllocatorService.Inventory);
+    }
+
+    internal void UpdateInventory(InventoryItem inventoryItem, int value)
+    {
+        var index = CurrentInventory.IndexOf(inventoryItem);
+        if (index >= 0)
+        {
+            CurrentInventory[index].QuantityOnHand += (short)value;
+            OnPropertyChanged(nameof(CurrentInventory));
+            OnPropertyChanged(nameof(AllocatedOrders));
+        }
     }
     #endregion Methods
 

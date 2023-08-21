@@ -26,6 +26,16 @@ namespace BlOrders2023.Models
             Scanline = scanline.Trim();
             ParseScanline();
         }
+        public override string Scanline { get; }
+
+        public override bool PopuplateProperties(ref ShippingItem item)
+        {
+            item.ProductID = _productId;
+            item.PickWeight = _weight;
+            item.PackDate = _packDate;
+            item.PackageSerialNumber = _serial;
+            return true;
+        }
 
         private void ParseScanline()
         {
@@ -78,16 +88,5 @@ namespace BlOrders2023.Models
             }
         }
 
-        public override string Scanline { get; }
-
-
-        public override bool PopuplateProperties(ref ShippingItem item)
-        {
-            item.ProductID = _productId;
-            item.PickWeight = _weight;
-            item.PackDate = _packDate;
-            item.PackageSerialNumber = _serial;
-            return true;
-        }
     }
 }

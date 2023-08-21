@@ -34,7 +34,8 @@ namespace BlOrders2023.Reporting.ReportClasses
         {
             container.Page(page =>
             {
-                page.Margin(10);
+                page.Margin(20);
+                page.Size(PageSizes.Letter);
 
                 page.Header().Height(100).Background(Colors.Grey.Lighten1);
                 page.Header().Element(ComposeHeader);
@@ -108,7 +109,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                         table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
 
                         table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yyyy")}").Style(tableTextStyle);
-                        if(order.Shipping == Models.Enums.ShippingType.Shipping)
+                        if(order.Shipping == Models.Enums.ShippingType.Delivery)
                         {
                             table.Cell().Element(CellStyle).Text($"Delivery").Style(tableTextStyle).Italic();
                         }
