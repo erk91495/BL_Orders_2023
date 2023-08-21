@@ -13,6 +13,10 @@ public class GTIN14Barcode : IBarcode
         {
             throw new InvalidBarcodeExcption("Invalid Shipping Item");
         }
+        if(item.Scanline?.Length != 14)
+        {
+            throw new InvalidBarcodeExcption("GTIN-14 Must Be 14 Characters");
+        }
 
         _scanline = item.Scanline ?? "";
 
@@ -20,6 +24,10 @@ public class GTIN14Barcode : IBarcode
 
     public GTIN14Barcode(string scanline) : base(scanline)
     {
+        if (scanline.Length != 14)
+        {
+            throw new InvalidBarcodeExcption("GTIN-14 Must Be 14 Characters");
+        }
         _scanline = scanline;
     }
 
@@ -27,7 +35,14 @@ public class GTIN14Barcode : IBarcode
 
     public override bool PopuplateProperties(ref ShippingItem item)
     {
-        item.ProductID = int.Parse(_scanline[8..^1]);
+        try
+        {
+            item.ProductID = int.Parse(_scanline[8..^1]);
+        }
+        catch(Exception e)
+        { 
+            throw new InvalidBarcodeExcption(e.Message); 
+        }
         return true;
     }
 }
