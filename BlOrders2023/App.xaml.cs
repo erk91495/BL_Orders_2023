@@ -108,6 +108,8 @@ public partial class App : Application
             services.AddTransient<CustomerClassesPage>();
             services.AddTransient<AllocatorPage>();
             services.AddTransient<AllocatorPageViewModel>();
+            services.AddTransient<InventoryPage>();
+            services.AddTransient<InventoryPageViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

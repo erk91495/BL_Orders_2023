@@ -52,5 +52,11 @@ internal class SqlInventoryTable : IInventoryTable
             return await _db.Inventory.OrderBy(i => i.SortIndex).ToListAsync();
         }
     }
+
+    public async Task UpsertAsync(InventoryItem item)
+    {
+        _db.Update(item);
+        await _db.SaveChangesAsync();
+    }
     #endregion Methods
 }

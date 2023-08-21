@@ -10,4 +10,5 @@ public interface IInventoryTable
 {
     public Task<IEnumerable<InventoryItem>> GetInventoryAsync(IEnumerable<int> ids = null);
     public IEnumerable<InventoryItem> GetInventory(IEnumerable<int> ids = null);
+    public Task UpsertAsync(InventoryItem item);
 }
