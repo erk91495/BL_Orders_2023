@@ -48,7 +48,8 @@
                 <TextBox x:Name="SeachBox"
                          TextChanged="SeachBox_TextChanged"
                          MinWidth="300"
-                         VerticalAlignment="Stretch"/>
+                         VerticalAlignment="Stretch"
+                         PlaceholderText="Search..."/>
             </AppBarElementContainer>
             <AppBarElementContainer>
                 <SplitButton ToolTipService.ToolTip="Create New Order" Content="New Order"

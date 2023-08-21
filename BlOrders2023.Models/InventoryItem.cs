@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlOrders2023.Models;
 
+
 [Table("tbl_Inventory_(Boxed)")]
 public class InventoryItem
 {

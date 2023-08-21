@@ -6,63 +6,136 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace BlOrders2023.Models
+namespace BlOrders2023.Models;
+
+[Table("tbl_ShipDetails")]
+public class ShippingItem : ObservableObject
 {
-    [Table("tbl_ShipDetails")]
-    public class ShippingItem
-    {
-        [Key]
-        public int SD_ID { get; set; }
-        public int OrderID { get; set; }
-        [ForeignKey("OrderID")]
-        [JsonIgnore]
-        public virtual Order order { get; set; } = null!;
-        [Column("ProdID")]
-        public int ProductID { get; set; }
-        public int? QuanRcvd { get; set; }
-        public float? PickWeight { get; set; }
-        public bool? Consolidated { get; set; }
-        public string? Scanline { get; set; }
-        public string? PackageSerialNumber { get; set; }
-        [Column("OrderDate")]
-        public DateTime? ScanDate { get; set; }
-        [Column("PackageDate")]
-        public DateTime? PackDate { get; set; }
-        [ForeignKey("ProductID")]
-        public virtual Product Product { get; set; } = null!;
-        [NotMapped]
-        public IBarcode? Barcode { get; set; }
-        public override bool Equals(object? obj)
-        {
-            return obj is ShippingItem item &&
-                   SD_ID == item.SD_ID &&
-                   OrderID == item.OrderID &&
-                   ProductID == item.ProductID &&
-                   QuanRcvd == item.QuanRcvd &&
-                   PickWeight == item.PickWeight &&
-                   Consolidated == item.Consolidated &&
-                   Scanline == item.Scanline &&
-                   PackageSerialNumber == item.PackageSerialNumber &&
-                   ScanDate == item.ScanDate &&
-                   PackDate == item.PackDate;
-                   
-        }
+    #region  Fields
+    private int sD_ID;
+    private int orderID;
+    private Order order = null!;
+    private int productID;
+    private int? quanRcvd;
+    private float? pickWeight;
+    private bool? consolidated;
+    private string? scanline;
+    private string? packageSerialNumber;
+    private DateTime? scanDate;
+    private DateTime? packDate;
+    private Product product = null!;
+    private IBarcode? barcode;
+    #endregion Fields
 
-        public override int GetHashCode()
-        {
-            HashCode hash = new HashCode();
-            hash.Add(SD_ID);
-            hash.Add(OrderID);
-            hash.Add(ProductID);
-            hash.Add(QuanRcvd);
-            hash.Add(PickWeight);
-            hash.Add(Consolidated);
-            hash.Add(Scanline);
-            hash.Add(PackageSerialNumber);
-            hash.Add(ScanDate);
-            hash.Add(PackDate);
-            return hash.ToHashCode();
-        }
+    #region Properties
+    [Key]
+    public int SD_ID
+    {
+        get => sD_ID; 
+        set => SetProperty(ref sD_ID, value);
     }
+    public int OrderID
+    {
+        get => orderID; 
+        set => SetProperty(ref orderID, value);
+    }
+    [ForeignKey("OrderID")]
+    [JsonIgnore]
+    public virtual Order Order
+    {
+        get => order; 
+        set => SetProperty(ref order, value);
+    }
+    [Column("ProdID")]
+    public int ProductID
+    {
+        get => productID; 
+        set => SetProperty(ref productID, value);
+    }
+    public int? QuanRcvd
+    {
+        get => quanRcvd; 
+        set => SetProperty(ref quanRcvd, value);
+    }
+    public float? PickWeight
+    {
+        get => pickWeight; 
+        set => SetProperty(ref pickWeight, value);
+    }
+    public bool? Consolidated
+    {
+        get => consolidated; 
+        set => SetProperty(ref consolidated, value);
+    }
+    public string? Scanline
+    {
+        get => scanline; 
+        set => SetProperty(ref scanline, value);
+    }
+    public string? PackageSerialNumber
+    {
+        get => packageSerialNumber; 
+        set => SetProperty(ref packageSerialNumber, value);
+    }
+    [Column("OrderDate")]
+    public DateTime? ScanDate
+    {
+        get => scanDate; 
+        set => SetProperty(ref scanDate, value);
+    }
+    [Column("PackageDate")]
+    public DateTime? PackDate
+    {
+        get => packDate; 
+        set => SetProperty(ref packDate, value);
+    }
+    [ForeignKey("ProductID")]
+    public virtual Product Product
+    {
+        get => product; 
+        set => SetProperty(ref product, value);
+    }
+    [NotMapped]
+    public IBarcode? Barcode
+    {
+        get => barcode; 
+        set => SetProperty(ref barcode, value);
+    }
+    #endregion Properties
+
+    #region Methods
+    public override bool Equals(object? obj)
+    {
+        return obj is ShippingItem item &&
+               SD_ID == item.SD_ID &&
+               OrderID == item.OrderID &&
+               ProductID == item.ProductID &&
+               QuanRcvd == item.QuanRcvd &&
+               PickWeight == item.PickWeight &&
+               Consolidated == item.Consolidated &&
+               Scanline == item.Scanline &&
+               PackageSerialNumber == item.PackageSerialNumber &&
+               ScanDate == item.ScanDate &&
+               PackDate == item.PackDate;
+               
+    }
+
+    public override int GetHashCode()
+    {
+        HashCode hash = new HashCode();
+        hash.Add(SD_ID);
+        hash.Add(OrderID);
+        hash.Add(ProductID);
+        hash.Add(QuanRcvd);
+        hash.Add(PickWeight);
+        hash.Add(Consolidated);
+        hash.Add(Scanline);
+        hash.Add(PackageSerialNumber);
+        hash.Add(ScanDate);
+        hash.Add(PackDate);
+        return hash.ToHashCode();
+    }
+    #endregion Methods
 }

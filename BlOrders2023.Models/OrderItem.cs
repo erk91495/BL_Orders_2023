@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.IdentityModel.Tokens;
 using ServiceStack;
 using System;
 using System.Collections.Generic;
@@ -12,44 +13,96 @@ using System.Threading.Tasks;
 namespace BlOrders2023.Models;
 
 [Table("tblOrderDetails_2")]
-public class OrderItem
+public class OrderItem : ObservableObject
 {
+    #region Fields
     private float? quanAllocated;
+    private int orderID;
+    private Order order = null!;
+    private int productID;
+    private float quantity;
+    private decimal actualCustPrice;
+    private int ordDtl_ID;
+    private DateTime? prodEntryDate;
+    private Product product = null!;
+    private int extraNeeded;
+    private bool? allocated;
+    #endregion Fields
 
     #region Properties
-    public int OrderID { get; set; }
+    public int OrderID
+    {
+        get => orderID; 
+        set => SetProperty(ref orderID, value);
+    }
     [ForeignKey("OrderID")]
     [JsonIgnore]
-    public virtual Order Order { get; set; } = null!;
-    public int ProductID { get; set; }
+    public virtual Order Order
+    {
+        get => order; 
+        set => SetProperty(ref order, value);
+    }
+    public int ProductID
+    {
+        get => productID; 
+        set => SetProperty(ref productID, value);
+    }
     [ConcurrencyCheck]
-    public float Quantity { get; set; }
-    [NotMapped]
-    public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
-    public decimal ActualCustPrice { get; set; }
+    public float Quantity
+    {
+        get => quantity; 
+        set => SetProperty(ref quantity, value);
+    }
+    public decimal ActualCustPrice
+    {
+        get => actualCustPrice; 
+        set => SetProperty(ref actualCustPrice, value);
+    }
     //public float QuanRcvd { get; set; }
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int OrdDtl_ID { get; set; }
-    public DateTime? ProdEntryDate { get; set; }
-    [ForeignKey("ProductID")]
-    public virtual Product Product { get; set; } = null!;
-    [NotMapped]
-    public int QuantityReceived => CalcQuantityReceived();
-    public float? QuanAllocated
+    public int OrdDtl_ID
     {
-        get => quanAllocated ?? 0; set => quanAllocated = value;
+        get => ordDtl_ID; 
+        set => SetProperty(ref ordDtl_ID, value);
+    }
+    public DateTime? ProdEntryDate
+    {
+        get => prodEntryDate; 
+        set => SetProperty(ref prodEntryDate, value);
+    }
+    [ForeignKey("ProductID")]
+    public virtual Product Product
+    {
+        get => product; 
+        set => SetProperty(ref product, value);
     }
 
-    public bool? Allocated { get; set; }
+    public float? QuanAllocated
+    {
+        get => quanAllocated ?? 0; 
+        set => SetProperty(ref quanAllocated, value);
+    }
+
+    public bool? Allocated
+    {
+        get => allocated; 
+        set => SetProperty(ref allocated, value);
+    }
 
     //Not in DB used for allocation
     [NotMapped]
-    public int ExtraNeeded { get; set; }
-    #endregion Properties
+    public int ExtraNeeded
+    {
+        get => extraNeeded; 
+        set => SetProperty( ref extraNeeded, value);
+    }
 
-    #region Fields
-    #endregion Fields
+    [NotMapped]
+    public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
+    [NotMapped]
+    public int QuantityReceived => CalcQuantityReceived();
+    #endregion Properties
 
     #region Constructors
     public OrderItem()

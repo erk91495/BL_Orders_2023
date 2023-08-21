@@ -252,14 +252,35 @@
                        IsTabStop="False">
             
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
-                <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="AutoLastColumnFill"/>
-                <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" AllowEditing="False" DisplayNumberFormat="N2"/>
-                <sf:GridNumericColumn HeaderText="Customer Price" MappingName="ActualCustPrice" AllowEditing="True" DisplayNumberFormat="C" />
-                <sf:GridNumericColumn HeaderText="Quantity Ordered" MappingName="Quantity" AllowEditing="True"/>
-                <sf:GridNumericColumn HeaderText="Quantity Allocated" MappingName="QuanAllocated" AllowEditing="True" IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
-                <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuantityReceived"/>
-                <sf:GridUnboundColumn HeaderText="" UseBindingValue="False" MappingName="UnboundColumn" ColumnWidthMode="SizeToCells" IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
+                <sf:GridTextColumn HeaderText="Product ID" 
+                                   MappingName="ProductID"/>
+                <sf:GridTextColumn HeaderText="Product Name" 
+                                   MappingName="Product.ProductName" 
+                                   IsReadOnly="True" 
+                                   ColumnWidthMode="AutoLastColumnFill"/>
+                <sf:GridNumericColumn HeaderText="Pick Weight" 
+                                      MappingName="PickWeight" 
+                                      AllowEditing="False" 
+                                      DisplayNumberFormat="N2"/>
+                <sf:GridNumericColumn HeaderText="Customer Price" 
+                                      MappingName="ActualCustPrice" 
+                                      AllowEditing="True" 
+                                      DisplayNumberFormat="C" 
+                                      ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
+                <sf:GridNumericColumn HeaderText="Quantity Ordered" 
+                                      MappingName="Quantity" 
+                                      AllowEditing="True"/>
+                <sf:GridNumericColumn HeaderText="Quantity Allocated" 
+                                      MappingName="QuanAllocated" 
+                                      AllowEditing="True"
+                                      IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                <sf:GridNumericColumn HeaderText="Quantity Received" 
+                                      MappingName="QuantityReceived"/>
+                <sf:GridUnboundColumn HeaderText="" 
+                                      UseBindingValue="False" 
+                                      MappingName="UnboundColumn" 
+                                      ColumnWidthMode="SizeToCells" 
+                                      IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
                     <sf:GridUnboundColumn.CellTemplate>
                         <DataTemplate>
                             <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">

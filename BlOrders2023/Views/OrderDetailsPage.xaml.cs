@@ -363,7 +363,7 @@ public sealed partial class OrderDetailsPage : Page
         ContentDialog dialog = new()
         {
             Title = "Delete Order",
-            Content = "Are you sure you want to delete this entire order.\r\nThis action cannot be undone.",
+            Content = "Are you sure you want to delete this entire Order.\r\nThis action cannot be undone.",
             CloseButtonText = "Cancel",
             PrimaryButtonText = "Delete Order",
             IsPrimaryButtonEnabled = true,
@@ -418,8 +418,8 @@ public sealed partial class OrderDetailsPage : Page
         }
         if(e.Key == Windows.System.VirtualKey.Tab)
         {
-            OrderedItems.ClearSelections(false);    
-            DispatcherQueue.TryEnqueue(() => { ProductEntryBox.Focus(FocusState.Programmatic); });
+            //OrderedItems.ClearSelections(false);    
+            //DispatcherQueue.TryEnqueue(() => { ProductEntryBox.Focus(FocusState.Programmatic); });
             //var res = ProductEntryBox.Focus(FocusState.Programmatic);
         }
     }
@@ -470,7 +470,7 @@ public sealed partial class OrderDetailsPage : Page
                 ContentDialog dialog = new()
                 {
                     Title = "Duplicate Product",
-                    Content = String.Format("Product ID: {0} already exists on the Order \n", productToAdd.ProductID),
+                    Content = string.Format("Product ID: {0} already exists on the Order \n", productToAdd?.ProductID),
                     CloseButtonText = "Ok",
                     XamlRoot = XamlRoot,
                 };
@@ -479,7 +479,7 @@ public sealed partial class OrderDetailsPage : Page
             }
             else
             {
-                var quantity = await PromptQuantityOrderdAsync(productToAdd.ProductID, productToAdd.ProductName);
+                var quantity = await PromptQuantityOrderdAsync(productToAdd.ProductID, productToAdd.ProductName ?? "null");
                 if (quantity != int.MaxValue)
                 {
                     ViewModel.AddItem(productToAdd, quantity);
@@ -529,7 +529,7 @@ public sealed partial class OrderDetailsPage : Page
         {
             XamlRoot = XamlRoot,
             Title = "WARNING",
-            Content = "You are about to change the status of this order. Are you sure you know what you are doing?",
+            Content = "You are about to change the status of this Order. Are you sure you know what you are doing?",
             PrimaryButtonText = "Continue",
             CloseButtonText = "Cancel",
         };
@@ -624,7 +624,7 @@ public sealed partial class OrderDetailsPage : Page
                 ContentDialog contentDialog = new ContentDialog()
                 {
                     XamlRoot = XamlRoot,
-                    Content = "This order has already been printed. To print a copy press continue",
+                    Content = "This Order has already been printed. To print a copy press continue",
                     PrimaryButtonText = "Continue",
                     CloseButtonText = "Cancel",
                 };

@@ -129,7 +129,7 @@ public sealed partial class WholesaleCustomersPage : Page
     }
 
     /// <summary>
-    /// Creates a new order for the given customer
+    /// Creates a new Order for the given customer
     /// </summary>
     /// <param name="customer"></param>
     private void CreateNewOrder(WholesaleCustomer customer)
