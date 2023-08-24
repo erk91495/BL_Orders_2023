@@ -71,7 +71,7 @@ public class PickList : IReport
                     {
                         //Invoice Number
                         row.RelativeItem().AlignCenter().Text($"Order ID: {_order.OrderID}").FontSize(14);
-                        row.RelativeItem().AlignCenter().Text($"PO: {_order.PO_Number ?? ""}").FontSize(14);
+                        row.RelativeItem().ShowIf(!_order.PO_Number.IsNullOrEmpty()).AlignCenter().Text($"PO: {_order.PO_Number ?? ""}").FontSize(14);
 
                     });
 

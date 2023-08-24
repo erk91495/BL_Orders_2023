@@ -20,6 +20,7 @@ public class PalletLoadingReport :IReport
     private readonly TextStyle giantTextSize = TextStyle.Default.FontSize(30).SemiBold().FontColor(Colors.Black);
     private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(18);
     private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(15);
+    private readonly TextStyle largeTableTextStyle = TextStyle.Default.FontSize(20).SemiBold();
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(8.5f).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(8.5f);
     #endregion Fields
@@ -93,7 +94,7 @@ public class PalletLoadingReport :IReport
                 table.ColumnsDefinition(column =>
                 {
                     column.ConstantColumn(350);
-                    column.ConstantColumn(50);
+                    column.ConstantColumn(55);
                     column.ConstantColumn(50);
 
                 });
@@ -101,16 +102,16 @@ public class PalletLoadingReport :IReport
                 foreach (var product in _pallet.Items.Keys)
                 {
                     table.Cell().Element(CellStyle).Text($"{product.ProductName}").Style(tableTextStyle);
-                    table.Cell().BorderRight(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).AlignCenter().Text($"{product.ProductID}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).AlignCenter().Text($"{_pallet.Items.GetValueOrDefault(product)}").Style(tableTextStyle);
+                    table.Cell().BorderRight(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).AlignCenter().Text($"{product.ProductID}").Style(largeTableTextStyle);
+                    table.Cell().Element(CellStyle).AlignCenter().Text($"{_pallet.Items.GetValueOrDefault(product)}").Style(largeTableTextStyle);
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.PaddingVertical(2);
                     }
                 }
                 table.Cell();
-                table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignCenter().Text("Total: ").Style(tableTextStyle);
-                table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_pallet.Items.Values.Sum()}").Style(tableTextStyle);
+                table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignCenter().Text("Total: ").Style(largeTableTextStyle);
+                table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_pallet.Items.Values.Sum()}").Style(largeTableTextStyle);
                 static IContainer FooterCellStyle(IContainer container)
                 {
                     return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
@@ -136,7 +137,8 @@ public class PalletLoadingReport :IReport
             {
                 row.RelativeItem().Text($"Order Taken By: {_order.TakenBy}").Style(smallFooterStyle).Italic();
                 row.RelativeItem().Text($"Total Orderd: {_order.GetTotalOrdered()}").Style(smallFooterStyle);
-                row.RelativeItem().Text($"Total Allocated: {_order.GetTotalAllocated()}").Style(smallFooterStyle);
+                var totalReceived = (_order.Allocated == true) ? _order.GetTotalAllocated() : _order.GetTotalOrdered();
+                row.RelativeItem().Text($"Total Allocated: {totalReceived}").Style(smallFooterStyle);
             });
             column.Item().AlignBottom().AlignRight().Row(footer =>
             {
