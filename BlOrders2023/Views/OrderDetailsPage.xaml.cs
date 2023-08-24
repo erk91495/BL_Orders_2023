@@ -619,6 +619,10 @@ public sealed partial class OrderDetailsPage : Page
     {
         if (ViewModel.CanPrintOrder)
         {
+            if (ViewModel.IsNewOrder)
+            {
+                ViewModel.SaveCurrentOrder();
+            }
             if (ViewModel.OrderStatus > OrderStatus.Ordered)
             {
                 ContentDialog contentDialog = new ContentDialog()
@@ -692,5 +696,13 @@ public sealed partial class OrderDetailsPage : Page
         await ViewModel.QueryProducts();
         ProductEntryBox.Text = null;
         ProductEntryBox.IsSuggestionListOpen = false;
+    }
+
+    private void PickupDate_SelectedDateChanging(object sender, Syncfusion.UI.Xaml.Editors.DateChangingEventArgs e)
+    {
+        if(e.NewDate == null)
+        {
+            e.Cancel = true;
+        }
     }
 }

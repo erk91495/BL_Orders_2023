@@ -211,7 +211,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     public bool CanPrintInvoice => _order.CanPrintInvoice;
     public bool CanPrintOrder => _order.CanPrintOrder;
     public bool AllItemsScanned => _order.AllItemsReceived;
-
+    public bool IsNewOrder {get; set;} = true;
     #endregion Properties
 
     #region Fields
@@ -265,11 +265,13 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
             {
                 //We want to track changes so get it from the db context
                 _order = entityOrder;
+                IsNewOrder = false;
             }
             else
             {
                 //Must be a new Order
                 _order = order;
+                IsNewOrder = true;
             }
             _items = new ObservableCollection<OrderItem>(_order.Items);
             _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
@@ -422,6 +424,11 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     {
         _order.Items = Items.ToList();
         await _db.Orders.UpsertAsync(_order);
+        if (IsNewOrder)
+        {
+            IsNewOrder = false;
+            ReloadOrder();
+        }
     }
 
     /// <summary>
@@ -431,6 +438,12 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     {
         _order.Items = Items.ToList();
         _db.Orders.Upsert(_order, overwrite);
+        if (IsNewOrder)
+        {
+            IsNewOrder = false;
+            // Want to pick up DB generated OrderID
+            ReloadOrder();
+        }
     }
 
     /// <summary>
