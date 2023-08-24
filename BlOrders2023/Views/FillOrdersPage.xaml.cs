@@ -326,7 +326,7 @@ public sealed partial class FillOrdersPage : Page
             PrinterSettings printSettings = new();
             printSettings.Copies = 2;
             var printer = new PDFPrinterService(filePath);
-            printer.PrintPdf(printSettings);
+            await printer.PrintPdfAsync(printSettings);
 
             if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
             {
@@ -366,7 +366,7 @@ public sealed partial class FillOrdersPage : Page
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;
             var printer = new PDFPrinterService(filePath);
-            printer.PrintPdf(printSettings);
+            await printer.PrintPdfAsync(printSettings);
 
             if (ViewModel.OrderStatus == OrderStatus.Ordered)
             {
@@ -387,7 +387,7 @@ public sealed partial class FillOrdersPage : Page
         printSettings.Copies = 1;
         printSettings.Duplex = Duplex.Simplex;
         var printer = new PDFPrinterService(filePath);
-        printer.PrintPdf(printSettings);     
+        await printer.PrintPdfAsync(printSettings);     
     }
 
     private void OrderLookup_GotFocus(object sender, RoutedEventArgs e)

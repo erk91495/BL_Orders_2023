@@ -13,14 +13,16 @@ internal class PDFPrinterService
         this.pdfFilePath = pdfFilePath;
     }
 
-    public void PrintPdf(PrinterSettings? settings = null)
+    public async Task PrintPdfAsync(PrinterSettings? settings = null)
     {
+        await Task.Run( () => {
         using PrintDocument printDoc = new();
         printDoc.PrinterSettings = settings ?? new();
         printDoc.PrintPage += On_PrintPage;
         printDoc.DefaultPageSettings.Margins = new Margins(0,0,0,0);
         printDoc.OriginAtMargins = true;
         printDoc.Print();
+        });
     }
 
     void On_BeginPrint(object sender, PrintEventArgs e)
