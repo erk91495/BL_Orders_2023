@@ -34,28 +34,37 @@ internal class SqlInventoryTable : IInventoryTable
     {
         if(ids != null)
         {
-            return _db.Inventory.Where( i => ids.Contains(i.ProductID)).OrderBy(i => i.SortIndex).ToList();
+            return _db.Inventory.Where( i => ids.Contains(i.ProductID)).OrderBy(i => i.SortIndex).AsTracking().ToList();
         }
         else
         {
-            return _db.Inventory.OrderBy(i => i.SortIndex).ToList();
+            return _db.Inventory.OrderBy(i => i.SortIndex).AsTracking().ToList();
         }
     }
     public async Task<IEnumerable<InventoryItem>> GetInventoryAsync(IEnumerable<int> ids = null)
     {
         if (ids != null)
         {
-            return await _db.Inventory.Where(i => ids.Contains(i.ProductID)).OrderBy(i => i.SortIndex).ToListAsync();
+            return await _db.Inventory.Where(i => ids.Contains(i.ProductID)).OrderBy(i => i.SortIndex).AsTracking().ToListAsync();
         }
         else
         {
-            return await _db.Inventory.OrderBy(i => i.SortIndex).ToListAsync();
+            return await _db.Inventory.OrderBy(i => i.SortIndex).AsTracking().ToListAsync();
         }
     }
 
     public async Task UpsertAsync(InventoryItem item)
     {
         _db.Update(item);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task UpsertAsync(IEnumerable<InventoryItem> inventory)
+    {
+        foreach (InventoryItem item in inventory)
+        {
+            _db.Update(item);
+        }
         await _db.SaveChangesAsync();
     }
     #endregion Methods

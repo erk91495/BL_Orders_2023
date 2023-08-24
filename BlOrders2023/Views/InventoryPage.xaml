@@ -30,30 +30,37 @@
                   RelativePanel.AlignTopWithPanel="True"/>
 
         <sf:SfDataGrid x:Name="InventoryGrid"
-               ItemsSource="{x:Bind ViewModel.Inventory, Mode=TwoWay}"
-               SourceType="models:InventoryItem"
-               RelativePanel.Below="progressBar"
-               GridLinesVisibility="Both"
-               IsReadOnly="False"
-               AutoGenerateColumns="False"
-               RelativePanel.AlignLeftWithPanel="True"
-               RelativePanel.AlignRightWithPanel="True"
-               SelectionUnit="Row"
-               EditTrigger="OnTap"
-               EditorSelectionBehavior="MoveLast"
-               ColumnWidthMode="AutoWithLastColumnFill"
-               AllowEditing="True"
-               AllowDeleting="False"
-               DataValidationMode="InView"
-               CurrentCellValidated="InventoryGrid_CurrentCellValidated">
+                       ItemsSource="{x:Bind ViewModel.Inventory, Mode=TwoWay}"
+                       SourceType="models:InventoryItem"
+                       RelativePanel.Below="progressBar"
+                       GridLinesVisibility="Both"
+                       IsReadOnly="False"
+                       AutoGenerateColumns="False"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.Above="ButtonStack"
+                       SelectionUnit="Row"
+                       EditTrigger="OnTap"
+                       EditorSelectionBehavior="MoveLast"
+                       ColumnWidthMode="AutoWithLastColumnFill"
+                       AllowEditing="True"
+                       AllowDeleting="False"
+                       DataValidationMode="InView"
+                       CurrentCellValidating="InventoryGrid_CurrentCellValidating"
+                       CurrentCellValidated="InventoryGrid_CurrentCellValidated">
 
             <sf:SfDataGrid.Columns>
                 <sf:GridNumericColumn MappingName="ProductID" IsReadOnly="False"/>
                 <sf:GridTextColumn MappingName="ProductName" AllowEditing="False"/>
-                <sf:GridNumericColumn MappingName="QuantityOnHand" AllowEditing="False"/>
-                <sf:GridNumericColumn MappingName="AdjustmentQuantity" AllowEditing="True"/>
+                <sf:GridNumericColumn MappingName="QuantityOnHand" AllowEditing="False" TextAlignment="Center"/>
+                <sf:GridTextColumn MappingName="AdjustmentQuantity" AllowEditing="True" TextAlignment="Center" ColumnWidthMode="Auto"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
-
+        <StackPanel x:Name="ButtonStack" 
+                Orientation="Horizontal" 
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignBottomWithPanel="True">
+            <Button x:Name="btn_Cancel" Content="Cancel" Click="btn_Cancel_Click"/>
+            <Button x:Name="btn_Save" Content="Save" Click="btn_Save_Click"/>
+        </StackPanel>
     </RelativePanel>
 </Page>

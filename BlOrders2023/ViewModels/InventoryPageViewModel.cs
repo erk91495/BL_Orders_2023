@@ -37,11 +37,13 @@ public class InventoryPageViewModel : ObservableRecipient
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private bool _isLoading;
     private ObservableCollection<InventoryItem> _inventory;
+    private IBLDatabase _db;
     #endregion Fields
 
     #region Constructors
     public InventoryPageViewModel()
     {
+        _db = App.GetNewDatabase();
         _inventory = new();
         _ = QueryInventory();
     }
@@ -58,7 +60,7 @@ public class InventoryPageViewModel : ObservableRecipient
                 Inventory.Clear();
             });
 
-            var table = App.GetNewDatabase().Inventory;
+            var table = _db.Inventory;
 
             var inventory = await Task.Run(() => table.GetInventoryAsync());
             await dispatcherQueue.EnqueueAsync(() =>
@@ -76,7 +78,7 @@ public class InventoryPageViewModel : ObservableRecipient
                 Inventory.Clear();
             });
 
-            var table = App.GetNewDatabase().Inventory;
+            var table = _db.Inventory;
             var inventory = await Task.Run(() => table.GetInventoryAsync());
 
             await dispatcherQueue.EnqueueAsync(() =>
@@ -90,13 +92,26 @@ public class InventoryPageViewModel : ObservableRecipient
 
     internal async void SaveItem(InventoryItem p)
     {
-        var table = App.GetNewDatabase().Inventory;
-        await table.UpsertAsync(p);
+        await _db.Inventory.UpsertAsync(p);
     }
 
     internal async Task DeleteItem(Product p)
     {
         
+    }
+
+    private void CalculateAdjustments()
+    {
+        foreach (var item in Inventory)
+        {
+            item.QuantityOnHand += item.AdjustmentQuantity;
+            item.AdjustmentQuantity = 0;
+        }
+    }
+    internal async Task SaveAllAsync()
+    {
+        CalculateAdjustments();
+        await _db.Inventory.UpsertAsync(_inventory);
     }
     #endregion Methods
 
