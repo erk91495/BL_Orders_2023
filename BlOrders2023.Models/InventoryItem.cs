@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlOrders2023.Models;
 
+
 [Table("tbl_Inventory_(Boxed)")]
 public class InventoryItem
 {
@@ -19,12 +20,12 @@ public class InventoryItem
         get; set;
     }
 
-    //[Required(AllowEmptyStrings=false)]
-    //[MaxLength(30)]
-    //public string? ProductName
-    //{
-    //    get; set;
-    //}
+    [Required(AllowEmptyStrings = false)]
+    [MaxLength(30)]
+    public string? ProductName
+    {
+        get; set;
+    }
 
     [Required]
     [ConcurrencyCheck]

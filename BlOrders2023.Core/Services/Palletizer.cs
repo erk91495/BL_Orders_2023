@@ -16,7 +16,10 @@ public class Palletizer
         Unknown,
         BBox,
         CBox,
-        BreastBox
+        NonGMO_BBox,
+        NonGMO_CBox,
+        BreastBox,
+        NonGMOBreastBox,
     }
 
     #region Properties
@@ -52,6 +55,11 @@ public class Palletizer
     }
 
     private async Task<IEnumerable<Pallet>> GenerateFullPalletsAsync()
+    {
+        return await Task.Run(GenerateFullPallets);
+    }
+
+    private IEnumerable<Pallet> GenerateFullPallets()
     {
         List<Pallet> pallets = new();
         Dictionary<Product, int> remainder = new();
@@ -160,6 +168,10 @@ public class Palletizer
 
     private async Task<IEnumerable<Pallet>> GenerateSingleProductPalletsAsync()
     {
+        return await Task.Run(GenerateSingleProductPallets);
+    }
+    private IEnumerable<Pallet> GenerateSingleProductPallets()
+    {
         List<Pallet> pallets = new List<Pallet>();
         foreach(var item in _currentOrder.Items)
         {
@@ -228,31 +240,45 @@ public class Palletizer
             case 613:
             case 615:
             case 617:
+                return BoxType.BBox;
             case 612:
             case 614:
             case 616:
-                return BoxType.BBox;
+            case 812:
+            case 816:
+                return BoxType.NonGMO_BBox;
 
             case 619:
             case 621:
             case 623:
             case 625:
             case 627:
+                return BoxType.CBox;
             case 620:
             case 624:
             case 626:
-                return BoxType.CBox;
+            case 820:
+            case 824:
+            case 826:
+                return BoxType.NonGMO_CBox;
 
             case 654:
             case 657:
             case 659:
-            case 656:
-            case 658:
             case 744:
             case 749:
             case 41:
             case 42:
+            case 854:
+            case 857:
+            case 859:
                 return BoxType.BreastBox;
+
+            case 656:
+            case 658:
+            case 856:
+            case 858:
+                return BoxType.NonGMOBreastBox;
 
             default:
                 return BoxType.Unknown;

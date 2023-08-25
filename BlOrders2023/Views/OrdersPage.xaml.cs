@@ -161,7 +161,7 @@ public sealed partial class OrdersPage : Page
                 PrinterSettings printSettings = new();
                 printSettings.Copies = 2;
                 var printer = new PDFPrinterService(filePath);
-                printer.PrintPdf(printSettings);
+                await printer.PrintPdfAsync(printSettings);
 
                 if (ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filling || ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filled)
                 {

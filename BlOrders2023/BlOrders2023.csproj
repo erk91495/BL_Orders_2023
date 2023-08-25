@@ -50,6 +50,9 @@
 	<None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="Views\InventoryPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="Styles\AllocationDataGridStyle.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -73,6 +76,7 @@
     <None Remove="Styles\AllocationDataGridStyle.xaml" />
     <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
+    <None Remove="Views\InventoryPage.xaml" />
   </ItemGroup>
   
   <ItemGroup>

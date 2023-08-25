@@ -63,7 +63,7 @@ public sealed partial class FillOrdersPage : Page
                     QuanRcvd = 1,
                     ScanDate = DateTime.Now,
                     Scanline = scanline,
-                    order = ViewModel.Order,
+                    Order = ViewModel.Order,
                 };
                 try
                 {
@@ -119,12 +119,12 @@ public sealed partial class FillOrdersPage : Page
         catch (DbUpdateConcurrencyException ex)
         {
             _ = ex;
-            await ShowLockedoutDialog("Database Write Conflict", $"The order was modified before your changes could be saved.\r\n" +
-                $"Please re-open the order to get all changes");
+            await ShowLockedoutDialog("Database Write Conflict", $"The Order was modified before your changes could be saved.\r\n" +
+                $"Please re-open the Order to get all changes");
         }
         catch (DbUpdateException ex)
         {
-            await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your order. Please contact your system administrator\r\n" +
+            await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your Order. Please contact your system administrator\r\n" +
                 $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
         }
         catch (DuplicateBarcodeException e)
@@ -248,7 +248,7 @@ public sealed partial class FillOrdersPage : Page
     {
         ShippingItemDataInputDialog dialog = new(XamlRoot);
         var result = await dialog.ShowAsync();
-        result.order = ViewModel.Order;
+        result.Order = ViewModel.Order;
         if (result != null)
         {
             await AddShippingItemAsync(result);
@@ -326,7 +326,7 @@ public sealed partial class FillOrdersPage : Page
             PrinterSettings printSettings = new();
             printSettings.Copies = 2;
             var printer = new PDFPrinterService(filePath);
-            printer.PrintPdf(printSettings);
+            await printer.PrintPdfAsync(printSettings);
 
             if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
             {
@@ -345,7 +345,7 @@ public sealed partial class FillOrdersPage : Page
                 ContentDialog contentDialog = new ContentDialog()
                 {
                     XamlRoot = XamlRoot,
-                    Content = "This order has already been printed. To print a copy press continue",
+                    Content = "This Order has already been printed. To print a copy press continue",
                     PrimaryButtonText = "Continue",
                     CloseButtonText = "Cancel",
                 };
@@ -366,7 +366,7 @@ public sealed partial class FillOrdersPage : Page
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;
             var printer = new PDFPrinterService(filePath);
-            printer.PrintPdf(printSettings);
+            await printer.PrintPdfAsync(printSettings);
 
             if (ViewModel.OrderStatus == OrderStatus.Ordered)
             {
@@ -387,7 +387,7 @@ public sealed partial class FillOrdersPage : Page
         printSettings.Copies = 1;
         printSettings.Duplex = Duplex.Simplex;
         var printer = new PDFPrinterService(filePath);
-        printer.PrintPdf(printSettings);     
+        await printer.PrintPdfAsync(printSettings);     
     }
 
     private void OrderLookup_GotFocus(object sender, RoutedEventArgs e)

@@ -71,7 +71,7 @@ public class PickList : IReport
                     {
                         //Invoice Number
                         row.RelativeItem().AlignCenter().Text($"Order ID: {_order.OrderID}").FontSize(14);
-                        row.RelativeItem().AlignCenter().Text($"PO: {_order.PO_Number ?? ""}").FontSize(14);
+                        row.RelativeItem().ShowIf(!_order.PO_Number.IsNullOrEmpty()).AlignCenter().Text($"PO: {_order.PO_Number ?? ""}").FontSize(14);
 
                     });
 
@@ -196,7 +196,10 @@ public class PickList : IReport
                     def.RelativeColumn(2);
                     def.RelativeColumn(8);
                     def.RelativeColumn(4);
-                    def.RelativeColumn(4);
+                    if(_order.Allocated == true)
+                    {
+                        def.RelativeColumn(4);
+                    }
                 });
 
                 itemsTable.Header(header =>
@@ -205,7 +208,10 @@ public class PickList : IReport
 
                     header.Cell().Element(CellStyle).Text("Name").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Ordered").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).Text("Allocated").Style(tableHeaderStyle);
+                    if (_order.Allocated == true)
+                    {
+                        header.Cell().Element(CellStyle).Text("Allocated").Style(tableHeaderStyle);
+                    }
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -219,7 +225,10 @@ public class PickList : IReport
                     itemsTable.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                     itemsTable.Cell().Element(CellStyle).Text($"{item.Product.ProductName}").Style(tableTextStyle);
                     itemsTable.Cell().Element(CellStyle).Text($"{item.Quantity}").Style(tableTextStyle);
-                    itemsTable.Cell().Element(CellStyle).Text($"{item.QuanAllocated ?? 0}").Style(tableTextStyle);
+                    if (_order.Allocated == true)
+                    {
+                        itemsTable.Cell().Element(CellStyle).Text($"{item.QuanAllocated ?? 0}").Style(tableTextStyle);
+                    }
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
@@ -228,7 +237,10 @@ public class PickList : IReport
                 itemsTable.Cell().Element(FooterCellStyle).Text($"").Style(tableTextStyle);
                 itemsTable.Cell().Element(FooterCellStyle).AlignRight().PaddingRight(2).Text($"Totals:").Style(tableTextStyle);
                 itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.Quantity)}").Style(tableTextStyle);
-                itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.QuanAllocated ?? 0)}").Style(tableTextStyle);
+                if (_order.Allocated == true)
+                {
+                    itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.QuanAllocated ?? 0)}").Style(tableTextStyle);
+                }
                 static IContainer FooterCellStyle(IContainer container)
                 {
                     return container.DefaultTextStyle(x => x.SemiBold()).BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);

@@ -202,7 +202,14 @@ namespace BlOrders2023.ViewModels.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return ((DateTimeOffset)value).DateTime;
+            if(value is DateTimeOffset offset)
+            {
+                return offset.DateTime;
+            }
+            else
+            {
+                throw new ArgumentException("ExceptionDateTimeToDateTimeOffsetConverterValueCannotBeNull"/*.GetLocalized()*/);
+            }
         }
     }
 

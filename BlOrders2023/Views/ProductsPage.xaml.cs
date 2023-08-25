@@ -53,9 +53,6 @@ public sealed partial class ProductsPage : Page
     #endregion Constructors
 
     #region Methods
-
-    #endregion Methods
-
     private void ProductsGrid_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
     {
         foreach(Product item in e.Items)
@@ -116,4 +113,6 @@ public sealed partial class ProductsPage : Page
             }
         }
     }
+    
+    #endregion Methods
 }
