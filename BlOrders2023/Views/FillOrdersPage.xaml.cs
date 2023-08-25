@@ -296,28 +296,30 @@ public sealed partial class FillOrdersPage : Page
                     printInvoice = true;
                 }
             }
+            //Not all items on order
+            else if (ViewModel.OrderStatus == OrderStatus.Filling)
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "All items ordered have not been received. Would you still like to print?",
+                    PrimaryButtonText = "Print",
+                    CloseButtonText = "Cancel",
+                };
+                SystemSounds.Asterisk.Play();
+                var res = await contentDialog.ShowAsync();
+                if (res == ContentDialogResult.Primary)
+                {
+                    printInvoice = true;
+                }
+            }
             //Print invoice
             else
             {
                 printInvoice = true;
             }
         }
-        else if (ViewModel.OrderStatus == OrderStatus.Filling)
-        {
-            ContentDialog contentDialog = new ContentDialog()
-            {
-                XamlRoot = XamlRoot,
-                Content = "All items ordered have not been received. Would you still like to print?",
-                PrimaryButtonText = "Print",
-                CloseButtonText = "Cancel",
-            };
-            SystemSounds.Asterisk.Play();
-            var res = await contentDialog.ShowAsync();
-            if (res == ContentDialogResult.Primary)
-            {
-                printInvoice = true;
-            }
-        }
+        
 
         if (printInvoice)
         {

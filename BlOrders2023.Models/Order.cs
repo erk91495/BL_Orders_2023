@@ -45,7 +45,7 @@ public class Order
     //Todo should this be a helper class?
     public bool CanFillOrder => (OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled);
     public bool CanEditOrder => OrderStatus == OrderStatus.Ordered;
-    public bool CanPrintInvoice => OrderStatus == OrderStatus.Filled;
+    public bool CanPrintInvoice => OrderStatus == OrderStatus.Filled || OrderStatus == OrderStatus.Filling;
     public bool CanPrintOrder => OrderStatus == OrderStatus.Ordered;
     public bool AllItemsReceived
     {
