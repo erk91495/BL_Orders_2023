@@ -7,16 +7,9 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.System.Power;
-using ServiceStack;
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Windows.Foundation.Metadata;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-
 namespace BlOrders2023.ViewModels;
 
 public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
