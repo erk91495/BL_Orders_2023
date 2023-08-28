@@ -90,17 +90,29 @@ public sealed partial class AllocatorPage : Page
         {
             if (comboBox.SelectedItem is AllocatorMode mode)
             {
-                ViewModel.AllocatorConfig.AllocationType = mode;
+                ViewModel.AllocatorConfig.AllocationMode = mode;
             }
-            var dateTuple = await ShowDateRangeSelectionAsync();
-            if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+            //-1  will be the value if TEST mode type is selected during debug, but TEST is not compiled into Release Builds
+            if (((int)ViewModel.AllocatorConfig.AllocationMode) == -1)
             {
-                ViewModel.AllocatorConfig.IDs = new() {67662,67663};
+                ViewModel.AllocatorConfig.IDs = new() { 67662, 67663 };
                 await StartAllocationAsync();
             }
+
             else
             {
-                TryGoBack();
+                var dateTuple = await ShowDateRangeSelectionAsync();
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    var ids = await ViewModel.GetOrdersIDToAllocateAsync(dateTuple.Item1, dateTuple.Item2, ViewModel.AllocatorConfig.AllocationMode);
+
+                    ViewModel.AllocatorConfig.IDs = ids.ToList();
+                    await StartAllocationAsync();
+                }
+                else
+                {
+                    TryGoBack();
+                }
             }
 
         }
@@ -190,6 +202,11 @@ public sealed partial class AllocatorPage : Page
     private void btn_Save_Click(object sender, RoutedEventArgs e)
     {
         Debugger.Break();
+    }
+
+    private async Task SaveAllocation()
+    {
+        //ViewModel.AllocatorService.SaveAllocationAsync();
     }
     #endregion Methods
 

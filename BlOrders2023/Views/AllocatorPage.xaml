@@ -93,7 +93,13 @@
 
             <SplitView.Content>
                 <RelativePanel x:Name="ContentArea">
+                    <StackPanel x:Name="AllocationModeStack" Orientation="Horizontal">
+                        <TextBlock Text="AllocationMode"/>
+                        <TextBlock Text="{x:Bind ViewModel.AllocatorConfig.AllocationMode, Mode=OneWay}"/>
+                    </StackPanel>
+                    
                     <controls:DataGrid
+                        RelativePanel.Below="AllocationModeStack"
                         RelativePanel.AlignTopWithPanel="True" 
                         RelativePanel.AlignBottomWithPanel="True" 
                         RelativePanel.AlignLeftWithPanel="True" 
@@ -139,7 +145,7 @@
                             <controls:DataGridTemplateColumn Header="Total Allocated" Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Order">
-                                        <TextBlock Text="{x:Bind GetTotalAllocated()}"/>
+                                        <TextBlock Text="{x:Bind GetTotalAllocated(), Mode=OneWay}"/>
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
