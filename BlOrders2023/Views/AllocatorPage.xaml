@@ -10,10 +10,15 @@
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:uc="using:BlOrders2023.UserControls"
+    xmlns:vm="using:BlOrders2023.ViewModels.Converters"
     xmlns:wctprimitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="AllocatorPage_Loaded">
+    <Page.Resources>
+        <vm:FloatToStringConverter x:Key="FloatToStringConverter"/>
+    </Page.Resources>
+    
     <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <SplitView 
             RelativePanel.AlignTopWithPanel="True" 
@@ -117,7 +122,7 @@
 
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="Allocated:"/>
-                                                <TextBlock Text="{x:Bind GetTotalAllocated, Mode=OneWay}"/>
+                                                <TextBlock Text="{x:Bind GetTotalAllocated(), Mode=OneWay}"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Expander.Header>
@@ -175,7 +180,8 @@
                         Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}"
                         GridLinesVisibility="All"
                         AllowFocusOnInteraction="False"
-                        SelectionMode="Single">
+                        SelectionMode="Single"
+                        IsReadOnly="False">
 
 
                         <controls:DataGrid.Columns>
@@ -208,10 +214,11 @@
                             <controls:DataGridTemplateColumn Header="Total Allocated" Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Order">
-                                        <TextBlock Text="{x:Bind GetTotalAllocated, Mode=OneWay}"/>
+                                        <TextBlock Text="{x:Bind GetTotalAllocated(), Mode=OneWay}"/>
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
+                            
                         </controls:DataGrid.Columns>
 
                         <controls:DataGrid.RowDetailsTemplate>

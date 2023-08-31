@@ -80,7 +80,7 @@ public class OrderItem : ObservableObject
 
     public float? QuanAllocated
     {
-        get => quanAllocated; 
+        get => quanAllocated ?? 0; 
         set => SetProperty(ref quanAllocated, value);
     }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -250,20 +251,19 @@ public class Order : ObservableObject
 
     public int GetTotalOrdered()
     {
-        if (Items.IsNullOrEmpty())
-        {
-            return 0;
-        }
-        else
-        {
-            var total =  Items.Sum(item => (int)item.Quantity);
-            return total;
-        }
+            if (Items.IsNullOrEmpty())
+            {
+                return 0;
+            }
+            else
+            {
+                var total =  Items.Sum(item => (int)item.Quantity);
+                return total;
+            }
     }
 
-    public int GetTotalAllocated
+    public int GetTotalAllocated()
     {
-        get{
             if (Items.IsNullOrEmpty())
             {
                 return 0;
@@ -273,7 +273,6 @@ public class Order : ObservableObject
                 var total = Items.Sum(item => (int)(item.QuanAllocated ?? 0));
                 return total;
             }
-        }
     }
 
     public decimal GetTotalPayments()
@@ -294,6 +293,27 @@ public class Order : ObservableObject
     }
 
     private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
+        {
+            foreach (INotifyPropertyChanged added in e.NewItems)
+            {
+                added.PropertyChanged += ShippingItemOnPropertyChanged;
+            }
+        }
+        if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove || e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
+        {
+            foreach (INotifyPropertyChanged removed in e.OldItems)
+            {
+                removed.PropertyChanged -= ShippingItemOnPropertyChanged;
+            }
+        }
+
+        OnPropertyChanged(nameof(GetTotalAllocated));
+        OnPropertyChanged(nameof(GetTotalOrdered));
+    }
+
+    private void ShippingItemOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         OnPropertyChanged(nameof(GetTotalAllocated));
         OnPropertyChanged(nameof(GetTotalOrdered));
