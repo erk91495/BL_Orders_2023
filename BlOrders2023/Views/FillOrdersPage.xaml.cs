@@ -214,6 +214,8 @@ public sealed partial class FillOrdersPage : Page
         else if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
         {
             OrderLookup.Text = null;
+            ViewModel.QueryFillableOrders(string.Empty);
+            
         }
     }
 
@@ -228,6 +230,7 @@ public sealed partial class FillOrdersPage : Page
         {
             await ViewModel.LoadOrder(o.OrderID);
         }
+        Scanline.Focus(FocusState.Programmatic);
     }
 
     private async void OrderedItems_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)

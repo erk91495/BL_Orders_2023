@@ -115,8 +115,16 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     internal void QueryFillableOrders(string text)
     {
         FillableOrders.Clear();
-        var orders = FillableOrdersMasterList.Where(o => o.OrderID.ToString().Contains(text) || 
-                                                    o.Customer.CustomerName.Contains(text, StringComparison.CurrentCultureIgnoreCase)).ToList();
+        List<Order> orders;
+        if (text.IsNullOrEmpty())
+        {
+            orders = FillableOrdersMasterList.ToList();
+        }
+        else
+        {
+             orders = FillableOrdersMasterList.Where(o => o.OrderID.ToString().Contains(text) || 
+                                                        o.Customer.CustomerName.Contains(text, StringComparison.CurrentCultureIgnoreCase)).ToList();
+        }
         if (!orders.IsNullOrEmpty())
         {
             foreach (var order in orders)
