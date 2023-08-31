@@ -112,6 +112,10 @@ public sealed partial class OrdersPage : Page
         {
             await PrintInvoiceAsync();           
         }
+        else if (ViewModel.SelectedOrder.OrderStatus >= OrderStatus.Invoiced)
+        {
+            await PrintInvoiceAsync();
+        }
     }
 
     #endregion Pane Buttons
