@@ -40,7 +40,7 @@
                        RelativePanel.Above="ButtonStack"
                        SelectionUnit="Row"
                        EditTrigger="OnTap"
-                       EditorSelectionBehavior="MoveLast"
+                       EditorSelectionBehavior="SelectAll"
                        ColumnWidthMode="AutoWithLastColumnFill"
                        AllowEditing="True"
                        AllowDeleting="False"
