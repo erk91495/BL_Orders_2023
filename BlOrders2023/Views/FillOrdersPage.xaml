@@ -175,13 +175,19 @@
                                 HorizontalAlignment="Right"
                                 MaxWidth="1000">
                         <TextBlock Text="Memo:"/>
-                        <Border BorderThickness="1" BorderBrush="{ThemeResource TextFillColorPrimary}">
-                            <TextBlock Text="{x:Bind ViewModel.Order.Memo, Mode=OneWay}"
-                                       TextWrapping="WrapWholeWords"
-                                       Margin="5,5,5,5"
-                                       MinHeight="50"
-                                       MinWidth="300"/>
-                        </Border>
+                        <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Memo'), Mode=OneWay}" 
+                               Visibility="{x:Bind ViewModel.VisibleIfError('Memo'), Mode=OneWay}" 
+                               Style="{StaticResource ValidatorTextBlockStyle}"/>
+                        <TextBox Text="{x:Bind ViewModel.Memo, Mode=TwoWay, TargetNullValue={x:Null}}"
+                                 TextWrapping="Wrap"
+                                 Margin="5,5,5,5"
+                                 MinHeight="75"
+                                 MinWidth="500"
+                                 AcceptsReturn="True"
+                                 Background="Transparent"
+                                 BorderBrush="{ThemeResource TextFillColorPrimary}"
+                                 BorderThickness="1"
+                                 LostFocus="MemoBox_LostFocus"/>
                     </StackPanel>
 
                     <StackPanel x:Name="CustomerInfo"  

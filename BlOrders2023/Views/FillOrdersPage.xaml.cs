@@ -119,18 +119,7 @@ public sealed partial class FillOrdersPage : Page
             {
                 ViewModel.Order.OrderStatus = OrderStatus.Filled;
             }
-            await ViewModel.SaveOrderAsync();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _ = ex;
-            await ShowLockedoutDialog("Database Write Conflict", $"The Order was modified before your changes could be saved.\r\n" +
-                $"Please re-open the Order to get all changes");
-        }
-        catch (DbUpdateException ex)
-        {
-            await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your Order. Please contact your system administrator\r\n" +
-                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
+            await TrySaveOrderAsync();
         }
         catch (DuplicateBarcodeException e)
         {
@@ -247,7 +236,7 @@ public sealed partial class FillOrdersPage : Page
                 await ViewModel.DeleteShippingItemAsync(item);
                 OrderedVsReceivedGrid.View.Refresh();
             }
-            await ViewModel.SaveOrderAsync();
+            await TrySaveOrderAsync();
             OrderedItems.View.Refresh();
         }
     }
@@ -341,7 +330,7 @@ public sealed partial class FillOrdersPage : Page
             if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
             {
                 ViewModel.OrderStatus = OrderStatus.Invoiced;
-                _ = ViewModel.SaveOrderAsync();
+                _ = TrySaveOrderAsync();
             }
         }
     }
@@ -381,7 +370,7 @@ public sealed partial class FillOrdersPage : Page
             if (ViewModel.OrderStatus == OrderStatus.Ordered)
             {
                 ViewModel.OrderStatus = OrderStatus.Filling;
-                _ = ViewModel.SaveOrderAsync();
+                _ = TrySaveOrderAsync();
             }
         }
     }
@@ -408,5 +397,32 @@ public sealed partial class FillOrdersPage : Page
     private void OrderLookup_LostFocus(object sender, RoutedEventArgs e)
     {
         OrderLookup.IsSuggestionListOpen = false;
+    }
+
+    private void MemoBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (!ViewModel.HasErrors)
+        {
+            _ = TrySaveOrderAsync();
+        }
+    }
+
+    private async Task TrySaveOrderAsync()
+    {
+        try
+        {
+            await ViewModel.SaveOrderAsync();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _ = ex;
+            await ShowLockedoutDialog("Database Write Conflict", $"The Order was modified before your changes could be saved.\r\n" +
+                $"Please re-open the Order to get all changes");
+        }
+        catch (DbUpdateException ex)
+        {
+            await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your Order. Please contact your system administrator\r\n" +
+                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
+        }
     }
 }
