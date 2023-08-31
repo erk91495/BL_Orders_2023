@@ -77,17 +77,22 @@ public sealed partial class FillOrdersPage : Page
                     Debug.WriteLine(e.ToString());
                     var prodCode = e.Data["ProductID"];
                     await ShowLockedoutDialog("Product Not Found", 
-                        String.Format("Product ID: {0} was not found in the database\r\n", prodCode)); 
-                } catch (InvalidBarcodeExcption e)
+                        string.Format("Product ID: {0} was not found in the database\r\n", prodCode)); 
+                } 
+                catch (InvalidBarcodeExcption e)
                 {
                     Debug.WriteLine(e.ToString());
                     var ai = e.Data["AI"];
                     var s = e.Data["Scanline"];
                     var location = e.Data["Location"];
                     await ShowLockedoutDialog(e.Message,
-                        String.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
+                        string.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
                 }
-
+                catch (UnknownBarcodeFormatException e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
+                }
                 
             }
         }
