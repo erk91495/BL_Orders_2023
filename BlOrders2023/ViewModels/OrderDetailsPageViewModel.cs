@@ -415,7 +415,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     /// </summary>
     public async Task SaveCurrentOrderAsync()
     {
-        _order.Items = Items.ToList();
+        _order.Items = Items;
         await _db.Orders.UpsertAsync(_order);
         if (IsNewOrder)
         {
@@ -429,7 +429,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     /// </summary>
     public void SaveCurrentOrder(bool overwrite = false)
     {
-        _order.Items = Items.ToList();
+        _order.Items = Items;
         _db.Orders.Upsert(_order, overwrite);
         if (IsNewOrder)
         {

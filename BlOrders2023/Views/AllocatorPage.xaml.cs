@@ -217,8 +217,8 @@ public sealed partial class AllocatorPage : Page
             
             if((double)e.NewValue % 1 == 0 )
             {
-                var newVal = (int) (double)(e.NewValue);
-                var oldVal = (int)(double)(e.OldValue);
+                var newVal = (int)(double) (e.NewValue);
+                var oldVal = (int)decimal.Truncate(decimal.Parse(e.OldValue.ToString()));
                 if (e.RowData is OrderItem item)
                 {
                     var inventoryItem = ViewModel.CurrentInventory.Where(i => i.ProductID == item.ProductID).FirstOrDefault();
@@ -226,7 +226,7 @@ public sealed partial class AllocatorPage : Page
                     {
                         e.IsValid = true;
                         ViewModel.UpdateInventory(inventoryItem, (newVal - oldVal) * -1);
-                        InventoryGrid.View.Refresh();
+
                     }
                     else
                     {

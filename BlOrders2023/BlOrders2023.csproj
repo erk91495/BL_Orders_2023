@@ -107,6 +107,9 @@
 	  <Pack>True</Pack>
 	  <PackagePath>\</PackagePath>
 	</None>
+	<Page Update="UserControls\AllocatedOrderCardControl.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="Views\InventoryPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -132,6 +135,7 @@
   <ItemGroup>
     <None Remove="Styles\AllocationDataGridStyle.xaml" />
     <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
+    <None Remove="UserControls\AllocatedOrderCardControl.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
     <None Remove="Views\InventoryPage.xaml" />
   </ItemGroup>

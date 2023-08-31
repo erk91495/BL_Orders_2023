@@ -93,14 +93,74 @@
 
             <SplitView.Content>
                 <RelativePanel x:Name="ContentArea">
-                    <StackPanel x:Name="AllocationModeStack" Orientation="Horizontal">
+                    <StackPanel x:Name="AllocationModeStack" Orientation="Horizontal"
+                                RelativePanel.AlignTopWithPanel="True">
                         <TextBlock Text="AllocationMode"/>
                         <TextBlock Text="{x:Bind ViewModel.AllocatorConfig.AllocationMode, Mode=OneWay}"/>
                     </StackPanel>
-                    
+
+                    <!--<GridView ItemsSource="{x:Bind ViewModel.AllocatedOrders, Mode=TwoWay}" SelectionMode="None">
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Order">
+                                <Expander IsExpanded="True" ExpandDirection="Down">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Order ID:"/>
+                                                <TextBlock Text="{x:Bind OrderID, Mode=OneWay}"/>
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Ordered:"/>
+                                                <TextBlock Text="{x:Bind GetTotalOrdered(), Mode=OneWay}"/>
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Allocated:"/>
+                                                <TextBlock Text="{x:Bind GetTotalAllocated, Mode=OneWay}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <NumberBox Text="{x:Bind Items[0].QuanAllocated, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                                            <uc:AllocatedItemsGridControl Items="{x:Bind Items, Mode=OneWay}" ValidateCell="AllocatedItemsGridControl_ValidateCell"/>
+                                            <sf:SfDataGrid ItemsSource="{x:Bind Path=Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CurrentCellValidating="AllocatedItemsGridControl_ValidateCell" AutoGenerateColumns="False">
+                                    <sf:SfDataGrid.Columns>
+                                        <sf:GridNumericColumn MappingName="QuanAllocated" AllowEditing="True" DataValidationMode="InView"/>
+                                    </sf:SfDataGrid.Columns>
+                                </sf:SfDataGrid>
+                                    </Expander.Content>
+
+                                </Expander>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>-->
+
+
+                    <!--<sf:SfDataGrid
+                        RelativePanel.Below="AllocationModeStack"
+                        RelativePanel.AlignBottomWithPanel="True" 
+                        RelativePanel.AlignLeftWithPanel="True" 
+                        RelativePanel.AlignRightWithPanel="True"
+                        x:Name="OrdersGrid"
+                        ItemsSource="{x:Bind ViewModel.AllocatedOrders, Mode=TwoWay}"
+                        AutoGenerateColumns="False"
+                        Style="{StaticResource AllocationDataGridStyle}"
+                        RowStyle="{StaticResource AllocationDataGridRowStyle}"
+                        CellStyle="{StaticResource AllocationDataGridCellStyle}"
+                        Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}"
+                        AllowFocusOnInteraction="False">
+                        <sf:SfDataGrid.Columns>
+                            <sf:GridTextColumn MappingName="OrderID"/>
+                        </sf:SfDataGrid.Columns>
+
+                        
+                        
+                    </sf:SfDataGrid>-->
+
+
                     <controls:DataGrid
                         RelativePanel.Below="AllocationModeStack"
-                        RelativePanel.AlignTopWithPanel="True" 
                         RelativePanel.AlignBottomWithPanel="True" 
                         RelativePanel.AlignLeftWithPanel="True" 
                         RelativePanel.AlignRightWithPanel="True"
@@ -113,7 +173,10 @@
                         CellStyle="{StaticResource AllocationDataGridCellStyle}"
                         RowDetailsVisibilityMode="Visible"
                         Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}"
-                        GridLinesVisibility="All">
+                        GridLinesVisibility="All"
+                        AllowFocusOnInteraction="False"
+                        SelectionMode="Single">
+
 
                         <controls:DataGrid.Columns>
                             <controls:DataGridTemplateColumn Header="Order ID" Width="Auto">
@@ -145,7 +208,7 @@
                             <controls:DataGridTemplateColumn Header="Total Allocated" Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Order">
-                                        <TextBlock Text="{x:Bind GetTotalAllocated(), Mode=OneWay}"/>
+                                        <TextBlock Text="{x:Bind GetTotalAllocated, Mode=OneWay}"/>
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
@@ -153,7 +216,13 @@
 
                         <controls:DataGrid.RowDetailsTemplate>
                             <DataTemplate x:DataType="models:Order">
+                                <!--<NumberBox Text="{x:Bind Items[0].QuanAllocated, Mode=TwoWay}"/>-->
                                 <uc:AllocatedItemsGridControl Items="{x:Bind Items, Mode=OneWay}" ValidateCell="AllocatedItemsGridControl_ValidateCell"/>
+                                <!--<sf:SfDataGrid ItemsSource="{x:Bind Path=Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CurrentCellValidating="AllocatedItemsGridControl_ValidateCell" AutoGenerateColumns="False">
+                                    <sf:SfDataGrid.Columns>
+                                        <sf:GridNumericColumn MappingName="QuanAllocated" AllowEditing="True" DataValidationMode="InView"/>
+                                    </sf:SfDataGrid.Columns>
+                                </sf:SfDataGrid>-->
                             </DataTemplate>
                         </controls:DataGrid.RowDetailsTemplate>
                     </controls:DataGrid>

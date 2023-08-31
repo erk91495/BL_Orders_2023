@@ -137,7 +137,7 @@ public class PalletLoadingReport :IReport
             {
                 row.RelativeItem().Text($"Order Taken By: {_order.TakenBy}").Style(smallFooterStyle).Italic();
                 row.RelativeItem().Text($"Total Orderd: {_order.GetTotalOrdered()}").Style(smallFooterStyle);
-                var totalReceived = (_order.Allocated == true) ? _order.GetTotalAllocated() : _order.GetTotalOrdered();
+                var totalReceived = (_order.Allocated == true) ? _order.GetTotalAllocated : _order.GetTotalOrdered();
                 row.RelativeItem().Text($"Total Allocated: {totalReceived}").Style(smallFooterStyle);
             });
             column.Item().AlignBottom().AlignRight().Row(footer =>
