@@ -40,13 +40,6 @@ public sealed partial class FillOrdersPage : Page
         ViewModel = App.GetService<FillOrdersPageViewModel>();
         InitializeComponent();
         reportGenerator = new();
-
-        //TODO: Is this the way to handle setting the default focus?
-        //dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low,
-        //new DispatcherQueueHandler(() =>
-        //{
-        //    OrderLookup.Focus(FocusState.Programmatic);
-        //}));
     }
 
     private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
@@ -326,6 +319,14 @@ public sealed partial class FillOrdersPage : Page
             printSettings.Copies = 2;
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
+
+            filePath = reportGenerator.GenerateShippingList(ViewModel.Order);
+            Windows.System.LauncherOptions options = new()
+            {
+                ContentType = "application/pdf"
+            };
+            _ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+
 
             if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
             {
