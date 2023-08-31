@@ -100,11 +100,11 @@ public sealed partial class OrdersPage : Page
         if (ViewModel.SelectedOrder.OrderStatus == Models.Enums.OrderStatus.Ordered)
         {
             var filePath = reportGenerator.GeneratePickList(ViewModel.SelectedOrder);
-            LauncherOptions options = new()
-            {
-                ContentType = "application/pdf"
-            };
-            _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+            PrinterSettings printSettings = new();
+            var printer = new PDFPrinterService(filePath);
+            await printer.PrintPdfAsync(printSettings);
+
             ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Filling;
             _ = ViewModel.SaveCurrentOrderAsync();
         }
