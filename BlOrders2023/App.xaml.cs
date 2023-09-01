@@ -161,7 +161,7 @@ public partial class App : Application
         //    CustomerAllocationType = Models.Enums.CustomerAllocationType.Grocer,
         //    IDs = new() {67662, 67663}
         //};
-        //_ = CommunityToolkit.WinUI.DispatcherQueueExtensions.EnqueueAsync(DispatcherQueue.GetForCurrentThread(), () => allocator.Allocate(config));
+        //_ = CommunityToolkit.WinUI.DispatcherQueueExtensions.EnqueueAsync(DispatcherQueue.GetForCurrentThread(), () => allocator.AllocateAsync(config));
 
 
         await App.GetService<IActivationService>().ActivateAsync(args);

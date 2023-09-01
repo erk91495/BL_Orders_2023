@@ -558,11 +558,12 @@ public sealed partial class OrderDetailsPage : Page
     private async Task PrintInvoiceAsync()
     {
         var printInvoice = false;
-        if(ViewModel.CanPrintInvoice) {
+        if (ViewModel.CanPrintInvoice)
+        {
             //Invoice already printed print copy
-            if (ViewModel.OrderStatus > OrderStatus.Filled) 
+            if (ViewModel.OrderStatus > OrderStatus.Filled)
             {
-                ContentDialog contentDialog= new ContentDialog()
+                ContentDialog contentDialog = new ContentDialog()
                 {
                     XamlRoot = XamlRoot,
                     Content = "This invoice has already been printed. To print a copy press Reprint",
@@ -570,7 +571,24 @@ public sealed partial class OrderDetailsPage : Page
                     CloseButtonText = "Cancel",
                 };
                 var res = await contentDialog.ShowAsync();
-                if(res == ContentDialogResult.Primary)
+                if (res == ContentDialogResult.Primary)
+                {
+                    printInvoice = true;
+                }
+            }
+            //Not all items on order
+            else if (ViewModel.OrderStatus == OrderStatus.Filling)
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "All items ordered have not been received. Would you still like to print?",
+                    PrimaryButtonText = "Print",
+                    CloseButtonText = "Cancel",
+                };
+                SystemSounds.Asterisk.Play();
+                var res = await contentDialog.ShowAsync();
+                if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
                 }
@@ -581,22 +599,7 @@ public sealed partial class OrderDetailsPage : Page
                 printInvoice = true;
             }
         }
-        else if( ViewModel.OrderStatus == OrderStatus.Filling)
-        {
-            ContentDialog contentDialog = new ContentDialog()
-            {
-                XamlRoot = XamlRoot,
-                Content = "All items ordered have not been received. Would you still like to print?",
-                PrimaryButtonText = "Print",
-                CloseButtonText = "Cancel",
-            };
-            SystemSounds.Asterisk.Play();
-            var res = await contentDialog.ShowAsync();
-            if (res == ContentDialogResult.Primary)
-            {
-                printInvoice= true;
-            }
-        }
+
 
         if (printInvoice)
         {

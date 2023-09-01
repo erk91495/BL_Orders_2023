@@ -7,14 +7,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using Newtonsoft.Json.Bson;
 using ServiceStack.DataAnnotations;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using Windows.UI.Text;
 
 namespace BlOrders2023.ViewModels;
 
-public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
+public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 {
     #region Properties
     public bool HasOrder => _order != null;
@@ -34,6 +36,26 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
             OnPropertyChanged(nameof(CanPrintOrder));
         }
     }
+
+    [MaxLength(255)]
+    public string? Memo
+    {
+        get => _order?.Memo;
+        set
+        {
+            if (value.IsNullOrEmpty())
+            {
+                _order.Memo = null;
+            }
+            else
+            {
+                _order.Memo = value?.Trim();
+            }
+            CheckValidation(Memo, nameof(Memo));
+            OnPropertyChanged();
+        }
+    }
+
     public bool CanPrintInvoice => _order?.CanPrintInvoice ?? false;
     public bool CanPrintOrder => _order?.CanPrintOrder ?? false;
     #endregion Properties
@@ -115,8 +137,16 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     internal void QueryFillableOrders(string text)
     {
         FillableOrders.Clear();
-        var orders = FillableOrdersMasterList.Where(o => o.OrderID.ToString().Contains(text) || 
-                                                    o.Customer.CustomerName.Contains(text, StringComparison.CurrentCultureIgnoreCase)).ToList();
+        List<Order> orders;
+        if (text.IsNullOrEmpty())
+        {
+            orders = FillableOrdersMasterList.ToList();
+        }
+        else
+        {
+             orders = FillableOrdersMasterList.Where(o => o.OrderID.ToString().Contains(text) || 
+                                                        o.Customer.CustomerName.Contains(text, StringComparison.CurrentCultureIgnoreCase)).ToList();
+        }
         if (!orders.IsNullOrEmpty())
         {
             foreach (var order in orders)
@@ -226,6 +256,62 @@ public class FillOrdersPageViewModel : ObservableRecipient, INavigationAware
     }
 
     internal async Task SaveOrderAsync() => await _orderDB.Orders.UpsertAsync(_order);
+
+    #region Validators
+    public string GetErrorMessage(string name)
+    {
+        var errors = GetErrors(name);
+        var firstError = errors.FirstOrDefault();
+        if (firstError != null)
+        {
+            return firstError.ErrorMessage ?? "Error";
+        }
+        return string.Empty;
+
+
+    }
+
+    public bool HasError(string name)
+    {
+        if (HasErrors)
+        {
+            var errors = GetErrors(name);
+            if (errors.IsNullOrEmpty())
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Visibility VisibleIfError(string name)
+    {
+        if (HasError(name))
+        {
+            return Visibility.Visible;
+        }
+        else
+        {
+            return Visibility.Collapsed;
+        }
+    }
+
+    private void CheckValidation(object? value, string propertyName = null!)
+    {
+        ValidateProperty(value, propertyName);
+        OnPropertyChanged(nameof(GetErrorMessage));
+        OnPropertyChanged(nameof(VisibleIfError));
+    }
+
+    public void ValidateProperties()
+    {
+        ValidateAllProperties();
+    }
+    #endregion Validators
     #endregion Methods
 
 

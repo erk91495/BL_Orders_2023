@@ -90,17 +90,29 @@ public sealed partial class AllocatorPage : Page
         {
             if (comboBox.SelectedItem is AllocatorMode mode)
             {
-                ViewModel.AllocatorConfig.AllocationType = mode;
+                ViewModel.AllocatorConfig.AllocationMode = mode;
             }
-            var dateTuple = await ShowDateRangeSelectionAsync();
-            if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+            //-1  will be the value if TEST mode type is selected during debug, but TEST is not compiled into Release Builds
+            if (((int)ViewModel.AllocatorConfig.AllocationMode) == -1)
             {
-                ViewModel.AllocatorConfig.IDs = new() {67662,67663};
+                ViewModel.AllocatorConfig.IDs = new() { 67662, 67663 };
                 await StartAllocationAsync();
             }
+
             else
             {
-                TryGoBack();
+                var dateTuple = await ShowDateRangeSelectionAsync();
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    var ids = await ViewModel.GetOrdersIDToAllocateAsync(dateTuple.Item1, dateTuple.Item2, ViewModel.AllocatorConfig.AllocationMode);
+
+                    ViewModel.AllocatorConfig.IDs = ids.ToList();
+                    await StartAllocationAsync();
+                }
+                else
+                {
+                    TryGoBack();
+                }
             }
 
         }
@@ -191,6 +203,11 @@ public sealed partial class AllocatorPage : Page
     {
         Debugger.Break();
     }
+
+    private async Task SaveAllocation()
+    {
+        //ViewModel.AllocatorService.SaveAllocationAsync();
+    }
     #endregion Methods
 
     private void AllocatedItemsGridControl_ValidateCell(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValidatingEventArgs e)
@@ -200,8 +217,8 @@ public sealed partial class AllocatorPage : Page
             
             if((double)e.NewValue % 1 == 0 )
             {
-                var newVal = (int) (double)(e.NewValue);
-                var oldVal = (int)(double)(e.OldValue);
+                var newVal = (int)(double) (e.NewValue);
+                var oldVal = (int)decimal.Truncate(decimal.Parse(e.OldValue.ToString()));
                 if (e.RowData is OrderItem item)
                 {
                     var inventoryItem = ViewModel.CurrentInventory.Where(i => i.ProductID == item.ProductID).FirstOrDefault();
@@ -209,7 +226,7 @@ public sealed partial class AllocatorPage : Page
                     {
                         e.IsValid = true;
                         ViewModel.UpdateInventory(inventoryItem, (newVal - oldVal) * -1);
-                        InventoryGrid.View.Refresh();
+
                     }
                     else
                     {

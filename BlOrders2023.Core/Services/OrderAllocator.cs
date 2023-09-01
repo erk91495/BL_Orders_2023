@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Azure.Identity;
 using BlOrders2023.Core.Contracts;
 using BlOrders2023.Core.Contracts.Services;
 using BlOrders2023.Core.Data;
@@ -36,16 +37,21 @@ public class OrderAllocator : IAllocatorService
     }
     #endregion Constructors
 
-    public async Task<bool> Allocate(IAllocatorConfig config)
+    public async Task<bool> AllocateAsync(IAllocatorConfig config)
     {
         if (config is not OrderAllocatorConfiguration || config == null) throw new ArgumentNullException("Invalid Configuration");
 
         //Task<IEnumerable<Order>> ordersTask = _db.Orders.GetAsync();
+        ////ordersTask.Start();
         //Task<IEnumerable<InventoryItem>> inventoryTask = _db.Inventory.GetInventoryAsync();
-        //await Task.WhenAll(ordersTask, inventoryTask);
+        ////inventoryTask.Start();
+        //Task<IEnumerable<AllocationGroup>> allocationGroupsTask = _db.Allocation.GetAllocationGroupsAsync();
+        ////allocationGroupsTask.Start();
+        //await Task.WhenAll(ordersTask, inventoryTask, allocationGroupsTask);
 
-        //_orders = ordersTask.Result.ToList();
-        //_inventory = inventoryTask.Result;
+        //_orders = (IList<Order>)await ordersTask;
+        //_inventory = await inventoryTask;
+        //_allocationGroups = await allocationGroupsTask;
 
 
         var temporder = await _db.Orders.GetAsync(config.IDs);
@@ -58,17 +64,17 @@ public class OrderAllocator : IAllocatorService
 
 
 
-        if(config.AllocationType == AllocatorMode.Grocer)
+        if(config.AllocationMode == AllocatorMode.Grocer)
         {
             CalculateTotalOrdered(CustomerAllocationType.Grocer);
             AllocateGrocer();
         }
-        else if (config.AllocationType == AllocatorMode.Gift)
+        else if (config.AllocationMode == AllocatorMode.Gift)
         {
             CalculateTotalOrdered(CustomerAllocationType.Gift);
             AllocateGift();
         }
-        else if (config.AllocationType == AllocatorMode.Both)
+        else if (config.AllocationMode == AllocatorMode.Both)
         {
             CalculateTotalOrdered(CustomerAllocationType.Gift);
             AllocateGift();
@@ -77,7 +83,7 @@ public class OrderAllocator : IAllocatorService
         }
 #if DEBUG
         //for debug and testing. do what you want
-        else if (config.AllocationType == AllocatorMode.Test)
+        else if (config.AllocationMode == AllocatorMode.Test)
         {
             CalculateTotalOrdered(CustomerAllocationType.Grocer);
             AllocateGrocer();
@@ -99,6 +105,20 @@ public class OrderAllocator : IAllocatorService
         return true;
     }
 
+    public async Task SaveAllocationAsync()
+    {
+        List<Task> orderUpsertTask = new();
+        foreach(var order in _orders)
+        {
+           await _db.Orders.UpsertAsync(order);
+        }
+        foreach(var item in _inventory) 
+        {
+            await _db.Inventory.UpsertAsync(item);
+        }
+        Debugger.Break();
+        //TODO need to make sure all of this is wrote back correctly
+    }
     private void UpdateRemainingInventory()
     {
         foreach(var key in _remainingInventory.Keys)
@@ -173,7 +193,7 @@ public class OrderAllocator : IAllocatorService
                             }
                             else
                             {
-                                throw new AllocationFailedException($"Could Not Allocate {currentProductID}. Insufficent Quantity: Needed {quantityNeeded}");
+                                throw new AllocationFailedException($"Could Not AllocateAsync {currentProductID}. Insufficent Quantity: Needed {quantityNeeded}");
                             }
                         }
                     }
@@ -228,7 +248,14 @@ public class OrderAllocator : IAllocatorService
                 if (_remainingInventory.ContainsKey(currentProductID) && ordered.ContainsKey(currentProductID))
                 {
                     var portion = (float)_remainingInventory[currentProductID] / (float)ordered[currentProductID];
-                    portion = portion > 1 ? 1 : portion;
+                    if (portion > 1)
+                    {
+                        portion = 1;
+                    }
+                    else if (portion < 0)
+                    {
+                        portion = 0;
+                    }
                     // Give Portion to each order
                     for (var orderIndex = 0; orderIndex < grocerOrders.Count(); orderIndex++)
                     {
@@ -257,15 +284,20 @@ public class OrderAllocator : IAllocatorService
                         var currentOrder = grocerOrders[orderIndex];
                         var currentOrderItem = currentOrder.Items.Where(i => i.ProductID == currentProductID).FirstOrDefault();
                         if(currentOrderItem != null){
-                            //If I can't portion up set portion to 0 it should sort itself out when we try to go down
                             float extraPortion = 0;
                             if ((idIndex + 1) < (productIDs.Count - 1) && totalExtraNeeded != 0)
                             {
                                 extraPortion = _remainingInventory[productIDs[idIndex + 1]] / totalExtraNeeded;
                             }
 
-
-                            extraPortion = extraPortion > 1 ? 1 : extraPortion;
+                            if (extraPortion > 1)
+                            {
+                                extraPortion = 1;
+                            }
+                            else if (extraPortion < 0)
+                            {
+                                extraPortion = 0;
+                            }
                             var quantToGive = (int)(currentOrderItem.ExtraNeeded * extraPortion);
                             var extra = (int)(currentOrderItem.ExtraNeeded) - quantToGive;
                             if (quantToGive > 0)
@@ -279,6 +311,7 @@ public class OrderAllocator : IAllocatorService
                                 {
                                     var newItem = new OrderItem()
                                     {
+                                        OrderID = currentOrder.OrderID,
                                         ProductID = productIDs[idIndex + 1],
                                         QuanAllocated = quantToGive,
                                         Quantity = 0,
@@ -288,50 +321,53 @@ public class OrderAllocator : IAllocatorService
                                 }
                                 _remainingInventory[productIDs[idIndex + 1]] -= quantToGive;
                             }
+
                             if (extra > 0)
                             {
-
-                                if (idIndex + 2 < productIDs.Count && extra < _remainingInventory[productIDs[idIndex + 2]])
-                                {
-                                    //go up two
-                                    if (!(currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex + 2]).IsNullOrEmpty()))
-                                    {
-                                        currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex + 2]).First().QuanAllocated += quantToGive;
-                                        currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex + 2]).First().ExtraNeeded = 0;
-                                    }
-                                    else
-                                    {
-                                        var newItem = new OrderItem()
-                                        {
-                                            ProductID = productIDs[idIndex + 2],
-                                            QuanAllocated = quantToGive,
-                                            Quantity = 0,
-                                            ExtraNeeded = 0,
-                                        };
-                                        currentOrder.Items.Add(newItem);
-                                    }
-                                    _remainingInventory[productIDs[idIndex + 2]] -= extra;
-                                }
                                 //go down one
-                                else if (idIndex - 1 >= 0 && extra < _remainingInventory[productIDs[idIndex - 1]])
+                                if (idIndex - 1 >= 0 && extra < _remainingInventory[productIDs[idIndex - 1]])
                                 {
                                     if (!(currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex - 1]).IsNullOrEmpty()))
                                     {
-                                        currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex - 1]).First().QuanAllocated += quantToGive;
+                                        currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex - 1]).First().QuanAllocated += extra;
                                         currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex - 1]).First().ExtraNeeded = 0;
                                     }
                                     else
                                     {
                                         var newItem = new OrderItem()
                                         {
+                                            OrderID = currentOrder.OrderID,
                                             ProductID = productIDs[idIndex - 1],
-                                            QuanAllocated = quantToGive,
+                                            QuanAllocated = extra,
                                             Quantity = 0,
                                             ExtraNeeded = 0,
                                         };
                                         currentOrder.Items.Add(newItem);
                                     }
                                     _remainingInventory[productIDs[idIndex - 1]] -= extra;
+                                }
+                                //go up two
+                                else if (idIndex + 2 < productIDs.Count && extra < _remainingInventory[productIDs[idIndex + 2]])
+                                {
+                                    
+                                    if (!(currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex + 2]).IsNullOrEmpty()))
+                                    {
+                                        currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex + 2]).First().QuanAllocated += extra;
+                                        currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex + 2]).First().ExtraNeeded = 0;
+                                    }
+                                    else
+                                    {
+                                        var newItem = new OrderItem()
+                                        {
+                                            OrderID = currentOrder.OrderID,
+                                            ProductID = productIDs[idIndex + 2],
+                                            QuanAllocated = extra,
+                                            Quantity = 0,
+                                            ExtraNeeded = 0,
+                                        };
+                                        currentOrder.Items.Add(newItem);
+                                    }
+                                    _remainingInventory[productIDs[idIndex + 2]] -= extra;
                                 }
                                 else
                                 {
@@ -386,5 +422,10 @@ public class OrderAllocator : IAllocatorService
             }
         }
         
+    }
+
+    public async Task<IEnumerable<int>> GetOrdersIDToAllocateAsync(DateTimeOffset item1, DateTimeOffset item2, AllocatorMode mode)
+    {
+        return await _db.Allocation.GetAllocatableOrderIDsAsync(item1, item2, mode);
     }
 }
