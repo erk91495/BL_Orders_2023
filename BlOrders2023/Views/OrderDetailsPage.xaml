@@ -187,6 +187,18 @@
 
                 <StackPanel Orientation="Horizontal"
                             Grid.Row="1"
+                            Grid.Column="1">
+                    <TextBlock Text="Allocated:" 
+                               VerticalAlignment="Center"
+                               Padding="0,0,10,0"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.Order.Allocated, Mode=TwoWay}" 
+                              VerticalAlignment="Center"
+                              IsTabStop="False"
+                              Unchecked="AllocationCheckBox_UnChecked"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
                             Grid.Column="2">
                     <TextBlock Text="Frozen:" 
                                VerticalAlignment="Center"
@@ -274,7 +286,8 @@
                 <sf:GridNumericColumn HeaderText="Quantity Allocated" 
                                       MappingName="QuanAllocated" 
                                       AllowEditing="True"
-                                      IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                                      IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                      ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" 
                                       MappingName="QuantityReceived"/>
                 <sf:GridUnboundColumn HeaderText="" 

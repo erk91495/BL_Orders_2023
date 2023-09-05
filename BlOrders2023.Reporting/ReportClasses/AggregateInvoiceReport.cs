@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using BlOrders2023.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using Windows.Media.AppBroadcasting;
-using Windows.System.RemoteSystems;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Aggregate Invoice")]

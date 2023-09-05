@@ -527,6 +527,24 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     {
         ValidateAllProperties();
     }
+
+    public void ResetAllocation()
+    {
+            List<OrderItem> itemsCopy = new (Items);
+            foreach(var item in itemsCopy) 
+            {
+                if (item.QuantityReceived == 0 && item.Quantity == 0)
+                {
+                    Items.Remove(item);
+                }
+                else
+                {
+                    item.Allocated = null;
+                    item.QuanAllocated = null;
+                }
+            }
+            Order.Allocated = false;
+    }
     #endregion Validators
     #endregion Methods
 }

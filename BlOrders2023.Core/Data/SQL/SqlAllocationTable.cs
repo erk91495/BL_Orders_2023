@@ -35,7 +35,7 @@ internal class SqlAllocationTable : IAllocationTable
                                            o.PickupDate <= item2 &&
                                            o.Allocated != true &&
                                            o.Frozen != true)
-                               .AsNoTracking()
+                               .AsNoTrackingWithIdentityResolution()
                                .Select(o => o.OrderID)
                                .ToListAsync();
         }
@@ -56,7 +56,7 @@ internal class SqlAllocationTable : IAllocationTable
                                                o.Allocated != true &&
                                                o.Frozen != true && 
                                                o.Customer.AllocationType == allocatorType)
-                                   .AsNoTracking()
+                                   .AsNoTrackingWithIdentityResolution()
                                    .Select(o => o.OrderID)
                                    .ToListAsync();
         }

@@ -708,4 +708,28 @@ public sealed partial class OrderDetailsPage : Page
             e.Cancel = true;
         }
     }
+
+    private async void AllocationCheckBox_UnChecked(object sender, RoutedEventArgs e)
+    {
+        if(sender is CheckBox checkbox && checkbox.IsChecked != true)
+        {
+            ContentDialog dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Reset Allocation",
+                Content = "Are you sure you want to reset allocation for this order?\r\nThese items will NOT be added back into inventory.",
+                PrimaryButtonText = "Reset",
+                CloseButtonText = "Cancel",
+            };
+            var result = await dialog.ShowAsync();
+            if(result == ContentDialogResult.Primary)
+            {
+                ViewModel.ResetAllocation();
+            }
+            else
+            {
+                checkbox.IsChecked = true;
+            }
+        } 
+    }
 }

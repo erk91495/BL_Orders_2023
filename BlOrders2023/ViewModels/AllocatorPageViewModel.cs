@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using BlOrders2023.Models.Enums;
+using Syncfusion.UI.Xaml.Data;
 
 namespace BlOrders2023.ViewModels;
 public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
