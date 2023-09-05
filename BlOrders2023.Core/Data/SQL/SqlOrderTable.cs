@@ -174,6 +174,15 @@ internal class SqlOrderTable : IOrderTable
             .ToList();
     }
 
+    public IEnumerable<Order> GetNonFrozenByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return _db.Orders
+            .Where(o => o.Frozen != true && o.PickupDate >= startDate && o.PickupDate <= endDate)
+            .OrderBy(o => o.PickupDate)
+            .ThenBy(o => o.PickupTime)
+            .ToList();
+    }
+
     public async Task<IEnumerable<Order>> GetByCustomerIDAndPickupDateAsync(IEnumerable<int> CustomerIDs, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return await _db.Orders

@@ -7,6 +7,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
+[System.ComponentModel.DisplayName("Allocation Summary Report")]
 public class AllocationSummaryReport : IReport
 {
     #region Fields

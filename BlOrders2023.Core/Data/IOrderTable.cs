@@ -10,6 +10,7 @@ public interface IOrderTable
     IEnumerable<Order> Get(int orderID);
     IEnumerable<Order> GetFrozenOrdersByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
     IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
+    IEnumerable<Order> GetNonFrozenByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
     IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate);
     Task<IEnumerable<Order>> GetByCustomerIDAndPickupDateAsync(IEnumerable<int> CustomerIDs, DateTimeOffset startDate, DateTimeOffset endDate);
     IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer);

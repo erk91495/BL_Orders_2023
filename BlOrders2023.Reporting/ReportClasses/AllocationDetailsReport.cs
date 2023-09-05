@@ -7,6 +7,7 @@ using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Reporting.ReportClasses;
+[System.ComponentModel.DisplayName("Allocation Details Report")]
 public class AllocationDetailsReport : IReport
 {
     #region Fields

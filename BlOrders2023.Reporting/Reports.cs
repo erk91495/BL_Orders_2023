@@ -24,5 +24,7 @@ public static class Reports
         typeof(FrozenOrdersReport),
         typeof(PickList),
         typeof(PalletLoadingReport),
+        typeof(CurrentInventoryReport),
+        typeof(InventoryDetailsReport),
     }; 
 }

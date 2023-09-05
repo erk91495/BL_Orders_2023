@@ -159,4 +159,20 @@ public class ReportGenerator
         report.GeneratePdf(filePath);
         return filePath;
     }
+
+    public string GenerateCurrentInventoryReport(IEnumerable<InventoryItem> inventory)
+    {
+        var report = new CurrentInventoryReport(inventory);
+        var filePath = TempPath + Path.DirectorySeparatorChar + $"CurrentInventory" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
+
+    public string GenerateInventoryDetailsReport(IEnumerable<InventoryItem> inventory, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new InventoryDetailsReport(inventory, orders, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + $"InventoryDetails" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
 }
