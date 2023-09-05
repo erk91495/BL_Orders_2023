@@ -212,12 +212,24 @@
                         <TextBlock Text="{x:Bind ViewModel.Customer.Buyer, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
                                Padding="0,0,0,0"/>
-                        <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="P:" 
+                                       FontSize="{StaticResource MediumFontSize}"
+                                       Padding="0,0,5,0"
+                                       Visibility="{x:Bind converters:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
                                Visibility="{x:Bind converters:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
-                        <TextBlock Text="{x:Bind ViewModel.Customer.Fax, Mode=OneWay}"
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="F:" 
+                                       FontSize="{StaticResource MediumFontSize}"
+                                       Padding="0,0,5,0"
+                                       Visibility="{x:Bind converters:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Customer.Fax, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
                                Visibility="{x:Bind converters:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                        </StackPanel>
                         <!--<TextBlock>
                             <TextBlock.Inlines>
                                 <Hyperlink NavigateUri="MAILTO:eric@bowmanlandes.com" Click="EmailButton_Click">

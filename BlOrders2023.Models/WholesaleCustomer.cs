@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -89,9 +90,21 @@ namespace BlOrders2023.Models
         public string PhoneString()
         {
             if (PhoneExt != null)
-                return String.Format("{0} x.{1}", Phone, PhoneExt);
+                return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone), PhoneExt);
             else
-                return Phone;
+                return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone));
+        }
+        public string Phone2String()
+        {
+            if (PhoneExt != null)
+                return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone_2), Phone2Ext);
+            else
+                return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone_2));
+        }
+
+        public string FaxString()
+        {
+            return string.Format("{0:(###)###-####}", Convert.ToInt64(Fax));
         }
 
         public override string ToString()
