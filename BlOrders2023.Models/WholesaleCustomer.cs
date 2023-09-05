@@ -1,4 +1,5 @@
 ﻿using BlOrders2023.Models.Enums;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -89,22 +90,49 @@ namespace BlOrders2023.Models
 
         public string PhoneString()
         {
-            if (PhoneExt != null)
-                return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone), PhoneExt);
-            else
-                return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone));
+            if(!Phone.IsNullOrEmpty()) {
+                if (PhoneExt != null)
+                {
+                    return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone), PhoneExt);
+                }
+                else
+                {
+                    return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone));
+                }
+            }else
+            {
+                return string.Empty;
+            }
         }
         public string Phone2String()
         {
-            if (PhoneExt != null)
-                return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone_2), Phone2Ext);
+            if (!Phone_2.IsNullOrEmpty())
+            {
+                if (Phone2Ext != null)
+                {
+                    return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone_2), Phone2Ext);
+                }
+                else
+                {
+                    return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone_2));
+                }
+            }
             else
-                return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone_2));
+            {
+                return string.Empty;
+            }
         }
 
         public string FaxString()
         {
-            return string.Format("{0:(###)###-####}", Convert.ToInt64(Fax));
+            if(!Fax.IsNullOrEmpty()) 
+            {
+                return string.Format("{0:(###)###-####}", Convert.ToInt64(Fax));
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
         public override string ToString()
