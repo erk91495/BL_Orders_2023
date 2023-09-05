@@ -105,7 +105,7 @@ internal class SqlOrderTable : IOrderTable
             .Include(Order => Order.Items)
             .Include(order => order.Customer)
             .Include(Order => Order.ShippingItems)
-            .AsNoTracking()
+            .AsNoTrackingWithIdentityResolution()
             .ToListAsync();
         }
     }
@@ -133,7 +133,7 @@ internal class SqlOrderTable : IOrderTable
             .Include(order => order.Customer)
             .Include(order => order.ShippingItems)
             .Where(order => order.OrderID == orderID)
-            .AsNoTracking()
+            .AsNoTrackingWithIdentityResolution()
             .ToListAsync();
         }
     }
@@ -244,6 +244,21 @@ internal class SqlOrderTable : IOrderTable
 
         _ = await _db.SaveChangesAsync();
         return order;
+    }
+
+    /// <summary>
+    /// Updates the database context with the given Order. If the Order does not exist it will be added to the db
+    /// </summary>
+    /// <param name="order">The Order to be added or updated</param>
+    /// <returns>the updated Order</returns>
+    public async Task<int> UpsertAsync(IEnumerable<Order> orders)
+    {
+        foreach(var order in orders) 
+        {
+            _db.Update(order);
+        }
+
+        return await _db.SaveChangesAsync();
     }
 
 

@@ -194,7 +194,7 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.Order.Allocated, Mode=TwoWay}" 
                               VerticalAlignment="Center"
                               IsTabStop="False"
-                              Checked="AllocationCheckBox_Checked"/>
+                              Unchecked="AllocationCheckBox_UnChecked"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal"

@@ -15,6 +15,7 @@ public interface IOrderTable
     IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer);
     Order Reload(Order orderID);
     Task<Order> UpsertAsync(Order order);
+    Task<int> UpsertAsync(IEnumerable<Order> orders);
     Task DeleteAsync(Order order);
     Order Upsert(Order order, bool overwrite=false);
     void Delete(Order order);

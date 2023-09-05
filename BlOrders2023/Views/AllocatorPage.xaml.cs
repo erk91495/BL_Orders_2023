@@ -98,7 +98,7 @@ public sealed partial class AllocatorPage : Page
             //-1  will be the value if TEST mode type is selected during debug, but TEST is not compiled into Release Builds
             if (((int)ViewModel.AllocatorConfig.AllocatorMode) == -1)
             {
-                ViewModel.AllocatorConfig.IDs = new() { 67662, 67663 };
+                ViewModel.AllocatorConfig.IDs = new() { 67662, 67663, 68664 };
                 await StartAllocationAsync();
             }
 

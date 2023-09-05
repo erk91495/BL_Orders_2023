@@ -530,9 +530,8 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
 
     public void ResetAllocation()
     {
-        if(Order.Allocated == true)
-        {
-            foreach(var item in Items) 
+            List<OrderItem> itemsCopy = new (Items);
+            foreach(var item in itemsCopy) 
             {
                 if (item.QuantityReceived == 0 && item.Quantity == 0)
                 {
@@ -545,7 +544,6 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
                 }
             }
             Order.Allocated = false;
-        }
     }
     #endregion Validators
     #endregion Methods

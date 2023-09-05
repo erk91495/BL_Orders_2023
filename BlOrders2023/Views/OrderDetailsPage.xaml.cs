@@ -709,7 +709,7 @@ public sealed partial class OrderDetailsPage : Page
         }
     }
 
-    private async void AllocationCheckBox_Checked(object sender, RoutedEventArgs e)
+    private async void AllocationCheckBox_UnChecked(object sender, RoutedEventArgs e)
     {
         if(sender is CheckBox checkbox && checkbox.IsChecked != true)
         {

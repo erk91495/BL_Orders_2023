@@ -115,17 +115,11 @@ public class OrderAllocator : IAllocatorService
 
     public async Task SaveAllocationAsync()
     {
-        List<Task> orderUpsertTask = new();
-        foreach(var order in _orders)
-        {
-           await _db.Orders.UpsertAsync(order);
-        }
+        await _db.Orders.UpsertAsync(Orders);
         foreach(var item in _inventory) 
         {
             await _db.Inventory.UpsertAsync(item);
         }
-        Debugger.Break();
-        //TODO need to make sure all of this is wrote back correctly
     }
     private void UpdateRemainingInventory()
     {
@@ -171,10 +165,9 @@ public class OrderAllocator : IAllocatorService
                                 }
                                 else
                                 {
-                                    OrderItem item = new()
+                                    var product = _db.Products.Get(productIDs[idIndex + 1],false).First();
+                                    OrderItem item = new(product,order)
                                     {
-                                        ProductID = productIDs[idIndex + 1],
-                                        Quantity = 0,
                                         QuanAllocated = quantityNeeded,
                                         Allocated = true
                                     };
@@ -192,10 +185,9 @@ public class OrderAllocator : IAllocatorService
                                 }
                                 else
                                 {
-                                    OrderItem item = new()
+                                    var product = _db.Products.Get(productIDs[idIndex - 1], true).First();
+                                    OrderItem item = new(product, order)
                                     {
-                                        ProductID = productIDs[idIndex - 1],
-                                        Quantity = 0,
                                         QuanAllocated = quantityNeeded,
                                         Allocated = true
                                     };
@@ -289,27 +281,27 @@ public class OrderAllocator : IAllocatorService
                     }// end for each order
 
 
+                    float extraPortion = 0;
+                    if ((idIndex + 1) < (productIDs.Count - 1) && totalExtraNeeded != 0)
+                    {
+                        extraPortion = _remainingInventory[productIDs[idIndex + 1]] / totalExtraNeeded;
+                    }
 
+                    if (extraPortion > 1)
+                    {
+                        extraPortion = 1;
+                    }
+                    else if (extraPortion < 0)
+                    {
+                        extraPortion = 0;
+                    }
                     //Give Exra to each order
                     for (var orderIndex = 0; orderIndex < grocerOrders.Count(); orderIndex++)
                     {
                         var currentOrder = grocerOrders[orderIndex];
                         var currentOrderItem = currentOrder.Items.Where(i => i.ProductID == currentProductID).FirstOrDefault();
                         if(currentOrderItem != null){
-                            float extraPortion = 0;
-                            if ((idIndex + 1) < (productIDs.Count - 1) && totalExtraNeeded != 0)
-                            {
-                                extraPortion = _remainingInventory[productIDs[idIndex + 1]] / totalExtraNeeded;
-                            }
 
-                            if (extraPortion > 1)
-                            {
-                                extraPortion = 1;
-                            }
-                            else if (extraPortion < 0)
-                            {
-                                extraPortion = 0;
-                            }
                             var quantToGive = (int)(currentOrderItem.ExtraNeeded * extraPortion);
                             var extra = (int)(currentOrderItem.ExtraNeeded) - quantToGive;
                             if (quantToGive > 0)
@@ -321,15 +313,14 @@ public class OrderAllocator : IAllocatorService
                                 }
                                 else
                                 {
-                                    var newItem = new OrderItem()
+                                    var product = _db.Products.Get(productIDs[idIndex + 1], true).First();
+                                    var item = new OrderItem(product, currentOrder)
                                     {
-                                        OrderID = currentOrder.OrderID,
-                                        ProductID = productIDs[idIndex + 1],
                                         QuanAllocated = quantToGive,
                                         Quantity = 0,
                                         Allocated = true,
                                     };
-                                    currentOrder.Items.Add(newItem);
+                                    currentOrder.Items.Add(item);
                                 }
                                 _remainingInventory[productIDs[idIndex + 1]] -= quantToGive;
                             }
@@ -346,10 +337,9 @@ public class OrderAllocator : IAllocatorService
                                     }
                                     else
                                     {
-                                        var newItem = new OrderItem()
+                                        var product = _db.Products.Get(productIDs[idIndex -1], true).First();
+                                        var newItem = new OrderItem(product, currentOrder)
                                         {
-                                            OrderID = currentOrder.OrderID,
-                                            ProductID = productIDs[idIndex - 1],
                                             QuanAllocated = extra,
                                             Quantity = 0,
                                             ExtraNeeded = 0,
@@ -369,10 +359,9 @@ public class OrderAllocator : IAllocatorService
                                     }
                                     else
                                     {
-                                        var newItem = new OrderItem()
+                                        var product = _db.Products.Get(productIDs[idIndex + 2], true).First();
+                                        var newItem = new OrderItem(product, currentOrder)
                                         {
-                                            OrderID = currentOrder.OrderID,
-                                            ProductID = productIDs[idIndex + 2],
                                             QuanAllocated = extra,
                                             Quantity = 0,
                                             ExtraNeeded = 0,
