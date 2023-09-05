@@ -1,15 +1,9 @@
-﻿using BlOrders2023.Models;
+﻿using System.Reflection;
+using BlOrders2023.Models;
 using Microsoft.IdentityModel.Tokens;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 

@@ -9,6 +9,7 @@ using BlOrders2023.Core.Helpers;
 using BlOrders2023.Exceptions;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
+using BlOrders2023.Reporting;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.IdentityModel.Tokens;
 
@@ -18,6 +19,8 @@ public class OrderAllocator : IAllocatorService
     #region Properties
     public IEnumerable<Order> Orders => _orders;
     public IEnumerable<InventoryItem> Inventory => _inventory;
+
+    public DateTime AllocationTime => _allocationTime;
     #endregion Properties
 
     #region Fields
@@ -27,7 +30,9 @@ public class OrderAllocator : IAllocatorService
     private IEnumerable<InventoryItem> _inventory;
     private ReadOnlyDictionary<int, int> _startingInventory;
     private readonly Dictionary<int, int> _remainingInventory = new();
+    private DateTime _allocationTime = DateTime.Now;
     private IEnumerable<AllocationGroup> _allocationGroups;
+    private IAllocatorConfig _config;
     #endregion Fields
 
     #region Constructors
@@ -40,7 +45,8 @@ public class OrderAllocator : IAllocatorService
     public async Task<bool> AllocateAsync(IAllocatorConfig config)
     {
         if (config is not OrderAllocatorConfiguration || config == null) throw new ArgumentNullException("Invalid Configuration");
-
+        _allocationTime = DateTime.Now;
+        _config = config;
         //Task<IEnumerable<Order>> ordersTask = _db.Orders.GetAsync();
         ////ordersTask.Start();
         //Task<IEnumerable<InventoryItem>> inventoryTask = _db.Inventory.GetInventoryAsync();
@@ -54,7 +60,7 @@ public class OrderAllocator : IAllocatorService
         //_allocationGroups = await allocationGroupsTask;
 
 
-        var temporder = await _db.Orders.GetAsync(config.IDs);
+        var temporder = await _db.Orders.GetAsync(_config.IDs);
         _orders = temporder.ToList();
         _inventory = await _db.Inventory.GetInventoryAsync();
         _allocationGroups = await _db.Allocation.GetAllocationGroupsAsync();
@@ -64,17 +70,17 @@ public class OrderAllocator : IAllocatorService
 
 
 
-        if(config.AllocationMode == AllocatorMode.Grocer)
+        if(_config.AllocatorMode == AllocatorMode.Grocer)
         {
             CalculateTotalOrdered(CustomerAllocationType.Grocer);
             AllocateGrocer();
         }
-        else if (config.AllocationMode == AllocatorMode.Gift)
+        else if (_config.AllocatorMode == AllocatorMode.Gift)
         {
             CalculateTotalOrdered(CustomerAllocationType.Gift);
             AllocateGift();
         }
-        else if (config.AllocationMode == AllocatorMode.Both)
+        else if (_config.AllocatorMode == AllocatorMode.Both)
         {
             CalculateTotalOrdered(CustomerAllocationType.Gift);
             AllocateGift();
@@ -83,8 +89,10 @@ public class OrderAllocator : IAllocatorService
         }
 #if DEBUG
         //for debug and testing. do what you want
-        else if (config.AllocationMode == AllocatorMode.Test)
+        else if (_config.AllocatorMode == AllocatorMode.Test)
         {
+            CalculateTotalOrdered(CustomerAllocationType.Gift);
+            AllocateGift();
             CalculateTotalOrdered(CustomerAllocationType.Grocer);
             AllocateGrocer();
         }
@@ -149,6 +157,7 @@ public class OrderAllocator : IAllocatorService
                             if(quantityNeeded <= _remainingInventory[currentProductID])
                             {
                                 orderedItem.QuanAllocated += quantityNeeded;
+                                _remainingInventory[currentProductID] -= (int)quantityNeeded;
                                 orderedItem.Allocated = true;
                             }
                             //Up one
@@ -158,6 +167,7 @@ public class OrderAllocator : IAllocatorService
                                 if(orderedItem != null)
                                 {
                                     orderedItem.QuanAllocated += quantityNeeded;
+                                    
                                 }
                                 else
                                 {
@@ -170,6 +180,7 @@ public class OrderAllocator : IAllocatorService
                                     };
                                     order.Items.Add(item);
                                 }
+                                _remainingInventory[productIDs[idIndex + 1]] -= (int)quantityNeeded;
                             }
                             //down one
                             else if (idIndex > 0 && quantityNeeded <= _remainingInventory[productIDs[idIndex -1 ]])
@@ -190,6 +201,7 @@ public class OrderAllocator : IAllocatorService
                                     };
                                     order.Items.Add(item);
                                 }
+                                _remainingInventory[productIDs[idIndex - 1]] -= (int)quantityNeeded;
                             }
                             else
                             {
@@ -242,7 +254,7 @@ public class OrderAllocator : IAllocatorService
             for (var idIndex = 0; idIndex < productIDs.Count; idIndex++)
             {
                 var currentProductID = productIDs[idIndex];
-                var totalExtraNeeded = 0;
+                var totalExtraNeeded = 0f;
 
                 //First Make Sure the key is inventory orderd lists
                 if (_remainingInventory.ContainsKey(currentProductID) && ordered.ContainsKey(currentProductID))
@@ -325,7 +337,7 @@ public class OrderAllocator : IAllocatorService
                             if (extra > 0)
                             {
                                 //go down one
-                                if (idIndex - 1 >= 0 && extra < _remainingInventory[productIDs[idIndex - 1]])
+                                if (idIndex - 1 >= 0 && extra <= _remainingInventory[productIDs[idIndex - 1]])
                                 {
                                     if (!(currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex - 1]).IsNullOrEmpty()))
                                     {
@@ -347,7 +359,7 @@ public class OrderAllocator : IAllocatorService
                                     _remainingInventory[productIDs[idIndex - 1]] -= extra;
                                 }
                                 //go up two
-                                else if (idIndex + 2 < productIDs.Count && extra < _remainingInventory[productIDs[idIndex + 2]])
+                                else if (idIndex + 2 < productIDs.Count && extra <= _remainingInventory[productIDs[idIndex + 2]])
                                 {
                                     
                                     if (!(currentOrder.Items.Where(i => i.ProductID == productIDs[idIndex + 2]).IsNullOrEmpty()))
@@ -427,5 +439,17 @@ public class OrderAllocator : IAllocatorService
     public async Task<IEnumerable<int>> GetOrdersIDToAllocateAsync(DateTimeOffset item1, DateTimeOffset item2, AllocatorMode mode)
     {
         return await _db.Allocation.GetAllocatableOrderIDsAsync(item1, item2, mode);
+    }
+
+    public async Task<string> GenerateAllocationSummary() 
+    {
+        ReportGenerator generator = new();
+        return await Task.Run(() => generator.GenerateAllocationSummaryReport(Orders, _config.AllocatorMode, AllocationTime));
+    }
+
+    public async Task<string> GenerateAllocationDetails()
+    {
+        ReportGenerator generator = new();
+        return await Task.Run(() => generator.GenerateAllocationDetailsReport(Orders, _allocationGroups, _config.AllocatorMode, AllocationTime));
     }
 }

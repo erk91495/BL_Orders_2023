@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using BlOrders2023.Models;
+using BlOrders2023.Models.Enums;
 using BlOrders2023.Reporting.ReportClasses;
 using QuestPDF.Fluent;
 using System.Diagnostics;
@@ -140,6 +141,22 @@ public class ReportGenerator
         }
         var filePath = TempPath + Path.DirectorySeparatorChar + $"{order.OrderID}_PalletLoading" + "_" + DateTime.Now.ToFileTime() + ".pdf";
         Document.Merge(palletPages).UseContinuousPageNumbers().GeneratePdf(filePath);
+        return filePath;
+    }
+
+    public string GenerateAllocationSummaryReport(IEnumerable<Order> orders, AllocatorMode mode, DateTime allocationTime)
+    {
+        var report = new AllocationSummaryReport(orders, mode, allocationTime);
+        var filePath = TempPath + Path.DirectorySeparatorChar + $"AllocationSummary" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
+
+    public string GenerateAllocationDetailsReport(IEnumerable<Order> orders, IEnumerable<AllocationGroup> allocationGroups, AllocatorMode mode, DateTime allocationTime)
+    {
+        var report = new AllocationDetailsReport(orders, allocationGroups, mode, allocationTime);
+        var filePath = TempPath + Path.DirectorySeparatorChar + $"AllocationDetails" + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
         return filePath;
     }
 }

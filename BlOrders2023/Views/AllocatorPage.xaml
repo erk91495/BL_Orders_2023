@@ -100,9 +100,20 @@
                 <RelativePanel x:Name="ContentArea">
                     <StackPanel x:Name="AllocationModeStack" Orientation="Horizontal"
                                 RelativePanel.AlignTopWithPanel="True">
-                        <TextBlock Text="AllocationMode"/>
-                        <TextBlock Text="{x:Bind ViewModel.AllocatorConfig.AllocationMode, Mode=OneWay}"/>
+                        <TextBlock Text="AllocationMode:" Margin="0,0,10,0" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.AllocatorConfig.AllocatorMode, Mode=OneWay}" FontSize="20" FontWeight="Bold"/>
                     </StackPanel>
+
+                    <Button RelativePanel.AlignRightWithPanel="True"
+                            RelativePanel.AlignTopWith="AllocationModeStack">
+                        <SymbolIcon Symbol="More"/>
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem x:Name="btn_PrintSummary" Text="Print Allocation Summary" Icon="Print" Click="PrintFlyoutButton_Click"/>
+                                <MenuFlyoutItem x:Name="btn_PrintDetails" Text="Print Allocation Details" Icon="Print" Click="PrintFlyoutButton_Click"/>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
 
                     <!--<GridView ItemsSource="{x:Bind ViewModel.AllocatedOrders, Mode=TwoWay}" SelectionMode="None">
                         <GridView.ItemTemplate>

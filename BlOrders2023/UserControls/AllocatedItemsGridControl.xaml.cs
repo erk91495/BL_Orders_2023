@@ -51,7 +51,7 @@ public sealed partial class AllocatedItemsGridControl : UserControl
             SfDataGrid d = new SfDataGrid()
             {
                 AutoGenerateColumns= false,
-                ItemsSource = Items.Where(e => Ids.Contains(e.ProductID)),
+                ItemsSource = Items.Where(e => Ids.Contains(e.ProductID)).OrderBy(i => i.ProductID),
                 IsReadOnly=false,
             };
             d.CurrentCellValidating += ValidateCell;
