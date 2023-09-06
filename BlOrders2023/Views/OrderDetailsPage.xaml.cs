@@ -22,6 +22,7 @@ using BlOrders2023.Reporting;
 using System.Drawing.Printing;
 using BlOrders2023.UserControls;
 using CommunityToolkit.WinUI;
+using System.Diagnostics;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -58,15 +59,34 @@ public sealed partial class OrderDetailsPage : Page
         ViewModel = App.GetService<OrderDetailsPageViewModel>();
         reportGenerator = new();
         this.InitializeComponent();
+        this.Loaded += OrderDetailsPage_Loaded;
         SetMemoTotalFormatter();
         //SetMemoWeightFormatter();
         PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
         OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
         this.DataContext = this;
     }
-
     #endregion Constructors
     #region Methods
+    private void OrderDetailsPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.Order != null)
+        {
+            var res = dispatcherQueue.EnqueueAsync(() =>
+            {
+                var res = ProductEntryBox.Focus(FocusState.Programmatic);
+            });
+        }
+        else
+        {
+            var res = dispatcherQueue.EnqueueAsync(() =>
+            {
+                dispatcherQueue.TryEnqueue(() => TakenBy.Focus(FocusState.Programmatic));
+            });
+            
+        }
+    }
+
     /// <summary>
     /// Handles NavigatedTo events
     /// </summary>
@@ -558,11 +578,12 @@ public sealed partial class OrderDetailsPage : Page
     private async Task PrintInvoiceAsync()
     {
         var printInvoice = false;
-        if(ViewModel.CanPrintInvoice) {
+        if (ViewModel.CanPrintInvoice)
+        {
             //Invoice already printed print copy
-            if (ViewModel.OrderStatus > OrderStatus.Filled) 
+            if (ViewModel.OrderStatus > OrderStatus.Filled)
             {
-                ContentDialog contentDialog= new ContentDialog()
+                ContentDialog contentDialog = new ContentDialog()
                 {
                     XamlRoot = XamlRoot,
                     Content = "This invoice has already been printed. To print a copy press Reprint",
@@ -570,7 +591,24 @@ public sealed partial class OrderDetailsPage : Page
                     CloseButtonText = "Cancel",
                 };
                 var res = await contentDialog.ShowAsync();
-                if(res == ContentDialogResult.Primary)
+                if (res == ContentDialogResult.Primary)
+                {
+                    printInvoice = true;
+                }
+            }
+            //Not all items on order
+            else if (ViewModel.OrderStatus == OrderStatus.Filling)
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "All items ordered have not been received. Would you still like to print?",
+                    PrimaryButtonText = "Print",
+                    CloseButtonText = "Cancel",
+                };
+                SystemSounds.Asterisk.Play();
+                var res = await contentDialog.ShowAsync();
+                if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
                 }
@@ -581,22 +619,7 @@ public sealed partial class OrderDetailsPage : Page
                 printInvoice = true;
             }
         }
-        else if( ViewModel.OrderStatus == OrderStatus.Filling)
-        {
-            ContentDialog contentDialog = new ContentDialog()
-            {
-                XamlRoot = XamlRoot,
-                Content = "All items ordered have not been received. Would you still like to print?",
-                PrimaryButtonText = "Print",
-                CloseButtonText = "Cancel",
-            };
-            SystemSounds.Asterisk.Play();
-            var res = await contentDialog.ShowAsync();
-            if (res == ContentDialogResult.Primary)
-            {
-                printInvoice= true;
-            }
-        }
+
 
         if (printInvoice)
         {
@@ -696,6 +719,7 @@ public sealed partial class OrderDetailsPage : Page
         await ViewModel.QueryProducts();
         ProductEntryBox.Text = null;
         ProductEntryBox.IsSuggestionListOpen = false;
+        await DispatcherQueue.EnqueueAsync(() => {ProductEntryBox.Focus(FocusState.Programmatic); });
     }
 
     private void PickupDate_SelectedDateChanging(object sender, Syncfusion.UI.Xaml.Editors.DateChangingEventArgs e)
@@ -704,5 +728,29 @@ public sealed partial class OrderDetailsPage : Page
         {
             e.Cancel = true;
         }
+    }
+
+    private async void AllocationCheckBox_UnChecked(object sender, RoutedEventArgs e)
+    {
+        if(sender is CheckBox checkbox && checkbox.IsChecked != true)
+        {
+            ContentDialog dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Reset Allocation",
+                Content = "Are you sure you want to reset allocation for this order?\r\nThese items will NOT be added back into inventory.",
+                PrimaryButtonText = "Reset",
+                CloseButtonText = "Cancel",
+            };
+            var result = await dialog.ShowAsync();
+            if(result == ContentDialogResult.Primary)
+            {
+                ViewModel.ResetAllocation();
+            }
+            else
+            {
+                checkbox.IsChecked = true;
+            }
+        } 
     }
 }

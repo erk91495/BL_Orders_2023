@@ -52,12 +52,24 @@
             <TextBlock Text="{x:Bind ViewModel.Customer.Buyer, Mode=OneWay}"
                                FontSize="{StaticResource MediumFontSize}"
                                Padding="0,20,0,0"/>
-            <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
-                               FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
-            <TextBlock Text="{x:Bind ViewModel.Customer.Fax, Mode=OneWay}"
-                               FontSize="{StaticResource MediumFontSize}"
-                               Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="P:" 
+                           FontSize="{StaticResource MediumFontSize}"
+                           Padding="0,0,5,0"
+                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"
+                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F:" 
+                           FontSize="{StaticResource MediumFontSize}"
+                           Padding="0,0,5,0"
+                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+                <TextBlock Text="{x:Bind ViewModel.Customer.Fax, Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"
+                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Fax), Mode=OneWay, FallbackValue=Collapsed}"/>
+            </StackPanel>
             <TextBlock IsTabStop="False">
                 <TextBlock.Inlines>
                     <Hyperlink Click="EmailButton_Click" IsTabStop="False">
@@ -134,7 +146,7 @@
                             Grid.Row="0"
                             Grid.Column="0">
                     <TextBlock Text="Taken By:"/>
-                    <TextBox Text="{x:Bind ViewModel.TakenBy, Mode=TwoWay}" TabIndex="1"/>
+                    <TextBox x:Name="TakenBy" Text="{x:Bind ViewModel.TakenBy, Mode=TwoWay}" TabIndex="1"/>
                     <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('TakenBy'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('TakenBy'), Mode=OneWay}" 
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
@@ -183,6 +195,18 @@
                                               SelectedTime="{x:Bind ViewModel.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
                                               TabIndex="4"/>
                     </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            Grid.Column="1">
+                    <TextBlock Text="Allocated:" 
+                               VerticalAlignment="Center"
+                               Padding="0,0,10,0"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.Order.Allocated, Mode=TwoWay}" 
+                              VerticalAlignment="Center"
+                              IsTabStop="False"
+                              Unchecked="AllocationCheckBox_UnChecked"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal"
@@ -274,7 +298,8 @@
                 <sf:GridNumericColumn HeaderText="Quantity Allocated" 
                                       MappingName="QuanAllocated" 
                                       AllowEditing="True"
-                                      IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                                      IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                      ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" 
                                       MappingName="QuantityReceived"/>
                 <sf:GridUnboundColumn HeaderText="" 

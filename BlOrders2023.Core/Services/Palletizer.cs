@@ -79,7 +79,7 @@ public class Palletizer
                 var maxPerPallet = GetMaxBoxesPerPallet(group[0].Product);
                 foreach(var item in group)
                 {
-                    var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
+                    var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated ?? 0 : item.Quantity);
                     //Make Full Pallets
                     for(var i = 0; i < (int)(quanNeeded / maxPerPallet); i++)
                     {

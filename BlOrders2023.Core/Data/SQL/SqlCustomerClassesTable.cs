@@ -27,7 +27,7 @@ internal class SqlCustomerClassesTable : ICustomerClassesTable
         {
             if (asNoTracking)
             {
-                return await _db.CustomerClasses.AsNoTracking().ToListAsync();
+                return await _db.CustomerClasses.AsNoTrackingWithIdentityResolution().ToListAsync();
             }
             else
             {
@@ -39,7 +39,7 @@ internal class SqlCustomerClassesTable : ICustomerClassesTable
             if (asNoTracking)
             {
                 return await _db.CustomerClasses.Where(c => c.ID.ToString().Contains(query) || c.Class.Contains(query))
-                                                .AsNoTracking()
+                                                .AsNoTrackingWithIdentityResolution()
                                                 .ToListAsync();
             }
             else

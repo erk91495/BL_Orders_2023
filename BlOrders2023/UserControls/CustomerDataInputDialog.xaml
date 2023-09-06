@@ -231,7 +231,7 @@
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('CustomerClass'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('CustomerClass'), Mode=OneWay}" 
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
-                <Button Click="Button_Click" Content="Break"/>
+                <!--<Button Click="Button_Click" Content="Break"/>-->
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Row="10" Grid.Column="1">
                 <TextBlock Text="Allocation Type: *"/>

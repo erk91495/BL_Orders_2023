@@ -6,6 +6,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
+[System.ComponentModel.DisplayName("Pallet Loading Report")]
 public class PalletLoadingReport :IReport
 {
     #region Properties

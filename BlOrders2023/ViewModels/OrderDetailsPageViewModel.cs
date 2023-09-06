@@ -7,16 +7,9 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.System.Power;
-using ServiceStack;
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Windows.Foundation.Metadata;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-
 namespace BlOrders2023.ViewModels;
 
 public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
@@ -422,7 +415,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     /// </summary>
     public async Task SaveCurrentOrderAsync()
     {
-        _order.Items = Items.ToList();
+        _order.Items = Items;
         await _db.Orders.UpsertAsync(_order);
         if (IsNewOrder)
         {
@@ -436,7 +429,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     /// </summary>
     public void SaveCurrentOrder(bool overwrite = false)
     {
-        _order.Items = Items.ToList();
+        _order.Items = Items;
         _db.Orders.Upsert(_order, overwrite);
         if (IsNewOrder)
         {
@@ -533,6 +526,24 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     public void ValidateProperties()
     {
         ValidateAllProperties();
+    }
+
+    public void ResetAllocation()
+    {
+            List<OrderItem> itemsCopy = new (Items);
+            foreach(var item in itemsCopy) 
+            {
+                if (item.QuantityReceived == 0 && item.Quantity == 0)
+                {
+                    Items.Remove(item);
+                }
+                else
+                {
+                    item.Allocated = null;
+                    item.QuanAllocated = null;
+                }
+            }
+            Order.Allocated = false;
     }
     #endregion Validators
     #endregion Methods

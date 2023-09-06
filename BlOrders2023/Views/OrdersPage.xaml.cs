@@ -100,75 +100,21 @@ public sealed partial class OrdersPage : Page
         if (ViewModel.SelectedOrder.OrderStatus == Models.Enums.OrderStatus.Ordered)
         {
             var filePath = reportGenerator.GeneratePickList(ViewModel.SelectedOrder);
-            LauncherOptions options = new()
-            {
-                ContentType = "application/pdf"
-            };
-            _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+            PrinterSettings printSettings = new();
+            var printer = new PDFPrinterService(filePath);
+            await printer.PrintPdfAsync(printSettings);
+
             ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Filling;
             _ = ViewModel.SaveCurrentOrderAsync();
         }
-        else if (ViewModel.SelectedOrder.OrderStatus == Models.Enums.OrderStatus.Filled ||
-                 ViewModel.SelectedOrder.OrderStatus == Models.Enums.OrderStatus.Filling)
+        else if (ViewModel.SelectedOrder.CanPrintInvoice)
         {
-
-            var printInvoice = false;
-            if (ViewModel.SelectedOrder.CanPrintInvoice)
-            {
-                //Invoice already printed print copy
-                if (ViewModel.SelectedOrder.OrderStatus > OrderStatus.Filled)
-                {
-                    ContentDialog contentDialog = new ContentDialog()
-                    {
-                        XamlRoot = XamlRoot,
-                        Content = "This invoice has already been printed. To print a copy press Reprint",
-                        PrimaryButtonText = "Reprint",
-                        CloseButtonText = "Cancel",
-                    };
-                    var res = await contentDialog.ShowAsync();
-                    if (res == ContentDialogResult.Primary)
-                    {
-                        printInvoice = true;
-                    }
-                }
-                //Print invoice
-                else
-                {
-                    printInvoice = true;
-                }
-            }
-            else if (ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filling)
-            {
-                ContentDialog contentDialog = new ContentDialog()
-                {
-                    XamlRoot = XamlRoot,
-                    Content = "All items ordered have not been received. Would you still like to print?",
-                    PrimaryButtonText = "Print",
-                    CloseButtonText = "Cancel",
-                };
-                SystemSounds.Asterisk.Play();
-                var res = await contentDialog.ShowAsync();
-                if (res == ContentDialogResult.Primary)
-                {
-                    printInvoice = true;
-                }
-            }
-
-            if (printInvoice)
-            {
-                var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
-
-                PrinterSettings printSettings = new();
-                printSettings.Copies = 2;
-                var printer = new PDFPrinterService(filePath);
-                await printer.PrintPdfAsync(printSettings);
-
-                if (ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filling || ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filled)
-                {
-                    ViewModel.SelectedOrder.OrderStatus = OrderStatus.Invoiced;
-                    await ViewModel.SaveCurrentOrderAsync();
-                }
-            }
+            await PrintInvoiceAsync();           
+        }
+        else if (ViewModel.SelectedOrder.OrderStatus >= OrderStatus.Invoiced)
+        {
+            await PrintInvoiceAsync();
         }
     }
 
@@ -325,6 +271,68 @@ public sealed partial class OrdersPage : Page
         }
     }
 
+    private async Task PrintInvoiceAsync()
+    {
+        var printInvoice = false;
+        if (ViewModel.SelectedOrder.CanPrintInvoice)
+        {
+            //Invoice already printed print copy
+            if (ViewModel.SelectedOrder.OrderStatus > OrderStatus.Filled)
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "This invoice has already been printed. To print a copy press Reprint",
+                    PrimaryButtonText = "Reprint",
+                    CloseButtonText = "Cancel",
+                };
+                var res = await contentDialog.ShowAsync();
+                if (res == ContentDialogResult.Primary)
+                {
+                    printInvoice = true;
+                }
+            }
+            //Not all items on order
+            else if (ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filling)
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "All items ordered have not been received. Would you still like to print?",
+                    PrimaryButtonText = "Print",
+                    CloseButtonText = "Cancel",
+                };
+                SystemSounds.Asterisk.Play();
+                var res = await contentDialog.ShowAsync();
+                if (res == ContentDialogResult.Primary)
+                {
+                    printInvoice = true;
+                }
+            }
+            //Print invoice
+            else
+            {
+                printInvoice = true;
+            }
+        }
+
+
+        if (printInvoice)
+        {
+            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 2;
+            var printer = new PDFPrinterService(filePath);
+            await printer.PrintPdfAsync(printSettings);
+
+            if (ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filling || ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filled)
+            {
+                ViewModel.SelectedOrder.OrderStatus = OrderStatus.Invoiced;
+                _ = ViewModel.SaveCurrentOrderAsync();
+            }
+        }
+    }
     public async Task<bool> TrySaveCurrentOrderAsync()
     {
         try

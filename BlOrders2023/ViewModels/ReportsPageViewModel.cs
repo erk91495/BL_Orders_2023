@@ -16,6 +16,11 @@ public class ReportsPageViewModel : ObservableRecipient
         return App.GetNewDatabase().Orders.GetByPickupDate(startDate, endDate);
     }
 
+    internal IEnumerable<Order> GetNonFrozenOrdersByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return App.GetNewDatabase().Orders.GetNonFrozenByPickupDate(startDate, endDate);
+    }
+
     internal IEnumerable<Order> GetOrdersByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return App.GetNewDatabase().Orders.GetByPickupDateThenName(startDate, endDate);
@@ -54,4 +59,8 @@ public class ReportsPageViewModel : ObservableRecipient
         return App.GetNewDatabase().Orders.GetFrozenOrdersByPickupDate(startDate.Date, endDate.Date);
     }
 
+    internal IEnumerable<InventoryItem> GetInventory()
+    {
+        return App.GetNewDatabase().Inventory.GetInventory();
+    }
 }
