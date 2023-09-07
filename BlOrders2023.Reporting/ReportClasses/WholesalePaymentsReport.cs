@@ -100,7 +100,7 @@ public class WholesalePaymentsReport : IReport
 
                 foreach (var payment in _payments)
                 {
-                    table.Cell().Element(CellStyle).Text($"{payment.PaymentDate.ToString("M/d/yy")}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{payment.PaymentDate?.ToString("M/d/yy")}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{payment.Customer.CustomerName}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{payment.OrderId}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{payment.PaymentID}").Style(tableTextStyle);

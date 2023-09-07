@@ -64,7 +64,7 @@ public class WholesaleCustomersViewModel : ObservableRecipient, INavigationAware
         });
 
         IWholesaleCustomerTable table = _db.Customers;
-        var customers = await Task.Run(() => table.GetAsync());
+        var customers = await Task.Run(() => table.GetIncludeInavtiveAsync());
 
         await dispatcherQueue.EnqueueAsync(() =>
         {
@@ -102,7 +102,7 @@ public class WholesaleCustomersViewModel : ObservableRecipient, INavigationAware
         });
 
         IWholesaleCustomerTable table = App.GetNewDatabase().Customers;
-        var customers = await Task.Run(() => table.GetAsync(query));
+        var customers = await Task.Run(() => table.GetIncludeInavtiveAsync(query));
 
         await dispatcherQueue.EnqueueAsync(() =>
         {

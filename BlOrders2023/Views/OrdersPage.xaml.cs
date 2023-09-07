@@ -61,7 +61,6 @@ public sealed partial class OrdersPage : Page
     {
         ViewModel.Orders.Clear();
         ViewModel.LoadOrders();
-        
     }
 
     #region Navigation
@@ -348,7 +347,6 @@ public sealed partial class OrdersPage : Page
         
 
     }
-    #endregion Methods
 
     private void OrdersGrid_SelectionChanged(object sender, Syncfusion.UI.Xaml.Grids.GridSelectionChangedEventArgs e)
     {
@@ -369,4 +367,5 @@ public sealed partial class OrdersPage : Page
                 break;
         }
     }
+    #endregion Methods
 }

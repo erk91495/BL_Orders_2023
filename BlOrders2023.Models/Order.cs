@@ -146,5 +146,12 @@ public class Order
     {
         return GetInvoiceTotal() - GetTotalPayments();
     }
+
+    public override string? ToString()
+    {
+        return OrderID.ToString();
+    }
+
+
     #endregion Methods
 }

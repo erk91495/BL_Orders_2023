@@ -50,6 +50,12 @@
 	<None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="UserControls\PaymentDataInputControl.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
+	<Page Update="Views\PaymentsPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="Views\InventoryPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -75,8 +81,10 @@
   <ItemGroup>
     <None Remove="Styles\AllocationDataGridStyle.xaml" />
     <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
+    <None Remove="UserControls\PaymentDataInputControl.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
     <None Remove="Views\InventoryPage.xaml" />
+    <None Remove="Views\PaymentsPage.xaml" />
   </ItemGroup>
   
   <ItemGroup>

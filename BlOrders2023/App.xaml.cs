@@ -110,6 +110,8 @@ public partial class App : Application
             services.AddTransient<AllocatorPageViewModel>();
             services.AddTransient<InventoryPage>();
             services.AddTransient<InventoryPageViewModel>();
+            services.AddTransient<PaymentsPage>();
+            services.AddTransient<PaymentsPageViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

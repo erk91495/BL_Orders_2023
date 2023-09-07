@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="BlOrders2023.UserControls.PaymentDataInputControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BlOrders2023.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:BlOrders2023.Models"
+    xmlns:calendar="using:Syncfusion.UI.Xaml.Calendar"
+    xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
+    mc:Ignorable="d"
+    MinWidth="1200"
+    CornerRadius="10"
+    PrimaryButtonText="Save Payment"
+    CloseButtonText="Cancel"
+    FlowDirection="LeftToRight">
+
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Customer"/>
+            <TextBox x:Name="CustomerSelectionBox"
+                            MinWidth="800"
+                            IsReadOnly="True"
+                            IsTabStop="False"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Invoice"/>
+            <AutoSuggestBox x:Name="InvoiceSelectionBox"
+                            PlaceholderText=" Select an Invoice..." 
+                            QuerySubmitted="InvoiceSelectionBox_QuerySubmitted"
+                            TextChanged="InvoiceSelectionBox_TextChanged"
+                            LostFocus="AutoSuggestBox_LostFocus"
+                            MinWidth="800"
+                            TabIndex="1">
+            </AutoSuggestBox>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <ComboBox x:Name="PaymentMethodCombo"
+                      Header="Payment Method" 
+                      ItemsSource="{x:Bind PaymentMethods, Mode=OneWay}" 
+                      SelectionChanged="PaymentMethod_SelectionChanged"
+                      TabIndex="2"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <calendar:SfCalendarDatePicker Header="Payment Date" 
+                                           SelectedDate="{x:Bind PaymentDate, Mode=TwoWay}" 
+                                           AllowNull="False"
+                                           TabIndex="3"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <editors:SfNumberBox x:Name="PaymentAmountBox" 
+                                 Header="Payment Amount" 
+                                 Value="{x:Bind PaymentAmount, Mode=TwoWay}" 
+                                 CustomFormat="C2"
+                                 TabIndex="4"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Check/Account Number:" Padding="0,0,10,0"/>
+            <TextBox Text="{x:Bind CheckNumber, Mode=TwoWay}" TabIndex="5"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Notes:"/>
+            <TextBox Text="{x:Bind Notes, Mode=TwoWay}"
+                     AcceptsReturn="True"
+                     TabIndex="6"/>
+        </StackPanel>
+    </StackPanel>
+</ContentDialog>
