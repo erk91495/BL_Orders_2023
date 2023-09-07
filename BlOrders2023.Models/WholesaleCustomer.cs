@@ -1,9 +1,11 @@
 ﻿using BlOrders2023.Models.Enums;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -86,13 +88,52 @@ public class WholesaleCustomer
         return string.Format("{0} {1}  {2}", BillingCity, BillingState, BillingZipCode);
     }
 
-    public string PhoneString()
-    {
-        if (PhoneExt != null)
-            return string.Format("{0} x.{1}", Phone, PhoneExt);
-        else
-            return Phone;
-    }
+        public string PhoneString()
+        {
+            if(!Phone.IsNullOrEmpty()) {
+                if (PhoneExt != null)
+                {
+                    return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone), PhoneExt);
+                }
+                else
+                {
+                    return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone));
+                }
+            }else
+            {
+                return string.Empty;
+            }
+        }
+        public string Phone2String()
+        {
+            if (!Phone_2.IsNullOrEmpty())
+            {
+                if (Phone2Ext != null)
+                {
+                    return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone_2), Phone2Ext);
+                }
+                else
+                {
+                    return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone_2));
+                }
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        public string FaxString()
+        {
+            if(!Fax.IsNullOrEmpty()) 
+            {
+                return string.Format("{0:(###)###-####}", Convert.ToInt64(Fax));
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
 
     public override string ToString()
     {

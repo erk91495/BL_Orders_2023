@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Runtime.InteropServices.WindowsRuntime;
 using BlOrders2023.Contracts.Services;
 using BlOrders2023.Core.Contracts;
@@ -18,6 +19,7 @@ using BlOrders2023.Reporting;
 using BlOrders2023.Services;
 using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -27,6 +29,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -90,17 +93,29 @@ public sealed partial class AllocatorPage : Page
         {
             if (comboBox.SelectedItem is AllocatorMode mode)
             {
-                ViewModel.AllocatorConfig.AllocationType = mode;
+                ViewModel.AllocatorConfig.AllocatorMode = mode;
             }
-            var dateTuple = await ShowDateRangeSelectionAsync();
-            if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+            //-1  will be the value if TEST mode type is selected during debug, but TEST is not compiled into Release Builds
+            if (((int)ViewModel.AllocatorConfig.AllocatorMode) == -1)
             {
-                ViewModel.AllocatorConfig.IDs = new() {67662,67663};
+                ViewModel.AllocatorConfig.IDs = new() { 67662, 67663, 68664 };
                 await StartAllocationAsync();
             }
+
             else
             {
-                TryGoBack();
+                var dateTuple = await ShowDateRangeSelectionAsync();
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    var ids = await ViewModel.GetOrdersIDToAllocateAsync(dateTuple.Item1, dateTuple.Item2, ViewModel.AllocatorConfig.AllocatorMode);
+
+                    ViewModel.AllocatorConfig.IDs = ids.ToList();
+                    await StartAllocationAsync();
+                }
+                else
+                {
+                    TryGoBack();
+                }
             }
 
         }
@@ -182,16 +197,74 @@ public sealed partial class AllocatorPage : Page
         }
     }
 
-    private void btn_SavePrint_Click(object sender, RoutedEventArgs e)
+    private async void btn_SavePrint_Click(object sender, RoutedEventArgs e)
     {
-
+        await SaveAllocation();
+        await PrintAllocationSummary();
     }
 
-    private void btn_Save_Click(object sender, RoutedEventArgs e)
+    private async void btn_Save_Click(object sender, RoutedEventArgs e)
     {
-        Debugger.Break();
+        await SaveAllocation();
     }
-    #endregion Methods
+
+    private async Task SaveAllocation()
+    {
+        try
+        {
+            await ViewModel.AllocatorService.SaveAllocationAsync();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _ = ex;
+            ContentDialog d = new()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Database Write Conflict",
+                Content = $"The an order was modified before your changes could be saved.\r\n" +
+                $"Please re-run allocation",
+                SecondaryButtonText = "Continue",
+                DefaultButton = ContentDialogButton.None,
+
+            };
+            await d.ShowAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            ContentDialog d = new()
+            {
+                XamlRoot = XamlRoot,
+                Title = "DbUpdateException",
+                Content = $"An error occured while trying to save your Order. Please contact your system administrator\r\n" +
+                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
+                SecondaryButtonText = "Continue",
+                DefaultButton = ContentDialogButton.None,
+
+            };
+            await d.ShowAsync();
+        }
+
+    }
+    
+    private async Task PrintAllocationSummary()
+    {
+        var filePath = await ViewModel.AllocatorService.GenerateAllocationSummary();
+        LauncherOptions options = new()
+        {
+            ContentType = "application/pdf"
+        };
+        _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+    }
+
+    private async Task PrintAllocationDetails()
+    {
+        var filePath = await ViewModel.AllocatorService.GenerateAllocationDetails();
+        LauncherOptions options = new()
+        {
+            ContentType = "application/pdf"
+        };
+        _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+    }
 
     private void AllocatedItemsGridControl_ValidateCell(object sender, Syncfusion.UI.Xaml.DataGrid.CurrentCellValidatingEventArgs e)
     {
@@ -200,8 +273,8 @@ public sealed partial class AllocatorPage : Page
             
             if((double)e.NewValue % 1 == 0 )
             {
-                var newVal = (int) (double)(e.NewValue);
-                var oldVal = (int)(double)(e.OldValue);
+                var newVal = (int)(double) (e.NewValue);
+                var oldVal = (int)decimal.Truncate(decimal.Parse(e.OldValue.ToString()));
                 if (e.RowData is OrderItem item)
                 {
                     var inventoryItem = ViewModel.CurrentInventory.Where(i => i.ProductID == item.ProductID).FirstOrDefault();
@@ -209,7 +282,7 @@ public sealed partial class AllocatorPage : Page
                     {
                         e.IsValid = true;
                         ViewModel.UpdateInventory(inventoryItem, (newVal - oldVal) * -1);
-                        InventoryGrid.View.Refresh();
+
                     }
                     else
                     {
@@ -225,4 +298,17 @@ public sealed partial class AllocatorPage : Page
             }
         }
     }
+
+    private async void PrintFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        if((MenuFlyoutItem)sender == btn_PrintSummary)
+        {
+            await PrintAllocationSummary();
+        }
+        else if ((MenuFlyoutItem)sender == btn_PrintDetails) 
+        {
+            await PrintAllocationDetails();
+        }
+    }
+    #endregion Methods
 }

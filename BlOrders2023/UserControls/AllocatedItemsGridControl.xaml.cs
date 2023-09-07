@@ -1,30 +1,12 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using BlOrders2023.Models;
-using BlOrders2023.ViewModels.Converters;
-using CommunityToolkit.WinUI.UI.Controls;
-using CommunityToolkit.WinUI.UI.Controls.Primitives;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using Syncfusion.UI.Xaml.Data;
 using Syncfusion.UI.Xaml.DataGrid;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,10 +18,11 @@ public sealed partial class AllocatedItemsGridControl : UserControl
     #region Properties
     public event EventHandler<CurrentCellValidatingEventArgs>? ValidateCell;
 
-    public static readonly DependencyProperty ItemsProperty = DependencyProperty.Register("Items", typeof(List<OrderItem>), typeof(AllocatedItemsGridControl), new PropertyMetadata(null));
-    public List<OrderItem> Items
+    public static readonly DependencyProperty ItemsProperty = DependencyProperty.Register("Items", typeof(ObservableCollection<OrderItem>), typeof(AllocatedItemsGridControl), new PropertyMetadata(null));
+
+    public ObservableCollection<OrderItem> Items
     {
-        get => (List<OrderItem>)GetValue(ItemsProperty);
+        get => (ObservableCollection<OrderItem>)GetValue(ItemsProperty);
         set 
         {
             SetValue(ItemsProperty, value);
@@ -47,16 +30,6 @@ public sealed partial class AllocatedItemsGridControl : UserControl
         }
     }
 
-    //public static readonly DependencyProperty GroupsProperty = DependencyProperty.Register("Groups", typeof(IEnumerable<List<int>>), typeof(AllocatedItemsGridControl), new PropertyMetadata(null));
-    //public IEnumerable<List<int>> Groups
-    //{
-    //    get => (IEnumerable<List<int>>)GetValue(GroupsProperty);
-    //    set
-    //    {
-    //        SetValue(GroupsProperty, value);
-    //        OnItemsChanged();
-    //    }
-    //}
     #endregion Properties
 
     #region Fields
@@ -66,6 +39,7 @@ public sealed partial class AllocatedItemsGridControl : UserControl
     public AllocatedItemsGridControl()
     {
         this.InitializeComponent();
+        this.DataContext = Items;
     }
     #endregion Constructors
 
@@ -77,7 +51,7 @@ public sealed partial class AllocatedItemsGridControl : UserControl
             SfDataGrid d = new SfDataGrid()
             {
                 AutoGenerateColumns= false,
-                ItemsSource = Items.Where(e => Ids.Contains(e.ProductID)),
+                ItemsSource = Items.Where(e => Ids.Contains(e.ProductID)).OrderBy(i => i.ProductID),
                 IsReadOnly=false,
             };
             d.CurrentCellValidating += ValidateCell;
@@ -103,7 +77,6 @@ public sealed partial class AllocatedItemsGridControl : UserControl
                 DataValidationMode = Syncfusion.UI.Xaml.Grids.GridValidationMode.InView,
                 IsReadOnly = false,
                 AllowEditing = true,
-                UseBindingValue = true,
             };
 
             d.Columns.Add(ProductIDColumn);

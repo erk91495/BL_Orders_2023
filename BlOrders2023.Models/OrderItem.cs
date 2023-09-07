@@ -107,20 +107,19 @@ public class OrderItem : ObservableObject
     #region Constructors
     public OrderItem()
     {
-
+        Quantity = 0;
+        ProdEntryDate = DateTime.Now;
+        ExtraNeeded = 0;
+        Allocated = false;
     }
-    public OrderItem(Product product, Order order)
+
+    public OrderItem(Product product, Order order) : this()
     {
         
         Product = product;
         Order = order;
         ProductID = product.ProductID;
-        Quantity = 0;
         ActualCustPrice = Helpers.PriceHelpers.CalculateCustomerPrice(product, order.Customer);
-        //QuanRcvd = 0;
-        ProdEntryDate = DateTime.Now;
-        ExtraNeeded = 0;
-        Allocated = false;
     }
     #endregion Constructors 
 

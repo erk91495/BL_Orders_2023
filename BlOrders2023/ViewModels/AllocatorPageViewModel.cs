@@ -16,6 +16,8 @@ using Microsoft.UI.Xaml;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using BlOrders2023.Models.Enums;
+using Syncfusion.UI.Xaml.Data;
 
 namespace BlOrders2023.ViewModels;
 public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
@@ -31,22 +33,15 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
     public IAllocatorService AllocatorService { get; }
     public ObservableCollection<Order> AllocatedOrders
     {
-        get => allocatedOrders; 
-        set 
-        {
-            allocatedOrders = value;
-            OnPropertyChanged();
-        }
+        get => allocatedOrders;
+        set => SetProperty(ref allocatedOrders, value);
     }
 
     public ObservableCollection<InventoryItem> CurrentInventory
     {
         get => _currentInventory;
-        set
-        {
-            _currentInventory = value;
-            OnPropertyChanged();
-        }
+        set => SetProperty(ref _currentInventory, value);
+
     }
     #endregion Properties
 
@@ -55,8 +50,8 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
     {
         AllocatorConfig = new OrderAllocatorConfiguration();
         AllocatorService = new OrderAllocator(App.GetNewDatabase());
-        AllocatedOrders = new();
-        CurrentInventory = new();
+        allocatedOrders = new();
+        _currentInventory = new();
     }
     #endregion Constructors
 
@@ -67,7 +62,7 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
     public async Task StartAllocationAsync()
     {
         if (AllocatorConfig == null || AllocatorService == null) throw new InvalidOperationException();
-        await AllocatorService.Allocate(AllocatorConfig);
+        await AllocatorService.AllocateAsync(AllocatorConfig);
         AllocatedOrders = new(AllocatorService.Orders);
         CurrentInventory = new(AllocatorService.Inventory);
     }
@@ -78,8 +73,22 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
         if (index >= 0)
         {
             CurrentInventory[index].QuantityOnHand += (short)value;
-            OnPropertyChanged(nameof(CurrentInventory));
-            OnPropertyChanged(nameof(AllocatedOrders));
+        }
+    }
+
+    internal async Task<IEnumerable<int>> GetOrdersIDToAllocateAsync(DateTimeOffset? item1, DateTimeOffset? item2, AllocatorMode mode)
+    {
+        if(item1 != null && item2 != null)
+        {
+            return await AllocatorService.GetOrdersIDToAllocateAsync((DateTimeOffset)item1, (DateTimeOffset)item2, mode);
+        }
+        if(item1 == null)
+        {
+            throw new ArgumentNullException(nameof(item1));
+        }
+        else
+        {
+            throw new ArgumentNullException(nameof(item2)); 
         }
     }
     #endregion Methods

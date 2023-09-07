@@ -227,7 +227,7 @@ public class PickList : IReport
                     itemsTable.Cell().Element(CellStyle).Text($"{item.Quantity}").Style(tableTextStyle);
                     if (_order.Allocated == true)
                     {
-                        itemsTable.Cell().Element(CellStyle).Text($"{item.QuanAllocated ?? 0}").Style(tableTextStyle);
+                        itemsTable.Cell().Element(CellStyle).Text($"{item.QuanAllocated}").Style(tableTextStyle);
                     }
                     static IContainer CellStyle(IContainer container)
                     {
@@ -239,7 +239,7 @@ public class PickList : IReport
                 itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.Quantity)}").Style(tableTextStyle);
                 if (_order.Allocated == true)
                 {
-                    itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.QuanAllocated ?? 0)}").Style(tableTextStyle);
+                    itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.QuanAllocated)}").Style(tableTextStyle);
                 }
                 static IContainer FooterCellStyle(IContainer container)
                 {

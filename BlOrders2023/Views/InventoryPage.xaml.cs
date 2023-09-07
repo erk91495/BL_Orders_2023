@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Forms;
 using BlOrders2023.Contracts.Services;
+using BlOrders2023.Helpers;
 using BlOrders2023.Models;
 using BlOrders2023.Services;
 using BlOrders2023.UserControls;
@@ -36,6 +37,7 @@ namespace BlOrders2023.Views;
 public sealed partial class InventoryPage : Page
 {
     private bool _Modified = false;
+    private bool _CanLeave = false;
     public InventoryPageViewModel ViewModel { get; }
 
     public InventoryPage()
@@ -43,16 +45,45 @@ public sealed partial class InventoryPage : Page
         this.InitializeComponent();
         ViewModel = App.GetService<InventoryPageViewModel>();
         InventoryGrid.CellRenderers.Remove("TextBox");
-        InventoryGrid.CellRenderers.Add("TextBox", new GridCellNumericRendererExt());
+        InventoryGrid.CellRenderers.Add("TextBox", new GridCellTextBoxRendererExt());
     }
 
+    protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        
+        if (!_CanLeave && _Modified)
+        {
+            e.Cancel = true;
+            var dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Unsaved Changes",
+                Content = "You have unsaved changes. Do you want to discard your changes",
+                PrimaryButtonText = "Discard",
+                CloseButtonText = "Cancel",
+            };
+
+            var result = await dialog.ShowAsync();
+            if(result == ContentDialogResult.Primary)
+            {
+                _CanLeave = true;
+                e.Cancel = false;
+                Frame.Navigate(e.SourcePageType, e.Parameter);
+            }
+            else
+            {
+                e.Cancel = true;
+            }
+        }
+        base.OnNavigatingFrom(e);
+    }
 
     private void InventoryGrid_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
     {
         if (e.RowData is InventoryItem item)
         {
 
-            if (e.OldValue != e.NewValue)
+            if (e.NewValue != null && e.OldValue != e.NewValue)
             {
                 _Modified = true;
                 switch (e.Column.MappingName)
@@ -130,6 +161,7 @@ public sealed partial class InventoryPage : Page
                 DefaultButton = ContentDialogButton.Primary,
             };
             await contentDialog.ShowAsync();
+            _Modified = false;
         }
         else
         {

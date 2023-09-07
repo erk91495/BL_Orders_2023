@@ -41,7 +41,7 @@ public class WholesaleInvoice : IReport
                         .Rotate(-45)
                         .TranslateX(-50)
                         .TranslateY(-50)
-                        .Text("COPY").FontColor(Colors.Grey.Lighten4).FontSize(200).ExtraBold();
+                        .Text("COPY").FontColor(Colors.Grey.Lighten3).FontSize(200).ExtraBold();
                     }
 
                     page.Margin(20);

@@ -51,7 +51,9 @@ public partial class App : Application
     }
 
     public static WindowEx MainWindow { get; } = new MainWindow();
-
+	
+	public static UIElement? AppTitlebar { get; set; }
+	
     public static DbContextOptions<SqlBLOrdersDBContext>? DBOptions { get; private set; }
 
     public App()
@@ -163,7 +165,7 @@ public partial class App : Application
         //    CustomerAllocationType = Models.Enums.CustomerAllocationType.Grocer,
         //    IDs = new() {67662, 67663}
         //};
-        //_ = CommunityToolkit.WinUI.DispatcherQueueExtensions.EnqueueAsync(DispatcherQueue.GetForCurrentThread(), () => allocator.Allocate(config));
+        //_ = CommunityToolkit.WinUI.DispatcherQueueExtensions.EnqueueAsync(DispatcherQueue.GetForCurrentThread(), () => allocator.AllocateAsync(config));
 
 
         await App.GetService<IActivationService>().ActivateAsync(args);

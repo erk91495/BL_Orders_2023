@@ -40,13 +40,6 @@ public sealed partial class FillOrdersPage : Page
         ViewModel = App.GetService<FillOrdersPageViewModel>();
         InitializeComponent();
         reportGenerator = new();
-
-        //TODO: Is this the way to handle setting the default focus?
-        //dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low,
-        //new DispatcherQueueHandler(() =>
-        //{
-        //    OrderLookup.Focus(FocusState.Programmatic);
-        //}));
     }
 
     private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
@@ -77,17 +70,22 @@ public sealed partial class FillOrdersPage : Page
                     Debug.WriteLine(e.ToString());
                     var prodCode = e.Data["ProductID"];
                     await ShowLockedoutDialog("Product Not Found", 
-                        String.Format("Product ID: {0} was not found in the database\r\n", prodCode)); 
-                } catch (InvalidBarcodeExcption e)
+                        string.Format("Product ID: {0} was not found in the database\r\n", prodCode)); 
+                } 
+                catch (InvalidBarcodeExcption e)
                 {
                     Debug.WriteLine(e.ToString());
                     var ai = e.Data["AI"];
                     var s = e.Data["Scanline"];
                     var location = e.Data["Location"];
                     await ShowLockedoutDialog(e.Message,
-                        String.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
+                        string.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
                 }
-
+                catch (UnknownBarcodeFormatException e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
+                }
                 
             }
         }
@@ -114,18 +112,7 @@ public sealed partial class FillOrdersPage : Page
             {
                 ViewModel.Order.OrderStatus = OrderStatus.Filled;
             }
-            await ViewModel.SaveOrderAsync();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _ = ex;
-            await ShowLockedoutDialog("Database Write Conflict", $"The Order was modified before your changes could be saved.\r\n" +
-                $"Please re-open the Order to get all changes");
-        }
-        catch (DbUpdateException ex)
-        {
-            await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your Order. Please contact your system administrator\r\n" +
-                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
+            await TrySaveOrderAsync();
         }
         catch (DuplicateBarcodeException e)
         {
@@ -214,6 +201,8 @@ public sealed partial class FillOrdersPage : Page
         else if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
         {
             OrderLookup.Text = null;
+            ViewModel.QueryFillableOrders(string.Empty);
+            
         }
     }
 
@@ -228,6 +217,7 @@ public sealed partial class FillOrdersPage : Page
         {
             await ViewModel.LoadOrder(o.OrderID);
         }
+        Scanline.Focus(FocusState.Programmatic);
     }
 
     private async void OrderedItems_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
@@ -239,7 +229,7 @@ public sealed partial class FillOrdersPage : Page
                 await ViewModel.DeleteShippingItemAsync(item);
                 OrderedVsReceivedGrid.View.Refresh();
             }
-            await ViewModel.SaveOrderAsync();
+            await TrySaveOrderAsync();
             OrderedItems.View.Refresh();
         }
     }
@@ -296,28 +286,30 @@ public sealed partial class FillOrdersPage : Page
                     printInvoice = true;
                 }
             }
+            //Not all items on order
+            else if (ViewModel.OrderStatus == OrderStatus.Filling)
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = "All items ordered have not been received. Would you still like to print?",
+                    PrimaryButtonText = "Print",
+                    CloseButtonText = "Cancel",
+                };
+                SystemSounds.Asterisk.Play();
+                var res = await contentDialog.ShowAsync();
+                if (res == ContentDialogResult.Primary)
+                {
+                    printInvoice = true;
+                }
+            }
             //Print invoice
             else
             {
                 printInvoice = true;
             }
         }
-        else if (ViewModel.OrderStatus == OrderStatus.Filling)
-        {
-            ContentDialog contentDialog = new ContentDialog()
-            {
-                XamlRoot = XamlRoot,
-                Content = "All items ordered have not been received. Would you still like to print?",
-                PrimaryButtonText = "Print",
-                CloseButtonText = "Cancel",
-            };
-            SystemSounds.Asterisk.Play();
-            var res = await contentDialog.ShowAsync();
-            if (res == ContentDialogResult.Primary)
-            {
-                printInvoice = true;
-            }
-        }
+        
 
         if (printInvoice)
         {
@@ -328,10 +320,18 @@ public sealed partial class FillOrdersPage : Page
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
 
+            filePath = reportGenerator.GenerateShippingList(ViewModel.Order);
+            Windows.System.LauncherOptions options = new()
+            {
+                ContentType = "application/pdf"
+            };
+            _ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+
             if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
             {
                 ViewModel.OrderStatus = OrderStatus.Invoiced;
-                _ = ViewModel.SaveOrderAsync();
+                _ = TrySaveOrderAsync();
             }
         }
     }
@@ -371,7 +371,7 @@ public sealed partial class FillOrdersPage : Page
             if (ViewModel.OrderStatus == OrderStatus.Ordered)
             {
                 ViewModel.OrderStatus = OrderStatus.Filling;
-                _ = ViewModel.SaveOrderAsync();
+                _ = TrySaveOrderAsync();
             }
         }
     }
@@ -398,5 +398,32 @@ public sealed partial class FillOrdersPage : Page
     private void OrderLookup_LostFocus(object sender, RoutedEventArgs e)
     {
         OrderLookup.IsSuggestionListOpen = false;
+    }
+
+    private void MemoBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (!ViewModel.HasErrors)
+        {
+            _ = TrySaveOrderAsync();
+        }
+    }
+
+    private async Task TrySaveOrderAsync()
+    {
+        try
+        {
+            await ViewModel.SaveOrderAsync();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _ = ex;
+            await ShowLockedoutDialog("Database Write Conflict", $"The Order was modified before your changes could be saved.\r\n" +
+                $"Please re-open the Order to get all changes");
+        }
+        catch (DbUpdateException ex)
+        {
+            await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your Order. Please contact your system administrator\r\n" +
+                $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
+        }
     }
 }

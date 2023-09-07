@@ -141,7 +141,7 @@ public class FrozenOrdersReport :IReport
 
                 table.Cell().Element(CellStyle).PaddingRight(1).AlignRight().Text("Report Totals: ").Style(tableHeaderStyle);
                 table.Cell().Element(CellStyle).Text($"{_orders.SelectMany(o => o.Items).Sum(i => i.Quantity)}").Style(tableHeaderStyle);
-                //table.Cell().Element(CellStyle).Text($"{_order.ShippingItems.Sum(i => i.PickWeight)}").Style(tableHeaderStyle);
+                //table.Cell().Element(MainTableCellStyle).Text($"{_order.ShippingItems.Sum(i => i.PickWeight)}").Style(tableHeaderStyle);
 
                 static IContainer CellStyle(IContainer container)
                 {

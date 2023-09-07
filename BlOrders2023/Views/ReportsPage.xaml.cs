@@ -406,6 +406,25 @@ public sealed partial class ReportsPage : Page
                     }
                 }
             }
+            else if( control.ReportType == typeof(CurrentInventoryReport))
+            {
+                var currentInventory = ViewModel.GetInventory();
+                reportPath = reportGenerator.GenerateCurrentInventoryReport(currentInventory);
+            }
+            else if(control.ReportType == typeof(InventoryDetailsReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    var orders = ViewModel.GetNonFrozenOrdersByPickupDate(startDate, endDate);
+                    var currentInventory = ViewModel.GetInventory();
+                    reportPath = reportGenerator.GenerateInventoryDetailsReport(currentInventory, orders, startDate, endDate);
+                }
+
+            }
             else
             {
                 ContentDialog d = new()
