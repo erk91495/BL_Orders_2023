@@ -168,12 +168,13 @@ public class Order : ObservableObject
             {
                 items.CollectionChanged -= Items_CollectionChanged;
             }
-            SetProperty(ref items, value);
             
-            if(items != null)
+            
+            if(value != null)
             {
-                items.CollectionChanged += Items_CollectionChanged;
+                value.CollectionChanged += Items_CollectionChanged;
             }
+            SetProperty(ref items, value);
         }
     }
     public virtual List<ShippingItem> ShippingItems

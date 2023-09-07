@@ -112,6 +112,11 @@ internal class SqlProductsTable : IProductsTable
         }
     }
 
+    public Product? GetByALU(string alu)
+    {
+        var result = _db.Products.Where(p => string.Equals(p.ALUCode, alu)).ToList();
+        return result.FirstOrDefault();
+    }
 
     public async Task<bool> IdExists(int productID)
     {

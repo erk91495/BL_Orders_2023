@@ -158,14 +158,19 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     internal async Task ReceiveItemAsync(ShippingItem item, bool checkDuplicate = true)
     {
-        var product = _orderDB.Products.Get(item.ProductID).FirstOrDefault();
+        //Mainly for canned stuff where upc is the scanline
+        var product = _orderDB.Products.GetByALU(item.Scanline);
         if(product == null)
         {
-            throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
+            product = _orderDB.Products.Get(item.ProductID).FirstOrDefault();
+            if (product == null) {
+                throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
+            }
         }
         else
         {
             item.Product = product;
+            item.ProductID = product.ProductID;
         }
 
         if(checkDuplicate)

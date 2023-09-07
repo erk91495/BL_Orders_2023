@@ -27,18 +27,15 @@ public class ProductsPageViewModel : ObservableRecipient
         get => _products;
         set
         {
-            if (_products != value)
+            foreach (var item in _products)
             {
-                value.CollectionChanged += LineItems_Changed;
+                item.PropertyChanged -= Product_PropertyChanged;
             }
-
-            if (_products != null)
+            SetProperty(ref _products, value);
+            foreach (var item in value)
             {
-                _products.CollectionChanged -= LineItems_Changed;
+                item.PropertyChanged += Product_PropertyChanged;
             }
-
-            _products = value;
-            OnPropertyChanged();
         }
     }
     /// <summary>
@@ -124,12 +121,13 @@ public class ProductsPageViewModel : ObservableRecipient
         await table.DeleteAsync(p);
     }
 
-    /// <summary>
-    /// Notifies anyone listening to this object that a line item changed. 
-    /// </summary>
-    private void LineItems_Changed(object? sender, NotifyCollectionChangedEventArgs e)
+
+    private void Product_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        OnPropertyChanged(nameof(Products));
+        if(e.PropertyName == "FixedPrice" && sender is Product p)
+        {
+            SaveItem(p);
+        }
     }
 
     internal static async Task<bool> ProductIDExists(int productId)

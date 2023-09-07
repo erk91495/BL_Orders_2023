@@ -141,7 +141,7 @@ public class OrderItem : ObservableObject
     {
         if(Product.FixedPrice == true)
         {
-            return ActualCustPrice;
+            return ActualCustPrice * QuantityReceived;
         }
         return decimal.Round(ActualCustPrice * (decimal)(PickWeight ?? 0),2);
     }

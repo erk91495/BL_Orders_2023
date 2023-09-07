@@ -18,6 +18,7 @@
 
     <Page.Resources>
         <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
+        <vm:NullBoolConverter x:Key="NullBoolConverter"/>
     </Page.Resources>
     <RelativePanel>
         <muxc:ProgressBar
@@ -54,16 +55,23 @@
                        CurrentCellValidated="ProductsGrid_CurrentCellValidated">
             
             <sf:SfDataGrid.Columns>
-                <sf:GridNumericColumn MappingName="ProductID" IsReadOnly="True"/>
-                <sf:GridTextColumn MappingName="ProductName" AllowEditing="True"/>
+                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" IsReadOnly="True"/>
+                <sf:GridTextColumn HeaderText="Product Name" MappingName="ProductName" AllowEditing="True"/>
                 <sf:GridNumericColumn x:Name="ColumnWholesalePrice"
                                       HeaderText="Wholesale Price" 
                                       MappingName="WholesalePrice"
                                       ValueBinding="{Binding Path=WholesalePrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
-                <sf:GridCheckBoxColumn MappingName="FixedPrice" AllowEditing="True"/>
+ 
+                <sf:GridCheckBoxColumn HeaderText="Fixed Price" 
+                                       MappingName="FixedPrice" 
+                                       AllowEditing="True" 
+                                       ValueBinding="{Binding Path=FixedPrice, Mode=TwoWay, Converter={StaticResource NullBoolConverter}}"
+                                       UseBindingValue="True"/>
                 <sf:GridTextColumn MappingName="UPCCode" AllowEditing="True"/>
                 <sf:GridTextColumn MappingName="KPCCode" AllowEditing="True"/>
-                <sf:GridTextColumn MappingName="CompanyCode" AllowEditing="True"/>
+                <sf:GridTextColumn MappingName="ALUCode" AllowEditing="True"/>
+                <sf:GridTextColumn HeaderText="Company Code" MappingName="CompanyCode" AllowEditing="True"/>
+                
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
       
