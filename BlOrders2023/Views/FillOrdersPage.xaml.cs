@@ -124,7 +124,7 @@ public sealed partial class FillOrdersPage : Page
                 Title = e.Message,
                 Content = $"Duplicate Scanline {s}\r\nWould you like to modify and override?",
                 PrimaryButtonText = "Modify",
-                SecondaryButtonText = "Continue",
+                SecondaryButtonText = "Cancel",
                 DefaultButton = ContentDialogButton.None,
 
             };

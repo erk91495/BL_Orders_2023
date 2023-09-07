@@ -96,6 +96,7 @@ public static class BarcodeInterpreter
                 try
                 {
                     barcode = new Code128Barcode(shippingItem);
+                    shippingItem.Scanline = barcode.Scanline;
                     isValidBarcodeType = true;
                 }
                 catch (InvalidBarcodeExcption)
