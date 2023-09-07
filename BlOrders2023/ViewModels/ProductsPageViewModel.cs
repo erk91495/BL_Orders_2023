@@ -81,7 +81,7 @@ public class ProductsPageViewModel : ObservableRecipient
 
             IProductsTable table = App.GetNewDatabase().Products;
 
-            var products = await Task.Run(() => table.GetAsync());
+            var products = await Task.Run(() => table.GetIncludeInactiveAsync());
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 Products = new(products);
@@ -98,7 +98,7 @@ public class ProductsPageViewModel : ObservableRecipient
             });
 
             IProductsTable table = App.GetNewDatabase().Products;
-            var products = await Task.Run(() => table.GetAsync());
+            var products = await Task.Run(() => table.GetIncludeInactiveAsync());
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
@@ -124,7 +124,8 @@ public class ProductsPageViewModel : ObservableRecipient
 
     private void Product_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if(e.PropertyName == "FixedPrice" && sender is Product p)
+        //Have to watch for these property changes because checkboxes dont validate
+        if((e.PropertyName == "FixedPrice" || e.PropertyName == "Inactive") && sender is Product p)
         {
             SaveItem(p);
         }

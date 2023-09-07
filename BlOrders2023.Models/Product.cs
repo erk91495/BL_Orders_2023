@@ -23,6 +23,7 @@ public class Product : ObservableObject
     private bool? _fixedPrice;
     private string? _companyCode;
     private string? _ALUCode;
+    private bool _inactive;
     #endregion Fields
 
     #region Properties
@@ -82,6 +83,12 @@ public class Product : ObservableObject
     {
         get => _ALUCode;
         set => SetProperty(ref _ALUCode, value);
+    }
+    [Required]
+    public bool Inactive
+    {
+        get => _inactive;
+        set => SetProperty(ref _inactive, value);
     }
 
     #endregion Properties

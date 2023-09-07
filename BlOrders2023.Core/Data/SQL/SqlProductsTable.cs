@@ -32,22 +32,22 @@ internal class SqlProductsTable : IProductsTable
         {
             if (productID == null)
             {
-                return _db.Products.ToList();
+                return _db.Products.Where(p => !p.Inactive).ToList();
             }
             else
             {
-                return _db.Products.Where(product => product.ProductID == productID).ToList();
+                return _db.Products.Where(product => !product.Inactive && product.ProductID == productID).ToList();
             }
         }
         else
         {
             if (productID == null)
             {
-                return _db.Products.AsNoTrackingWithIdentityResolution().ToList();
+                return _db.Products.Where(p => !p.Inactive).AsNoTrackingWithIdentityResolution().ToList();
             }
             else
             {
-                return _db.Products.Where(product => product.ProductID == productID).AsNoTrackingWithIdentityResolution().ToList();
+                return _db.Products.Where(product => !product.Inactive && product.ProductID == productID).AsNoTrackingWithIdentityResolution().ToList();
             }
         }
     }
@@ -57,6 +57,33 @@ internal class SqlProductsTable : IProductsTable
         if (tracking)
         {
             if(ProductID == null)
+            {
+                return await _db.Products.Where(p => !p.Inactive).OrderBy(product => product.ProductID).ToListAsync();
+            }
+            else
+            {
+                return await _db.Products.Where(p => !p.Inactive && p.ProductID == ProductID).ToListAsync();
+            }
+        }
+        else
+        {
+            if (ProductID == null)
+            {
+                return await _db.Products.Where(p => !p.Inactive).OrderBy(product => product.ProductID).AsNoTrackingWithIdentityResolution().ToListAsync();
+            }
+            else
+            {
+                return await _db.Products.Where(p => !p.Inactive && p.ProductID == ProductID).AsNoTrackingWithIdentityResolution().ToListAsync();
+            }
+        }
+        
+    }
+
+    public async Task<IEnumerable<Product>> GetIncludeInactiveAsync(int? ProductID = null, bool tracking = true)
+    {
+        if (tracking)
+        {
+            if (ProductID == null)
             {
                 return await _db.Products.OrderBy(product => product.ProductID).ToListAsync();
             }
@@ -76,7 +103,7 @@ internal class SqlProductsTable : IProductsTable
                 return await _db.Products.Where(p => p.ProductID == ProductID).AsNoTrackingWithIdentityResolution().ToListAsync();
             }
         }
-        
+
     }
 
     public async Task<IEnumerable<Product>> GetAsync(string value, bool tracking) 
@@ -85,13 +112,13 @@ internal class SqlProductsTable : IProductsTable
         {
             if (value.IsNullOrEmpty())
             {
-                return await _db.Products.ToListAsync();
+                return await _db.Products.Where(p => !p.Inactive).ToListAsync();
             }
             else
             {
                 return await _db.Products.Where(product =>
-                    product.ProductName.Contains(value) ||
-                    product.ProductID.ToString().Contains(value))
+                    !product.Inactive &&
+                    (product.ProductName.Contains(value) || product.ProductID.ToString().Contains(value)))
                     .ToListAsync();
             }
         }
@@ -99,13 +126,13 @@ internal class SqlProductsTable : IProductsTable
         {
             if (value.IsNullOrEmpty())
             {
-                return await _db.Products.AsNoTrackingWithIdentityResolution().ToListAsync();
+                return await _db.Products.Where(p => !p.Inactive).AsNoTrackingWithIdentityResolution().ToListAsync();
             }
             else
             {
                 return await _db.Products.Where(product =>
-                    product.ProductName.Contains(value) ||
-                    product.ProductID.ToString().Contains(value))
+                    !product.Inactive &&
+                    (product.ProductName.Contains(value) || product.ProductID.ToString().Contains(value)))
                     .AsNoTrackingWithIdentityResolution()
                     .ToListAsync();
             }
@@ -114,7 +141,7 @@ internal class SqlProductsTable : IProductsTable
 
     public Product? GetByALU(string alu)
     {
-        var result = _db.Products.Where(p => string.Equals(p.ALUCode, alu)).ToList();
+        var result = _db.Products.Where(p => !p.Inactive && string.Equals(p.ALUCode, alu)).ToList();
         return result.FirstOrDefault();
     }
 

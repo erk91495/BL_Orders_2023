@@ -11,4 +11,5 @@ public interface IProductsTable
     Task DeleteAsync(Product product);
     Task<bool> IdExists(int productID);
     Product? GetByALU(string upc);
+    Task<IEnumerable<Product>> GetIncludeInactiveAsync(int? ProductID = null, bool tracking = true);
 }
