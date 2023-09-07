@@ -11,6 +11,7 @@ namespace BlOrders2023.Core.Data
     {
         Task<IEnumerable<WholesaleCustomer>> GetAsync(string query = null);
         Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID);
+        Task<IEnumerable<WholesaleCustomer>> GetIncludeInavtiveAsync(string query = null);
         IEnumerable<WholesaleCustomer> Get(string query = null);
         IEnumerable<WholesaleCustomer> Get(int customerID);
         Task<WholesaleCustomer> UpsertAsync(WholesaleCustomer customer);

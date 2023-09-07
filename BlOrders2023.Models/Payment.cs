@@ -13,10 +13,10 @@ namespace BlOrders2023.Models
         [Key]
         [Column("PaymentID")]
         public int PaymentID { get; set; }
-        public int OrderId { get; set; }
-        public int CustId { get; set; }
+        public int? OrderId { get; set; }
+        public int? CustId { get; set; }
         public decimal? PaymentAmount { get; set; }
-        public DateTime PaymentDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
         public string? CreditCardNumber { get; set; }
         public string? CardholdersName { get; set; }
         public DateTime? CreditCardExpDate { get; set; }
@@ -31,6 +31,6 @@ namespace BlOrders2023.Models
         public virtual WholesaleCustomer? Customer { get; set; }
 
         [ForeignKey(nameof(OrderId))]
-        public virtual Order Order { get; set; } = null!;
+        public virtual Order? Order { get; set; } = null!;
     }
 }

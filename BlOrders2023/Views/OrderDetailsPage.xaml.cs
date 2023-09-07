@@ -245,7 +245,7 @@ public sealed partial class OrderDetailsPage : Page
             ContentDialog dialog = new()
             {
                 Title = "Input Error",
-                Content = $"Please correct all errors before saving the order\r\n\r\nErrors:\r\n{String.Join("\r\n", errorMessages)}",
+                Content = $"Please correct all errors before saving the order\r\n\r\nErrors:\r\n{string.Join("\r\n", errorMessages)}",
                 XamlRoot = this.XamlRoot,
                 PrimaryButtonText = "Ok",
             };

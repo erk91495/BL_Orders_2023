@@ -21,6 +21,7 @@ public class PageService : IPageService
         Configure<FillOrdersPageViewModel, FillOrdersPage>();
         Configure<WholesaleCustomersViewModel, WholesaleCustomersPage>();
         Configure<AllocatorPageViewModel, AllocatorPage>();
+        Configure<PaymentsPageViewModel, PaymentsPage>();
     }
 
     public Type GetPageType(string key)

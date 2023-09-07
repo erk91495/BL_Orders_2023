@@ -6,7 +6,7 @@ namespace BlOrders2023.ViewModels;
 public class ReportsPageViewModel : ObservableRecipient
 {
 
-    public Order? GetOrder(int orderID)
+    internal Order? GetOrder(int orderID)
     {
         return App.GetNewDatabase().Orders.Get(orderID).FirstOrDefault();
     }

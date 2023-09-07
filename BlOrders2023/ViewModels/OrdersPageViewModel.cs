@@ -1,21 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using BlOrders2023.Core.Services;
-using Microsoft.EntityFrameworkCore;
 using BlOrders2023.Models;
-using System;
-using System.Linq;
-using BlOrders2023.Core.Data.SQL;
 using BlOrders2023.Core.Data;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Microsoft.IdentityModel.Tokens;
-using System.Globalization;
-using Microsoft.UI.Xaml.Controls;
+
 
 namespace BlOrders2023.ViewModels;
 

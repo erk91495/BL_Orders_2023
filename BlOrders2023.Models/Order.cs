@@ -318,5 +318,12 @@ public class Order : ObservableObject
         OnPropertyChanged(nameof(GetTotalAllocated));
         OnPropertyChanged(nameof(GetTotalOrdered));
     }
+
+    public override string? ToString()
+    {
+        return OrderID.ToString();
+    }
+
+
     #endregion Methods
 }

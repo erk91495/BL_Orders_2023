@@ -23,18 +23,35 @@ internal class SqlWholesaleCustomerTable : IWholesaleCustomerTable
         throw new NotImplementedException();
     }
 
+    public async Task<IEnumerable<WholesaleCustomer>> GetIncludeInavtiveAsync(string query = null)
+    {
+        if (query.IsNullOrEmpty())
+        {
+            return await _db.Customers
+                .ToListAsync();
+        }
+        else
+        {
+            return await _db.Customers
+                .Where(c => c.CustomerName.Contains(query) ||
+                            c.CustID.ToString().Contains(query))
+                .ToListAsync();
+        }
+    }
+
     public IEnumerable<WholesaleCustomer> Get(string query = null)
     {
         if (query.IsNullOrEmpty())
         {
-            return  _db.Customers
+            return  _db.Customers.Where(c => c.Inactive != true)
                 .ToList();
         }
         else
         {
             return  _db.Customers
-                .Where(c => c.CustomerName.Contains(query) ||
-                            c.CustID.ToString().Contains(query))
+                .Where(c => c.Inactive != true &&
+                            (c.CustomerName.Contains(query) ||
+                            c.CustID.ToString().Contains(query)))
                 .ToList();
         }
     }
@@ -50,14 +67,15 @@ internal class SqlWholesaleCustomerTable : IWholesaleCustomerTable
     {
         if (query.IsNullOrEmpty())
         {
-            return await _db.Customers
+            return await _db.Customers.Where(c => c.Inactive != true)
                 .ToListAsync();
         }
         else
         {
             return await _db.Customers
-                .Where(c => c.CustomerName.Contains(query) || 
-                            c.CustID.ToString().Contains(query))
+                .Where(c => c.Inactive != true && 
+                            (c.CustomerName.Contains(query) || 
+                            c.CustID.ToString().Contains(query)))
                 .ToListAsync();
         }
     }
