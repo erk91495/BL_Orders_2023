@@ -1,5 +1,3 @@
-USE [New_BL_Orders]
-GO
 
 /****** Object:  StoredProcedure [dbo].[usp_ProductIDExists]    Script Date: 6/26/2023 3:41:12 PM ******/
 SET ANSI_NULLS ON

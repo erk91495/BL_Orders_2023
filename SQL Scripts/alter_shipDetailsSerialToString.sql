@@ -1,5 +1,3 @@
-USE [New_BL_Orders]
-GO
 
 DROP INDEX [tbl_ShipDetails$PackageSerialNumber] ON [dbo].[tbl_ShipDetails]
 GO

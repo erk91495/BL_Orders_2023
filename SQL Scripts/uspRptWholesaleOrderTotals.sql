@@ -1,5 +1,3 @@
-USE [New_BL_Orders]
-GO
 
 /****** Object:  StoredProcedure [dbo].[uspRptWholesaleOrderTotals]    Script Date: 6/16/2023 8:59:29 AM ******/
 SET ANSI_NULLS ON

@@ -1,4 +1,3 @@
-USE [New_BL_Orders]
 GO
 
 /****** Object:  Index [tbl_ShipDetails$Scanline]    Script Date: 8/15/2023 3:32:32 PM ******/

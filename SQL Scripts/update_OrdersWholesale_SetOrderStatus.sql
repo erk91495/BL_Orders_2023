@@ -1,4 +1,4 @@
-USE [New_BL_Orders]
+
 UPDATE tblOrdersWholesale SET
 OrderStatus = 999
 GO

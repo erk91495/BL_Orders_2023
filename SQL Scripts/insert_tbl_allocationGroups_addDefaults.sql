@@ -1,5 +1,4 @@
-USE [New_BL_Orders]
-GO
+
 
 SET IDENTITY_INSERT [dbo].[tbl_AllocationGroups] ON
 INSERT INTO [dbo].[tbl_AllocationGroups]

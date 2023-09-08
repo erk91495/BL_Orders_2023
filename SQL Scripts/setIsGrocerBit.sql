@@ -1,5 +1,4 @@
-USE [New_BL_Orders]
-GO
+
 
 ALTER TABLE [dbo].[tblCustomerWholesale] ADD [isGrocer] BIT
 

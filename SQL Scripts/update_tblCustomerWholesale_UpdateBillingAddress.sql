@@ -1,5 +1,4 @@
-USE [New_BL_Orders]
-GO
+
 
 UPDATE [dbo].[tblCustomerWholesale]
    SET 

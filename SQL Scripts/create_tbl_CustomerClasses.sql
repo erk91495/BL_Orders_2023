@@ -1,6 +1,3 @@
-USE [New_BL_Orders]
-GO
-
 /****** Object:  Table [dbo].[tbl_CustomerClasses]    Script Date: 6/26/2023 1:27:06 PM ******/
 SET ANSI_NULLS ON
 GO
