@@ -1,6 +1,7 @@
 
 
 ALTER TABLE [dbo].[tblCustomerWholesale] ADD [isGrocer] BIT
+GO
 
 UPDATE [dbo].[tblCustomerWholesale]
    SET [isGrocer] = 1
