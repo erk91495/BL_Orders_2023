@@ -18,6 +18,7 @@ public class Product : ObservableObject
     private string? _productName;
     private short? _noPerCase;
     private decimal _wholesalePrice;
+    private decimal _kettteringPrice;
     private string? _UPCCode;
     private string? _KPCCode;
     private bool? _fixedPrice;
@@ -51,6 +52,12 @@ public class Product : ObservableObject
     {
         get => _wholesalePrice; 
         set => SetProperty(ref _wholesalePrice, value);
+    }
+
+    public decimal KetteringPrice
+    {
+        get => _kettteringPrice;
+        set => SetProperty(ref _kettteringPrice, value);
     }
     [MaxLength(15)]
     public string? UPCCode
@@ -101,10 +108,13 @@ public class Product : ObservableObject
         ProductName = product.ProductName;
         NoPerCase = product.NoPerCase;
         WholesalePrice = product.WholesalePrice;
+        KetteringPrice = product.KetteringPrice;
         UPCCode = product.UPCCode;
         KPCCode = product.KPCCode;
         FixedPrice = product.FixedPrice;
         CompanyCode = product.CompanyCode;
+        ALUCode = product.ALUCode;
+        Inactive = product.Inactive;
     }
     public override string ToString()
     {

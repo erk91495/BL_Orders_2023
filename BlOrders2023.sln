@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlOrders2023", "BlOrders2023\BlOrders2023.csproj", "{3731BE19-8B7A-41CD-8CB4-2726C7E42564}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BIG Turkey", "BlOrders2023\BIG Turkey.csproj", "{3731BE19-8B7A-41CD-8CB4-2726C7E42564}"
 	ProjectSection(ProjectDependencies) = postProject
 		{55A516F3-BDB5-4372-89C5-58BF44214D84} = {55A516F3-BDB5-4372-89C5-58BF44214D84}
 	EndProjectSection
