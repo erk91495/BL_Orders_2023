@@ -16,6 +16,7 @@
     <PackageCertificateThumbprint>02B5F3CC6E63AC80B4E792D8734BCE7B6E1F40C2</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <PackageIcon>Square150x150Logo.scale-100.png</PackageIcon>
+    <AssemblyName>BIGTurkey</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Content Remove="Assets\BadgeLogo.scale-100.png" />
