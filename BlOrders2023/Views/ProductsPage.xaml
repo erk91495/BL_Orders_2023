@@ -61,7 +61,10 @@
                                       HeaderText="Wholesale Price" 
                                       MappingName="WholesalePrice"
                                       ValueBinding="{Binding Path=WholesalePrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
- 
+                <sf:GridNumericColumn x:Name="ColumnKetteringPrice"
+                                      HeaderText="Kettering Price" 
+                                      MappingName="KetteringPrice"
+                                      ValueBinding="{Binding Path=KetteringPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridCheckBoxColumn HeaderText="Fixed Price" 
                                        MappingName="FixedPrice" 
                                        AllowEditing="True" 

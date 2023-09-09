@@ -163,9 +163,11 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         if(product == null)
         {
             product = _orderDB.Products.Get(item.ProductID).FirstOrDefault();
-            if (product == null) {
-                throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
-            }
+        }
+
+        if (product == null)
+        {
+            throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
         }
         else
         {
@@ -201,7 +203,6 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
                 {
                     DecrementOrderedItem(item);
                 }
-                OnPropertyChanged(nameof(Items));
             }
         });
 
