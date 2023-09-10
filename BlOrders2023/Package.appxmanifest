@@ -12,7 +12,7 @@
   <Identity
     Name="BIGTURKEY"
     Publisher="CN=BL"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <Properties>
     <DisplayName>BIG Turkey</DisplayName>
