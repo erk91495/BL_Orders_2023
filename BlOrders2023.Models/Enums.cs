@@ -22,8 +22,8 @@ public enum ShippingType
 {
     [Description("No Type")]
     NoType,
-    Delivery,
     Pickup,
+    Delivery,
 }
 
 public enum States
