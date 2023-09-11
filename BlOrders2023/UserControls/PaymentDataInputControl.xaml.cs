@@ -39,7 +39,7 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
     public PaymentMethod SelectedPaymentMethod { get ; set; } 
     public string? CheckNumber { get; set; }
     public string? Notes { get; set; }
-    public int? InvoiceNumber { get; set; }
+    public Order SelectedOrder { get; set; }
     public ObservableCollection<Order> Orders { get; set; }
     public ObservableCollection<Order> OrdersMasterList{ get; private set;}
     public WholesaleCustomer? SelectedCustomer
@@ -157,7 +157,7 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
         else if (!string.IsNullOrEmpty(args.QueryText))
         {
             var id = sender.Text.Trim();
-            var result = Int32.TryParse(id, out var orderID);
+            var result = int.TryParse(id, out var orderID);
             var toAdd = Orders.FirstOrDefault(order => order.OrderID == orderID);
             if (result && toAdd != null)
             {
@@ -173,9 +173,10 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
 
         if (FoundOrder != null)
         {
-            InvoiceNumber = FoundOrder.OrderID;
+            SelectedOrder = FoundOrder;
             CustomerSelectionBox.Text = FoundOrder.Customer.CustomerName;
             SelectedCustomer = FoundOrder.Customer;
+            OnPropertyChanged(nameof(GetBalanceDue));
         }
     }
 
@@ -190,9 +191,9 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
         {
             _payment = new();
         }
-        if(SelectedCustomer != null && InvoiceNumber != null)
+        if(SelectedCustomer != null && SelectedOrder != null)
         {
-            _payment.OrderId = InvoiceNumber;
+            _payment.OrderId = SelectedOrder.OrderID;
             _payment.CustId = SelectedCustomer.CustID;
             _payment.PaymentAmount = (decimal?)PaymentAmount;
             _payment.PaymentDate = PaymentDate.DateTime;
@@ -214,7 +215,7 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
         //TODO: make this work with ui
         CustomerSelectionBox.Text = payment.Customer.CustomerName;
         InvoiceSelectionBox.Text = payment.OrderId.ToString();
-        InvoiceNumber = payment.OrderId;
+        SelectedOrder = payment.Order;
         SelectedCustomer = payment.Customer;
         PaymentAmount = (double?)payment.PaymentAmount;
         PaymentDate = new((DateTime)payment.PaymentDate);
@@ -224,6 +225,17 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
 
         //Lock Out changes for invoice number
         InvoiceSelectionBox.IsEnabled = false;
+    }
+    private string GetBalanceDue()
+    {
+        if(SelectedOrder != null)
+        {
+            return string.Format($"{SelectedOrder.GetBalanceDue():C}");
+        }
+        else
+        {
+            return string.Empty;
+        }
     }
     #endregion Methods
 

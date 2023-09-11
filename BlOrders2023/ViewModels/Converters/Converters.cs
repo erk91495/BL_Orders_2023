@@ -266,6 +266,20 @@ namespace BlOrders2023.ViewModels.Converters
         }
     }
 
+
+    public class CurrencyFormatConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return ((float)value).ToString("C");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
     public class EnumToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
