@@ -136,7 +136,7 @@ public partial class App : Application
         base.OnLaunched(args);
         var localsettings = App.GetService<ILocalSettingsService>();
         //var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
-        var dbServer = "ERIC-PC";
+        var dbServer = "BL4";
         //var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
         var dbName = "BL_Enterprise";
         var dbOptions = new DbContextOptionsBuilder<SqlBLOrdersDBContext>();
