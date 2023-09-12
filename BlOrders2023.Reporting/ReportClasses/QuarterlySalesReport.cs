@@ -117,7 +117,7 @@ public class QuarterlySalesReport : IReport
                     table.Cell().Element(CellStyle).Text($"{id}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{matchingItems.First().Product.ProductName}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.QuantityReceived)}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.GetTotalPrice()):C}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.GetTotalPrice):C}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.PickWeight):N2}").Style(tableTextStyle);
                     static IContainer CellStyle(IContainer container)
                     {

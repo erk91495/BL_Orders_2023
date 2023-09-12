@@ -4,14 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Models
 {
     [Table("tblPayments")]
     public class Payment
     {
+        #region Fields
+        private string? _notes;
+        #endregion Fields
         [Key]
         [Column("PaymentID")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PaymentID { get; set; }
         public int? OrderId { get; set; }
         public int? CustId { get; set; }
@@ -21,7 +26,21 @@ namespace BlOrders2023.Models
         public string? CardholdersName { get; set; }
         public DateTime? CreditCardExpDate { get; set; }
         public int? PaymentMethodID {  get; set; }
-        public string? Notes { get; set; }
+        public string? Notes 
+        { 
+            get => _notes; 
+            set
+            {
+                if (value.IsNullOrEmpty())
+                {
+                    _notes = null;
+                }
+                else
+                {
+                    _notes = value;
+                }
+            } 
+        }
         public string? CheckNumber { get; set; }
         
         [ForeignKey(nameof(PaymentMethodID))]

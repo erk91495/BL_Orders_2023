@@ -251,7 +251,7 @@ public class WholesaleInvoice : IReport
 
                     table.Cell().Element(CellStyle).Text($"{item.PickWeight:N2}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).AlignRight().Text($"{item.ActualCustPrice:C}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).AlignRight().Text($"{item.GetTotalPrice():C}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).AlignRight().Text($"{item.GetTotalPrice:C}").Style(tableTextStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {

@@ -1,13 +1,17 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Media;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using BlOrders2023.Models;
+using BlOrders2023.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -28,18 +32,50 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
     #region Fields
     private WholesaleCustomer? selectedCustomer;
     private Payment? _payment;
+    private PaymentMethod selectedPaymentMethod;
+    private double? paymentAmount;
+    private Order? selectedOrder;
     #endregion Fields
 
     #region Properties
     public event PropertyChangedEventHandler? PropertyChanged;
-    public IEnumerable<WholesaleCustomer> Customers { get; set; }
-    public DateTimeOffset PaymentDate { get; set; } 
-    public double? PaymentAmount { get; set; }
+    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+
+    public IEnumerable<WholesaleCustomer>? Customers { get; set; }
+    public DateTimeOffset PaymentDate { get; set; }
+    public double? PaymentAmount
+    {
+        get => paymentAmount; 
+        set
+        {
+            paymentAmount = value;
+            OnPropertyChanged();
+            UpdateReadyToSave();
+        }
+    }
     public IList<PaymentMethod> PaymentMethods { get; set; }
-    public PaymentMethod SelectedPaymentMethod { get ; set; } 
+    public PaymentMethod SelectedPaymentMethod
+    {
+        get => selectedPaymentMethod; 
+        set 
+        {
+            selectedPaymentMethod = value;
+            OnPropertyChanged();
+            UpdateReadyToSave();
+        }
+    }
     public string? CheckNumber { get; set; }
     public string? Notes { get; set; }
-    public int? InvoiceNumber { get; set; }
+    public Order? SelectedOrder
+    {
+        get => selectedOrder; 
+        set 
+        {
+            selectedOrder = value; 
+            OnPropertyChanged();
+            UpdateReadyToSave();
+        }
+    }
     public ObservableCollection<Order> Orders { get; set; }
     public ObservableCollection<Order> OrdersMasterList{ get; private set;}
     public WholesaleCustomer? SelectedCustomer
@@ -49,8 +85,10 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
         {
             selectedCustomer = value;
             OnPropertyChanged();
+            UpdateReadyToSave();
         }
     }
+    public bool ReadyToSave {get; private set; }
     #endregion Properties
 
     #region Constructors
@@ -157,7 +195,7 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
         else if (!string.IsNullOrEmpty(args.QueryText))
         {
             var id = sender.Text.Trim();
-            var result = Int32.TryParse(id, out var orderID);
+            var result = int.TryParse(id, out var orderID);
             var toAdd = Orders.FirstOrDefault(order => order.OrderID == orderID);
             if (result && toAdd != null)
             {
@@ -173,9 +211,15 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
 
         if (FoundOrder != null)
         {
-            InvoiceNumber = FoundOrder.OrderID;
+            SelectedOrder = FoundOrder;
             CustomerSelectionBox.Text = FoundOrder.Customer.CustomerName;
             SelectedCustomer = FoundOrder.Customer;
+            OnPropertyChanged(nameof(GetBalanceDue));
+            var options = new FindNextElementOptions()
+            {
+                SearchRoot = this,
+            };
+            FocusManager.TryMoveFocus(FocusNavigationDirection.Down, options);
         }
     }
 
@@ -190,9 +234,9 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
         {
             _payment = new();
         }
-        if(SelectedCustomer != null && InvoiceNumber != null)
+        if(SelectedCustomer != null && SelectedOrder != null)
         {
-            _payment.OrderId = InvoiceNumber;
+            _payment.OrderId = SelectedOrder.OrderID;
             _payment.CustId = SelectedCustomer.CustID;
             _payment.PaymentAmount = (decimal?)PaymentAmount;
             _payment.PaymentDate = PaymentDate.DateTime;
@@ -214,7 +258,7 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
         //TODO: make this work with ui
         CustomerSelectionBox.Text = payment.Customer.CustomerName;
         InvoiceSelectionBox.Text = payment.OrderId.ToString();
-        InvoiceNumber = payment.OrderId;
+        SelectedOrder = payment.Order;
         SelectedCustomer = payment.Customer;
         PaymentAmount = (double?)payment.PaymentAmount;
         PaymentDate = new((DateTime)payment.PaymentDate);
@@ -224,6 +268,38 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
 
         //Lock Out changes for invoice number
         InvoiceSelectionBox.IsEnabled = false;
+    }
+    private string GetBalanceDue()
+    {
+        if(SelectedOrder != null)
+        {
+            return string.Format($"{SelectedOrder.GetBalanceDue():C}");
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
+    private void UpdateReadyToSave()
+    {
+        if(SelectedOrder != null && selectedCustomer != null && PaymentAmount != null && SelectedPaymentMethod != null) 
+        {
+            if(SelectedOrder.Customer == SelectedCustomer) 
+            {
+                ReadyToSave = true;
+            }
+            else
+            {
+                ReadyToSave = false;
+            }
+        }
+        else 
+        { 
+            ReadyToSave = false; 
+        }
+        OnPropertyChanged(nameof(ReadyToSave));
+
     }
     #endregion Methods
 

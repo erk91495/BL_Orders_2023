@@ -60,7 +60,8 @@ namespace BlOrders2023.Models
                         //subtract 1 day from Jdate to account for starting at Jan 1
                         date = date.AddDays(int.Parse(Scanline.Substring(15, 3)) - 1);
                         _packDate = date.Date;
-                        _serial = Scanline.Substring(18, 6);
+                        //Go to the end to pick up the '_' for manually entered barcodes
+                        _serial = Scanline[18..];
                         break;
                     }
                 //B&L Ladder Barcode 605375 610 1255 23193 00424233
@@ -73,7 +74,8 @@ namespace BlOrders2023.Models
                         //subtract 1 day from Jdate to account for starting at Jan 1
                         date = date.AddDays(int.Parse(Scanline.Substring(15, 3)) - 1);
                         _packDate = date.Date;
-                        _serial = Scanline.Substring(18, 8);
+                        //Go to the end to pick up the '_' for manually entered barcodes
+                        _serial = Scanline[18..];
                         break;
                     }
                 //DLM Turkey & Breast Barcodes 605375 812 001255 23193 00424233
@@ -86,7 +88,8 @@ namespace BlOrders2023.Models
                         //subtract 1 day from Jdate to account for starting at Jan 1
                         date = date.AddDays(int.Parse(Scanline.Substring(17, 3)) - 1);
                         _packDate = date.Date;
-                        _serial = Scanline.Substring(20, 8);
+                        //Go to the end to pick up the '_' for manually entered barcodes
+                        _serial = Scanline[20..];
                         break;
                     }
                 default:

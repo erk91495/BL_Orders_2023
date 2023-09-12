@@ -137,13 +137,16 @@ public class OrderItem : ObservableObject
         }
     }
 
-    public decimal GetTotalPrice()
+    public decimal GetTotalPrice
     {
-        if(Product.FixedPrice == true)
+        get
         {
-            return ActualCustPrice * QuantityReceived;
+            if(Product.FixedPrice == true)
+            {
+                return ActualCustPrice * QuantityReceived;
+            }
+            return decimal.Round(ActualCustPrice * (decimal)(PickWeight ?? 0),2);
         }
-        return decimal.Round(ActualCustPrice * (decimal)(PickWeight ?? 0),2);
     }
 
     public override string ToString()

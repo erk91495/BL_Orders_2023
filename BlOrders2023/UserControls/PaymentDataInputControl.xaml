@@ -9,61 +9,61 @@
     xmlns:models="using:BlOrders2023.Models"
     xmlns:calendar="using:Syncfusion.UI.Xaml.Calendar"
     xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
+    xmlns:converters="using:BlOrders2023.ViewModels.Converters"
+    xmlns:sys="using:System"
     mc:Ignorable="d"
     MinWidth="1200"
     CornerRadius="10"
     PrimaryButtonText="Save Payment"
+    IsPrimaryButtonEnabled="{x:Bind ReadyToSave, Mode=OneWay}"
+    IsSecondaryButtonEnabled="{x:Bind ReadyToSave, Mode=OneWay}"
     CloseButtonText="Cancel"
     FlowDirection="LeftToRight">
 
-    <StackPanel Orientation="Vertical">
-        <StackPanel Orientation="Vertical">
-            <TextBlock Text="Customer"/>
-            <TextBox x:Name="CustomerSelectionBox"
-                            MinWidth="800"
-                            IsReadOnly="True"
-                            IsTabStop="False"/>
-        </StackPanel>
-        <StackPanel Orientation="Vertical">
-            <TextBlock Text="Invoice"/>
-            <AutoSuggestBox x:Name="InvoiceSelectionBox"
-                            PlaceholderText=" Select an Invoice..." 
-                            QuerySubmitted="InvoiceSelectionBox_QuerySubmitted"
-                            TextChanged="InvoiceSelectionBox_TextChanged"
-                            LostFocus="AutoSuggestBox_LostFocus"
-                            MinWidth="800"
-                            TabIndex="1">
+    <ContentDialog.Resources>
+        <converters:CurrencyFormatConverter x:Key="CurrencyFormatConverter"/>
+        <converters:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
+    </ContentDialog.Resources>
+    
+    <StackPanel Orientation="Vertical" Spacing="20">
+        <TextBox Header="Customer:" 
+                 x:Name="CustomerSelectionBox"
+                 MinWidth="800"
+                 IsReadOnly="True"
+                 IsTabStop="False"/>
+        <StackPanel Orientation="Horizontal">
+            <AutoSuggestBox Header="Invoice Number:"
+                        x:Name="InvoiceSelectionBox"
+                        PlaceholderText=" Select an Invoice..." 
+                        QuerySubmitted="InvoiceSelectionBox_QuerySubmitted"
+                        TextChanged="InvoiceSelectionBox_TextChanged"
+                        LostFocus="AutoSuggestBox_LostFocus"
+                        TabIndex="1"
+                        Margin="0,0,100,0">
             </AutoSuggestBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="Balance Due" HorizontalAlignment="Center"/>
+                <TextBlock Text="{x:Bind GetBalanceDue(), Mode=OneWay}" MinWidth="200" HorizontalAlignment="Center"/>
+            </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Vertical">
-            <ComboBox x:Name="PaymentMethodCombo"
-                      Header="Payment Method" 
+        <ComboBox x:Name="PaymentMethodCombo"
+                      Header="Payment Method:" 
                       ItemsSource="{x:Bind PaymentMethods, Mode=OneWay}" 
                       SelectionChanged="PaymentMethod_SelectionChanged"
-                      TabIndex="2"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <calendar:SfCalendarDatePicker Header="Payment Date" 
-                                           SelectedDate="{x:Bind PaymentDate, Mode=TwoWay}" 
-                                           AllowNull="False"
-                                           TabIndex="3"/>
-        </StackPanel>
-        <StackPanel Orientation="Vertical">
-            <editors:SfNumberBox x:Name="PaymentAmountBox" 
-                                 Header="Payment Amount" 
-                                 Value="{x:Bind PaymentAmount, Mode=TwoWay}" 
-                                 CustomFormat="C2"
-                                 TabIndex="4"/>
-        </StackPanel>
-        <StackPanel Orientation="Vertical">
-            <TextBlock Text="Check/Account Number:" Padding="0,0,10,0"/>
-            <TextBox Text="{x:Bind CheckNumber, Mode=TwoWay}" TabIndex="5"/>
-        </StackPanel>
-        <StackPanel Orientation="Vertical">
-            <TextBlock Text="Notes:"/>
-            <TextBox Text="{x:Bind Notes, Mode=TwoWay}"
-                     AcceptsReturn="True"
-                     TabIndex="6"/>
-        </StackPanel>
+                      TabIndex="2" />
+        <calendar:SfCalendarDatePicker Header="Payment Date:" 
+                                       SelectedDate="{x:Bind PaymentDate, Mode=TwoWay}" 
+                                       AllowNull="False"
+                                       TabIndex="3"/>
+        <editors:SfNumberBox x:Name="PaymentAmountBox" 
+                             Header="Payment Amount:" 
+                             Value="{x:Bind PaymentAmount, Mode=TwoWay}" 
+                             CustomFormat="C2"
+                             TabIndex="4"/>
+
+        <TextBox Header="Check/Account Number:" Text="{x:Bind CheckNumber, Mode=TwoWay}" TabIndex="5"/>
+        <TextBox Header="Notes:"  Text="{x:Bind Notes, Mode=TwoWay}"
+                 AcceptsReturn="True"
+                 TabIndex="6"/>
     </StackPanel>
 </ContentDialog>

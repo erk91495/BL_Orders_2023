@@ -102,9 +102,13 @@
                                        Padding="0,0,5,0"
                                        Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
                             <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.PhoneString(), Mode=OneWay}"
-                                       Padding="0,0,5,0"
+                                       Padding="0,0,30,0"
                                        FontSize="{StaticResource MediumFontSize}"
                                        Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Customer.Phone2String(), Mode=OneWay}"
+                                       Padding="0,0,5,0"
+                                       FontSize="{StaticResource MediumFontSize}"
+                                       Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.SelectedOrder.Customer.Phone_2), Mode=OneWay, FallbackValue=Collapsed}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="F:"

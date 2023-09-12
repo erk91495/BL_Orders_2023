@@ -243,11 +243,11 @@ public class Order : ObservableObject
         {
             foreach(var item in Items)
             {
-                total += item.GetTotalPrice();
+                total += item.GetTotalPrice;
             }
         }
         total += Memo_Totl ?? 0;
-        return total;
+        return decimal.Round(total,2);
     }
 
     public int GetTotalOrdered()

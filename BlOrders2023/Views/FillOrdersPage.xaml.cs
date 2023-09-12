@@ -21,6 +21,7 @@ using BlOrders2023.Reporting;
 using BlOrders2023.Services;
 using System.Drawing.Printing;
 using BlOrders2023.Core.Services;
+using Syncfusion.UI.Xaml.DataGrid;
 
 namespace BlOrders2023.Views;
 
@@ -209,7 +210,7 @@ public sealed partial class FillOrdersPage : Page
     private async void OrderLookup_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         var input = args.QueryText;
-        if (!ViewModel.FillableOrders.Where(e => e.OrderID.ToString().Equals(input)).IsNullOrEmpty())
+        if (!ViewModel.FillableOrdersMasterList.Where(e => e.OrderID.ToString().Equals(input)).IsNullOrEmpty())
         {
             await ViewModel.LoadOrder(int.Parse(input));
         }
@@ -218,6 +219,25 @@ public sealed partial class FillOrdersPage : Page
             await ViewModel.LoadOrder(o.OrderID);
         }
         Scanline.Focus(FocusState.Programmatic);
+    }
+
+    private async void OrderedItems_RecordDeleting(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletingEventArgs e)
+    {
+        //e.Cancel = true;
+        //ContentDialog dialog = new()
+        //{
+        //    XamlRoot = XamlRoot,
+        //    Title = "Confirm Delete",
+        //    Content = "Are you sure you want to delete all shipping items from this order? These changes cannot be undone.",
+        //    PrimaryButtonText = "Delete",
+        //    CloseButtonText = "Cancel",
+        //};
+        //var result = await dialog.ShowAsync();
+        //if (result == ContentDialogResult.Primary)
+        //{
+        //    //TODO DELETE THE ITEM
+        //}
+        
     }
 
     private async void OrderedItems_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
@@ -238,16 +258,29 @@ public sealed partial class FillOrdersPage : Page
     {
         ShippingItemDataInputDialog dialog = new(XamlRoot);
         var result = await dialog.ShowAsync();
-        result.Order = ViewModel.Order;
         if (result != null)
         {
+            result.Order = ViewModel.Order;
             await AddShippingItemAsync(result);
         }
     }
 
     private async void DeleteAll_Click(object sender, RoutedEventArgs e)
     {
-        await ViewModel.DeleteAllShippingItemsAsync();
+        ContentDialog dialog = new()
+        {
+            XamlRoot = XamlRoot,
+            Title = "Confirm Delete",
+            Content = "Are you sure you want to delete all shipping items from this order? These changes cannot be undone.",
+            PrimaryButtonText = "Delete",
+            CloseButtonText = "Cancel",
+        };
+        var result = await dialog.ShowAsync();
+        if(result == ContentDialogResult.Primary){
+            await ViewModel.DeleteAllShippingItemsAsync();
+            await TrySaveOrderAsync();
+            OrderedVsReceivedGrid.View.Refresh();
+        }
     }
 
     private void PrintOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
