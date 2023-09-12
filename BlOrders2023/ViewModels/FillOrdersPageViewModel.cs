@@ -132,6 +132,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         OnPropertyChanged(nameof(FillableOrdersMasterList));
         OnPropertyChanged(nameof(CanPrintInvoice));
         OnPropertyChanged(nameof(CanPrintOrder));
+        OnPropertyChanged(nameof(Memo));
     }
 
     internal void QueryFillableOrders(string text)
