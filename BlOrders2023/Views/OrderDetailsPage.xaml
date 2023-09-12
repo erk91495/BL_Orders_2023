@@ -59,8 +59,13 @@
                            Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
                 <TextBlock Text="{x:Bind ViewModel.Customer.PhoneString(), Mode=OneWay}"
                            FontSize="{StaticResource MediumFontSize}"
-                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"/>
+                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone), Mode=OneWay, FallbackValue=Collapsed}"
+                           Padding="0,0,20,0"/>
+                <TextBlock Text="{x:Bind ViewModel.Customer.Phone2String(), Mode=OneWay}"
+                           FontSize="{StaticResource MediumFontSize}"
+                           Visibility="{x:Bind vm:Converters.CollapsedIfNullOrEmpty(ViewModel.Customer.Phone_2), Mode=OneWay, FallbackValue=Collapsed}"/>
             </StackPanel>
+
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="F:" 
                            FontSize="{StaticResource MediumFontSize}"
