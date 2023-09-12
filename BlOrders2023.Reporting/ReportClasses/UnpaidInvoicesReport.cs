@@ -134,19 +134,16 @@ namespace BlOrders2023.Reporting.ReportClasses
                             return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
                         }
                     }
-                    table.Footer(footer =>
-                    {
-                        footer.Cell().Element(CellStyle).Text("Totals:").Style(tableHeaderStyle);
-                        footer.Cell().Element(CellStyle).Text("").Style(tableHeaderStyle);                        
-                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
-                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetTotalPayments()):C}").Style(tableHeaderStyle);
-                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetBalanceDue()):C}").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).Text("Totals:").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).Text("").Style(tableHeaderStyle);                        
+                    table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetTotalPayments()):C}").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetBalanceDue()):C}").Style(tableHeaderStyle);
 
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.PaddingVertical(2);
-                        }
-                    });
+                    static IContainer FooterCellStyle(IContainer container)
+                    {
+                        return container.PaddingVertical(2);
+                    }
 
                 });
             });

@@ -87,12 +87,14 @@ public class AggregateInvoiceReport : IReport
                         column.RelativeColumn(2);
                         column.RelativeColumn(2);
                         column.RelativeColumn(2);
+                        column.RelativeColumn(2);
                     });
 
                     invoicesTable.Header(header =>
                     {
                         header.Cell().Element(CellStyle).Text("Invoice Number").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).Text("Invoice Total").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Balance Due").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).Text("Pickup Date").Style(tableHeaderStyle);
 
                         static IContainer CellStyle(IContainer container)
@@ -105,6 +107,7 @@ public class AggregateInvoiceReport : IReport
                     {
                         invoicesTable.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
                         invoicesTable.Cell().Element(CellStyle).Text($"{order.GetInvoiceTotal():C}").Style(tableTextStyle);
+                        invoicesTable.Cell().Element(CellStyle).Text($"{order.GetBalanceDue():C}").Style(tableTextStyle);
                         invoicesTable.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yy")}").Style(tableTextStyle);
 
                         static IContainer CellStyle(IContainer container)
@@ -113,17 +116,15 @@ public class AggregateInvoiceReport : IReport
                         }
                     }
 
-                    invoicesTable.Footer(footer =>
-                    {
-                        footer.Cell().Element(CellStyle).Text("Total").Style(tableHeaderStyle);
-                        footer.Cell().Element(CellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
-                        footer.Cell().Element(CellStyle).Text("").Style(tableHeaderStyle);
+                    invoicesTable.Cell().Element(FooterCellStyle).Text("Total").Style(tableHeaderStyle);
+                    invoicesTable.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
+                    invoicesTable.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetBalanceDue()):C}").Style(tableHeaderStyle);
+                    invoicesTable.Cell().Element(FooterCellStyle).Text("").Style(tableHeaderStyle);
 
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderColor(Colors.Black);
-                        }
-                    });
+                    static IContainer FooterCellStyle(IContainer container)
+                    {
+                        return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderColor(Colors.Black);
+                    }
 
                 });
                 row.ConstantItem(10);
@@ -209,21 +210,18 @@ public class AggregateInvoiceReport : IReport
                     }
                 }
 
-                table.Footer(footer =>
-                {
-                    footer.Cell().Element(CellStyle).Text("Total: ").Style(tableHeaderStyle);
-                    footer.Cell().Element(CellStyle).Text($"{aggregateItems.Sum(i => i.QuantityReceived)}").Style(tableHeaderStyle);
-                    footer.Cell().Element(CellStyle).Text($"{aggregateItems.Sum(i => i.Quantity)}").Style(tableHeaderStyle);
-                    footer.Cell();
-                    footer.Cell().Element(CellStyle).Text($"{aggregateItems.Sum(i => i.PickWeight):N2}").Style(tableHeaderStyle);
-                    footer.Cell();
-                    footer.Cell().Element(CellStyle).AlignRight().Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text("Total: ").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{aggregateItems.Sum(i => i.QuantityReceived)}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{aggregateItems.Sum(i => i.Quantity)}").Style(tableHeaderStyle);
+                table.Cell();
+                table.Cell().Element(FooterCellStyle).Text($"{aggregateItems.Sum(i => i.PickWeight):N2}").Style(tableHeaderStyle);
+                table.Cell();
+                table.Cell().Element(FooterCellStyle).AlignRight().Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
 
-                    static IContainer CellStyle(IContainer container)
-                    {
-                        return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderColor(Colors.Black);
-                    }
-                });
+                static IContainer FooterCellStyle(IContainer container)
+                {
+                    return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderColor(Colors.Black);
+                }
 
             });
         });
