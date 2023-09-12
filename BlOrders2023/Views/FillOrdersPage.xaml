@@ -285,8 +285,10 @@
                                    SelectionMode="Extended"
                                    EditorSelectionBehavior="MoveLast"
                                    AllowDeleting="True"
+                                   RecordDeleting="OrderedItems_RecordDeleting"
                                    RecordDeleted="OrderedItems_RecordDeleted"
-                                   ColumnWidthMode="AutoWithLastColumnFill">
+                                   ColumnWidthMode="AutoWithLastColumnFill"
+                                   >
 
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
