@@ -248,6 +248,8 @@ public sealed partial class FillOrdersPage : Page
     private async void DeleteAll_Click(object sender, RoutedEventArgs e)
     {
         await ViewModel.DeleteAllShippingItemsAsync();
+        await TrySaveOrderAsync();
+        OrderedVsReceivedGrid.View.Refresh();
     }
 
     private void PrintOrderFlyoutItem_Click(object sender, RoutedEventArgs e)

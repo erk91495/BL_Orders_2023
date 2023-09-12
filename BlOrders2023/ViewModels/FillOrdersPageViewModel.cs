@@ -192,10 +192,11 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     internal async Task DeleteShippingItemAsync(ShippingItem item)
     {
-        await Task.Run(() => 
+        if (!Items.Remove(item))
         {
-            if (!Items.Remove(item))
+            await Task.Run(() => 
             {
+
                 if (!_order!.ShippingItems.Remove(item))
                 {
                     //throw new Exception();
@@ -204,10 +205,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
                 {
                     DecrementOrderedItem(item);
                 }
-            }
-        });
-
-
+            });
+        }
     }
 
 
@@ -226,7 +225,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         }
     }
 
-    private void DecrementOrderedItem(ShippingItem item)
+    private async void DecrementOrderedItem(ShippingItem item)
     {
         var ordered = _order!.Items.Where(e => e.ProductID == item.ProductID).FirstOrDefault();
         if (ordered == null)
@@ -237,8 +236,11 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         {
             if(ordered.QuantityReceived <= 0 && ordered.Quantity <=0)
             {
-                _order.Items.Remove(ordered);
-                _orderDB.Orders.Upsert(_order);
+                await dispatcherQueue.EnqueueAsync(() => 
+                {
+                    _order.Items.Remove(ordered);
+                });
+
             }
         }
     }
@@ -246,24 +248,16 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     internal async Task DeleteAllShippingItemsAsync()
     {
-        foreach( var item in Items)
+        await Task.Run(() =>
         {
-            if (!Items.Remove(item))
+            _order.ShippingItems.Clear();
+            foreach (var item in Items)
             {
-                if (!_order!.ShippingItems.Remove(item))
-                {
-                    //throw new Exception();
-                }
-                else
-                {
-                    DecrementOrderedItem(item);
-                }
-                
+                DecrementOrderedItem(item);
             }
-        }
-        await SaveOrderAsync();
+        });
+        Items.Clear();
         OnPropertyChanged(nameof(Items));
-
     }
 
     internal async Task SaveOrderAsync() => await _orderDB.Orders.UpsertAsync(_order);
