@@ -111,7 +111,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                     table.Header(header =>
                     {
                         header.Cell().Element(CellStyle).Text("Invoice Number").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Pickup Date").Style(tableHeaderStyle);
+                        header.Cell().Element(CellStyle).Text("Pickup/Delivery Date").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).Text("Invoice Total").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).Text("Payments").Style(tableHeaderStyle);
                         header.Cell().Element(CellStyle).Text("Balance Due").Style(tableHeaderStyle);
