@@ -202,7 +202,7 @@ public class AggregateInvoiceReport : IReport
 
                     table.Cell().Element(CellStyle).Text($"{group.Sum(i => i.PickWeight):N2}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).AlignRight().Text($"{group.First().ActualCustPrice:C}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).AlignRight().Text($"{group.Sum(i => i.GetTotalPrice()):C}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).AlignRight().Text($"{group.Sum(i => i.GetTotalPrice):C}").Style(tableTextStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {

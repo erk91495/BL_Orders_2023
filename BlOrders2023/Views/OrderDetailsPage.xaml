@@ -260,63 +260,6 @@
                 </StackPanel>
             </StackPanel>
         </RelativePanel>
-        <sf:SfDataGrid x:Name="OrderedItems"
-                       ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
-                       SourceType="models:OrderItem"
-                       RelativePanel.Below="ProductEntryErrorMessage"
-                       RelativePanel.Above="NavigationButtonGrid"
-                       GridLinesVisibility="Both"
-                       IsEnabled="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
-                       AutoGenerateColumns="False"
-                       RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignRightWithPanel="True"
-                       EditTrigger="OnTap"
-                       SelectionUnit="Row"
-                       EditorSelectionBehavior="MoveLast"
-                       PointerMoved="OrderedItems_PointerMoved"
-                       IsTabStop="False">
-            
-            <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn HeaderText="Product ID" 
-                                   MappingName="ProductID"/>
-                <sf:GridTextColumn HeaderText="Product Name" 
-                                   MappingName="Product.ProductName" 
-                                   IsReadOnly="True" 
-                                   ColumnWidthMode="AutoLastColumnFill"/>
-                <sf:GridNumericColumn HeaderText="Pick Weight" 
-                                      MappingName="PickWeight" 
-                                      AllowEditing="False" 
-                                      DisplayNumberFormat="N2"/>
-                <sf:GridNumericColumn HeaderText="Customer Price" 
-                                      MappingName="ActualCustPrice" 
-                                      AllowEditing="True" 
-                                      DisplayNumberFormat="C" 
-                                      ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
-                <sf:GridNumericColumn HeaderText="Quantity Ordered" 
-                                      MappingName="Quantity" 
-                                      AllowEditing="True"/>
-                <sf:GridNumericColumn HeaderText="Quantity Allocated" 
-                                      MappingName="QuanAllocated" 
-                                      AllowEditing="True"
-                                      IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                      ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
-                <sf:GridNumericColumn HeaderText="Quantity Received" 
-                                      MappingName="QuantityReceived"/>
-                <sf:GridUnboundColumn HeaderText="" 
-                                      UseBindingValue="False" 
-                                      MappingName="UnboundColumn" 
-                                      ColumnWidthMode="SizeToCells" 
-                                      IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
-                    <sf:GridUnboundColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">
-                                <SymbolIcon Symbol="Delete"/>
-                            </Button>
-                        </DataTemplate>
-                    </sf:GridUnboundColumn.CellTemplate>
-                </sf:GridUnboundColumn>
-            </sf:SfDataGrid.Columns>
-        </sf:SfDataGrid>
 
         <AutoSuggestBox x:Name="ProductEntryBox"
                         RelativePanel.Below="UserInputRanel"
@@ -347,6 +290,74 @@
                    Text="Clear all errors before adding products" 
                    Visibility="{x:Bind ViewModel.HasErrors, Mode=OneWay}" 
                    Style="{StaticResource ValidatorTextBlockStyle}"/>
+        <sf:SfDataGrid x:Name="OrderedItems"
+                       ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
+                       SourceType="models:OrderItem"
+                       RelativePanel.Below="ProductEntryErrorMessage"
+                       RelativePanel.Above="InvoiceTotalStack"
+                       GridLinesVisibility="Both"
+                       IsEnabled="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
+                       AutoGenerateColumns="False"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignRightWithPanel="True"
+                       EditTrigger="OnTap"
+                       SelectionUnit="Row"
+                       EditorSelectionBehavior="MoveLast"
+                       PointerMoved="OrderedItems_PointerMoved"
+                       IsTabStop="False">
+
+            <sf:SfDataGrid.Columns>
+                <sf:GridTextColumn HeaderText="Product ID" 
+                                   MappingName="ProductID"/>
+                <sf:GridTextColumn HeaderText="Product Name" 
+                                   MappingName="Product.ProductName" 
+                                   IsReadOnly="True" 
+                                   ColumnWidthMode="AutoLastColumnFill"/>
+                <sf:GridNumericColumn HeaderText="Pick Weight" 
+                                      MappingName="PickWeight" 
+                                      AllowEditing="False" 
+                                      DisplayNumberFormat="N2"/>
+                <sf:GridNumericColumn HeaderText="Customer Price" 
+                                      MappingName="ActualCustPrice" 
+                                      AllowEditing="True" 
+                                      DisplayNumberFormat="C" 
+                                      ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
+                <sf:GridNumericColumn HeaderText="Quantity Ordered" 
+                                      MappingName="Quantity" 
+                                      AllowEditing="True"/>
+                <sf:GridNumericColumn HeaderText="Quantity Allocated" 
+                                      MappingName="QuanAllocated" 
+                                      AllowEditing="True"
+                                      IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                      ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
+                <sf:GridNumericColumn HeaderText="Quantity Received" 
+                                      MappingName="QuantityReceived"/>
+                <sf:GridNumericColumn HeaderText="Total Price" 
+                                      MappingName="GetTotalPrice"
+                                      IsReadOnly="True"/>
+                <sf:GridUnboundColumn HeaderText="" 
+                                      UseBindingValue="False" 
+                                      MappingName="UnboundColumn" 
+                                      ColumnWidthMode="SizeToCells" 
+                                      IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
+                    <sf:GridUnboundColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">
+                                <SymbolIcon Symbol="Delete"/>
+                            </Button>
+                        </DataTemplate>
+                    </sf:GridUnboundColumn.CellTemplate>
+                </sf:GridUnboundColumn>
+            </sf:SfDataGrid.Columns>
+        </sf:SfDataGrid>
+        <StackPanel x:Name="InvoiceTotalStack" 
+                    RelativePanel.Above="NavigationButtonGrid" 
+                    RelativePanel.AlignRightWithPanel="True" 
+                    Orientation="Horizontal"
+                    Spacing="10">
+            <TextBlock Text="Invoice Total: $" FontWeight="Bold" FontSize="{StaticResource MediumFontSize}"/>
+            <TextBlock Text="{x:Bind ViewModel.Order.GetInvoiceTotal(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+        </StackPanel>
         <Grid x:Name="NavigationButtonGrid" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
