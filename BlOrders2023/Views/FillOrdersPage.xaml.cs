@@ -209,7 +209,7 @@ public sealed partial class FillOrdersPage : Page
     private async void OrderLookup_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         var input = args.QueryText;
-        if (!ViewModel.FillableOrders.Where(e => e.OrderID.ToString().Equals(input)).IsNullOrEmpty())
+        if (!ViewModel.FillableOrdersMasterList.Where(e => e.OrderID.ToString().Equals(input)).IsNullOrEmpty())
         {
             await ViewModel.LoadOrder(int.Parse(input));
         }
