@@ -238,9 +238,9 @@ public sealed partial class FillOrdersPage : Page
     {
         ShippingItemDataInputDialog dialog = new(XamlRoot);
         var result = await dialog.ShowAsync();
-        result.Order = ViewModel.Order;
         if (result != null)
         {
+            result.Order = ViewModel.Order;
             await AddShippingItemAsync(result);
         }
     }
