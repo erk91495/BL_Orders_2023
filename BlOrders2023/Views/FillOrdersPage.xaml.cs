@@ -411,16 +411,41 @@ public sealed partial class FillOrdersPage : Page
 
     private async Task PrintPalletTicketsAsync()
     {
+        var print = false;
+        if(ViewModel.Order.Allocated != true)
+        {
 
-        Palletizer palletizer = new(new(), ViewModel.Order);
-        var pallets = await palletizer.PalletizeAsync();
-        var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+            var dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Print Confirmation",
+                Content = "This order has not yet been allocated. Are you sure you want to print pallet tickets?",
+                PrimaryButtonText = "Print",
+                CloseButtonText = "Cancel",
+            };
 
-        PrinterSettings printSettings = new();
-        printSettings.Copies = 1;
-        printSettings.Duplex = Duplex.Simplex;
-        var printer = new PDFPrinterService(filePath);
-        await printer.PrintPdfAsync(printSettings);     
+            var result = await dialog.ShowAsync();
+            if(result == ContentDialogResult.Primary)
+            {
+                print = true;
+            }
+        }
+        else
+        {
+            print = true;
+        }
+        if (print)
+        {
+            Palletizer palletizer = new(new(), ViewModel.Order);
+            var pallets = await palletizer.PalletizeAsync();
+            var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 1;
+            printSettings.Duplex = Duplex.Simplex;
+            var printer = new PDFPrinterService(filePath);
+            await printer.PrintPdfAsync(printSettings);
+        }
     }
 
     private void OrderLookup_GotFocus(object sender, RoutedEventArgs e)
