@@ -10,12 +10,12 @@
   IgnorableNamespaces="uap rescap genTemplate">
 
   <Identity
-    Name="BIGTURKEY"
+    Name="BLSANDBOX"
     Publisher="CN=BL"
-    Version="1.0.2.0" />
+    Version="0.0.1.0" />
 
   <Properties>
-    <DisplayName>BIG Turkey</DisplayName>
+    <DisplayName>BL Sandbox</DisplayName>
     <PublisherDisplayName>Eric</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>

@@ -138,7 +138,7 @@ public partial class App : Application
         //var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
         var dbServer = "BL4";
         //var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
-        var dbName = "BL_Enterprise";
+        var dbName = "New_BL_Orders";
         var dbOptions = new DbContextOptionsBuilder<SqlBLOrdersDBContext>();
         dbOptions.UseLazyLoadingProxies()
                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
@@ -147,7 +147,7 @@ public partial class App : Application
                .UseSqlServer(connectionString: $"Data Source={dbServer}; Database={dbName};Integrated Security=true; Trust Server Certificate=true");
         App.DBOptions = dbOptions.Options;
 
-        var SupportedDBVersion = new Version(1, 0, 1);
+        var SupportedDBVersion = new Version(0, 0, 1);
         var DBVersion = App.GetNewDatabase().dbVersion;
         if (!SupportedDBVersion.Equals(DBVersion))
         {
