@@ -136,7 +136,7 @@ public partial class App : Application
         base.OnLaunched(args);
         var localsettings = App.GetService<ILocalSettingsService>();
         //var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
-        var dbServer = "ERIC-PC";
+        var dbServer = "BL4";
         //var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
         var dbName = "BL_Enterprise";
         var dbOptions = new DbContextOptionsBuilder<SqlBLOrdersDBContext>();
@@ -147,7 +147,7 @@ public partial class App : Application
                .UseSqlServer(connectionString: $"Data Source={dbServer}; Database={dbName};Integrated Security=true; Trust Server Certificate=true");
         App.DBOptions = dbOptions.Options;
 
-        var SupportedDBVersion = new Version(1, 0, 1);
+        var SupportedDBVersion = new Version(1, 0, 2);
         var DBVersion = App.GetNewDatabase().dbVersion;
         if (!SupportedDBVersion.Equals(DBVersion))
         {
