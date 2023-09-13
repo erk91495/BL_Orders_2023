@@ -50,47 +50,66 @@ public sealed partial class FillOrdersPage : Page
     {
         if(sender is TextBox box )
         {
+
             var scanlineText = box.Text;
             if (scanlineText.EndsWith('\r'))
             {
                 var scanline = scanlineText.Trim();
                 box.Text = null;
-                ShippingItem item = new()
+                if (RemoveItemCheckBox.IsChecked != true)
                 {
-                    QuanRcvd = 1,
-                    ScanDate = DateTime.Now,
-                    Scanline = scanline,
-                    Order = ViewModel.Order,
-                };
-                try
-                {
-                    //interpreter has no concept of dbcontext and cannot track items
-                    BarcodeInterpreter.ParseBarcode(ref item);
-                    //item.Product = product;
-                    await AddShippingItemAsync(item);
+                    ShippingItem item = new()
+                    {
+                        QuanRcvd = 1,
+                        ScanDate = DateTime.Now,
+                        Scanline = scanline,
+                        Order = ViewModel.Order,
+                    };
+                    try
+                    {
+                        //interpreter has no concept of dbcontext and cannot track items
+                        BarcodeInterpreter.ParseBarcode(ref item);
+                        //item.Product = product;
+                        await AddShippingItemAsync(item);
+                    }
+                    catch (ProductNotFoundException e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        var prodCode = e.Data["ProductID"];
+                        await ShowLockedoutDialog("Product Not Found", 
+                            string.Format("Product ID: {0} was not found in the database\r\n", prodCode)); 
+                    } 
+                    catch (InvalidBarcodeExcption e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        var ai = e.Data["AI"];
+                        var s = e.Data["Scanline"];
+                        var location = e.Data["Location"];
+                        await ShowLockedoutDialog(e.Message,
+                            string.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
+                    }
+                    catch (UnknownBarcodeFormatException e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
+                    }
+
                 }
-                catch (ProductNotFoundException e)
+                else // remove items is checked
                 {
-                    Debug.WriteLine(e.ToString());
-                    var prodCode = e.Data["ProductID"];
-                    await ShowLockedoutDialog("Product Not Found", 
-                        string.Format("Product ID: {0} was not found in the database\r\n", prodCode)); 
-                } 
-                catch (InvalidBarcodeExcption e)
-                {
-                    Debug.WriteLine(e.ToString());
-                    var ai = e.Data["AI"];
-                    var s = e.Data["Scanline"];
-                    var location = e.Data["Location"];
-                    await ShowLockedoutDialog(e.Message,
-                        string.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
+                    var item = ViewModel.Items.Where(i => i.Scanline == scanline).FirstOrDefault();
+                    if(item != null)
+                    {
+                        await ViewModel.DeleteShippingItemAsync(item);
+                        await TrySaveOrderAsync();
+                        box.Focus(FocusState.Programmatic);
+                    }
+                    else
+                    {
+                        await ShowLockedoutDialog("Product Not Found", $"No item with the scanline {scanline} was found on order {ViewModel.Order.OrderID}" +
+                            $" Nothing was removed");
+                    }
                 }
-                catch (UnknownBarcodeFormatException e)
-                {
-                    Debug.WriteLine(e.ToString());
-                    await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
-                }
-                
             }
         }
     }
@@ -222,11 +241,6 @@ public sealed partial class FillOrdersPage : Page
             await ViewModel.LoadOrder(o.OrderID);
         }
         Scanline.Focus(FocusState.Programmatic);
-    }
-
-    private async void OrderedItems_RecordDeleting(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletingEventArgs e)
-    {
-        
     }
 
     private async void OrderedItems_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
@@ -471,6 +485,18 @@ public sealed partial class FillOrdersPage : Page
         {
             await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your Order. Please contact your system administrator\r\n" +
                 $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
+        }
+    }
+
+    private void RemoveItemCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+        if(RemoveItemCheckBox.IsChecked == true) 
+        {
+            Scanline.PlaceholderText = "Scan to remove a product...";
+        }
+        else
+        {
+            Scanline.PlaceholderText = "Scan to add a product...";
         }
     }
 }

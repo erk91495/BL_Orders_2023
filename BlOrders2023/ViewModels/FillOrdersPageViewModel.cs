@@ -194,21 +194,20 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     internal async Task DeleteShippingItemAsync(ShippingItem item)
     {
-        if (!Items.Remove(item))
+        Items.Remove(item);
+        await Task.Run(() => 
         {
-            await Task.Run(() => 
-            {
 
-                if (!_order!.ShippingItems.Remove(item))
-                {
-                    //throw new Exception();
-                }
-                else
-                {
-                    DecrementOrderedItem(item);
-                }
-            });
-        }
+            if (!_order!.ShippingItems.Remove(item))
+            {
+                //throw new Exception();
+            }
+            else
+            {
+                DecrementOrderedItem(item);
+            }
+        });
+        OnPropertyChanged(nameof(SortedOrderItems));
     }
 
 
