@@ -22,6 +22,8 @@ using BlOrders2023.Services;
 using System.Drawing.Printing;
 using BlOrders2023.Core.Services;
 using Syncfusion.UI.Xaml.DataGrid;
+using Microsoft.UI.Xaml.Input;
+using WinUIEx;
 
 namespace BlOrders2023.Views;
 
@@ -41,6 +43,7 @@ public sealed partial class FillOrdersPage : Page
         ViewModel = App.GetService<FillOrdersPageViewModel>();
         InitializeComponent();
         reportGenerator = new();
+        OrderedItems.SelectionController = new FillOrdersGridSelectionController(OrderedItems);
     }
 
     private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
@@ -223,20 +226,6 @@ public sealed partial class FillOrdersPage : Page
 
     private async void OrderedItems_RecordDeleting(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletingEventArgs e)
     {
-        //e.Cancel = true;
-        //ContentDialog dialog = new()
-        //{
-        //    XamlRoot = XamlRoot,
-        //    Title = "Confirm Delete",
-        //    Content = "Are you sure you want to delete all shipping items from this order? These changes cannot be undone.",
-        //    PrimaryButtonText = "Delete",
-        //    CloseButtonText = "Cancel",
-        //};
-        //var result = await dialog.ShowAsync();
-        //if (result == ContentDialogResult.Primary)
-        //{
-        //    //TODO DELETE THE ITEM
-        //}
         
     }
 
@@ -484,4 +473,43 @@ public sealed partial class FillOrdersPage : Page
                 $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
         }
     }
+}
+
+internal class FillOrdersGridSelectionController : GridSelectionController
+{
+    public FillOrdersGridSelectionController(SfDataGrid dataGrid) : base(dataGrid)
+    {
+    }
+
+    KeyRoutedEventArgs keyEventArgs = null;
+    public override bool HandleKeyDown(KeyRoutedEventArgs args)
+    {
+
+        if (args.Key == Windows.System.VirtualKey.Delete)
+        {
+            keyEventArgs = args;
+            ContentDialog dialog = new()
+            {
+                XamlRoot = this.DataGrid.XamlRoot,
+                Title = "Confirm Delete",
+                Content = "Are you sure you want to delete all shipping items from this order? These changes cannot be undone.",
+                PrimaryButtonText = "Delete",
+                CloseButtonText = "Cancel",
+            };
+
+            dialog.PrimaryButtonClick += DeleteDialog_PrimaryButtonClick;
+
+            var result = dialog.ShowAsync();
+            return false;
+        }
+
+        return base.HandleKeyDown(args);
+
+    }
+
+    private void DeleteDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        base.HandleKeyDown(keyEventArgs);
+    }
+
 }
