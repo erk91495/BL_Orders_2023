@@ -301,7 +301,6 @@
                        RelativePanel.Below="ProductEntryErrorMessage"
                        RelativePanel.Above="InvoiceTotalStack"
                        GridLinesVisibility="Both"
-                       IsEnabled="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
                        AutoGenerateColumns="False"
                        RelativePanel.AlignLeftWithPanel="True"
                        RelativePanel.AlignRightWithPanel="True"
@@ -309,7 +308,8 @@
                        SelectionUnit="Row"
                        EditorSelectionBehavior="MoveLast"
                        PointerMoved="OrderedItems_PointerMoved"
-                       IsTabStop="False">
+                       IsTabStop="False"
+                       IsReadOnly="{x:Bind ViewModel.CanAddItems, Mode=OneWay}">
 
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" 
@@ -324,15 +324,16 @@
                                       DisplayNumberFormat="N2"/>
                 <sf:GridNumericColumn HeaderText="Customer Price" 
                                       MappingName="ActualCustPrice" 
-                                      AllowEditing="True" 
-                                      DisplayNumberFormat="C" 
+                                      AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}" 
+                                      DisplayNumberFormat="C"
+                                      UseBindingValue="True"
                                       ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" 
                                       MappingName="Quantity" 
-                                      AllowEditing="True"/>
+                                      AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Allocated" 
                                       MappingName="QuanAllocated" 
-                                      AllowEditing="True"
+                                      AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
                                       IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                                       ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" 
@@ -346,7 +347,7 @@
                                       ColumnWidthMode="SizeToCells" 
                                       IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
                     <sf:GridUnboundColumn.CellTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="local:FillOrdersPage">
                             <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">
                                 <SymbolIcon Symbol="Delete"/>
                             </Button>
