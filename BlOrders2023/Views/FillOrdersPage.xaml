@@ -67,7 +67,7 @@
                     <sf:SfDataGrid x:Name="OrderedVsReceivedGrid"
                                        IsReadOnly="True"
                                        AutoGenerateColumns="False"
-                                       ItemsSource="{x:Bind ViewModel.Order.Items, Mode=OneWay}"
+                                       ItemsSource="{x:Bind ViewModel.SortedOrderItems, Mode=OneWay}"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.AlignTopWithPanel="True"
