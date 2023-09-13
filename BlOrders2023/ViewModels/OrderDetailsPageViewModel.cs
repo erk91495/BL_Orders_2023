@@ -284,7 +284,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
 
     public void AddItem(Product p, int? quantity = null)
     {
-        var tracked = _db.Products.Get(p.ProductID, false).First();
+        var tracked = _db.Products.Get(p.ProductID, true).First();
         OrderItem item = new(tracked, _order);
         if(quantity != null) 
         {

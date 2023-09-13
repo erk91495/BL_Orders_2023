@@ -388,9 +388,38 @@ public sealed partial class ReportsPage : Page
                         var order = ViewModel.GetOrder(id);
                         if (order != null)
                         {
-                            Palletizer palletizer = new Palletizer(new PalletizerConfig(), order);
-                            IEnumerable<Pallet> pallets = await palletizer.PalletizeAsync();
-                            reportPath = reportGenerator.GeneratePalletLoadingReport(order, pallets);
+                            var print = false;
+                            if (order.Allocated != true)
+                            {
+
+                                var printDialog = new ContentDialog()
+                                {
+                                    XamlRoot = XamlRoot,
+                                    Title = "Print Confirmation",
+                                    Content = "This order has not yet been allocated. Are you sure you want to print pallet tickets?",
+                                    PrimaryButtonText = "Print",
+                                    CloseButtonText = "Cancel",
+                                };
+
+                                result = await printDialog.ShowAsync();
+                                if (result == ContentDialogResult.Primary)
+                                {
+                                    print = true;
+                                }
+
+
+                            }
+                            else
+                            {
+                                print = true;
+                            }
+
+                            if(print) 
+                            {
+                                Palletizer palletizer = new Palletizer(new PalletizerConfig(), order);
+                                IEnumerable<Pallet> pallets = await palletizer.PalletizeAsync();
+                                reportPath = reportGenerator.GeneratePalletLoadingReport(order, pallets);
+                            }
                         }
                         else
                         {

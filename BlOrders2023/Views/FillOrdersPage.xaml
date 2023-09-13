@@ -67,7 +67,7 @@
                     <sf:SfDataGrid x:Name="OrderedVsReceivedGrid"
                                        IsReadOnly="True"
                                        AutoGenerateColumns="False"
-                                       ItemsSource="{x:Bind ViewModel.Order.Items, Mode=OneWay}"
+                                       ItemsSource="{x:Bind ViewModel.SortedOrderItems, Mode=OneWay}"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.AlignTopWithPanel="True"
@@ -245,7 +245,7 @@
                     </StackPanel>
 
                     <TextBox x:Name="Scanline"
-                             PlaceholderText="Scan a product..."
+                             PlaceholderText="Scan to add a product..."
                              RelativePanel.Below="CustomerInfo"
                              RelativePanel.AlignLeftWith="CustomerInfo"
                              Margin="10,10,0,0"
@@ -257,12 +257,19 @@
                              TabIndex="2"/>
 
                     <Button x:Name="ManualProductAdd" RelativePanel.RightOf="Scanline" RelativePanel.AlignBottomWith="Scanline"
-                            Margin="10,0,0,0" Click="ManualProductAdd_Click">
+                            Margin="10,0,20,0" Click="ManualProductAdd_Click">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Add A Product Manually" Padding="0,0,10,0"/>
                             <SymbolIcon Symbol="Add"/>
                         </StackPanel>
                     </Button>
+                    <CheckBox x:Name="RemoveItemCheckBox" 
+                              Content="Scan To Remove" 
+                              RelativePanel.RightOf="ManualProductAdd" 
+                              RelativePanel.AlignVerticalCenterWith="ManualProductAdd"
+                              Checked="RemoveItemCheckBox_Checked"
+                              Unchecked="RemoveItemCheckBox_Checked"
+                              />
 
                     <!--<ListView ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                               RelativePanel.Below="OrderedItems"
@@ -285,7 +292,6 @@
                                    SelectionMode="Extended"
                                    EditorSelectionBehavior="MoveLast"
                                    AllowDeleting="True"
-                                   RecordDeleting="OrderedItems_RecordDeleting"
                                    RecordDeleted="OrderedItems_RecordDeleted"
                                    ColumnWidthMode="AutoWithLastColumnFill"
                                    >
