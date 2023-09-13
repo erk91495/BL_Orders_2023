@@ -65,11 +65,23 @@ public sealed partial class OrderDetailsPage : Page
         PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
         OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
         this.DataContext = this;
+        this.Unloaded += OrderDetailsPage_Unloaded;
+    }
+
+    private void OrderDetailsPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        App.MainWindow.Closed -= MainWindow_Closed;
+    }
+
+    private void MainWindow_Closed(object sender, WindowEventArgs args)
+    {
+        args.Handled = true;
     }
     #endregion Constructors
     #region Methods
     private void OrderDetailsPage_Loaded(object sender, RoutedEventArgs e)
     {
+        App.MainWindow.Closed += MainWindow_Closed;
         if (ViewModel.Order != null)
         {
             var res = dispatcherQueue.EnqueueAsync(() =>
