@@ -202,7 +202,6 @@ public sealed partial class FillOrdersPage : Page
             Content = content,
             SecondaryButtonText = "Continue",
             DefaultButton = ContentDialogButton.None,
-
         };
         d.PreviewKeyDown += LockOutKeyPresses;
         SystemSounds.Exclamation.Play();
@@ -239,6 +238,10 @@ public sealed partial class FillOrdersPage : Page
         else if (args.ChosenSuggestion is Order o)
         {
             await ViewModel.LoadOrder(o.OrderID);
+        }
+        else
+        {
+            await ShowLockedoutDialog("Order Not Found", $"No order found for {input}");
         }
         Scanline.Focus(FocusState.Programmatic);
     }
