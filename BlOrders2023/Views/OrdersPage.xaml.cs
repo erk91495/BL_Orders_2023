@@ -18,6 +18,7 @@ using BlOrders2023.Models.Enums;
 using BlOrders2023.Services;
 using System.Drawing.Printing;
 using System.Media;
+using BlOrders2023.Helpers;
 
 namespace BlOrders2023.Views;
 
@@ -374,6 +375,11 @@ public sealed partial class OrdersPage : Page
             default:
                 break;
         }
+    }
+
+    private void OrdersGrid_CopyGridCellContent(object sender, Syncfusion.UI.Xaml.Grids.GridCopyPasteCellEventArgs e)
+    {
+        DatagridCellCopy.CopyGridCellContent(sender, e);
     }
     #endregion Methods
 }

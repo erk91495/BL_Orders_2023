@@ -242,7 +242,8 @@
                                    AllowSorting="False"
                                    SelectionMode="Single"
                                    NavigationMode="Row"
-                                   SelectionChanged="OrdersGrid_SelectionChanged">
+                                   SelectionChanged="OrdersGrid_SelectionChanged"
+                                   CopyGridCellContent="OrdersGrid_CopyGridCellContent">
 
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>

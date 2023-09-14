@@ -52,7 +52,8 @@
                        AddNewRowPosition="Top"
                        DataValidationMode="InView"
                        AddNewRowInitiating="ProductsGrid_AddNewRowInitiating"
-                       CurrentCellValidated="ProductsGrid_CurrentCellValidated">
+                       CurrentCellValidated="ProductsGrid_CurrentCellValidated"
+                       CopyGridCellContent="ProductsGrid_CopyGridCellContent">
             
             <sf:SfDataGrid.Columns>
                 <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" IsReadOnly="True"/>

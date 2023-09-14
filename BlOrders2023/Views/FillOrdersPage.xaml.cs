@@ -502,6 +502,11 @@ public sealed partial class FillOrdersPage : Page
             Scanline.PlaceholderText = "Scan to add a product...";
         }
     }
+
+    private void OrderedItems_CopyGridCellContent(object sender, Syncfusion.UI.Xaml.Grids.GridCopyPasteCellEventArgs e)
+    {
+        DatagridCellCopy.CopyGridCellContent(sender,e);
+    }
 }
 
 internal class FillOrdersGridSelectionController : GridSelectionController

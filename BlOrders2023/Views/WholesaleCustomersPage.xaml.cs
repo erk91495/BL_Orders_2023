@@ -1,4 +1,5 @@
-﻿using BlOrders2023.Models;
+﻿using BlOrders2023.Helpers;
+using BlOrders2023.Models;
 using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -139,5 +140,10 @@ public sealed partial class WholesaleCustomersPage : Page
             Order order = new(customer);
             Frame.Navigate(typeof(OrderDetailsPage), order);
         }
+    }
+
+    private void CustomersGrid_CopyingRowClipboardContent(object sender, CommunityToolkit.WinUI.UI.Controls.DataGridRowClipboardEventArgs e)
+    {
+            DatagridCellCopy.CopyGridCellContent(sender, e);
     }
 }
