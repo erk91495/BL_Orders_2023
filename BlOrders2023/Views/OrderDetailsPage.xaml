@@ -188,6 +188,7 @@
                                                        AllowNull="False"
                                                        SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
                                                        SelectedDateChanging="PickupDate_SelectedDateChanging"
+                                                       DropDownPlacement="Bottom"
                                                        TabIndex="3"/>
                         <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('PickupDate'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('PickupDate'), Mode=OneWay}" 
