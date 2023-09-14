@@ -115,7 +115,7 @@
                             Padding="0,10,0,5"
                             FontSize="50"
                             FontWeight="SemiBold"/>-->
-            <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Vertical" Spacing="15">
                 
                 <ComboBox x:Name="OrderStatusCombo"                  
                       xmlns:ui="using:CommunityToolkit.WinUI.UI"
@@ -123,9 +123,13 @@
                       SelectedItem="{Binding ViewModel.OrderStatus, Mode=TwoWay}"
                       Margin="0,50,0,0"
                       IsEnabled="False"
-                      FontSize="20"/>
-                
-                        <!-- Two way binding is causing a stack overflow so this is my workaround-->
+                      FontSize="20"
+                      HorizontalAlignment="Right"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="Ordered On:" FontSize="{StaticResource MediumFontSize}"/>
+                    <TextBlock Text="{x:Bind ViewModel.Order.OrderDate.ToString(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
         <RelativePanel x:Name="UserInputRanel"
