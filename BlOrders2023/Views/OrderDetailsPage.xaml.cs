@@ -512,10 +512,42 @@ public sealed partial class OrderDetailsPage : Page
             }
             else
             {
-                var quantity = await PromptQuantityOrderdAsync(productToAdd.ProductID, productToAdd.ProductName ?? "null");
-                if (quantity != int.MaxValue)
+                if(productToAdd.IsCredit)
                 {
-                    ViewModel.AddItem(productToAdd, quantity);
+                    SingleValueInputDialog inputControl = new()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = $"{productToAdd.ProductName}",
+                        PrimaryButtonText = "Submit",
+                        Prompt = "Total?",
+                        ValidateValue = delegate (string? value)
+                        {
+                            if (value != null)
+                            {
+                                if (decimal.TryParse(value, out var result) && result != 0)
+                                {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        },
+                    };
+                    var res = await inputControl.ShowAsync();
+                    if (res == ContentDialogResult.Primary && inputControl.Value != null)
+                    {
+                        var price = decimal.Parse(inputControl?.Value!);
+                        ViewModel.AddItem(productToAdd, 1, price);
+                         
+                    }
+
+                }
+                else
+                {
+                    var quantity = await PromptQuantityOrderdAsync(productToAdd.ProductID, productToAdd.ProductName ?? "null");
+                    if (quantity != int.MaxValue)
+                    {
+                        ViewModel.AddItem(productToAdd, quantity);
+                    }
                 }
             }
 

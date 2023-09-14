@@ -75,8 +75,8 @@
                 <sf:GridTextColumn MappingName="KPCCode" AllowEditing="True"/>
                 <sf:GridTextColumn MappingName="ALUCode" AllowEditing="True"/>
                 <sf:GridTextColumn HeaderText="Company Code" MappingName="CompanyCode" AllowEditing="True"/>
-                <sf:GridCheckBoxColumn MappingName="Inactive" 
-                                       AllowEditing="True"/>
+                <sf:GridCheckBoxColumn MappingName="Inactive" AllowEditing="True"/>
+                <sf:GridCheckBoxColumn MappingName="IsCredit" AllowEditing="True"/>
 
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
