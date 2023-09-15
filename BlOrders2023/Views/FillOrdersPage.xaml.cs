@@ -507,6 +507,13 @@ public sealed partial class FillOrdersPage : Page
     {
         DatagridCellCopy.CopyGridCellContent(sender,e);
     }
+
+    private async void OrderedItems_CurrentCellEndEdit(object sender, CurrentCellEndEditEventArgs e)
+    {
+        await TrySaveOrderAsync();
+        OrderedVsReceivedGrid.View.Refresh();
+
+    }
 }
 
 internal class FillOrdersGridSelectionController : GridSelectionController

@@ -17,8 +17,9 @@
         <converters:TimeFormatConverter x:Key="TimeFormatConverter"/>
         <converters:WeightFormatConverter x:Key="WeightFormatConverter"/>
         <uiConverters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <converters:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
 
-        <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
+            <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
             <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
                 <Expander.Header>
                     <StackPanel Orientation="Horizontal" Spacing="20">
@@ -295,6 +296,7 @@
                                    AllowDeleting="True"
                                    RecordDeleted="OrderedItems_RecordDeleted"
                                    ColumnWidthMode="AutoWithLastColumnFill"
+                                   CurrentCellEndEdit="OrderedItems_CurrentCellEndEdit"
                                    CopyGridCellContent="OrderedItems_CopyGridCellContent">
                         
                         <sf:SfDataGrid.Columns>
@@ -302,7 +304,12 @@
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="SizeToCells"/>
                             <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline" ColumnWidthMode="SizeToCells" IsReadOnly="False"/>
                             <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" IsReadOnly="True" DisplayNumberFormat="N2"/>
-                            <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True" DisplayNumberFormat="N0"/>
+                            <sf:GridNumericColumn HeaderText="Quantity Received" 
+                                                  MappingName="QuanRcvd" 
+                                                  AllowEditing="True" 
+                                                  DisplayNumberFormat="N0" 
+                                                  UseBindingValue="True"
+                                                  ValueBinding="{Binding Path=QuanRcvd, Mode=TwoWay,  Converter={StaticResource IntToDoubleConverter}}"/>
                             <sf:GridTextColumn HeaderText="Serial" MappingName="PackageSerialNumber"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
