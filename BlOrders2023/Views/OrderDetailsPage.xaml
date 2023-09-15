@@ -262,9 +262,10 @@
                                 HorizontalAlignment="Right">
                         <TextBlock Text="Memo Total: $" VerticalAlignment="Center"/>
                         <NumberBox x:Name="MemoTotal"
-                                   Value="{x:Bind ViewModel.Memo_Totl, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                   Value="{x:Bind ViewModel.Memo_Totl, Mode=OneWay, Converter={StaticResource DecimalToDoubleConverter}}"
                                    Background="Transparent"
-                                   IsTabStop="False"    
+                                   IsTabStop="False"
+                                   IsEnabled="False"
                                    />
                     </StackPanel>
                 </StackPanel>
