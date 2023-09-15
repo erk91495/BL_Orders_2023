@@ -273,6 +273,7 @@ public sealed partial class OrdersPage : Page
 
     private async Task PrintInvoiceAsync()
     {
+        PrinterSettings printSettings = new();
         var printInvoice = false;
         if (ViewModel.SelectedOrder.CanPrintInvoice)
         {
@@ -290,6 +291,7 @@ public sealed partial class OrdersPage : Page
                 if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
+                    printSettings.Copies = 1;
                 }
             }
             //Not all items on order
@@ -307,12 +309,14 @@ public sealed partial class OrdersPage : Page
                 if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
+                    printSettings.Copies = 2;
                 }
             }
             //Print invoice
             else
             {
                 printInvoice = true;
+                printSettings.Copies = 2;
             }
         }
 
@@ -321,8 +325,6 @@ public sealed partial class OrdersPage : Page
         {
             var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
 
-            PrinterSettings printSettings = new();
-            printSettings.Copies = 2;
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
 
