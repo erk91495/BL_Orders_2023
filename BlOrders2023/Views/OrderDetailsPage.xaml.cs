@@ -73,9 +73,27 @@ public sealed partial class OrderDetailsPage : Page
         App.MainWindow.Closed -= MainWindow_Closed;
     }
 
-    private void MainWindow_Closed(object sender, WindowEventArgs args)
+    private async void MainWindow_Closed(object sender, WindowEventArgs args)
     {
         args.Handled = true;
+        ContentDialog dialog = new ContentDialog()
+        {
+            XamlRoot = XamlRoot,
+            Title = "Close Application",
+            Content = "Are you sure you want to exit the application? Unsaved changes will be discarded.",
+            PrimaryButtonText = "Exit",
+            CloseButtonText = "Cancel",
+        };
+
+        var res = await dialog.ShowAsync();
+        if(res == ContentDialogResult.Primary)
+        {
+            if(sender is MainWindow window)
+            {
+                App.MainWindow.Closed -= MainWindow_Closed;
+                App.MainWindow.Close();
+            }
+        }
     }
     #endregion Constructors
     #region Methods
