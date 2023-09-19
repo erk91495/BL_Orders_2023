@@ -13,7 +13,7 @@
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
     xmlns:calendar="using:Syncfusion.UI.Xaml.Calendar"
-    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters" 
+    xmlns:converters="using:CommunityToolkit.WinUI.Converters" 
     xmlns:enums="using:BlOrders2023.Models.Enums"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -115,17 +115,21 @@
                             Padding="0,10,0,5"
                             FontSize="50"
                             FontWeight="SemiBold"/>-->
-            <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Vertical" Spacing="15">
                 
                 <ComboBox x:Name="OrderStatusCombo"                  
-                      xmlns:ui="using:CommunityToolkit.WinUI.UI"
+                      xmlns:ui="using:CommunityToolkit.WinUI"
                       ItemsSource="{ui:EnumValues Type=enums:OrderStatus}"
                       SelectedItem="{Binding ViewModel.OrderStatus, Mode=TwoWay}"
                       Margin="0,50,0,0"
                       IsEnabled="False"
-                      FontSize="20"/>
-                
-                        <!-- Two way binding is causing a stack overflow so this is my workaround-->
+                      FontSize="20"
+                      HorizontalAlignment="Right"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="Ordered On:" FontSize="{StaticResource MediumFontSize}"/>
+                    <TextBlock Text="{x:Bind ViewModel.Order.OrderDate.ToString(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
         <RelativePanel x:Name="UserInputRanel"
@@ -188,6 +192,7 @@
                                                        AllowNull="False"
                                                        SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
                                                        SelectedDateChanging="PickupDate_SelectedDateChanging"
+                                                       DropDownPlacement="Bottom"
                                                        TabIndex="3"/>
                         <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('PickupDate'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('PickupDate'), Mode=OneWay}" 
@@ -257,9 +262,10 @@
                                 HorizontalAlignment="Right">
                         <TextBlock Text="Memo Total: $" VerticalAlignment="Center"/>
                         <NumberBox x:Name="MemoTotal"
-                                   Value="{x:Bind ViewModel.Memo_Totl, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                   Value="{x:Bind ViewModel.Memo_Totl, Mode=OneWay, Converter={StaticResource DecimalToDoubleConverter}}"
                                    Background="Transparent"
-                                   IsTabStop="False"    
+                                   IsTabStop="False"
+                                   IsEnabled="False"
                                    />
                     </StackPanel>
                 </StackPanel>

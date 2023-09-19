@@ -73,9 +73,27 @@ public sealed partial class OrderDetailsPage : Page
         App.MainWindow.Closed -= MainWindow_Closed;
     }
 
-    private void MainWindow_Closed(object sender, WindowEventArgs args)
+    private async void MainWindow_Closed(object sender, WindowEventArgs args)
     {
         args.Handled = true;
+        ContentDialog dialog = new ContentDialog()
+        {
+            XamlRoot = XamlRoot,
+            Title = "Close Application",
+            Content = "Are you sure you want to exit the application? Unsaved changes will be discarded.",
+            PrimaryButtonText = "Exit",
+            CloseButtonText = "Cancel",
+        };
+
+        var res = await dialog.ShowAsync();
+        if(res == ContentDialogResult.Primary)
+        {
+            if(sender is MainWindow window)
+            {
+                App.MainWindow.Closed -= MainWindow_Closed;
+                App.MainWindow.Close();
+            }
+        }
     }
     #endregion Constructors
     #region Methods
@@ -512,10 +530,42 @@ public sealed partial class OrderDetailsPage : Page
             }
             else
             {
-                var quantity = await PromptQuantityOrderdAsync(productToAdd.ProductID, productToAdd.ProductName ?? "null");
-                if (quantity != int.MaxValue)
+                if(productToAdd.IsCredit)
                 {
-                    ViewModel.AddItem(productToAdd, quantity);
+                    SingleValueInputDialog inputControl = new()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = $"{productToAdd.ProductName}",
+                        PrimaryButtonText = "Submit",
+                        Prompt = "Total?",
+                        ValidateValue = delegate (string? value)
+                        {
+                            if (value != null)
+                            {
+                                if (decimal.TryParse(value, out var result) && result != 0)
+                                {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        },
+                    };
+                    var res = await inputControl.ShowAsync();
+                    if (res == ContentDialogResult.Primary && inputControl.Value != null)
+                    {
+                        var price = decimal.Parse(inputControl?.Value!);
+                        ViewModel.AddItem(productToAdd, 1, price);
+                         
+                    }
+
+                }
+                else
+                {
+                    var quantity = await PromptQuantityOrderdAsync(productToAdd.ProductID, productToAdd.ProductName ?? "null");
+                    if (quantity != int.MaxValue)
+                    {
+                        ViewModel.AddItem(productToAdd, quantity);
+                    }
                 }
             }
 
@@ -591,6 +641,7 @@ public sealed partial class OrderDetailsPage : Page
     private async Task PrintInvoiceAsync()
     {
         var printInvoice = false;
+        PrinterSettings printSettings = new();
         if (ViewModel.CanPrintInvoice)
         {
             //Invoice already printed print copy
@@ -607,6 +658,7 @@ public sealed partial class OrderDetailsPage : Page
                 if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
+                    printSettings.Copies = 1;
                 }
             }
             //Not all items on order
@@ -624,12 +676,14 @@ public sealed partial class OrderDetailsPage : Page
                 if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
+                    printSettings.Copies = 2;
                 }
             }
             //Print invoice
             else
             {
                 printInvoice = true;
+                printSettings.Copies = 2;
             }
         }
 
@@ -638,8 +692,7 @@ public sealed partial class OrderDetailsPage : Page
         {
             var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
 
-            PrinterSettings printSettings = new();
-            printSettings.Copies = 2;
+
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
 

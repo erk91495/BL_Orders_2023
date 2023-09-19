@@ -328,13 +328,9 @@ public class CustomerDataInputControlViewModel : ObservableValidator
         _customer = new WholesaleCustomer();
         _ = GetClassesAsync();
     }
+    #endregion Constructors
 
-    private void HasErrorsChanged(object? sender, System.ComponentModel.DataErrorsChangedEventArgs e)
-    {
-        OnPropertyChanged(nameof(GetErrorMessage));
-        OnPropertyChanged(nameof(VisibleIfError));
-    }
-
+    #region Methods
     public async Task GetClassesAsync()
     {
         var db = App.GetNewDatabase();
@@ -351,12 +347,39 @@ public class CustomerDataInputControlViewModel : ObservableValidator
         });
     }
 
-    #endregion Constructors
-
-    #region Methods
-
+    internal bool SaveCustomer(bool overwrite = false)
+    {
+        ValidateAllProperties();
+        if (!HasErrors)
+        {
+            var db = App.GetNewDatabase();
+            db.Customers.Upsert(Customer, overwrite);
+            return true;
+        }
+        return false;
+    }
+    internal void SetCustomer(WholesaleCustomer customer)
+    {
+        //var entityOrder = _db.Customers.Get(customer.CustID).FirstOrDefault();
+        //if (entityOrder != null)
+        //{
+        //    //We want to track changes so get it from the db context
+        //    _customer = entityOrder;
+        //}
+        //else
+        //{
+        //    //Must be a new Order
+        //    _customer = customer;
+        //}
+        _customer = customer;
+    }
     #region Validators
 
+    private void HasErrorsChanged(object? sender, System.ComponentModel.DataErrorsChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(GetErrorMessage));
+        OnPropertyChanged(nameof(VisibleIfError));
+    }
 
     public string GetErrorMessage(string name)
     {
@@ -398,19 +421,6 @@ public class CustomerDataInputControlViewModel : ObservableValidator
         }
     }
 
-
-    internal bool SaveCustomer(bool overwrite = false)
-    {
-        ValidateAllProperties();
-        if (!HasErrors)
-        {
-            var db = App.GetNewDatabase();
-            db.Customers.Upsert(Customer, overwrite);
-            return true;
-        }
-        return false;
-    }
-
     public static ValidationResult? ValidateCustomerName(string? value, ValidationContext context)
     {
         if (context.ObjectInstance is CustomerDataInputControlViewModel vm && vm.CheckIfUnique)
@@ -432,22 +442,6 @@ public class CustomerDataInputControlViewModel : ObservableValidator
             return ValidationResult.Success;
         }
         
-    }
-
-    internal void SetCustomer(WholesaleCustomer customer)
-    {
-        //var entityOrder = _db.Customers.Get(customer.CustID).FirstOrDefault();
-        //if (entityOrder != null)
-        //{
-        //    //We want to track changes so get it from the db context
-        //    _customer = entityOrder;
-        //}
-        //else
-        //{
-        //    //Must be a new Order
-        //    _customer = customer;
-        //}
-        _customer = customer;
     }
     #endregion Validators
     #endregion Methods
