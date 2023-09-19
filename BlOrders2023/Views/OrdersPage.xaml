@@ -19,10 +19,10 @@
                 Click="MenuFlyoutViewDetails_Click"
                 Icon="Edit"
                 Text="Edit"/>
-            <MenuFlyoutItem
+            <!--<MenuFlyoutItem
                 Click="MenuFlyoutNewOrderClick"
                 Icon="Add"
-                Text="New"/>
+                Text="New"/>-->
             <MenuFlyoutItem
                 Click="MenuFlyoutFillOrderClick"
                 Icon="List"

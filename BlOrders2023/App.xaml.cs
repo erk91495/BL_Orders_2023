@@ -151,7 +151,7 @@ public partial class App : Application
         var DBVersion = App.GetNewDatabase().dbVersion;
         if (!SupportedDBVersion.Equals(DBVersion))
         {
-            var version = Windows.ApplicationModel.Package.Current.Id.Version;
+            var version = Package.Current.Id.Version;
             var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
             var message = "The application version you are running is not compatible with the current Database version\r\n" +
                 $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n"+

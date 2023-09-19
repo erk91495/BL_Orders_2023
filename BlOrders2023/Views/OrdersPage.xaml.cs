@@ -157,12 +157,15 @@ public sealed partial class OrdersPage : Page
     /// </summary>
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the click event</param>
-    private void MenuFlyoutNewOrderClick(object _sender, RoutedEventArgs e)
+    private async void MenuFlyoutNewOrderClick(object _sender, RoutedEventArgs e)
     {
         if (ViewModel?.SelectedOrder?.Customer != null)
         {
-            WholesaleCustomer customer = ViewModel.SelectedOrder.Customer;
-            CreateNewOrder(customer);
+            WholesaleCustomer? customer = await ViewModel.GetCustomerAsync(ViewModel.SelectedOrder.CustID);
+            if(customer != null)
+            {
+                CreateNewOrder(customer);
+            }
         }
     }
 
