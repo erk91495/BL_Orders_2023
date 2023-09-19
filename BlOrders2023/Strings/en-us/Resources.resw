@@ -181,7 +181,7 @@
     <value>PO:  </value>
   </data>
   <data name="Order_ShippingType.Text" xml:space="preserve">
-    <value>Shiping Type: </value>
+    <value>Shipping Type: </value>
   </data>
   <data name="OrdersGridColumn_ItemID.Header" xml:space="preserve">
     <value>Item #</value>

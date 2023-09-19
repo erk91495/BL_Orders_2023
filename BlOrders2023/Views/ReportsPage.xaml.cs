@@ -16,7 +16,6 @@ using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
 using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
-using Microsoft.Graphics.Canvas.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

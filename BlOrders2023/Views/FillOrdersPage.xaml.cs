@@ -307,6 +307,7 @@ public sealed partial class FillOrdersPage : Page
     private async Task PrintInvoiceAsync()
     {
         var printInvoice = false;
+        PrinterSettings printSettings = new();
         if (ViewModel.CanPrintInvoice)
         {
             //Invoice already printed print copy
@@ -323,6 +324,7 @@ public sealed partial class FillOrdersPage : Page
                 if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
+                    printSettings.Copies = 1;
                 }
             }
             //Not all items on order
@@ -340,12 +342,14 @@ public sealed partial class FillOrdersPage : Page
                 if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
+                    printSettings.Copies = 2;
                 }
             }
             //Print invoice
             else
             {
                 printInvoice = true;
+                printSettings.Copies = 2;
             }
         }
         
@@ -354,8 +358,6 @@ public sealed partial class FillOrdersPage : Page
         {
             var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
 
-            PrinterSettings printSettings = new();
-            printSettings.Copies = 2;
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
 
@@ -501,6 +503,18 @@ public sealed partial class FillOrdersPage : Page
         {
             Scanline.PlaceholderText = "Scan to add a product...";
         }
+    }
+
+    private void OrderedItems_CopyGridCellContent(object sender, Syncfusion.UI.Xaml.Grids.GridCopyPasteCellEventArgs e)
+    {
+        DatagridCellCopy.CopyGridCellContent(sender,e);
+    }
+
+    private async void OrderedItems_CurrentCellEndEdit(object sender, CurrentCellEndEditEventArgs e)
+    {
+        await TrySaveOrderAsync();
+        OrderedVsReceivedGrid.View.Refresh();
+
     }
 }
 

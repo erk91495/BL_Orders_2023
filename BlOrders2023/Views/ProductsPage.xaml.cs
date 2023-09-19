@@ -25,6 +25,7 @@ using Windows.Globalization.NumberFormatting;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.ObjectModel;
+using BlOrders2023.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -113,6 +114,10 @@ public sealed partial class ProductsPage : Page
             }
         }
     }
-    
+
+    private void ProductsGrid_CopyGridCellContent(object sender, Syncfusion.UI.Xaml.Grids.GridCopyPasteCellEventArgs e)
+    {
+        DatagridCellCopy.CopyGridCellContent(sender, e);
+    }
     #endregion Methods
 }
