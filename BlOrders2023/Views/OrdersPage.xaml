@@ -28,6 +28,22 @@
                 Icon="List"
                 Text="Fill"
                 IsEnabled="{x:Bind ViewModel.SelectedOrder.CanFillOrder, Mode=OneWay}"/>
+            <MenuFlyoutItem
+                Click="MenuFlyoutPdfOrder_Click"
+                Text="PDF Order"
+                IsEnabled="{x:Bind ViewModel.SelectedOrder.CanPrintOrder, Mode=OneWay}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xEA90;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Click="MenuFlyoutPdfInvoice_Click"
+                Text="PDF Invoice"
+                IsEnabled="{x:Bind ViewModel.SelectedOrder.CanPrintInvoice, Mode=OneWay}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xEA90;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
         </MenuFlyout>
     </Page.Resources>
     <RelativePanel>

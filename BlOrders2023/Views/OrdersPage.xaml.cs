@@ -99,14 +99,7 @@ public sealed partial class OrdersPage : Page
     {
         if (ViewModel.SelectedOrder.OrderStatus == Models.Enums.OrderStatus.Ordered)
         {
-            var filePath = reportGenerator.GeneratePickList(ViewModel.SelectedOrder);
-
-            PrinterSettings printSettings = new();
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
-
-            ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Filling;
-            _ = ViewModel.SaveCurrentOrderAsync();
+            await PrintOrderAsync();
         }
         else if (ViewModel.SelectedOrder.CanPrintInvoice)
         {
@@ -118,15 +111,12 @@ public sealed partial class OrdersPage : Page
         }
     }
 
-    #endregion Pane Buttons
-
-    #region Orders Grid
     /// <summary>
     /// Handles doubleclick events for the orders datagrid 
     /// </summary>
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the doubletaped event</param>
-    private void Order_OrdersGrid_DoubleTapped(object _sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)=>
+    private void Order_OrdersGrid_DoubleTapped(object _sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e) =>
         NavigateToOrderDetailsPage();
 
     /// <summary>
@@ -141,6 +131,34 @@ public sealed partial class OrdersPage : Page
         {
             ViewModel.SelectedOrder = (Order)element.DataContext;
         }
+    }
+    #endregion Pane Buttons
+
+    #region Orders Grid
+
+    private void OrdersGrid_SelectionChanged(object sender, Syncfusion.UI.Xaml.Grids.GridSelectionChangedEventArgs e)
+    {
+        switch (ViewModel.SelectedOrder.OrderStatus)
+        {
+            case Models.Enums.OrderStatus.Ordered:
+                Order_BtnPrintInvoice.Content = "Print Order";
+                break;
+            case Models.Enums.OrderStatus.Filling:
+            case Models.Enums.OrderStatus.Filled:
+                Order_BtnPrintInvoice.Content = "Print Invoice";
+                break;
+            case Models.Enums.OrderStatus.Invoiced:
+            case Models.Enums.OrderStatus.Complete:
+                Order_BtnPrintInvoice.Content = "Reprint Invoice";
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void OrdersGrid_CopyGridCellContent(object sender, Syncfusion.UI.Xaml.Grids.GridCopyPasteCellEventArgs e)
+    {
+        DatagridCellCopy.CopyGridCellContent(sender, e);
     }
 
     #region Menu Flyouts
@@ -176,7 +194,24 @@ public sealed partial class OrdersPage : Page
     /// <param name="e">event args for the click event</param>
     private void MenuFlyoutFillOrderClick(object _sender, RoutedEventArgs e) =>
         NavigateToFillOrdersPage();
+
+    /// <summary>
+    /// Handles the click event for the pdf order button
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
+    private async void MenuFlyoutPdfOrder_Click(object _sender, RoutedEventArgs e) => await PrintOrderAsync(false);
+        
+
+    /// <summary>
+    /// Handles the click event for the pdf invoice button
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
+    private async void MenuFlyoutPdfInvoice_Click(object _sender, RoutedEventArgs e) =>
+        await PrintInvoiceAsync(false);
     #endregion Menu Flyouts
+
     #endregion Orders Grid
 
     /// <summary>
@@ -274,7 +309,7 @@ public sealed partial class OrdersPage : Page
         }
     }
 
-    private async Task PrintInvoiceAsync()
+    private async Task PrintInvoiceAsync(bool autoprint = true)
     {
         PrinterSettings printSettings = new();
         var printInvoice = false;
@@ -328,8 +363,21 @@ public sealed partial class OrdersPage : Page
         {
             var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
 
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            
+            if (autoprint)
+            {
+                var printer = new PDFPrinterService(filePath);
+                await printer.PrintPdfAsync(printSettings);
+            }
+            else
+            {
+                LauncherOptions options = new()
+                {
+                    ContentType = "application/pdf"
+                };
+                _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+            }
+            
 
             if (ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filling || ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filled)
             {
@@ -338,6 +386,32 @@ public sealed partial class OrdersPage : Page
             }
         }
     }
+
+    private async Task PrintOrderAsync(bool autoprint = true)
+    {
+        var filePath = reportGenerator.GeneratePickList(ViewModel.SelectedOrder);
+
+        if(autoprint)
+        {
+            PrinterSettings printSettings = new();
+            var printer = new PDFPrinterService(filePath);
+            await printer.PrintPdfAsync(printSettings);
+        }
+        else
+        {
+            LauncherOptions options = new()
+            {
+                ContentType = "application/pdf"
+            };
+            _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+        }
+        if(ViewModel.SelectedOrder.OrderStatus == OrderStatus.Ordered)
+        {
+            ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Filling;
+            await ViewModel.SaveCurrentOrderAsync();
+        }
+    }
+
     public async Task<bool> TrySaveCurrentOrderAsync()
     {
         try
@@ -362,29 +436,5 @@ public sealed partial class OrdersPage : Page
 
     }
 
-    private void OrdersGrid_SelectionChanged(object sender, Syncfusion.UI.Xaml.Grids.GridSelectionChangedEventArgs e)
-    {
-        switch (ViewModel.SelectedOrder.OrderStatus)
-        {
-            case Models.Enums.OrderStatus.Ordered:
-                Order_BtnPrintInvoice.Content = "Print Order";
-                break;
-            case Models.Enums.OrderStatus.Filling:
-            case Models.Enums.OrderStatus.Filled:
-                Order_BtnPrintInvoice.Content = "Print Invoice";
-                break;
-            case Models.Enums.OrderStatus.Invoiced:
-            case Models.Enums.OrderStatus.Complete:
-                Order_BtnPrintInvoice.Content = "Reprint Invoice";
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void OrdersGrid_CopyGridCellContent(object sender, Syncfusion.UI.Xaml.Grids.GridCopyPasteCellEventArgs e)
-    {
-        DatagridCellCopy.CopyGridCellContent(sender, e);
-    }
     #endregion Methods
 }
