@@ -58,7 +58,7 @@ public partial class App : Application
 
     public App()
     {
-        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NGaF5cXmVCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXlceXRSQmBZUU1+XUc=");
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NHaF5cXmVCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXZfeXRSQmFdVEB/V0U=");
         QuestPDF.Settings.License = LicenseType.Community;
 
         InitializeComponent();

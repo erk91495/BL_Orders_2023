@@ -8,7 +8,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:vm="using:BlOrders2023.ViewModels.Converters"
     xmlns:enums="using:BlOrders2023.Models.Enums"
-    xmlns:uiConverters="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:uiConverters="using:CommunityToolkit.WinUI.Converters"
     mc:Ignorable="d">
 
     <Page.Resources>

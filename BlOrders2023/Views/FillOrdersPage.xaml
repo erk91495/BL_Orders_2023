@@ -7,7 +7,7 @@
     xmlns:models="using:BlOrders2023.Models"
     xmlns:vm="using:BlOrders2023.ViewModels"
     xmlns:converters="using:BlOrders2023.ViewModels.Converters"
-    xmlns:uiConverters="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:uiConverters="using:CommunityToolkit.WinUI.Converters"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:helpers="using:BlOrders2023.Helpers"
     mc:Ignorable="d">
