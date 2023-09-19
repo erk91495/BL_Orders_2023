@@ -23,6 +23,7 @@ using Windows.ApplicationModel;
 using Microsoft.UI.Dispatching;
 using BlOrders2023.Core.Contracts;
 using BlOrders2023.Core.Helpers;
+using System.Diagnostics;
 
 namespace BlOrders2023;
 
@@ -136,7 +137,7 @@ public partial class App : Application
         base.OnLaunched(args);
         var localsettings = App.GetService<ILocalSettingsService>();
         //var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
-        var dbServer = "Eric-PC";
+        var dbServer = "BL4e";
         //var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
         var dbName = "BL_Enterprise";
         var dbOptions = new DbContextOptionsBuilder<SqlBLOrdersDBContext>();
@@ -159,6 +160,14 @@ public partial class App : Application
             System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
             Exit();
         }
+
+#if DEBUG
+        if(dbServer == "BL4" && dbName == "BL_Enterprise")
+        {
+            var message = "You are running a production DB with a debug application version.";
+            System.Windows.Forms.MessageBox.Show(message, $"WARNING", System.Windows.Forms.MessageBoxButtons.OK);
+        }
+#endif // DEBUG
 
         //IAllocatorService allocator = new OrderAllocator(GetNewDatabase());
         //IAllocatorConfig config = new OrderAllocatorConfiguration()
