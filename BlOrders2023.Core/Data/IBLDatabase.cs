@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,4 +18,5 @@ public interface IBLDatabase
     public IInventoryTable Inventory { get; }
     public IAllocationTable Allocation { get; }
     public Version dbVersion { get; }
+    public DbConnection DbConnection{ get; }
 }

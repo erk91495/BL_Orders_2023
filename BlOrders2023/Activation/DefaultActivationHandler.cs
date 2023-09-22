@@ -1,6 +1,5 @@
 ﻿using BlOrders2023.Contracts.Services;
 using BlOrders2023.ViewModels;
-
 using Microsoft.UI.Xaml;
 
 namespace BlOrders2023.Activation;
@@ -8,6 +7,7 @@ namespace BlOrders2023.Activation;
 public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
     private readonly INavigationService _navigationService;
+    
 
     public DefaultActivationHandler(INavigationService navigationService)
     {

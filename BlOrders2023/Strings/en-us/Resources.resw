@@ -225,4 +225,7 @@
   <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>https://YourPrivacyUrlGoesHere/</value>
   </data>
+  <data name="Settings_DatabaseSettings.Text" xml:space="preserve">
+    <value>Database Settings</value>
+  </data>
 </root>
