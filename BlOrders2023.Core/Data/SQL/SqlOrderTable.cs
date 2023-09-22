@@ -160,7 +160,7 @@ internal class SqlOrderTable : IOrderTable
             .Include(order => order.Customer)
             .Include(order => order.ShippingItems)
             .Where(order => ids.Contains(order.OrderID))
-            .AsNoTracking()
+            .AsNoTrackingWithIdentityResolution()
             .ToListAsync();
         }
     }

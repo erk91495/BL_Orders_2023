@@ -25,6 +25,7 @@ public class Product : ObservableObject
     private string? _companyCode;
     private string? _ALUCode;
     private bool _inactive;
+    private bool _isCredit;
     #endregion Fields
 
     #region Properties
@@ -97,6 +98,12 @@ public class Product : ObservableObject
         get => _inactive;
         set => SetProperty(ref _inactive, value);
     }
+    [Required]
+    public bool IsCredit
+    {
+        get => _isCredit;
+        set => SetProperty(ref _isCredit, value);
+    }
 
     #endregion Properties
     public Product()
@@ -115,6 +122,7 @@ public class Product : ObservableObject
         CompanyCode = product.CompanyCode;
         ALUCode = product.ALUCode;
         Inactive = product.Inactive;
+        IsCredit = product.IsCredit;
     }
     public override string ToString()
     {

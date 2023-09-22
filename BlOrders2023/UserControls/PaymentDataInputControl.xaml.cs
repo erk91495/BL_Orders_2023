@@ -160,8 +160,10 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
 
     private void AutoSuggestBox_LostFocus(object sender, RoutedEventArgs e)
     {
+        
         if (sender is AutoSuggestBox autoBox)
         {
+            InvoiceSelectionBox_QuerySubmitted(autoBox, new());
             autoBox.IsSuggestionListOpen = false;
         }
     }
@@ -192,7 +194,7 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
             FoundOrder = o;
 
         }
-        else if (!string.IsNullOrEmpty(args.QueryText))
+        else if (!string.IsNullOrEmpty(sender.Text))
         {
             var id = sender.Text.Trim();
             var result = int.TryParse(id, out var orderID);
@@ -215,11 +217,11 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
             CustomerSelectionBox.Text = FoundOrder.Customer.CustomerName;
             SelectedCustomer = FoundOrder.Customer;
             OnPropertyChanged(nameof(GetBalanceDue));
-            var options = new FindNextElementOptions()
-            {
-                SearchRoot = this,
-            };
-            FocusManager.TryMoveFocus(FocusNavigationDirection.Down, options);
+            //var options = new FindNextElementOptions()
+            //{
+            //    SearchRoot = this,
+            //};
+            //FocusManager.TryMoveFocus(FocusNavigationDirection.Down, options);
         }
     }
 

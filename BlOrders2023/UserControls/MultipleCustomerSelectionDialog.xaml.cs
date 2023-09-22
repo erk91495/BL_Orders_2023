@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using BlOrders2023.Models;
 using BlOrders2023.UserControls.ViewModels;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -44,5 +45,18 @@ public sealed partial class MultipleCustomerSelectionDialog : ContentDialog
         {
             Customers = CustomerSelection.SelectedItems.OfType<WholesaleCustomer>().ToList();
         }
+    }
+
+    private void CustomerSelection_GotFocus(object sender, RoutedEventArgs e)
+    {
+        if(CustomerSelection.SelectedItems.IsNullOrEmpty())
+        {
+            CustomerSelection.IsDropDownOpen = true;
+        }
+    }
+
+    private void CustomerSelection_LostFocus(object sender, RoutedEventArgs e)
+    {
+        CustomerSelection.IsDropDownOpen = false;
     }
 }

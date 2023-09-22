@@ -126,14 +126,21 @@ public class OrderItem : ObservableObject
     #region Methods
     private int CalcQuantityReceived()
     {
-        if (Order != null && !Order.ShippingItems.IsNullOrEmpty())
+        if (Product.IsCredit)
         {
-            
-            return Order.ShippingItems.Where(item => item.ProductID == ProductID).Sum(item => item.QuanRcvd ?? 0);
+            return 0;
         }
         else
         {
-            return 0;
+            if (Order != null && !Order.ShippingItems.IsNullOrEmpty())
+            {
+            
+                return Order.ShippingItems.Where(item => item.ProductID == ProductID).Sum(item => item.QuanRcvd ?? 0);
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 
@@ -144,6 +151,10 @@ public class OrderItem : ObservableObject
             if(Product.FixedPrice == true)
             {
                 return ActualCustPrice * QuantityReceived;
+            }
+            if(Product.IsCredit)
+            {
+                return ActualCustPrice;
             }
             return decimal.Round(ActualCustPrice * (decimal)(PickWeight ?? 0),2);
         }

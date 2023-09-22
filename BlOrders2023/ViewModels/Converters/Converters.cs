@@ -333,4 +333,15 @@ namespace BlOrders2023.ViewModels.Converters
             return (bool)value ? (bool?)true : (bool?)null;
         }
     }
+    public class IntToDoubleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return double.Parse(value.ToString());
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return (int)Math.Round((double)value,0);
+        }
+    }
 }

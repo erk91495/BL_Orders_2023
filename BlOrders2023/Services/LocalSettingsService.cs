@@ -65,8 +65,7 @@ public class LocalSettingsService : ILocalSettingsService
     private void WriteDefaultLocalSettings()
     {
         SaveSetting(LocalSettingsKeys.FirstRun, false);
-        SaveSetting(LocalSettingsKeys.DatabaseServer, "ERIC-PC");
-        SaveSetting(LocalSettingsKeys.DatabaseName, "New_Bl_Orders");
+        SaveSetting(LocalSettingsKeys.DBConnectionString, "Data Source=Eric-PC;Initial Catalog=BL_Enterprise;User ID=;Trust Server Certificate=True;Authentication=ActiveDirectoryIntegrated");
     }
 
     private async Task InitializeAsync()
@@ -111,6 +110,29 @@ public class LocalSettingsService : ILocalSettingsService
         return default;
     }
 
+    public T? ReadSetting<T>(string key)
+    {
+        if (RuntimeHelper.IsMSIX)
+        {
+            if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
+            {
+                return Json.ToObject<T>((string)obj);
+
+            }
+        }
+        else
+        {
+            Initialize();
+
+            if (_settings != null && _settings.TryGetValue(key, out var obj))
+            {
+                return Json.ToObject<T>((string)obj);
+            }
+        }
+
+        return default;
+    }
+
     public async Task SaveSettingAsync<T>(string key, T value)
     {
         if (RuntimeHelper.IsMSIX)
@@ -127,7 +149,7 @@ public class LocalSettingsService : ILocalSettingsService
         }
     }
 
-    private void SaveSetting<T>(string key, T value)
+    public void SaveSetting<T>(string key, T value)
     {
         if (RuntimeHelper.IsMSIX)
         {
