@@ -208,6 +208,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
             }
         });
         OnPropertyChanged(nameof(SortedOrderItems));
+        OnPropertyChanged(nameof(Items));
     }
 
 
