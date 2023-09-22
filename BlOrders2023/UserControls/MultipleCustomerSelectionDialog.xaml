@@ -19,6 +19,8 @@
             x:Name="CustomerSelection"
             SelectionMode="Multiple"
             ItemsSource="{x:Bind ViewModel.SuggestedCustomers}"
+            GotFocus="CustomerSelection_GotFocus"
+            LostFocus="CustomerSelection_LostFocus"
             DisplayMemberPath="CustomerName"
             TextMemberPath="CustomerName"
             TextSearchMode="Contains"

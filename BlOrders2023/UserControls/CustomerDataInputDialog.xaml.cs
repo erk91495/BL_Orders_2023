@@ -2,7 +2,7 @@ using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
 using BlOrders2023.UserControls.ViewModels;
-using CommunityToolkit.WinUI.UI.Converters;
+using CommunityToolkit.WinUI.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

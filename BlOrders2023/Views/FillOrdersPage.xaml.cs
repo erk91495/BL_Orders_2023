@@ -22,6 +22,8 @@ using BlOrders2023.Services;
 using System.Drawing.Printing;
 using BlOrders2023.Core.Services;
 using Syncfusion.UI.Xaml.DataGrid;
+using Microsoft.UI.Xaml.Input;
+using WinUIEx;
 
 namespace BlOrders2023.Views;
 
@@ -41,53 +43,73 @@ public sealed partial class FillOrdersPage : Page
         ViewModel = App.GetService<FillOrdersPageViewModel>();
         InitializeComponent();
         reportGenerator = new();
+        OrderedItems.SelectionController = new FillOrdersGridSelectionController(OrderedItems);
     }
 
     private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
     {
         if(sender is TextBox box )
         {
+
             var scanlineText = box.Text;
             if (scanlineText.EndsWith('\r'))
             {
                 var scanline = scanlineText.Trim();
                 box.Text = null;
-                ShippingItem item = new()
+                if (RemoveItemCheckBox.IsChecked != true)
                 {
-                    QuanRcvd = 1,
-                    ScanDate = DateTime.Now,
-                    Scanline = scanline,
-                    Order = ViewModel.Order,
-                };
-                try
-                {
-                    //interpreter has no concept of dbcontext and cannot track items
-                    BarcodeInterpreter.ParseBarcode(ref item);
-                    //item.Product = product;
-                    await AddShippingItemAsync(item);
+                    ShippingItem item = new()
+                    {
+                        QuanRcvd = 1,
+                        ScanDate = DateTime.Now,
+                        Scanline = scanline,
+                        Order = ViewModel.Order,
+                    };
+                    try
+                    {
+                        //interpreter has no concept of dbcontext and cannot track items
+                        BarcodeInterpreter.ParseBarcode(ref item);
+                        //item.Product = product;
+                        await AddShippingItemAsync(item);
+                    }
+                    catch (ProductNotFoundException e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        var prodCode = e.Data["ProductID"];
+                        await ShowLockedoutDialog("Product Not Found", 
+                            string.Format("Product ID: {0} was not found in the database\r\n", prodCode)); 
+                    } 
+                    catch (InvalidBarcodeExcption e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        var ai = e.Data["AI"];
+                        var s = e.Data["Scanline"];
+                        var location = e.Data["Location"];
+                        await ShowLockedoutDialog(e.Message,
+                            string.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
+                    }
+                    catch (UnknownBarcodeFormatException e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
+                    }
+
                 }
-                catch (ProductNotFoundException e)
+                else // remove items is checked
                 {
-                    Debug.WriteLine(e.ToString());
-                    var prodCode = e.Data["ProductID"];
-                    await ShowLockedoutDialog("Product Not Found", 
-                        string.Format("Product ID: {0} was not found in the database\r\n", prodCode)); 
-                } 
-                catch (InvalidBarcodeExcption e)
-                {
-                    Debug.WriteLine(e.ToString());
-                    var ai = e.Data["AI"];
-                    var s = e.Data["Scanline"];
-                    var location = e.Data["Location"];
-                    await ShowLockedoutDialog(e.Message,
-                        string.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
+                    var item = ViewModel.Items.Where(i => i.Scanline == scanline).FirstOrDefault();
+                    if(item != null)
+                    {
+                        await ViewModel.DeleteShippingItemAsync(item);
+                        await TrySaveOrderAsync();
+                        box.Focus(FocusState.Programmatic);
+                    }
+                    else
+                    {
+                        await ShowLockedoutDialog("Product Not Found", $"No item with the scanline {scanline} was found on order {ViewModel.Order.OrderID}" +
+                            $" Nothing was removed");
+                    }
                 }
-                catch (UnknownBarcodeFormatException e)
-                {
-                    Debug.WriteLine(e.ToString());
-                    await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
-                }
-                
             }
         }
     }
@@ -155,9 +177,9 @@ public sealed partial class FillOrdersPage : Page
                 res = await inputControl.ShowAsync();
                 if(res == ContentDialogResult.Primary && !inputControl.Value.IsNullOrEmpty())
                 {
-                        item.PickWeight = float.Parse(inputControl?.Value!);
-                        //Add underscore so when an invoice is printed we can see manual overrides
-                        item.PackageSerialNumber += '_';
+                    item.PickWeight = float.Parse(inputControl?.Value!);
+                    //Add underscore so when an invoice is printed we can see manual overrides
+                    item.PackageSerialNumber += '_';
 
                 }
                 else
@@ -180,7 +202,6 @@ public sealed partial class FillOrdersPage : Page
             Content = content,
             SecondaryButtonText = "Continue",
             DefaultButton = ContentDialogButton.None,
-
         };
         d.PreviewKeyDown += LockOutKeyPresses;
         SystemSounds.Exclamation.Play();
@@ -213,31 +234,18 @@ public sealed partial class FillOrdersPage : Page
         if (!ViewModel.FillableOrdersMasterList.Where(e => e.OrderID.ToString().Equals(input)).IsNullOrEmpty())
         {
             await ViewModel.LoadOrder(int.Parse(input));
+            RemoveItemCheckBox.IsChecked = false;
         }
         else if (args.ChosenSuggestion is Order o)
         {
             await ViewModel.LoadOrder(o.OrderID);
+            RemoveItemCheckBox.IsChecked = false;
+        }
+        else
+        {
+            await ShowLockedoutDialog("Order Not Found", $"No order found for {input}");
         }
         Scanline.Focus(FocusState.Programmatic);
-    }
-
-    private async void OrderedItems_RecordDeleting(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletingEventArgs e)
-    {
-        //e.Cancel = true;
-        //ContentDialog dialog = new()
-        //{
-        //    XamlRoot = XamlRoot,
-        //    Title = "Confirm Delete",
-        //    Content = "Are you sure you want to delete all shipping items from this order? These changes cannot be undone.",
-        //    PrimaryButtonText = "Delete",
-        //    CloseButtonText = "Cancel",
-        //};
-        //var result = await dialog.ShowAsync();
-        //if (result == ContentDialogResult.Primary)
-        //{
-        //    //TODO DELETE THE ITEM
-        //}
-        
     }
 
     private async void OrderedItems_RecordDeleted(object sender, Syncfusion.UI.Xaml.DataGrid.RecordDeletedEventArgs e)
@@ -301,6 +309,7 @@ public sealed partial class FillOrdersPage : Page
     private async Task PrintInvoiceAsync()
     {
         var printInvoice = false;
+        PrinterSettings printSettings = new();
         if (ViewModel.CanPrintInvoice)
         {
             //Invoice already printed print copy
@@ -317,6 +326,7 @@ public sealed partial class FillOrdersPage : Page
                 if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
+                    printSettings.Copies = 1;
                 }
             }
             //Not all items on order
@@ -334,12 +344,14 @@ public sealed partial class FillOrdersPage : Page
                 if (res == ContentDialogResult.Primary)
                 {
                     printInvoice = true;
+                    printSettings.Copies = 2;
                 }
             }
             //Print invoice
             else
             {
                 printInvoice = true;
+                printSettings.Copies = 2;
             }
         }
         
@@ -348,8 +360,6 @@ public sealed partial class FillOrdersPage : Page
         {
             var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
 
-            PrinterSettings printSettings = new();
-            printSettings.Copies = 2;
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
 
@@ -411,16 +421,41 @@ public sealed partial class FillOrdersPage : Page
 
     private async Task PrintPalletTicketsAsync()
     {
+        var print = false;
+        if(ViewModel.Order.Allocated != true)
+        {
 
-        Palletizer palletizer = new(new(), ViewModel.Order);
-        var pallets = await palletizer.PalletizeAsync();
-        var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+            var dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Print Confirmation",
+                Content = "This order has not yet been allocated. Are you sure you want to print pallet tickets?",
+                PrimaryButtonText = "Print",
+                CloseButtonText = "Cancel",
+            };
 
-        PrinterSettings printSettings = new();
-        printSettings.Copies = 1;
-        printSettings.Duplex = Duplex.Simplex;
-        var printer = new PDFPrinterService(filePath);
-        await printer.PrintPdfAsync(printSettings);     
+            var result = await dialog.ShowAsync();
+            if(result == ContentDialogResult.Primary)
+            {
+                print = true;
+            }
+        }
+        else
+        {
+            print = true;
+        }
+        if (print)
+        {
+            Palletizer palletizer = new(new(), ViewModel.Order);
+            var pallets = await palletizer.PalletizeAsync();
+            var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 1;
+            printSettings.Duplex = Duplex.Simplex;
+            var printer = new PDFPrinterService(filePath);
+            await printer.PrintPdfAsync(printSettings);
+        }
     }
 
     private void OrderLookup_GotFocus(object sender, RoutedEventArgs e)
@@ -459,4 +494,67 @@ public sealed partial class FillOrdersPage : Page
                 $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
         }
     }
+
+    private void RemoveItemCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+        if(RemoveItemCheckBox.IsChecked == true) 
+        {
+            Scanline.PlaceholderText = "Scan to remove a product...";
+        }
+        else
+        {
+            Scanline.PlaceholderText = "Scan to add a product...";
+        }
+    }
+
+    private void OrderedItems_CopyGridCellContent(object sender, Syncfusion.UI.Xaml.Grids.GridCopyPasteCellEventArgs e)
+    {
+        DatagridCellCopy.CopyGridCellContent(sender,e);
+    }
+
+    private async void OrderedItems_CurrentCellEndEdit(object sender, CurrentCellEndEditEventArgs e)
+    {
+        await TrySaveOrderAsync();
+        OrderedVsReceivedGrid.View.Refresh();
+
+    }
+}
+
+internal class FillOrdersGridSelectionController : GridSelectionController
+{
+    public FillOrdersGridSelectionController(SfDataGrid dataGrid) : base(dataGrid)
+    {
+    }
+
+    KeyRoutedEventArgs keyEventArgs = null;
+    public override bool HandleKeyDown(KeyRoutedEventArgs args)
+    {
+
+        if (args.Key == Windows.System.VirtualKey.Delete)
+        {
+            keyEventArgs = args;
+            ContentDialog dialog = new()
+            {
+                XamlRoot = this.DataGrid.XamlRoot,
+                Title = "Confirm Delete",
+                Content = "Are you sure you want to delete all shipping items from this order? These changes cannot be undone.",
+                PrimaryButtonText = "Delete",
+                CloseButtonText = "Cancel",
+            };
+
+            dialog.PrimaryButtonClick += DeleteDialog_PrimaryButtonClick;
+
+            var result = dialog.ShowAsync();
+            return false;
+        }
+
+        return base.HandleKeyDown(args);
+
+    }
+
+    private void DeleteDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        base.HandleKeyDown(keyEventArgs);
+    }
+
 }
