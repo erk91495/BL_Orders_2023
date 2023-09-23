@@ -52,8 +52,7 @@
                        AddNewRowPosition="Top"
                        DataValidationMode="InView"
                        AddNewRowInitiating="ProductsGrid_AddNewRowInitiating"
-                       CurrentCellValidated="ProductsGrid_CurrentCellValidated"
-                       CopyGridCellContent="ProductsGrid_CopyGridCellContent">
+                       CurrentCellValidated="ProductsGrid_CurrentCellValidated">
             
             <sf:SfDataGrid.Columns>
                 <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" IsReadOnly="True"/>
@@ -75,8 +74,8 @@
                 <sf:GridTextColumn MappingName="KPCCode" AllowEditing="True"/>
                 <sf:GridTextColumn MappingName="ALUCode" AllowEditing="True"/>
                 <sf:GridTextColumn HeaderText="Company Code" MappingName="CompanyCode" AllowEditing="True"/>
-                <sf:GridCheckBoxColumn MappingName="Inactive" AllowEditing="True"/>
-                <sf:GridCheckBoxColumn MappingName="IsCredit" AllowEditing="True"/>
+                <sf:GridCheckBoxColumn MappingName="Inactive" 
+                                       AllowEditing="True"/>
 
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>

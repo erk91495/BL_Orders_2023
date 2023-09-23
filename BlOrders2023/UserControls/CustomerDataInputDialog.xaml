@@ -11,7 +11,7 @@
     xmlns:sf="using:Syncfusion.UI.Xaml.Editors"
     xmlns:vm="using:BlOrders2023.UserControls.ViewModels"
     xmlns:enums="using:BlOrders2023.Models.Enums"
-    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:vmconverters="using:BlOrders2023.ViewModels.Converters" 
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"

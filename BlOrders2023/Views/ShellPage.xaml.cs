@@ -163,11 +163,5 @@ public sealed partial class ShellPage : Page
         var navigationService = App.GetService<INavigationService>();
         navigationService?.Frame?.Navigate(typeof(PaymentsPage));
     }
-
-    private void MenuFlyoutSettings_Click(object sender, RoutedEventArgs e)
-    {
-        var navigationService = App.GetService<INavigationService>();
-        navigationService?.Frame?.Navigate(typeof(SettingsPage));
-    }
     #endregion Methods
 }

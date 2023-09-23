@@ -13,7 +13,7 @@
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
     xmlns:calendar="using:Syncfusion.UI.Xaml.Calendar"
-    xmlns:converters="using:CommunityToolkit.WinUI.Converters" 
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters" 
     xmlns:enums="using:BlOrders2023.Models.Enums"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -115,21 +115,17 @@
                             Padding="0,10,0,5"
                             FontSize="50"
                             FontWeight="SemiBold"/>-->
-            <StackPanel Orientation="Vertical" Spacing="15">
+            <StackPanel Orientation="Vertical">
                 
                 <ComboBox x:Name="OrderStatusCombo"                  
-                      xmlns:ui="using:CommunityToolkit.WinUI"
+                      xmlns:ui="using:CommunityToolkit.WinUI.UI"
                       ItemsSource="{ui:EnumValues Type=enums:OrderStatus}"
                       SelectedItem="{Binding ViewModel.OrderStatus, Mode=TwoWay}"
                       Margin="0,50,0,0"
                       IsEnabled="False"
-                      FontSize="20"
-                      HorizontalAlignment="Right"/>
-
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <TextBlock Text="Ordered On:" FontSize="{StaticResource MediumFontSize}"/>
-                    <TextBlock Text="{x:Bind ViewModel.Order.OrderDate.ToString(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
-                </StackPanel>
+                      FontSize="20"/>
+                
+                        <!-- Two way binding is causing a stack overflow so this is my workaround-->
             </StackPanel>
         </StackPanel>
         <RelativePanel x:Name="UserInputRanel"
@@ -192,7 +188,6 @@
                                                        AllowNull="False"
                                                        SelectedDate="{x:Bind ViewModel.PickupDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
                                                        SelectedDateChanging="PickupDate_SelectedDateChanging"
-                                                       DropDownPlacement="Bottom"
                                                        TabIndex="3"/>
                         <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('PickupDate'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('PickupDate'), Mode=OneWay}" 
@@ -262,10 +257,9 @@
                                 HorizontalAlignment="Right">
                         <TextBlock Text="Memo Total: $" VerticalAlignment="Center"/>
                         <NumberBox x:Name="MemoTotal"
-                                   Value="{x:Bind ViewModel.Memo_Totl, Mode=OneWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                   Value="{x:Bind ViewModel.Memo_Totl, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
                                    Background="Transparent"
-                                   IsTabStop="False"
-                                   IsEnabled="False"
+                                   IsTabStop="False"    
                                    />
                     </StackPanel>
                 </StackPanel>
@@ -307,6 +301,7 @@
                        RelativePanel.Below="ProductEntryErrorMessage"
                        RelativePanel.Above="InvoiceTotalStack"
                        GridLinesVisibility="Both"
+                       IsEnabled="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
                        AutoGenerateColumns="False"
                        RelativePanel.AlignLeftWithPanel="True"
                        RelativePanel.AlignRightWithPanel="True"
@@ -314,8 +309,7 @@
                        SelectionUnit="Row"
                        EditorSelectionBehavior="MoveLast"
                        PointerMoved="OrderedItems_PointerMoved"
-                       IsTabStop="False"
-                       IsReadOnly="{x:Bind ViewModel.CanAddItems, Mode=OneWay}">
+                       IsTabStop="False">
 
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" 
@@ -330,16 +324,15 @@
                                       DisplayNumberFormat="N2"/>
                 <sf:GridNumericColumn HeaderText="Customer Price" 
                                       MappingName="ActualCustPrice" 
-                                      AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}" 
-                                      DisplayNumberFormat="C"
-                                      UseBindingValue="True"
+                                      AllowEditing="True" 
+                                      DisplayNumberFormat="C" 
                                       ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" 
                                       MappingName="Quantity" 
-                                      AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"/>
+                                      AllowEditing="True"/>
                 <sf:GridNumericColumn HeaderText="Quantity Allocated" 
                                       MappingName="QuanAllocated" 
-                                      AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
+                                      AllowEditing="True"
                                       IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                                       ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" 
@@ -353,7 +346,7 @@
                                       ColumnWidthMode="SizeToCells" 
                                       IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
                     <sf:GridUnboundColumn.CellTemplate>
-                        <DataTemplate x:DataType="local:FillOrdersPage">
+                        <DataTemplate>
                             <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">
                                 <SymbolIcon Symbol="Delete"/>
                             </Button>

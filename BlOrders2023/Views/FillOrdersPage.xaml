@@ -7,9 +7,8 @@
     xmlns:models="using:BlOrders2023.Models"
     xmlns:vm="using:BlOrders2023.ViewModels"
     xmlns:converters="using:BlOrders2023.ViewModels.Converters"
-    xmlns:uiConverters="using:CommunityToolkit.WinUI.Converters"
+    xmlns:uiConverters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
-    xmlns:helpers="using:BlOrders2023.Helpers"
     mc:Ignorable="d">
     <Page.Resources>
         <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
@@ -17,9 +16,8 @@
         <converters:TimeFormatConverter x:Key="TimeFormatConverter"/>
         <converters:WeightFormatConverter x:Key="WeightFormatConverter"/>
         <uiConverters:BoolNegationConverter x:Key="BoolNegationConverter"/>
-        <converters:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
 
-            <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
+        <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
             <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
                 <Expander.Header>
                     <StackPanel Orientation="Horizontal" Spacing="20">
@@ -69,7 +67,7 @@
                     <sf:SfDataGrid x:Name="OrderedVsReceivedGrid"
                                        IsReadOnly="True"
                                        AutoGenerateColumns="False"
-                                       ItemsSource="{x:Bind ViewModel.SortedOrderItems, Mode=OneWay}"
+                                       ItemsSource="{x:Bind ViewModel.Order.Items, Mode=OneWay}"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.AlignTopWithPanel="True"
@@ -137,10 +135,10 @@
                         <SymbolIcon Symbol="More"/>
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem x:Name="DeleteAll" Text="Remove All Items" Icon="Delete" Click="DeleteAll_Click"/>
                                 <MenuFlyoutItem Text="Print Order" Icon="Print" Click="PrintOrderFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintOrder, Mode=OneWay}"/>
                                 <MenuFlyoutItem Text="Print Invoice" Icon="Print" Click="PrintInvoiceFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintInvoice, Mode=OneWay}"/>
                                 <MenuFlyoutItem Text="Print Pallet Tickets" Icon="Print" Click="PrintPalletTicketsFlyoutItem_Click"/>
-                                <MenuFlyoutItem x:Name="DeleteAll" Text="Remove All Items" Icon="Delete" Click="DeleteAll_Click"/>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
@@ -247,7 +245,7 @@
                     </StackPanel>
 
                     <TextBox x:Name="Scanline"
-                             PlaceholderText="Scan to add a product..."
+                             PlaceholderText="Scan a product..."
                              RelativePanel.Below="CustomerInfo"
                              RelativePanel.AlignLeftWith="CustomerInfo"
                              Margin="10,10,0,0"
@@ -259,19 +257,12 @@
                              TabIndex="2"/>
 
                     <Button x:Name="ManualProductAdd" RelativePanel.RightOf="Scanline" RelativePanel.AlignBottomWith="Scanline"
-                            Margin="10,0,20,0" Click="ManualProductAdd_Click">
+                            Margin="10,0,0,0" Click="ManualProductAdd_Click">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Add A Product Manually" Padding="0,0,10,0"/>
                             <SymbolIcon Symbol="Add"/>
                         </StackPanel>
                     </Button>
-                    <CheckBox x:Name="RemoveItemCheckBox" 
-                              Content="Scan To Remove" 
-                              RelativePanel.RightOf="ManualProductAdd" 
-                              RelativePanel.AlignVerticalCenterWith="ManualProductAdd"
-                              Checked="RemoveItemCheckBox_Checked"
-                              Unchecked="RemoveItemCheckBox_Checked"
-                              />
 
                     <!--<ListView ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                               RelativePanel.Below="OrderedItems"
@@ -294,22 +285,17 @@
                                    SelectionMode="Extended"
                                    EditorSelectionBehavior="MoveLast"
                                    AllowDeleting="True"
+                                   RecordDeleting="OrderedItems_RecordDeleting"
                                    RecordDeleted="OrderedItems_RecordDeleted"
                                    ColumnWidthMode="AutoWithLastColumnFill"
-                                   CurrentCellEndEdit="OrderedItems_CurrentCellEndEdit"
-                                   CopyGridCellContent="OrderedItems_CopyGridCellContent">
-                        
+                                   >
+
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="SizeToCells"/>
                             <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline" ColumnWidthMode="SizeToCells" IsReadOnly="False"/>
                             <sf:GridNumericColumn HeaderText="Pick Weight" MappingName="PickWeight" IsReadOnly="True" DisplayNumberFormat="N2"/>
-                            <sf:GridNumericColumn HeaderText="Quantity Received" 
-                                                  MappingName="QuanRcvd" 
-                                                  AllowEditing="True" 
-                                                  DisplayNumberFormat="N0" 
-                                                  UseBindingValue="True"
-                                                  ValueBinding="{Binding Path=QuanRcvd, Mode=TwoWay,  Converter={StaticResource IntToDoubleConverter}}"/>
+                            <sf:GridNumericColumn HeaderText="Quantity Received" MappingName="QuanRcvd" AllowEditing="True" DisplayNumberFormat="N0"/>
                             <sf:GridTextColumn HeaderText="Serial" MappingName="PackageSerialNumber"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>

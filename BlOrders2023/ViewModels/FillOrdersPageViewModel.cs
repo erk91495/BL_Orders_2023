@@ -22,7 +22,6 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
     public bool HasOrder => _order != null;
     public WholesaleCustomer Customer { get; set; }
     public Order? Order { get => _order; set => _order = value; }
-    public IEnumerable<OrderItem>? SortedOrderItems => _order?.Items.OrderBy(i => i.ProductID);
     public ObservableCollection<ShippingItem> Items { get; set; }
     public ObservableCollection<Order> FillableOrders { get; set; }
     public ObservableCollection<Order> FillableOrdersMasterList { get; set; }
@@ -134,7 +133,6 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         OnPropertyChanged(nameof(CanPrintInvoice));
         OnPropertyChanged(nameof(CanPrintOrder));
         OnPropertyChanged(nameof(Memo));
-        OnPropertyChanged(nameof(SortedOrderItems));
     }
 
     internal void QueryFillableOrders(string text)
@@ -194,21 +192,21 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     internal async Task DeleteShippingItemAsync(ShippingItem item)
     {
-        Items.Remove(item);
-        await Task.Run(() => 
+        if (!Items.Remove(item))
         {
+            await Task.Run(() => 
+            {
 
-            if (!_order!.ShippingItems.Remove(item))
-            {
-                //throw new Exception();
-            }
-            else
-            {
-                DecrementOrderedItem(item);
-            }
-        });
-        OnPropertyChanged(nameof(SortedOrderItems));
-        OnPropertyChanged(nameof(Items));
+                if (!_order!.ShippingItems.Remove(item))
+                {
+                    //throw new Exception();
+                }
+                else
+                {
+                    DecrementOrderedItem(item);
+                }
+            });
+        }
     }
 
 

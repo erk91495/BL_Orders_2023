@@ -58,7 +58,7 @@
                             <MenuFlyoutItem Icon="Shuffle" Text="Allocation" Click="MenuFlyoutItemAllocation_Click"/>
                             <MenuFlyoutItem Icon="ContactInfo" Text="Customer Classes" Click="MenuFlyoutCustomerClasses_Click"/>
                             <MenuFlyoutItem Icon="Calculator" Text="Payments" Click="MenuFlyoutPayments_Click"/>
-                            <MenuFlyoutItem Icon="Setting" Text="Settings" Click="MenuFlyoutSettings_Click"/>
+                            <MenuFlyoutItem Icon="Setting" Text="Settings"/>
                         </MenuFlyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>

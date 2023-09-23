@@ -24,7 +24,7 @@ public class GS1_128Barcode : IBarcode
         {"01", new Regex("^01(\\d{14})")},                                                                               //GTIN
         {"02", new Regex("^02(\\d{14})$ ")},                                                                             //GTIN OF CONTAINED ITEMS
         {"10", new Regex("^10([\\x21-\\x22\\x25-\\x2F\\x30-\\x39\\x3A-\\x3F\\x41-\\x5A\\x5F\\x61-\\x7A]{0,20})")},       //LOT CODE
-        {"11", new Regex("^11(\\d{6})")},
+        {"11", new Regex("^13(\\d{6})")},
         {"13", new Regex("^13(\\d{6})")},                                                                                //PACKAGING DATE
         {"21", new Regex("^21([\\x21-\\x22\\x25-\\x2F\\x30-\\x39\\x3A-\\x3F\\x41-\\x5A\\x5F\\x61-\\x7A]{0,20})")},       //SERIAL NUMBER
         {"3202",new Regex("^320(\\d)(\\d{6})")},                                                                          //NET WEIGHT (LBS.)
@@ -176,11 +176,6 @@ public class GS1_128Barcode : IBarcode
                     var ai = match[..^data.Length];
                     scanline = scanline[match.Length..];
                     _AIValues.Add(ai,data.Value);
-                }
-                else
-                {
-                    Debug.WriteLine(String.Format("Dev messed up regex AI {0} at {1}", Scanline, scanline));
-                    throw new InvalidBarcodeExcption("Regex Match Not Made", re.ToString(), Scanline, scanline);
                 }
             }
             else

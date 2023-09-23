@@ -189,7 +189,7 @@ public class AggregateInvoiceReport : IReport
                     }
                 });
                 var aggregateItems = _orders.SelectMany(o => o.Items);
-                var groupedItems = aggregateItems.GroupBy(i => new { i.ProductID, i.ActualCustPrice }).OrderBy(a => a.Key.ProductID);
+                var groupedItems = aggregateItems.GroupBy(i => new { i.ProductID, i.ActualCustPrice });
                 
                 // step 3
                 foreach (var group in groupedItems)

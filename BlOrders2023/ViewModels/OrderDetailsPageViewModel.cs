@@ -282,18 +282,15 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
 
     }
 
-    public void AddItem(Product p, int? quantity = null, decimal? actualCustomerPrice = null)
+    public void AddItem(Product p, int? quantity = null)
     {
-        var tracked = _db.Products.Get(p.ProductID, true).First();
+        var tracked = _db.Products.Get(p.ProductID, false).First();
         OrderItem item = new(tracked, _order);
         if(quantity != null) 
         {
             item.Quantity = (float)quantity;
         }
-        if(actualCustomerPrice != null)
-        {
-            item.ActualCustPrice = (decimal)actualCustomerPrice;
-        }
+
         Items.Add(item);
     }
 

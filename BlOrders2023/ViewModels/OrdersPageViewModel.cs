@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
-using BlOrders2023.Views;
+
 
 namespace BlOrders2023.ViewModels;
 
@@ -133,19 +133,6 @@ public class OrdersPageViewModel : ObservableRecipient
                 }
             });
             IsLoading = false;
-        }
-    }
-
-    public async Task<WholesaleCustomer?> GetCustomerAsync(int custID)
-    {
-        var res = await _db.Customers.GetAsync(custID, true);
-        if(!res.IsNullOrEmpty())
-        {
-            return res.FirstOrDefault();
-        }
-        else
-        {   
-            return null;
         }
     }
     #endregion Queries

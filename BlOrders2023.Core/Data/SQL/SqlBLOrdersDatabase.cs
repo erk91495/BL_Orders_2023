@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +20,8 @@ public class SqlBLOrdersDatabase : IBLDatabase
     {
         _dbOptions = (DbContextOptions<SqlBLOrdersDBContext>)dbOptionBuilder;
         _dbContext = new SqlBLOrdersDBContext(_dbOptions);
+        _dbContext.Database.EnsureCreated();
+
     }
 
     public IOrderTable Orders => new SqlOrderTable(_dbContext);
@@ -57,5 +58,4 @@ public class SqlBLOrdersDatabase : IBLDatabase
             return new Version(0, 0, 0);
         }
     }
-    public DbConnection DbConnection => _dbContext.Database.GetDbConnection();
 }

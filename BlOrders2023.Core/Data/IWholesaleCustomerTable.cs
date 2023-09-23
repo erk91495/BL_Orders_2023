@@ -10,10 +10,10 @@ namespace BlOrders2023.Core.Data
     public interface IWholesaleCustomerTable
     {
         Task<IEnumerable<WholesaleCustomer>> GetAsync(string query = null);
-        Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID, bool asNoTracking = false);
+        Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID);
         Task<IEnumerable<WholesaleCustomer>> GetIncludeInavtiveAsync(string query = null);
         IEnumerable<WholesaleCustomer> Get(string query = null);
-        IEnumerable<WholesaleCustomer> Get(int customerID, bool asNoTracking = false);
+        IEnumerable<WholesaleCustomer> Get(int customerID);
         Task<WholesaleCustomer> UpsertAsync(WholesaleCustomer customer);
         WholesaleCustomer Upsert(WholesaleCustomer customer, bool overwrite = false);
         Task DeleteAsync(WholesaleCustomer order);

@@ -22,7 +22,6 @@ sqlcmd -S BL4 -d BL_Enterprise -E -i alter_tblProducts_AddCompanyCode.sql
 sqlcmd -S BL4 -d BL_Enterprise -E -i alter_tblProducts_AddFixedPrice.sql
 sqlcmd -S BL4 -d BL_Enterprise -E -i alter_tblProducts_AddInactive.sql
 sqlcmd -S BL4 -d BL_Enterprise -E -i alter_tblProducts_DropExtraPrices.sql
-sqlcmd -S BL4 -d BL_Enterprise -E -i alter_tblProducts_AddIsCredit.sql
 :: Create usp
 sqlcmd -S BL4 -d BL_Enterprise -E -i usp_ProductIDExists.sql
 sqlcmd -S BL4 -d BL_Enterprise -E -i uspRptWholesaleOrderTotals.sql

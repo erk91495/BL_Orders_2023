@@ -54,20 +54,7 @@ public partial class App : Application
 	
 	public static UIElement? AppTitlebar { get; set; }
 	
-    public static DbContextOptions<SqlBLOrdersDBContext>? DBOptions 
-    { 
-        get
-        {
-            var localsettings = App.GetService<ILocalSettingsService>();
-            var dbOptions = new DbContextOptionsBuilder<SqlBLOrdersDBContext>();
-            dbOptions.UseLazyLoadingProxies()
-                   .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
-                   .EnableSensitiveDataLogging()
-                   .EnableDetailedErrors()
-                   .UseSqlServer(connectionString: localsettings.ReadSetting<string>(LocalSettingsKeys.DBConnectionString));
-            return dbOptions.Options;
-        }
-    }
+    public static DbContextOptions<SqlBLOrdersDBContext>? DBOptions { get; private set; }
 
     public App()
     {
@@ -138,50 +125,55 @@ public partial class App : Application
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-		if(e.Exception is SqlException)
-		{
-		    var nav = App.GetService<INavigationService>() as NavigationService;
-		    if(nav != null)
-		    {
-		        nav.NavigateTo(typeof(SettingsViewModel).FullName!);
-		        e.Handled = true;
-		    }
-		}
-
-		var message = $"{e.Message} \r\n";
-		var title = $"{"AppDisplayName".GetLocalized()} Unhandled Exception";
-		if (MainWindow.Content != null)
-		{
-		    ContentDialog dialog = new ContentDialog()
-		    {
-		        XamlRoot = MainWindow.Content.XamlRoot,
-		        Content = message,
-		        Title = title,
-		        PrimaryButtonText = "ok"
-		    };
-		    _ = dialog.ShowAsync();
-		}
-		else
-		{
-		    System.Windows.Forms.MessageBox.Show(message, title, System.Windows.Forms.MessageBoxButtons.OK);
-		}
-		// TODO: Log and handle exceptions as appropriate.
-		// https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
-		if (!e.Handled)
-		{
-		    Exit();
-		}
-
+        var message = $"{e.Message}";
+        System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} Unhandled Exception", System.Windows.Forms.MessageBoxButtons.OK);
+        // TODO: Log and handle exceptions as appropriate.
+        // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
+        var localsettings = App.GetService<ILocalSettingsService>();
+        //var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
+        var dbServer = "BL4";
+        //var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
+        var dbName = "New_BL_Orders";
+        var dbOptions = new DbContextOptionsBuilder<SqlBLOrdersDBContext>();
+        dbOptions.UseLazyLoadingProxies()
+               .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
+               .EnableSensitiveDataLogging()
+               .EnableDetailedErrors()
+               .UseSqlServer(connectionString: $"Data Source={dbServer}; Database={dbName};Integrated Security=true; Trust Server Certificate=true");
+        App.DBOptions = dbOptions.Options;
+
+        var SupportedDBVersion = new Version(0, 0, 1);
+        var DBVersion = App.GetNewDatabase().dbVersion;
+        if (!SupportedDBVersion.Equals(DBVersion))
+        {
+            var version = Windows.ApplicationModel.Package.Current.Id.Version;
+            var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+            var message = "The application version you are running is not compatible with the current Database version\r\n" +
+                $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n"+
+                $"Supported Database Version: {SupportedDBVersion}. Actual Database Version: {DBVersion}";
+            System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
+            Exit();
+        }
+
+        //IAllocatorService allocator = new OrderAllocator(GetNewDatabase());
+        //IAllocatorConfig config = new OrderAllocatorConfiguration()
+        //{
+        //    CustomerAllocationType = Models.Enums.CustomerAllocationType.Grocer,
+        //    IDs = new() {67662, 67663}
+        //};
+        //_ = CommunityToolkit.WinUI.DispatcherQueueExtensions.EnqueueAsync(DispatcherQueue.GetForCurrentThread(), () => allocator.AllocateAsync(config));
+
+
         await App.GetService<IActivationService>().ActivateAsync(args);
 
     }
     public static IBLDatabase GetNewDatabase()
     {
-        return new SqlBLOrdersDatabase(DBOptions);
+        return new SqlBLOrdersDatabase(App.DBOptions);
     }
 }

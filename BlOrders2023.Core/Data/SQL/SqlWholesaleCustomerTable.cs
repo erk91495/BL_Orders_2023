@@ -56,22 +56,11 @@ internal class SqlWholesaleCustomerTable : IWholesaleCustomerTable
         }
     }
 
-    public IEnumerable<WholesaleCustomer> Get(int customerID, bool asNoTracking = false)
+    public IEnumerable<WholesaleCustomer> Get(int customerID)
     {
-        if (asNoTracking)
-        {
             return _db.Customers
-                      .Where(c => c.CustID == customerID)
-                      .AsNoTrackingWithIdentityResolution()
-                      .ToList();
-        }
-        else
-        {
-            return _db.Customers
-                      .Where(c => c.CustID == customerID)
-                      .ToList();
-        }
-
+                .Where(c => c.CustID == customerID)
+                .ToList();
     }
 
     public async Task<IEnumerable<WholesaleCustomer>> GetAsync(string query = null)
@@ -91,18 +80,8 @@ internal class SqlWholesaleCustomerTable : IWholesaleCustomerTable
         }
     }
 
-    public async Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID, bool asNoTracking = false)
-    {
-        if (asNoTracking)
-        {
-            return await _db.Customers.Include(c => c.Orders).Where(c => c.CustID == customerID).AsNoTrackingWithIdentityResolution().ToListAsync();
-        }
-        else
-        {
-            return await _db.Customers.Include(c => c.Orders).Where(c => c.CustID == customerID).ToListAsync();
-        }
-    }
-        
+    public async Task<IEnumerable<WholesaleCustomer>> GetAsync(int customerID)=>
+        await _db.Customers.Include(c => c.Orders).Where(c => c.CustID == customerID).ToListAsync();
 
     public async Task<CustomerClass> GetDefaultCustomerClassAsync() =>
        await _db.CustomerClasses.FirstAsync();

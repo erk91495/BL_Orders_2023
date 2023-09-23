@@ -109,36 +109,30 @@ namespace BlOrders2023.Models
                 case 24:
                     {
                         //_weight = float.Parse(Scanline.Substring(9, 4)) / 100f;
-                        var companyCode = oldScanline[..6];
-                        var prodCode = _productId.ToString().PadLeft(3,'0');
                         var weightString = Math.Round(_weight * 100f, 0).ToString().PadLeft(4, '0');
-                        var jdate = string.Format("{0}{1}", _packDate.ToString("yy"), _packDate.DayOfYear.ToString().PadLeft(3, '0'));
-                        var serial = _serial;
-                        scanline = string.Concat(companyCode, prodCode, weightString, jdate, serial);
+                        var startHalf = oldScanline[..9];
+                        var endHalf = oldScanline[13..];
+                        scanline = string.Concat(startHalf, weightString, endHalf);
                         break;
                     }
                 //B&L Ladder Barcode 605375 610 1255 23193 00424233
                 case 26:
                     {
                         //_weight = float.Parse(Scanline.Substring(9, 4)) / 100f;
-                        var companyCode = oldScanline[..6];
-                        var prodCode = _productId.ToString().PadLeft(3, '0');
-                        var weightString = Math.Round(_weight * 100f, 0).ToString().PadLeft(4, '0');
-                        var jdate = string.Format("{0}{1}",_packDate.ToString("yy"), _packDate.DayOfYear.ToString().PadLeft(3,'0'));
-                        var serial = _serial;
-                        scanline = string.Concat(companyCode, prodCode, weightString, jdate, serial);
+                        var weightString = Math.Round(_weight * 100f, 0).ToString().PadLeft(4,'0');
+                        var startHalf = oldScanline[..9];
+                        var endHalf = oldScanline[13..];
+                        scanline = string.Concat(startHalf, weightString, endHalf);
                         break;
                     }
                 //DLM Turkey & Breast Barcodes 605375 812 001255 23193 00424233
                 case 28:
                     {
                         //_weight = float.Parse(Scanline.Substring(9, 6)) / 100f;
-                        var companyCode = oldScanline[..6];
-                        var prodCode = _productId.ToString().PadLeft(3, '0');
                         var weightString = Math.Round(_weight * 100f, 0).ToString().PadLeft(6, '0');
-                        var jdate = string.Format("{0}{1}", _packDate.ToString("yy"), _packDate.DayOfYear.ToString().PadLeft(3, '0'));
-                        var serial = _serial;
-                        scanline = string.Concat(companyCode, prodCode, weightString, jdate, serial);
+                        var startHalf = oldScanline[..9];
+                        var endHalf = oldScanline[15..];
+                        scanline = string.Concat(startHalf, weightString, endHalf);
                         break;
                     }
                 default:

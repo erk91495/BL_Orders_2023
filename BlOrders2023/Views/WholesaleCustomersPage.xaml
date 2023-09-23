@@ -50,8 +50,7 @@
             SelectionMode="Single"
             IsReadOnly="True"
             RightTapped="DataGrid_RightTapped"
-            CanUserSortColumns="True"
-            CopyingRowClipboardContent="CustomersGrid_CopyingRowClipboardContent">
+            CanUserSortColumns="True">
             <controls:DataGrid.Resources>
                 <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
             </controls:DataGrid.Resources>
