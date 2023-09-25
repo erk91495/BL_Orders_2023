@@ -25,6 +25,7 @@ using BlOrders2023.Core.Contracts;
 using BlOrders2023.Core.Helpers;
 using System.Diagnostics;
 using Microsoft.Data.SqlClient;
+using BlOrders2023.Exceptions;
 
 namespace BlOrders2023;
 
@@ -140,23 +141,17 @@ public partial class App : Application
         var SupportedDBVersion = new Version(1, 0, 3);
         var db = App.GetNewDatabase();
 
-        try{
-            var DBVersion = db.dbVersion;
-            if (!SupportedDBVersion.Equals(DBVersion))
-            {
-                var version = Package.Current.Id.Version;
-                var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
-                var message = "The application version you are running is not compatible with the current Database version\r\n" +
-                    $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n" +
-                    $"Supported Database Version: {SupportedDBVersion}. Actual Database Version: {DBVersion}";
-                System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
-            }
-        }
-        catch(SqlException e)
+        var DBVersion = db.dbVersion;
+        if (!SupportedDBVersion.Equals(DBVersion))
         {
-
+            var version = Package.Current.Id.Version;
+            var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+            var message = "The application version you are running is not compatible with the current Database version\r\n" +
+                $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n" +
+                $"Supported Database Version: {SupportedDBVersion}. Actual Database Version: {DBVersion}";
+            //System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
+            throw new VersionMismatchException(message);
         }
-
 
 #if DEBUG
         if (db.DbConnection.DataSource == "BL4" && db.DbConnection.Database == "BL_Enterprise")
@@ -169,10 +164,9 @@ public partial class App : Application
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        if(e.Exception is SqlException)
+        if(e.Exception is SqlException || e.Exception is VersionMismatchException)
         {
-            var nav = App.GetService<INavigationService>() as NavigationService;
-            if(nav != null)
+            if (App.GetService<INavigationService>() is NavigationService nav)
             {
                 nav.NavigateTo(typeof(SettingsViewModel).FullName!);
                 e.Handled = true;
@@ -180,7 +174,7 @@ public partial class App : Application
         }
 
         var message = $"{e.Message} \r\n";
-        var title = $"{"AppDisplayName".GetLocalized()} Unhandled Exception";
+        var title = $"{"AppDisplayName".GetLocalized()} {nameof(e)}";
         if (MainWindow.Content != null)
         {
             ContentDialog dialog = new ContentDialog()
