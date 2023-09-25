@@ -137,7 +137,7 @@ public partial class App : Application
 
         UnhandledException += App_UnhandledException;
 
-        var SupportedDBVersion = new Version(1, 0, 3);
+        var SupportedDBVersion = new Version(0, 0, 1);
         var db = App.GetNewDatabase();
 
         try{
