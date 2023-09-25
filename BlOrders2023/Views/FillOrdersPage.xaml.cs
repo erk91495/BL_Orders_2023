@@ -177,9 +177,9 @@ public sealed partial class FillOrdersPage : Page
                 res = await inputControl.ShowAsync();
                 if(res == ContentDialogResult.Primary && !inputControl.Value.IsNullOrEmpty())
                 {
-                        item.PickWeight = float.Parse(inputControl?.Value!);
-                        //Add underscore so when an invoice is printed we can see manual overrides
-                        item.PackageSerialNumber += '_';
+                    item.PickWeight = float.Parse(inputControl?.Value!);
+                    //Add underscore so when an invoice is printed we can see manual overrides
+                    item.PackageSerialNumber += '_';
 
                 }
                 else
@@ -234,10 +234,12 @@ public sealed partial class FillOrdersPage : Page
         if (!ViewModel.FillableOrdersMasterList.Where(e => e.OrderID.ToString().Equals(input)).IsNullOrEmpty())
         {
             await ViewModel.LoadOrder(int.Parse(input));
+            RemoveItemCheckBox.IsChecked = false;
         }
         else if (args.ChosenSuggestion is Order o)
         {
             await ViewModel.LoadOrder(o.OrderID);
+            RemoveItemCheckBox.IsChecked = false;
         }
         else
         {
