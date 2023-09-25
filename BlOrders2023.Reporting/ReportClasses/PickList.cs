@@ -16,6 +16,7 @@ namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Pick List")]
 public class PickList : IReport
 {
+    private readonly CompanyInfo _companyInfo;
     private readonly Order _order;
     private readonly DateTime _ReportDate = DateTime.Now;
 
@@ -26,8 +27,9 @@ public class PickList : IReport
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(10f).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(8f);
 
-    public PickList(Order order)
+    public PickList(CompanyInfo companyInfo, Order order)
     {
+        _companyInfo = companyInfo;
         _order = order;
     }
 
@@ -66,7 +68,7 @@ public class PickList : IReport
 
                 row.RelativeItem(3).AlignMiddle().AlignCenter().Column(col =>
                 {
-                    col.Item().Text("B & L Wholesale Order Pick List").Style(titleStyle);
+                    col.Item().Text($"{_companyInfo.ShortCompanyName} Wholesale Order Pick List").Style(titleStyle);
                     col.Item().PaddingTop(5).Row(row =>
                     {
                         //Invoice Number

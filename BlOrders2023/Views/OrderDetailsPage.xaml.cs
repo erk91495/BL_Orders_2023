@@ -57,7 +57,7 @@ public sealed partial class OrderDetailsPage : Page
     public OrderDetailsPage()
     {
         ViewModel = App.GetService<OrderDetailsPageViewModel>();
-        reportGenerator = new();
+        reportGenerator = new(App.CompanyInfo);
         this.InitializeComponent();
         this.Loaded += OrderDetailsPage_Loaded;
         SetMemoTotalFormatter();

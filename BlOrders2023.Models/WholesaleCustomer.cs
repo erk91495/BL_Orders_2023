@@ -88,52 +88,52 @@ public class WholesaleCustomer
         return string.Format("{0} {1}  {2}", BillingCity, BillingState, BillingZipCode);
     }
 
-        public string PhoneString()
-        {
-            if(!Phone.IsNullOrEmpty()) {
-                if (PhoneExt != null)
-                {
-                    return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone), PhoneExt);
-                }
-                else
-                {
-                    return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone));
-                }
-            }else
+    public string PhoneString()
+    {
+        if(!Phone.IsNullOrEmpty()) {
+            if (PhoneExt != null)
             {
-                return string.Empty;
-            }
-        }
-        public string Phone2String()
-        {
-            if (!Phone_2.IsNullOrEmpty())
-            {
-                if (Phone2Ext != null)
-                {
-                    return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone_2), Phone2Ext);
-                }
-                else
-                {
-                    return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone_2));
-                }
+                return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone), PhoneExt);
             }
             else
             {
-                return string.Empty;
+                return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone));
+            }
+        }else
+        {
+            return string.Empty;
+        }
+    }
+    public string Phone2String()
+    {
+        if (!Phone_2.IsNullOrEmpty())
+        {
+            if (Phone2Ext != null)
+            {
+                return string.Format("{0:(###)###-####} x.{1}", Convert.ToInt64(Phone_2), Phone2Ext);
+            }
+            else
+            {
+                return string.Format("{0:(###)###-####}", Convert.ToInt64(Phone_2));
             }
         }
+        else
+        {
+            return string.Empty;
+        }
+    }
 
-        public string FaxString()
+    public string FaxString()
+    {
+        if(!Fax.IsNullOrEmpty()) 
         {
-            if(!Fax.IsNullOrEmpty()) 
-            {
-                return string.Format("{0:(###)###-####}", Convert.ToInt64(Fax));
-            }
-            else
-            {
-                return string.Empty;
-            }
+            return string.Format("{0:(###)###-####}", Convert.ToInt64(Fax));
         }
+        else
+        {
+            return string.Empty;
+        }
+    }
 
     public override string ToString()
     {

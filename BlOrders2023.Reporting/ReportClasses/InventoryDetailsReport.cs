@@ -12,6 +12,7 @@ namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Inventory Details Report")]
 public class InventoryDetailsReport : IReport
 {
+    private readonly CompanyInfo _copanyInfo;
     private readonly IEnumerable<InventoryItem> _items;
     private readonly IEnumerable<Order> _orders;
     private readonly DateTimeOffset _startDate;
@@ -25,8 +26,9 @@ public class InventoryDetailsReport : IReport
     public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-    public InventoryDetailsReport(IEnumerable<InventoryItem> items, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    public InventoryDetailsReport(CompanyInfo companyInfo, IEnumerable<InventoryItem> items, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
+        _copanyInfo = companyInfo;
         _items = items;
         _orders = orders;
         _startDate = startDate;
@@ -56,7 +58,7 @@ public class InventoryDetailsReport : IReport
     {
         container.Row(row =>
         {
-            row.RelativeItem(2).AlignCenter().Text("B & L Inventory Details").Style(titleStyle);
+            row.RelativeItem(2).AlignCenter().Text($"{_copanyInfo.ShortCompanyName} Inventory Details").Style(titleStyle);
             row.RelativeItem(1).AlignRight().Column(column =>
             {
                 column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);

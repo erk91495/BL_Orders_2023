@@ -17,7 +17,7 @@ public class AllocationSummaryReport : IReport
     private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-
+    private readonly CompanyInfo _companyInfo;
     private readonly IEnumerable<Order> _orders;
     private readonly AllocatorMode _allocationMode;
     private readonly DateTime _reportDate = DateTime.Now;
@@ -27,8 +27,9 @@ public class AllocationSummaryReport : IReport
     #endregion Fields
 
     #region Constructors
-    public AllocationSummaryReport(IEnumerable<Order> Orders, AllocatorMode mode, DateTime AllocationTime)
+    public AllocationSummaryReport(CompanyInfo companyInfo, IEnumerable<Order> Orders, AllocatorMode mode, DateTime AllocationTime)
     {
+        _companyInfo = companyInfo;
         _orders = Orders;
         _allocationMode = mode;
         _allocationTime = AllocationTime;
@@ -71,7 +72,7 @@ public class AllocationSummaryReport : IReport
 
                 row.RelativeItem(3).AlignCenter().Column(col =>
                 {
-                    col.Item().AlignCenter().Text("Allocation Summary Report").Style(titleStyle);
+                    col.Item().AlignCenter().Text($"{_companyInfo.ShortCompanyName} Allocation Summary Report").Style(titleStyle);
                 });
 
                 row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>

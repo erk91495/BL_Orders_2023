@@ -4,14 +4,12 @@ using BlOrders2023.Core.Contracts.Services;
 using BlOrders2023.Core.Data;
 using BlOrders2023.Core.Data.SQL;
 using BlOrders2023.Core.Services;
-using BlOrders2023.Helpers;
 using BlOrders2023.Models;
 using BlOrders2023.Services;
 using BlOrders2023.ViewModels;
 using BlOrders2023.Views;
 using BlOrders2023.UserControls.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Proxies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -21,11 +19,10 @@ using QuestPDF.Infrastructure;
 
 using Windows.ApplicationModel;
 using Microsoft.UI.Dispatching;
-using BlOrders2023.Core.Contracts;
-using BlOrders2023.Core.Helpers;
 using System.Diagnostics;
 using Microsoft.Data.SqlClient;
 using BlOrders2023.Exceptions;
+using CommunityToolkit.WinUI;
 
 namespace BlOrders2023;
 
@@ -67,7 +64,7 @@ public partial class App : Application
                    .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                    .EnableSensitiveDataLogging()
                    .EnableDetailedErrors()
-                   .UseSqlServer(connectionString: localsettings.ReadSetting<string>(LocalSettingsKeys.DBConnectionString));
+                   .UseSqlServer(connectionString: localsettings.ReadSetting<string>(Helpers.LocalSettingsKeys.DBConnectionString));
             return dbOptions.Options;
         }
     }
@@ -138,19 +135,33 @@ public partial class App : Application
 
         UnhandledException += App_UnhandledException;
 
-        var SupportedDBVersion = new Version(1, 0, 3);
-        var db = App.GetNewDatabase();
 
-        var DBVersion = db.dbVersion;
-        if (!SupportedDBVersion.Equals(DBVersion))
+        var db = App.GetNewDatabase();
+        try
         {
-            var version = Package.Current.Id.Version;
-            var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
-            var message = "The application version you are running is not compatible with the current Database version\r\n" +
-                $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n" +
-                $"Supported Database Version: {SupportedDBVersion}. Actual Database Version: {DBVersion}";
-            //System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
-            throw new VersionMismatchException(message);
+            var DBVersion = db.dbVersion;
+            var SupportedDBVersion = new Version(1, 0, 3);
+            if (!SupportedDBVersion.Equals(DBVersion))
+            {
+                var version = Package.Current.Id.Version;
+                var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+                var message = "The application version you are running is not compatible with the current Database version\r\n" +
+                    $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n" +
+                    $"Supported Database Version: {SupportedDBVersion}. Actual Database Version: {DBVersion}";
+                System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
+                Exit();
+            }
+        }
+        catch (SqlException ex)
+        {
+            System.Windows.Forms.MessageBox.Show(ex.Message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
+            DispatcherQueue.GetForCurrentThread().EnqueueAsync(() =>
+            {
+                if (App.GetService<INavigationService>() is NavigationService nav)
+                {
+                    nav.NavigateTo(typeof(SettingsViewModel).FullName!);
+                }
+            });
         }
 
 #if DEBUG
@@ -175,21 +186,24 @@ public partial class App : Application
 
         var message = $"{e.Message} \r\n";
         var title = $"{"AppDisplayName".GetLocalized()} {nameof(e)}";
-        if (MainWindow.Content != null)
-        {
-            ContentDialog dialog = new ContentDialog()
+        try{
+            if (MainWindow.Content is ShellPage shell)
             {
-                XamlRoot = MainWindow.Content.XamlRoot,
-                Content = message,
-                Title = title,
-                PrimaryButtonText = "ok"
-            };
-            _ = dialog.ShowAsync();
+                ContentDialog dialog = new ContentDialog()
+                {
+                    XamlRoot = shell.XamlRoot,
+                    Content = message,
+                    Title = title,
+                    PrimaryButtonText = "ok"
+                };
+                _ = dialog.ShowAsync();
+            }
         }
-        else
+        catch (Exception)
         {
             System.Windows.Forms.MessageBox.Show(message, title, System.Windows.Forms.MessageBoxButtons.OK);
         }
+
         // TODO: Log and handle exceptions as appropriate.
         // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
         if (!e.Handled)
@@ -201,12 +215,13 @@ public partial class App : Application
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
-
         await App.GetService<IActivationService>().ActivateAsync(args);
-
     }
+
     public static IBLDatabase GetNewDatabase()
     {
         return new SqlBLOrdersDatabase(DBOptions);
     }
+
+    public static CompanyInfo CompanyInfo => App.GetNewDatabase().CompanyInfo;
 }

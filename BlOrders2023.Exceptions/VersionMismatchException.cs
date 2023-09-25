@@ -7,11 +7,7 @@ using System.Threading.Tasks;
 namespace BlOrders2023.Exceptions;
 public class VersionMismatchException : Exception
 {
-    public VersionMismatchException() : base()
-    {
-    }
-
-    public VersionMismatchException(string message) : base(message)
+    public VersionMismatchException(Version expectedVersion, Version actualVersion) : base($"Version Mismatch expected: {expectedVersion} got: {actualVersion}")
     {
     }
 }

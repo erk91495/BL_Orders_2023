@@ -19,12 +19,13 @@ public class OutstandingBalancesReport : IReport
     private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-
+    private readonly CompanyInfo _companyInfo;
     private readonly IEnumerable<Order> _orders;
     private readonly DateTime _reportDate = DateTime.Now;
 
-    public OutstandingBalancesReport(IEnumerable<Order> orders)
+    public OutstandingBalancesReport(CompanyInfo companyInfo, IEnumerable<Order> orders)
     {
+        _companyInfo = companyInfo;
         _orders = orders;
     }
 
@@ -61,7 +62,7 @@ public class OutstandingBalancesReport : IReport
 
                 row.RelativeItem(3).AlignCenter().Column(col =>
                 {
-                    col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
+                    col.Item().AlignCenter().Text(_companyInfo.LongCompanyName).Style(titleStyle);
                     col.Item().AlignCenter().Text("Outstanding Balances").Style(titleStyle);
                 });
 

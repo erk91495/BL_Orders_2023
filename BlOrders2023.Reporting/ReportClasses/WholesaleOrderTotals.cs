@@ -13,7 +13,7 @@ namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Wholesale Order Totals")]
 public class WholesaleOrderTotals : IReport
 {
-
+    private readonly CompanyInfo _companyInfo;
     private readonly IEnumerable<OrderTotalsItem> _items;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
@@ -25,8 +25,9 @@ public class WholesaleOrderTotals : IReport
     public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-    public WholesaleOrderTotals(IEnumerable<OrderTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
+    public WholesaleOrderTotals(CompanyInfo companyInfo, IEnumerable<OrderTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
     {
+        _companyInfo = companyInfo;
         _items = items;
         _startDate = startDate;
         _endDate = endDate;
@@ -54,7 +55,7 @@ public class WholesaleOrderTotals : IReport
     {
         container.Row(row =>
         {
-            row.RelativeItem(2).AlignCenter().Text("B & L Wholesale Order Pickup Recap").Style(titleStyle);
+            row.RelativeItem(2).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Wholesale Order Pickup Recap").Style(titleStyle);
             row.RelativeItem(1).AlignRight().Column(column =>
             {
                 column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);

@@ -58,4 +58,5 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
     public DbSet<AllocationGroup> AllocationGroups { get; set; }
+    public DbSet<CompanyInfo> CompanyInfo { get; set; }
 }

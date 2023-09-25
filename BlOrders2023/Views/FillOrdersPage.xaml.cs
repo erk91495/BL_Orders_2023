@@ -42,7 +42,7 @@ public sealed partial class FillOrdersPage : Page
     {
         ViewModel = App.GetService<FillOrdersPageViewModel>();
         InitializeComponent();
-        reportGenerator = new();
+        reportGenerator = new(App.CompanyInfo);
         OrderedItems.SelectionController = new FillOrdersGridSelectionController(OrderedItems);
     }
 

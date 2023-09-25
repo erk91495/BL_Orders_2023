@@ -49,7 +49,7 @@ public sealed partial class OrdersPage : Page
     public OrdersPage()
     {
         ViewModel = App.GetService<OrdersPageViewModel>();
-        reportGenerator = new();
+        reportGenerator = new(App.CompanyInfo);
         InitializeComponent();       
     }
     #endregion Constructors
