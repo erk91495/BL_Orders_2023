@@ -65,7 +65,7 @@ public class LocalSettingsService : ILocalSettingsService
     private void WriteDefaultLocalSettings()
     {
         SaveSetting(LocalSettingsKeys.FirstRun, false);
-        SaveSetting(LocalSettingsKeys.DBConnectionString, "Data Source=Eric-PC;Initial Catalog=BL_Enterprise;User ID=;Trust Server Certificate=True;Authentication=ActiveDirectoryIntegrated");
+        SaveSetting(LocalSettingsKeys.DBConnectionString, "Data Source=BL4;Initial Catalog=BL_Enterprise;User ID=;Trust Server Certificate=True;Authentication=ActiveDirectoryIntegrated");
     }
 
     private async Task InitializeAsync()
