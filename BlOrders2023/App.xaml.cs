@@ -23,6 +23,7 @@ using Windows.ApplicationModel;
 using Microsoft.UI.Dispatching;
 using BlOrders2023.Core.Contracts;
 using BlOrders2023.Core.Helpers;
+using System.Diagnostics;
 
 namespace BlOrders2023;
 
@@ -58,7 +59,7 @@ public partial class App : Application
 
     public App()
     {
-        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NGaF5cXmVCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXlceXRSQmBZUU1+XUc=");
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NHaF5cXmVCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXZfeXRSQmFdVEB/V0U=");
         QuestPDF.Settings.License = LicenseType.Community;
 
         InitializeComponent();
@@ -138,7 +139,7 @@ public partial class App : Application
         //var dbServer = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseServer);
         var dbServer = "BL4";
         //var dbName = await localsettings.ReadSettingAsync<string>(LocalSettingsKeys.DatabaseName);
-        var dbName = "New_BL_Orders";
+        var dbName = "BL_Enterprise";
         var dbOptions = new DbContextOptionsBuilder<SqlBLOrdersDBContext>();
         dbOptions.UseLazyLoadingProxies()
                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
@@ -147,11 +148,11 @@ public partial class App : Application
                .UseSqlServer(connectionString: $"Data Source={dbServer}; Database={dbName};Integrated Security=true; Trust Server Certificate=true");
         App.DBOptions = dbOptions.Options;
 
-        var SupportedDBVersion = new Version(0, 0, 1);
+        var SupportedDBVersion = new Version(1, 0, 3);
         var DBVersion = App.GetNewDatabase().dbVersion;
         if (!SupportedDBVersion.Equals(DBVersion))
         {
-            var version = Windows.ApplicationModel.Package.Current.Id.Version;
+            var version = Package.Current.Id.Version;
             var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
             var message = "The application version you are running is not compatible with the current Database version\r\n" +
                 $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n"+
@@ -159,6 +160,14 @@ public partial class App : Application
             System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
             Exit();
         }
+
+#if DEBUG
+        if(dbServer == "BL4" && dbName == "BL_Enterprise")
+        {
+            var message = "You are running a production DB with a debug application version.";
+            System.Windows.Forms.MessageBox.Show(message, $"WARNING", System.Windows.Forms.MessageBoxButtons.OK);
+        }
+#endif // DEBUG
 
         //IAllocatorService allocator = new OrderAllocator(GetNewDatabase());
         //IAllocatorConfig config = new OrderAllocatorConfiguration()
