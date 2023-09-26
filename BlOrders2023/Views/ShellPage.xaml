@@ -35,6 +35,7 @@
                        Style="{StaticResource CaptionTextBlockStyle}"
                        Margin="28,0,0,0"
                        Padding="10,0,0,0"/>
+            
         </Grid>
         
         <NavigationView

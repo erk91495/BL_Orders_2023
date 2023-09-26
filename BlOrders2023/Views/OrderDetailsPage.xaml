@@ -102,8 +102,9 @@
                                 <KeyboardAccelerator Key="S" Modifiers="Control"/>
                             </MenuFlyoutItem.KeyboardAccelerators>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="New Order" Icon="Add" Click="NewOrderFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Delete Order" Icon="Delete" Click="DeleteOrderFlyoutItem_Click"/>
-                        <MenuFlyoutItem Text="Allow Status Changes" Icon="Edit" Click="StatusFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Allow Status Changes" Icon="Edit" Click="StatusFlyoutItem_Click" IsEnabled="{x:Bind vm:Converters.Not(ViewModel.HasErrors)}"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

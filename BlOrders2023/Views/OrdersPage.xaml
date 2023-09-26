@@ -50,7 +50,7 @@
         <TextBlock
                 x:Name="PageTitle"
                 FontSize="{StaticResource TitleLargeTextBlockFontSize}"
-                Text="Orders" />
+                Text="{x:Bind ViewModel.DatabaseName, Mode=OneWay}" />
 
 
         <CommandBar

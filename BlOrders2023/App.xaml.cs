@@ -23,6 +23,7 @@ using System.Diagnostics;
 using Microsoft.Data.SqlClient;
 using BlOrders2023.Exceptions;
 using CommunityToolkit.WinUI;
+using System.ComponentModel;
 
 namespace BlOrders2023;
 

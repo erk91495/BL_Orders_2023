@@ -13,6 +13,8 @@ public class OrdersPageViewModel : ObservableRecipient
 {
 
     #region Properties
+    public string DatabaseName => _db.DbConnection.Database.Replace('_',' ');
+
     /// <summary>
     /// Gets or sets the text for the Orders filter
     /// </summary>

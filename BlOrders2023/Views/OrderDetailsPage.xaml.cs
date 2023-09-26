@@ -23,6 +23,7 @@ using System.Drawing.Printing;
 using BlOrders2023.UserControls;
 using CommunityToolkit.WinUI;
 using System.Diagnostics;
+using Castle.Core.Resource;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -827,5 +828,13 @@ public sealed partial class OrderDetailsPage : Page
                 checkbox.IsChecked = true;
             }
         } 
+    }
+
+    private void NewOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        if(!ViewModel.HasErrors){
+            Order order = new(ViewModel.Customer);
+            Frame.Navigate(typeof(OrderDetailsPage), order);
+        }
     }
 }
