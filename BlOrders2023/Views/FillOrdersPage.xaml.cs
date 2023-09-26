@@ -127,7 +127,7 @@ public sealed partial class FillOrdersPage : Page
             OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
             OrderedItems.ColumnSizer.Refresh(); 
             OrderedVsReceivedGrid.View.Refresh();
-            if (ViewModel.Order?.OrderStatus == OrderStatus.Ordered)
+            if (ViewModel.Order?.OrderStatus <= OrderStatus.Ordered)
             {
                 ViewModel.Order.OrderStatus = OrderStatus.Filling;
             }
@@ -330,7 +330,7 @@ public sealed partial class FillOrdersPage : Page
                 }
             }
             //Not all items on order
-            else if (ViewModel.OrderStatus == OrderStatus.Filling)
+            else if (!ViewModel.Order.AllItemsReceived)
             {
                 ContentDialog contentDialog = new ContentDialog()
                 {

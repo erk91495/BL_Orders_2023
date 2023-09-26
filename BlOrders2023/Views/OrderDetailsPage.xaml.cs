@@ -662,7 +662,7 @@ public sealed partial class OrderDetailsPage : Page
                 }
             }
             //Not all items on order
-            else if (ViewModel.OrderStatus == OrderStatus.Filling)
+            else if (!ViewModel.Order.AllItemsReceived)
             {
                 ContentDialog contentDialog = new ContentDialog()
                 {
@@ -695,6 +695,15 @@ public sealed partial class OrderDetailsPage : Page
 
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
+
+            filePath = reportGenerator.GenerateShippingList(ViewModel.Order);
+            Windows.System.LauncherOptions options = new()
+            {
+                ContentType = "application/pdf"
+            };
+            _ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+
 
             if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
             {
