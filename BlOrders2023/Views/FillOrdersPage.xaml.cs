@@ -24,6 +24,7 @@ using BlOrders2023.Core.Services;
 using Syncfusion.UI.Xaml.DataGrid;
 using Microsoft.UI.Xaml.Input;
 using WinUIEx;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BlOrders2023.Views;
 
@@ -52,10 +53,10 @@ public sealed partial class FillOrdersPage : Page
         {
 
             var scanlineText = box.Text;
-            if (scanlineText.EndsWith('\r'))
+            if (scanlineText.Contains('\r'))
             {
-                var scanline = scanlineText.Trim();
-                box.Text = null;
+                var scanline = scanlineText.Split('\r').First().Trim();
+                box.Text = scanlineText[(scanline.Length + 1)..];
                 if (RemoveItemCheckBox.IsChecked != true)
                 {
                     ShippingItem item = new()
