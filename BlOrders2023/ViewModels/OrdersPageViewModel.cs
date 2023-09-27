@@ -91,7 +91,7 @@ public class OrdersPageViewModel : ObservableRecipient
     /// <summary>
     /// Retrieves orders from the data source.
     /// </summary>
-    public async void LoadOrders()
+    public async Task LoadOrders()
     {
         await dispatcherQueue.EnqueueAsync(() =>
         {
@@ -117,7 +117,7 @@ public class OrdersPageViewModel : ObservableRecipient
     /// <summary>
     /// Submits a query to the data source.
     /// </summary>
-    public async void QueryOrders(string query)
+    public async Task QueryOrders(string query)
     {
         if (!string.IsNullOrWhiteSpace(query))
         {

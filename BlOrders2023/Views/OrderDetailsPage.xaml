@@ -332,7 +332,7 @@
                 <sf:GridNumericColumn HeaderText="Customer Price" 
                                       MappingName="ActualCustPrice" 
                                       AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}" 
-                                      DisplayNumberFormat="C"
+                                      DisplayNumberFormat="N2"
                                       UseBindingValue="True"
                                       ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" 
@@ -347,7 +347,8 @@
                                       MappingName="QuantityReceived"/>
                 <sf:GridNumericColumn HeaderText="Total Price" 
                                       MappingName="GetTotalPrice"
-                                      IsReadOnly="True"/>
+                                      IsReadOnly="True"
+                                      DisplayNumberFormat="N2"/>
                 <sf:GridUnboundColumn HeaderText="" 
                                       UseBindingValue="False" 
                                       MappingName="UnboundColumn" 

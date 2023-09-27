@@ -61,7 +61,7 @@ public sealed partial class OrdersPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         ViewModel.Orders.Clear();
-        ViewModel.LoadOrders();
+        _ = ViewModel.LoadOrders();
     }
 
     #region Navigation
