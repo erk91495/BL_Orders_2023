@@ -141,7 +141,7 @@ public partial class App : Application
         try
         {
             var DBVersion = db.dbVersion;
-            var SupportedDBVersion = new Version(1, 0, 3);
+            var SupportedDBVersion = new Version(1, 0, 4);
             if (!SupportedDBVersion.Equals(DBVersion))
             {
                 var version = Package.Current.Id.Version;
