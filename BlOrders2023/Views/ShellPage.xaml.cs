@@ -49,6 +49,7 @@ public sealed partial class ShellPage : Page
         App.MainWindow.SetTitleBar(AppTitleBar);
         App.MainWindow.Activated += MainWindow_Activated;
         AppTitleBarText.Text = "AppDisplayName".GetLocalized();
+        NavigationFrame.Navigated += NavigationFrame_Navigated;
     }
     #endregion Constructors
 
@@ -168,6 +169,11 @@ public sealed partial class ShellPage : Page
     {
         var navigationService = App.GetService<INavigationService>();
         navigationService?.Frame?.Navigate(typeof(SettingsPage));
+    }
+
+    private void NavigationFrame_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        DatabaseName.Text = App.GetNewDatabase().DbConnection.Database.Replace('_', ' ');
     }
     #endregion Methods
 }
