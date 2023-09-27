@@ -534,18 +534,18 @@ internal class FillOrdersGridSelectionController : GridSelectionController
         if (args.Key == Windows.System.VirtualKey.Delete)
         {
             keyEventArgs = args;
+            args.Handled = true;
             ContentDialog dialog = new()
             {
-                XamlRoot = this.DataGrid.XamlRoot,
+                XamlRoot = DataGrid.XamlRoot,
                 Title = "Confirm Delete",
-                Content = "Are you sure you want to delete all shipping items from this order? These changes cannot be undone.",
+                Content = "Are you sure you want to delete the selected shipping item(s) from this order? These changes cannot be undone.",
                 PrimaryButtonText = "Delete",
                 CloseButtonText = "Cancel",
             };
 
             dialog.PrimaryButtonClick += DeleteDialog_PrimaryButtonClick;
-
-            var result = dialog.ShowAsync();
+            _ = dialog.ShowAsync();
             return false;
         }
 
