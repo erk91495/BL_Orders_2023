@@ -59,16 +59,17 @@ public sealed partial class OrderDetailsPage : Page
     {
         ViewModel = App.GetService<OrderDetailsPageViewModel>();
         reportGenerator = new(App.CompanyInfo);
-        this.InitializeComponent();
-        this.Loaded += OrderDetailsPage_Loaded;
+        InitializeComponent();
+        Loaded += OrderDetailsPage_Loaded;
         SetMemoTotalFormatter();
         //SetMemoWeightFormatter();
         PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
         OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
-        this.DataContext = this;
-        this.Unloaded += OrderDetailsPage_Unloaded;
+        DataContext = this;
+        Unloaded += OrderDetailsPage_Unloaded;
     }
-
+    #endregion Constructors
+    #region Methods
     private void OrderDetailsPage_Unloaded(object sender, RoutedEventArgs e)
     {
         App.MainWindow.Closed -= MainWindow_Closed;
@@ -87,17 +88,16 @@ public sealed partial class OrderDetailsPage : Page
         };
 
         var res = await dialog.ShowAsync();
-        if(res == ContentDialogResult.Primary)
+        if (res == ContentDialogResult.Primary)
         {
-            if(sender is MainWindow window)
+            if (sender is MainWindow window)
             {
                 App.MainWindow.Closed -= MainWindow_Closed;
                 App.MainWindow.Close();
             }
         }
     }
-    #endregion Constructors
-    #region Methods
+
     private void OrderDetailsPage_Loaded(object sender, RoutedEventArgs e)
     {
         App.MainWindow.Closed += MainWindow_Closed;

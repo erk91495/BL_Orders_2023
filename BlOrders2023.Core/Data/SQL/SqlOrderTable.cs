@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Core.Data.SQL;
 
@@ -63,9 +64,9 @@ internal class SqlOrderTable : IOrderTable
     public IEnumerable<Order> Get(int orderID)
     {
         return _db.Orders
-            .Include(order => order.Items)
-            .Include(order => order.Customer)
-            .Include(order => order.ShippingItems)
+            //.Include(order => order.Items)
+            //.Include(order => order.Customer)
+            //.Include(order => order.ShippingItems)
             .Where(order => order.OrderID == orderID)
             .ToList();
     }
@@ -102,9 +103,9 @@ internal class SqlOrderTable : IOrderTable
             .OrderByDescending(order => order.PickupDate)
             .ThenBy(order => order.OrderID)
             .Where(order => order.PickupDate.Year >= DateTime.Now.Year - 2)
-            .Include(Order => Order.Items)
-            .Include(order => order.Customer)
-            .Include(Order => Order.ShippingItems)
+            //.Include(Order => Order.Items)
+            //.Include(order => order.Customer)
+            //.Include(Order => Order.ShippingItems)
             .AsNoTrackingWithIdentityResolution()
             .ToListAsync();
         }
@@ -120,18 +121,18 @@ internal class SqlOrderTable : IOrderTable
     {
         if (tracking){
             return await _db.Orders
-            .Include(order => order.Items)
-            .Include(order => order.Customer)
-            .Include(order => order.ShippingItems)
+            //.Include(order => order.Items)
+            //.Include(order => order.Customer)
+            //.Include(order => order.ShippingItems)
             .Where(order => order.OrderID == orderID)
             .ToListAsync();
         }
         else
         {
             return await _db.Orders
-            .Include(order => order.Items)
-            .Include(order => order.Customer)
-            .Include(order => order.ShippingItems)
+            //.Include(order => order.Items)
+            //.Include(order => order.Customer)
+            //.Include(order => order.ShippingItems)
             .Where(order => order.OrderID == orderID)
             .AsNoTrackingWithIdentityResolution()
             .ToListAsync();
@@ -147,18 +148,18 @@ internal class SqlOrderTable : IOrderTable
         if (tracking)
         {
             return await _db.Orders
-            .Include(order => order.Items)
-            .Include(order => order.Customer)
-            .Include(order => order.ShippingItems)
+            //.Include(order => order.Items)
+            //.Include(order => order.Customer)
+            //.Include(order => order.ShippingItems)
             .Where(order => ids.Contains(order.OrderID))
             .ToListAsync();
         }
         else
         {
             return await _db.Orders
-            .Include(order => order.Items)
-            .Include(order => order.Customer)
-            .Include(order => order.ShippingItems)
+            //.Include(order => order.Items)
+            //.Include(order => order.Customer)
+            //.Include(order => order.ShippingItems)
             .Where(order => ids.Contains(order.OrderID))
             .AsNoTrackingWithIdentityResolution()
             .ToListAsync();
@@ -229,7 +230,16 @@ internal class SqlOrderTable : IOrderTable
     /// <returns></returns>
     public Order Upsert(Order order, bool overwrite = false)
     {
-        _db.Update(order);
+        if(_db.Orders.Any(o => o == order))
+        {
+            _db.Update(order);
+        }
+        else
+        {
+            _db.Entry(order).State = EntityState.Added;
+            AddOrderItems(order);
+            AddShippingItems(order);
+        }
         //TODO: may be a cleaner way of doing this but it works for now
         if (overwrite)
         {
@@ -242,6 +252,28 @@ internal class SqlOrderTable : IOrderTable
         return order;
     }
 
+    private void AddOrderItems(Order order)
+    {
+        if(order != null && !order.Items.IsNullOrEmpty())
+        {
+            foreach(var item in order.Items)
+            {
+                _db.Entry(item).State = EntityState.Added;
+            }
+        }
+    }
+
+    private void AddShippingItems(Order order)
+    {
+        if (order != null && !order.ShippingItems.IsNullOrEmpty())
+        {
+            foreach (var item in order.ShippingItems)
+            {
+                _db.Entry(item).State = EntityState.Added;
+            }
+        }
+    }
+
     /// <summary>
     /// Updates the database context with the given Order. If the Order does not exist it will be added to the db
     /// </summary>
@@ -249,7 +281,16 @@ internal class SqlOrderTable : IOrderTable
     /// <returns>the updated Order</returns>
     public async Task<Order> UpsertAsync(Order order)
     {
-        _db.Update(order);
+        if (_db.Orders.Any(o => o == order))
+        {
+            _db.Update(order);
+        }
+        else
+        {
+            _db.Entry(order).State = EntityState.Added;
+            AddOrderItems(order);
+            AddShippingItems(order);
+        }
 
         _ = await _db.SaveChangesAsync();
         return order;
