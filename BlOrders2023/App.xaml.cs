@@ -19,13 +19,13 @@ using QuestPDF.Infrastructure;
 
 using Windows.ApplicationModel;
 using Microsoft.UI.Dispatching;
-using System.Diagnostics;
 using Microsoft.Data.SqlClient;
 using BlOrders2023.Exceptions;
 using CommunityToolkit.WinUI;
-using System.ComponentModel;
+using System.Diagnostics;
 
 namespace BlOrders2023;
+
 
 // To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
 public partial class App : Application
@@ -135,36 +135,10 @@ public partial class App : Application
         Build();
 
         UnhandledException += App_UnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 
         var db = App.GetNewDatabase();
-        try
-        {
-            var DBVersion = db.dbVersion;
-            var SupportedDBVersion = new Version(1, 0, 4);
-            if (!SupportedDBVersion.Equals(DBVersion))
-            {
-                var version = Package.Current.Id.Version;
-                var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
-                var message = "The application version you are running is not compatible with the current Database version\r\n" +
-                    $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n" +
-                    $"Supported Database Version: {SupportedDBVersion}. Actual Database Version: {DBVersion}";
-                System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
-                Exit();
-            }
-        }
-        catch (SqlException ex)
-        {
-            System.Windows.Forms.MessageBox.Show(ex.Message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
-            DispatcherQueue.GetForCurrentThread().EnqueueAsync(() =>
-            {
-                if (App.GetService<INavigationService>() is NavigationService nav)
-                {
-                    nav.NavigateTo(typeof(SettingsViewModel).FullName!);
-                }
-            });
-        }
-
 #if DEBUG
         if (db.DbConnection.DataSource == "BL4" && db.DbConnection.Database == "BL_Enterprise")
         {
@@ -172,6 +146,33 @@ public partial class App : Application
             System.Windows.Forms.MessageBox.Show(message, $"WARNING", System.Windows.Forms.MessageBoxButtons.OK);
         }
 #endif // DEBUG
+    }
+
+    private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+    {
+        if(e.ExceptionObject is Exception ex)
+        {
+            var message = $"{ex.ToString()} \r\n";
+            var title = $"{"AppDisplayName".GetLocalized()} {nameof(e)}";
+            try
+            {
+                if (MainWindow.Content is ShellPage shell)
+                {
+                    ContentDialog dialog = new ContentDialog()
+                    {
+                        XamlRoot = shell.XamlRoot,
+                        Content = message,
+                        Title = title,
+                        PrimaryButtonText = "ok"
+                    };
+                    _ = dialog.ShowAsync();
+                }
+            }
+            catch (Exception)
+            {
+                System.Windows.Forms.MessageBox.Show(message, title, System.Windows.Forms.MessageBoxButtons.OK);
+            }
+        }
     }
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -217,6 +218,33 @@ public partial class App : Application
     {
         base.OnLaunched(args);
         await App.GetService<IActivationService>().ActivateAsync(args);
+        try
+        {
+            var db = App.GetNewDatabase();
+            var DBVersion = db.dbVersion;
+            var SupportedDBVersion = new Version(1, 0, 4);
+            if (!SupportedDBVersion.Equals(DBVersion))
+            {
+                var version = Package.Current.Id.Version;
+                var versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+                var message = "The application version you are running is not compatible with the current Database version\r\n" +
+                    $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n" +
+                    $"Supported Database Version: {SupportedDBVersion}. Actual Database Version: {DBVersion}";
+                System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
+                Exit();
+            }
+        }
+        catch (Exception ex)
+        {
+            //System.Windows.Forms.MessageBox.Show(ex.Message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
+            await DispatcherQueue.GetForCurrentThread().EnqueueAsync(() =>
+            {
+                if (App.GetService<INavigationService>() is NavigationService nav)
+                {
+                    nav.NavigateTo(typeof(SettingsViewModel).FullName!);
+                }
+            });
+        }
     }
 
     public static IBLDatabase GetNewDatabase()
