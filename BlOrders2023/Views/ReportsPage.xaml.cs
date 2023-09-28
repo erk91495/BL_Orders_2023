@@ -52,7 +52,7 @@ public sealed partial class ReportsPage : Page
     {
         this.InitializeComponent();
         ViewModel = App.GetService<ReportsPageViewModel>();
-        reportGenerator = new();
+        reportGenerator = new(App.CompanyInfo);
 
 
         ReportsList = new();

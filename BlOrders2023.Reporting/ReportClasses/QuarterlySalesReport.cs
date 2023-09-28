@@ -20,14 +20,15 @@ public class QuarterlySalesReport : IReport
     private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-
+    private readonly CompanyInfo _companyInfo;
     private readonly IEnumerable<Order> _orders;
     private readonly DateTime _reportDate = DateTime.Now;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
 
-    public QuarterlySalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    public QuarterlySalesReport(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
+        _companyInfo = companyInfo;
         _orders = orders;
         _startDate  = startDate;
         _endDate = endDate; 
@@ -66,7 +67,7 @@ public class QuarterlySalesReport : IReport
 
                 row.RelativeItem(3).AlignCenter().Column(col =>
                 {
-                    col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
+                    col.Item().AlignCenter().Text($"{_companyInfo.ShortCompanyName} Turkeys, Inc.").Style(titleStyle);
                     col.Item().AlignCenter().Text("Quarterly Sales Report").Style(titleStyle);
                 });
 

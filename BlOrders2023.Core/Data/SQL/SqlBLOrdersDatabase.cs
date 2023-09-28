@@ -58,4 +58,5 @@ public class SqlBLOrdersDatabase : IBLDatabase
         }
     }
     public DbConnection DbConnection => _dbContext.Database.GetDbConnection();
+    public CompanyInfo CompanyInfo => _dbContext.CompanyInfo.AsNoTracking().ToList().First();
 }

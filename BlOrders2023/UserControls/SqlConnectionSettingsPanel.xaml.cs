@@ -33,9 +33,10 @@ namespace BlOrders2023.UserControls
             if (connectionString != null )
             {
                 builder = new(connectionString);
-                _ =RefreshDatabaseList();
-                cboAuthenticationProtocols.SelectedIndex = (int)builder.Authentication;
                 Database = builder.InitialCatalog;
+                _ = RefreshDatabaseList();
+                cboAuthenticationProtocols.SelectedIndex = (int)builder.Authentication;
+                
             }
             else    
             { 
@@ -225,16 +226,22 @@ namespace BlOrders2023.UserControls
                     using SqlDataReader reader = await command.ExecuteReaderAsync();
                     while (await reader.ReadAsync())
                     {
-                        databases.Add(reader.GetString(0));
+                        var dbname = reader.GetString(0);
+                        if (dbname == "BL_Enterprise" || dbname == "BL_Enterprise_North")
+                        {
+                            databases.Add(dbname);
+                        } 
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Database) || !databases.Contains(Database))
+                if (!string.IsNullOrEmpty(Database) && !databases.Contains(Database))
                 {
                     databases.Insert(0, Database);
                 }
 
                 Databases = databases;
+                DatabaseCombo.ItemsSource = databases;
+                DatabaseCombo.SelectedIndex = DatabaseCombo.Items.IndexOf(Database);
             }
             catch (Exception ex)
             {

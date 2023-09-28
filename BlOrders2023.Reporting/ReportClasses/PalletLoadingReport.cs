@@ -9,12 +9,10 @@ namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Pallet Loading Report")]
 public class PalletLoadingReport :IReport
 {
-    #region Properties
-    #endregion Properties
-
     #region Fields
     private readonly Order _order;
     private readonly Pallet _pallet;
+    private readonly CompanyInfo _companyInfo;
 
     private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).FontColor(Colors.Black);
     private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(18).FontColor(Colors.Black);
@@ -25,9 +23,14 @@ public class PalletLoadingReport :IReport
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(8.5f).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(8.5f);
     #endregion Fields
+    #region Properties
+    #endregion Properties
 
-    public PalletLoadingReport(Order order, Pallet pallet)
+
+
+    public PalletLoadingReport(CompanyInfo companyInfo, Order order, Pallet pallet)
     {
+        _companyInfo = companyInfo;
         _order = order;
         _pallet = pallet;
     }
@@ -63,7 +66,7 @@ public class PalletLoadingReport :IReport
                 row.RelativeItem(1).Text($"Pallet: {_pallet.PalletIndex} of {_pallet.TotalPallets}").Style(titleStyle);
                 row.RelativeItem(3).Column( col =>
                 {
-                    col.Item().AlignCenter().Text($"Bowman & Landes Pallet Loading Report").Style(subTitleStyle);
+                    col.Item().AlignCenter().Text($"{_companyInfo.ShortCompanyName} Pallet Loading Report").Style(subTitleStyle);
                     col.Item().AlignCenter().Text($"{_order.Customer.AllocationType} Order").Style(subTitleStyle);
                 });
                 FontManager.RegisterFontFromEmbeddedResource("BlOrders2023.Reporting.Assets.Fonts.IDAutomationHC39M_Free.ttf");

@@ -12,6 +12,7 @@ namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Current Inventory")]
 public  class CurrentInventoryReport : IReport
 {
+    private readonly CompanyInfo _companyInfo;
     private readonly IEnumerable<InventoryItem> _items;
     private readonly DateTime _reportDate = DateTime.Now;
 
@@ -22,8 +23,9 @@ public  class CurrentInventoryReport : IReport
     public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-    public CurrentInventoryReport(IEnumerable<InventoryItem> items)
+    public CurrentInventoryReport(CompanyInfo companyInfo, IEnumerable<InventoryItem> items)
     {
+        _companyInfo = companyInfo;
         _items = items;
     }
 
@@ -50,7 +52,7 @@ public  class CurrentInventoryReport : IReport
     {
         container.Row(row =>
         {
-            row.RelativeItem(2).AlignCenter().Text("B & L Current Inventory").Style(titleStyle);
+            row.RelativeItem(2).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Current Inventory").Style(titleStyle);
             row.RelativeItem(1).AlignRight().Column(column =>
             {
                 column.Item().Text($"From: {_reportDate.ToString("M/d/yy")}").Style(subTitleStyle);

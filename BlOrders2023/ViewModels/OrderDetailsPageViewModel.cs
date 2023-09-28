@@ -15,7 +15,6 @@ namespace BlOrders2023.ViewModels;
 public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
 {
     #region Properties
-
     public ObservableCollection<OrderItem> Items
     {
         get => _items;

@@ -24,6 +24,7 @@ using BlOrders2023.Core.Services;
 using Syncfusion.UI.Xaml.DataGrid;
 using Microsoft.UI.Xaml.Input;
 using WinUIEx;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BlOrders2023.Views;
 
@@ -42,7 +43,7 @@ public sealed partial class FillOrdersPage : Page
     {
         ViewModel = App.GetService<FillOrdersPageViewModel>();
         InitializeComponent();
-        reportGenerator = new();
+        reportGenerator = new(App.CompanyInfo);
         OrderedItems.SelectionController = new FillOrdersGridSelectionController(OrderedItems);
     }
 
@@ -52,10 +53,10 @@ public sealed partial class FillOrdersPage : Page
         {
 
             var scanlineText = box.Text;
-            if (scanlineText.EndsWith('\r'))
+            if (scanlineText.Contains('\r'))
             {
-                var scanline = scanlineText.Trim();
-                box.Text = null;
+                var scanline = scanlineText.Split('\r').First().Trim();
+                box.Text = scanlineText[(scanline.Length + 1)..];
                 if (RemoveItemCheckBox.IsChecked != true)
                 {
                     ShippingItem item = new()
@@ -127,7 +128,7 @@ public sealed partial class FillOrdersPage : Page
             OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
             OrderedItems.ColumnSizer.Refresh(); 
             OrderedVsReceivedGrid.View.Refresh();
-            if (ViewModel.Order?.OrderStatus == OrderStatus.Ordered)
+            if (ViewModel.Order?.OrderStatus <= OrderStatus.Ordered)
             {
                 ViewModel.Order.OrderStatus = OrderStatus.Filling;
             }
@@ -330,7 +331,7 @@ public sealed partial class FillOrdersPage : Page
                 }
             }
             //Not all items on order
-            else if (ViewModel.OrderStatus == OrderStatus.Filling)
+            else if (!ViewModel.Order.AllItemsReceived)
             {
                 ContentDialog contentDialog = new ContentDialog()
                 {
@@ -533,18 +534,18 @@ internal class FillOrdersGridSelectionController : GridSelectionController
         if (args.Key == Windows.System.VirtualKey.Delete)
         {
             keyEventArgs = args;
+            args.Handled = true;
             ContentDialog dialog = new()
             {
-                XamlRoot = this.DataGrid.XamlRoot,
+                XamlRoot = DataGrid.XamlRoot,
                 Title = "Confirm Delete",
-                Content = "Are you sure you want to delete all shipping items from this order? These changes cannot be undone.",
+                Content = "Are you sure you want to delete the selected shipping item(s) from this order? These changes cannot be undone.",
                 PrimaryButtonText = "Delete",
                 CloseButtonText = "Cancel",
             };
 
             dialog.PrimaryButtonClick += DeleteDialog_PrimaryButtonClick;
-
-            var result = dialog.ShowAsync();
+            _ = dialog.ShowAsync();
             return false;
         }
 

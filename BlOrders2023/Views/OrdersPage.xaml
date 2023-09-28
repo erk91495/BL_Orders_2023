@@ -50,7 +50,7 @@
         <TextBlock
                 x:Name="PageTitle"
                 FontSize="{StaticResource TitleLargeTextBlockFontSize}"
-                Text="Orders" />
+                Text="{x:Bind ViewModel.DatabaseName, Mode=OneWay}" />
 
 
         <CommandBar
@@ -252,10 +252,8 @@
                                    RelativePanel.AlignRightWithPanel="True"
                                    RelativePanel.AlignLeftWithPanel="True"
                                    ContextFlyout="{StaticResource DataGridContextMenu}"
-                                   EnableDataVirtualization="True"
-                                   IsDynamicItemsSource="True"
-                                   AllowFiltering="False"
-                                   AllowSorting="False"
+                                   AllowFiltering="True"
+                                   AllowSorting="True"
                                    SelectionMode="Single"
                                    NavigationMode="Row"
                                    SelectionChanged="OrdersGrid_SelectionChanged"

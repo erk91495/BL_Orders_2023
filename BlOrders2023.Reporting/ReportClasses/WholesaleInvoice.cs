@@ -13,7 +13,7 @@ namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Wholesale Invoice")]
 public class WholesaleInvoice : IReport
 {
-
+    private readonly CompanyInfo _companyInfo;
     private readonly Order _order;
 
     private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
@@ -23,8 +23,9 @@ public class WholesaleInvoice : IReport
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-    public WholesaleInvoice (Order order)
+    public WholesaleInvoice (CompanyInfo companyInfo, Order order)
     {
+        _companyInfo = companyInfo;
         _order = order;
     }
 
@@ -74,10 +75,10 @@ public class WholesaleInvoice : IReport
 
                 row.RelativeItem(3).AlignCenter().Column(col =>
                 {
-                    col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
-                    col.Item().AlignCenter().Text("6490 Ross Road, New Carlisle, Ohio 45344").Style(subTitleStyle);
-                    col.Item().AlignCenter().Text("Phone: 937-845-9466          Fax: 937-845-9998");
-                    col.Item().AlignCenter().Text("www.bowmanlandes.com");
+                    col.Item().AlignCenter().Text(_companyInfo.LongCompanyName).Style(titleStyle);
+                    col.Item().AlignCenter().Text($"{_companyInfo.StreetAddress}, {_companyInfo.City}, {_companyInfo.State} {_companyInfo.ShortZipCode}").Style(subTitleStyle);
+                    col.Item().AlignCenter().Text($"Phone: {_companyInfo.PhoneString()}          Fax: {_companyInfo.FaxString()}");
+                    col.Item().AlignCenter().Text(_companyInfo.Website);
                 });
 
                 row.RelativeItem(1).AlignMiddle().AlignRight().Column(column =>

@@ -23,6 +23,7 @@ using System.Drawing.Printing;
 using BlOrders2023.UserControls;
 using CommunityToolkit.WinUI;
 using System.Diagnostics;
+using Castle.Core.Resource;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -57,17 +58,18 @@ public sealed partial class OrderDetailsPage : Page
     public OrderDetailsPage()
     {
         ViewModel = App.GetService<OrderDetailsPageViewModel>();
-        reportGenerator = new();
-        this.InitializeComponent();
-        this.Loaded += OrderDetailsPage_Loaded;
+        reportGenerator = new(App.CompanyInfo);
+        InitializeComponent();
+        Loaded += OrderDetailsPage_Loaded;
         SetMemoTotalFormatter();
         //SetMemoWeightFormatter();
         PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
         OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
-        this.DataContext = this;
-        this.Unloaded += OrderDetailsPage_Unloaded;
+        DataContext = this;
+        Unloaded += OrderDetailsPage_Unloaded;
     }
-
+    #endregion Constructors
+    #region Methods
     private void OrderDetailsPage_Unloaded(object sender, RoutedEventArgs e)
     {
         App.MainWindow.Closed -= MainWindow_Closed;
@@ -86,17 +88,16 @@ public sealed partial class OrderDetailsPage : Page
         };
 
         var res = await dialog.ShowAsync();
-        if(res == ContentDialogResult.Primary)
+        if (res == ContentDialogResult.Primary)
         {
-            if(sender is MainWindow window)
+            if (sender is MainWindow window)
             {
                 App.MainWindow.Closed -= MainWindow_Closed;
                 App.MainWindow.Close();
             }
         }
     }
-    #endregion Constructors
-    #region Methods
+
     private void OrderDetailsPage_Loaded(object sender, RoutedEventArgs e)
     {
         App.MainWindow.Closed += MainWindow_Closed;
@@ -662,7 +663,7 @@ public sealed partial class OrderDetailsPage : Page
                 }
             }
             //Not all items on order
-            else if (ViewModel.OrderStatus == OrderStatus.Filling)
+            else if (!ViewModel.Order.AllItemsReceived)
             {
                 ContentDialog contentDialog = new ContentDialog()
                 {
@@ -695,6 +696,15 @@ public sealed partial class OrderDetailsPage : Page
 
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
+
+            filePath = reportGenerator.GenerateShippingList(ViewModel.Order);
+            Windows.System.LauncherOptions options = new()
+            {
+                ContentType = "application/pdf"
+            };
+            _ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+
+
 
             if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
             {
@@ -818,5 +828,13 @@ public sealed partial class OrderDetailsPage : Page
                 checkbox.IsChecked = true;
             }
         } 
+    }
+
+    private void NewOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        if(!ViewModel.HasErrors){
+            Order order = new(ViewModel.Customer);
+            Frame.Navigate(typeof(OrderDetailsPage), order);
+        }
     }
 }

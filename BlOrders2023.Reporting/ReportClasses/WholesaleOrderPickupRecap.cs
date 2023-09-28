@@ -12,6 +12,7 @@ namespace BlOrders2023.Reporting.ReportClasses
     [System.ComponentModel.DisplayName("Wholesale Order Pickup Recap")]
     public class WholesaleOrderPickupRecap : IReport
     {
+        private readonly CompanyInfo _companyInfo;
         private IEnumerable<Order> _orders;
         private DateTimeOffset _startDate;
         private DateTimeOffset _endDate;
@@ -23,8 +24,9 @@ namespace BlOrders2023.Reporting.ReportClasses
         public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
         public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-        public WholesaleOrderPickupRecap(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+        public WholesaleOrderPickupRecap(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
         {
+            _companyInfo = companyInfo;
             _orders = orders;
             _startDate = startDate;
             _endDate = endDate;
@@ -53,7 +55,7 @@ namespace BlOrders2023.Reporting.ReportClasses
         {
             container.Row(row =>
             {
-                row.RelativeItem(2).AlignCenter().Text("B & L Wholesale Order Pickup Recap").Style(titleStyle);
+                row.RelativeItem(2).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Wholesale Order Pickup Recap").Style(titleStyle);
                 row.RelativeItem(1).AlignRight().Column( column =>
                 {
                     column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);

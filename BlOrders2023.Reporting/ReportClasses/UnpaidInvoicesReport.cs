@@ -22,12 +22,13 @@ namespace BlOrders2023.Reporting.ReportClasses
         private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
         private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
         private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-
+        private readonly CompanyInfo _companyInfo;
         private IEnumerable<Order> _orders;
         private DateTime _reportDate = DateTime.Now;
 
-        public UnpaidInvoicesReport(IEnumerable<Order> orders)
+        public UnpaidInvoicesReport(CompanyInfo companyInfo, IEnumerable<Order> orders)
         {
+            _companyInfo = companyInfo;
             _orders = orders;
         }
 
@@ -64,10 +65,10 @@ namespace BlOrders2023.Reporting.ReportClasses
 
                     row.RelativeItem(3).AlignCenter().Column(col =>
                     {
-                        col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
-                        col.Item().AlignCenter().Text("6490 Ross Road, New Carlisle, Ohio 45344").Style(subTitleStyle);
-                        col.Item().AlignCenter().Text("Phone: 937-845-9466          Fax: 937-845-9998");
-                        col.Item().AlignCenter().Text("www.bowmanlandes.com");
+                        col.Item().AlignCenter().Text(_companyInfo.LongCompanyName).Style(titleStyle);
+                        col.Item().AlignCenter().Text($"{_companyInfo.StreetAddress}, {_companyInfo.City}, {_companyInfo.State} {_companyInfo.ShortZipCode}").Style(subTitleStyle);
+                        col.Item().AlignCenter().Text($"Phone: {_companyInfo.PhoneString()}          Fax: {_companyInfo.FaxString()}");
+                        col.Item().AlignCenter().Text(_companyInfo.Website);
                     });
 
                 });

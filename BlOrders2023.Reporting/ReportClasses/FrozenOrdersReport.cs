@@ -13,20 +13,21 @@ namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Frozen Orders Report")]
 public class FrozenOrdersReport :IReport
 {
-        private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-        private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).FontColor(Colors.Black);
-        private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-        private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-        private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9);
-        private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-
-        private readonly IEnumerable<Order> _orders;
-        private readonly DateTime _reportDate = DateTime.Now;
-        private readonly DateTimeOffset _startDate;
-        private readonly DateTimeOffset _endDate;
+    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
+    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).FontColor(Colors.Black);
+    private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
+    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
+    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9);
+    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
+    private readonly CompanyInfo _companyInfo;
+    private readonly IEnumerable<Order> _orders;
+    private readonly DateTime _reportDate = DateTime.Now;
+    private readonly DateTimeOffset _startDate;
+    private readonly DateTimeOffset _endDate;
     
-    public FrozenOrdersReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    public FrozenOrdersReport(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
+        _companyInfo = companyInfo;
         _orders = orders;
         _startDate = startDate;
         _endDate = endDate;
@@ -65,7 +66,7 @@ public class FrozenOrdersReport :IReport
 
                 row.RelativeItem(1);
 
-                row.RelativeItem(5).AlignCenter().Text("Bowman & Landes Frozen Orders Report").Style(titleStyle);
+                row.RelativeItem(5).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Frozen Orders Report").Style(titleStyle);
 
                 row.RelativeItem(1).AlignRight().Column(column =>
                 {

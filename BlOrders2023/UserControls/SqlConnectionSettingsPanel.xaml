@@ -65,8 +65,8 @@
                 <FontIcon Glyph="&#xEE94;"/>
             </labs:SettingsCard.HeaderIcon>
             <Grid>
-                <ComboBox DropDownOpened="DatabaseComboBox_DropDownOpened"
-                          ItemsSource="{x:Bind Databases, Mode=OneWay}"
+                <ComboBox x:Name="DatabaseCombo"
+                          DropDownOpened="DatabaseComboBox_DropDownOpened"
                           Text="{x:Bind Database, Mode=TwoWay}"
                           SelectionChanged="Database_SelectionChanged"
                           IsEditable="True"

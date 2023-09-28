@@ -224,6 +224,7 @@ public class Order : ObservableObject
         PickupTime = DateTime.Today.AddHours(12);
         OrderStatus = OrderStatus.Ordered;
         Items = new();
+        Allocated = false;
     }
 
     public Order(WholesaleCustomer customer)

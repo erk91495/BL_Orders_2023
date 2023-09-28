@@ -102,8 +102,9 @@
                                 <KeyboardAccelerator Key="S" Modifiers="Control"/>
                             </MenuFlyoutItem.KeyboardAccelerators>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="New Order" Icon="Add" Click="NewOrderFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Delete Order" Icon="Delete" Click="DeleteOrderFlyoutItem_Click"/>
-                        <MenuFlyoutItem Text="Allow Status Changes" Icon="Edit" Click="StatusFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Allow Status Changes" Icon="Edit" Click="StatusFlyoutItem_Click" IsEnabled="{x:Bind vm:Converters.Not(ViewModel.HasErrors)}"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
@@ -331,7 +332,7 @@
                 <sf:GridNumericColumn HeaderText="Customer Price" 
                                       MappingName="ActualCustPrice" 
                                       AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}" 
-                                      DisplayNumberFormat="C"
+                                      DisplayNumberFormat="N2"
                                       UseBindingValue="True"
                                       ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" 
@@ -346,7 +347,8 @@
                                       MappingName="QuantityReceived"/>
                 <sf:GridNumericColumn HeaderText="Total Price" 
                                       MappingName="GetTotalPrice"
-                                      IsReadOnly="True"/>
+                                      IsReadOnly="True"
+                                      DisplayNumberFormat="N2"/>
                 <sf:GridUnboundColumn HeaderText="" 
                                       UseBindingValue="False" 
                                       MappingName="UnboundColumn" 

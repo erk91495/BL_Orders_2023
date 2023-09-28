@@ -49,7 +49,7 @@ public sealed partial class OrdersPage : Page
     public OrdersPage()
     {
         ViewModel = App.GetService<OrdersPageViewModel>();
-        reportGenerator = new();
+        reportGenerator = new(App.CompanyInfo);
         InitializeComponent();       
     }
     #endregion Constructors
@@ -61,7 +61,7 @@ public sealed partial class OrdersPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         ViewModel.Orders.Clear();
-        ViewModel.LoadOrders();
+        _ = ViewModel.LoadOrders();
     }
 
     #region Navigation
@@ -333,7 +333,7 @@ public sealed partial class OrdersPage : Page
                 }
             }
             //Not all items on order
-            else if (ViewModel.SelectedOrder.OrderStatus == OrderStatus.Filling)
+            else if (!ViewModel.SelectedOrder.AllItemsReceived)
             {
                 ContentDialog contentDialog = new ContentDialog()
                 {

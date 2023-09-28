@@ -19,8 +19,10 @@ public class AggregateInvoiceReport : IReport
     private IEnumerable<Order> _orders;
     private DateTimeOffset _startDate;
     private DateTimeOffset _endDate;
-    public AggregateInvoiceReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    private CompanyInfo _companyInfo;
+    public AggregateInvoiceReport(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
+        _companyInfo = companyInfo;
         _orders = orders;
         _startDate = startDate;
         _endDate = endDate;
@@ -59,10 +61,10 @@ public class AggregateInvoiceReport : IReport
 
                 row.RelativeItem(3).AlignCenter().Column(col =>
                 {
-                    col.Item().AlignCenter().Text("Bowman & Landes Turkeys, Inc.").Style(titleStyle);
-                    col.Item().AlignCenter().Text("6490 Ross Road, New Carlisle, Ohio 45344").Style(subTitleStyle);
-                    col.Item().AlignCenter().Text("Phone: 937-845-9466          Fax: 937-845-9998");
-                    col.Item().AlignCenter().Text("www.bowmanlandes.com");
+                    col.Item().AlignCenter().Text(_companyInfo.LongCompanyName).Style(titleStyle);
+                    col.Item().AlignCenter().Text($"{_companyInfo.StreetAddress}, {_companyInfo.City}, {_companyInfo.State} {_companyInfo.ShortZipCode}").Style(subTitleStyle);
+                    col.Item().AlignCenter().Text($"Phone: {_companyInfo.PhoneString()}          Fax: {_companyInfo.FaxString()}");
+                    col.Item().AlignCenter().Text(_companyInfo.Website);
                 });
 
                 row.RelativeItem(1).AlignRight().Column(column =>
