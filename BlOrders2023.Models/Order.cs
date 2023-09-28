@@ -272,7 +272,7 @@ public class Order : ObservableObject
             }
             else
             {
-                var total = Items.Sum(item => (int)(item.QuanAllocated ?? 0));
+                var total = Items.Sum(item => (int)(item.QuanAllocated));
                 return total;
             }
     }

@@ -542,7 +542,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
                 else
                 {
                     item.Allocated = null;
-                    item.QuanAllocated = null;
+                    item.QuanAllocated = 0;
                 }
             }
             Order.Allocated = false;
