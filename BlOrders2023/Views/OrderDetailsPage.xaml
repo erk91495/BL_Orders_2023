@@ -353,7 +353,7 @@
                                       UseBindingValue="False" 
                                       MappingName="UnboundColumn" 
                                       ColumnWidthMode="SizeToCells" 
-                                      IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
+                                      IsHidden="{x:Bind ViewModel.CanDeleteItems, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                     <sf:GridUnboundColumn.CellTemplate>
                         <DataTemplate x:DataType="local:FillOrdersPage">
                             <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">
