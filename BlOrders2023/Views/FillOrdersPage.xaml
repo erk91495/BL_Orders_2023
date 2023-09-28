@@ -18,8 +18,9 @@
         <converters:WeightFormatConverter x:Key="WeightFormatConverter"/>
         <uiConverters:BoolNegationConverter x:Key="BoolNegationConverter"/>
         <converters:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
+        <converters:AllocatedToString x:Key="AllocatedToString"/>
 
-            <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
+        <DataTemplate x:Key="ShippingItemsViewTemplate"  x:DataType="models:ShippingItem">
             <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
                 <Expander.Header>
                     <StackPanel Orientation="Horizontal" Spacing="20">
@@ -106,7 +107,7 @@
                                     PlaceholderText="Lookup an order..."
                                     RelativePanel.AlignTopWithPanel="True"
                                     RelativePanel.AlignLeftWithPanel="True"
-                                    MinWidth="400"
+                                    MinWidth="600"
                                     ItemsSource="{x:Bind ViewModel.FillableOrders}"
                                     TextChanged="OrderLookup_TextChanged"
                                     QuerySubmitted="OrderLookup_QuerySubmitted"
@@ -119,12 +120,28 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="260"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="75"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{x:Bind OrderID}" Grid.Column="0" Margin="0,0,10,0"/>
-                                    <TextBlock Text="{x:Bind Customer.CustomerName}" Grid.Column="1" HorizontalAlignment="Left"/>
-                                    <TextBlock Text="{x:Bind PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}" Grid.Column="2" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="{x:Bind OrderID}" 
+                                               Grid.Column="0" 
+                                               Margin="0,0,10,0"/>
+                                    <TextBlock Text="{x:Bind Customer.CustomerName}" 
+                                               Grid.Column="1" 
+                                               HorizontalAlignment="Left"/>
+                                    <TextBlock Text="{x:Bind PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}" 
+                                               Grid.Column="2" 
+                                               HorizontalAlignment="Left"/>
+                                    <TextBlock Text="{x:Bind OrderStatus, Mode=OneWay}" 
+                                               Grid.Column="3" 
+                                               HorizontalAlignment="Left" 
+                                               Margin="0,0,10,0"/>
+                                    <TextBlock Text="{x:Bind Allocated, Mode=OneWay, Converter={StaticResource AllocatedToString}}" 
+                                               Grid.Column="4" 
+                                               HorizontalAlignment="Right" 
+                                               Margin="0,0,10,0"/>
                                 </Grid>
                             </DataTemplate>
                         </AutoSuggestBox.ItemTemplate>
