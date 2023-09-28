@@ -98,9 +98,10 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
         Orders = new(unpaidOrders);
         PaymentDate = DateTime.Today;
         PaymentMethods = paymentMethods;
-        SelectedPaymentMethod = PaymentMethods.First();
+        SelectedPaymentMethod = PaymentMethods.First(m => m.Method == "check") ?? PaymentMethods.First();
         _payment = null;
         this.InitializeComponent();
+        PaymentMethodCombo.SelectedIndex = PaymentMethods.IndexOf(SelectedPaymentMethod);
         Loaded += PaymentDataInputControl_Loaded;
     }
     #endregion Constructors
