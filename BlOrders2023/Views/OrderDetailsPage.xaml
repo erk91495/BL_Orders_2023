@@ -25,6 +25,7 @@
         <vm:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <vm:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -342,7 +343,7 @@
                                       MappingName="QuanAllocated" 
                                       AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
                                       IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                      ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
+                                      ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource IntToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" 
                                       MappingName="QuantityReceived"/>
                 <sf:GridNumericColumn HeaderText="Total Price" 
