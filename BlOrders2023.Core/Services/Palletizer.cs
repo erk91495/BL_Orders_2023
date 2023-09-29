@@ -65,10 +65,10 @@ public class Palletizer
         Dictionary<Product, int> remainder = new();
         List<List<OrderItem>> GroupedByBox = new()
         {
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BBox).ToList(),
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.CBox).ToList(),
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BreastBox).ToList(),
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.Unknown).ToList()
+            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BBox && i.Product.IsCredit != true).ToList(),
+            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.CBox && i.Product.IsCredit != true).ToList(),
+            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BreastBox && i.Product.IsCredit != true).ToList(),
+            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.Unknown && i.Product.IsCredit != true).ToList()
         };
 
         foreach(var group in GroupedByBox)

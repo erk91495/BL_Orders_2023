@@ -103,6 +103,13 @@ public class PalletLoadingReport :IReport
 
                 });
 
+                //table.Header(header =>
+                //{
+                //    header.Cell();
+                //    header.Cell();
+                //    header.Cell().Text("Pick");
+                //});
+
                 foreach (var product in _pallet.Items.Keys)
                 {
                     table.Cell().Element(CellStyle).Text($"{product.ProductName}").Style(tableTextStyle);
