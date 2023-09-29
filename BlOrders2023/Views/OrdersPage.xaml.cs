@@ -19,6 +19,7 @@ using BlOrders2023.Services;
 using System.Drawing.Printing;
 using System.Media;
 using BlOrders2023.Helpers;
+using BlOrders2023.Core.Services;
 
 namespace BlOrders2023.Views;
 
@@ -210,6 +211,14 @@ public sealed partial class OrdersPage : Page
     /// <param name="e">event args for the click event</param>
     private async void MenuFlyoutPdfInvoice_Click(object _sender, RoutedEventArgs e) =>
         await PrintInvoiceAsync(false);
+
+    /// <summary>
+    /// Handles the click event for the pdf shipping list button
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
+    private async void MenuFlyoutPdfShippingList_Click(object _sender, RoutedEventArgs e) =>
+        await PrintShippingList(false);
     #endregion Menu Flyouts
 
     #endregion Orders Grid
@@ -408,6 +417,86 @@ public sealed partial class OrdersPage : Page
         if(ViewModel.SelectedOrder.OrderStatus == OrderStatus.Ordered)
         {
             ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Filling;
+            await ViewModel.SaveCurrentOrderAsync();
+        }
+    }
+
+    private async Task PrintShippingList(bool autoprint = true)
+    {
+        var filePath = reportGenerator.GenerateShippingList(ViewModel.SelectedOrder);
+
+
+        if (autoprint)
+        {
+            PrinterSettings printSettings = new();
+            var printer = new PDFPrinterService(filePath);
+            await printer.PrintPdfAsync(printSettings);
+        }
+        else
+        {
+            LauncherOptions options = new()
+            {
+                ContentType = "application/pdf"
+            };
+            _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+        }
+    }
+    private async Task PrintPalletTicketsAsync()
+    {
+        var print = false;
+        if (ViewModel.SelectedOrder.Allocated != true)
+        {
+
+            var dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Print Confirmation",
+                Content = "This order has not yet been allocated. Are you sure you want to print pallet tickets?",
+                PrimaryButtonText = "Print",
+                CloseButtonText = "Cancel",
+            };
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                print = true;
+            }
+        }
+        else
+        {
+            print = true;
+        }
+
+        if (print && ViewModel.SelectedOrder.PalletTicketPrinted)
+        {
+            var dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Print Confirmation",
+                Content = "Pallet tickets have already been printed for this order. Do you want to reprint the pallet tickets?",
+                PrimaryButtonText = "Reprint",
+                CloseButtonText = "Cancel",
+            };
+            var result = await dialog.ShowAsync();
+            if (result != ContentDialogResult.Primary)
+            {
+                print = false;
+            }
+        }
+
+        if (print)
+        {
+            Palletizer palletizer = new(new(), ViewModel.SelectedOrder);
+            var pallets = await palletizer.PalletizeAsync();
+            var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.SelectedOrder, pallets);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 1;
+            printSettings.Duplex = Duplex.Simplex;
+            var printer = new PDFPrinterService(filePath);
+            await printer.PrintPdfAsync(printSettings);
+
+            ViewModel.SelectedOrder.PalletTicketPrinted = true;
             await ViewModel.SaveCurrentOrderAsync();
         }
     }

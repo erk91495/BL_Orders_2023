@@ -19,10 +19,10 @@
                 Click="MenuFlyoutViewDetails_Click"
                 Icon="Edit"
                 Text="Edit"/>
-            <!--<MenuFlyoutItem
+            <MenuFlyoutItem
                 Click="MenuFlyoutNewOrderClick"
                 Icon="Add"
-                Text="New"/>-->
+                Text="New"/>
             <MenuFlyoutItem
                 Click="MenuFlyoutFillOrderClick"
                 Icon="List"
@@ -39,6 +39,14 @@
             <MenuFlyoutItem
                 Click="MenuFlyoutPdfInvoice_Click"
                 Text="PDF Invoice"
+                IsEnabled="{x:Bind ViewModel.SelectedOrder.CanPrintInvoice, Mode=OneWay}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xEA90;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Click="MenuFlyoutPdfShippingList_Click"
+                Text="PDF Shipping List"
                 IsEnabled="{x:Bind ViewModel.SelectedOrder.CanPrintInvoice, Mode=OneWay}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xEA90;"/>

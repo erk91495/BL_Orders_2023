@@ -98,6 +98,7 @@
                     <MenuFlyout Placement="Bottom">
                         <MenuFlyoutItem Text="Print Order" Icon="Print" Click="PrintOrderFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintOrder, Mode=OneWay}"/>
                         <MenuFlyoutItem Text="Print Invoice" Icon="Print" Click="PrintInvoiceFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintInvoice, Mode=OneWay}"/>
+                        <MenuFlyoutItem Text="Print Pallet Tickets" Icon="Print" Click="PrintPalletTicketsFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Save Order" Icon="Save" Click="SaveOrderFlyoutItem_Click" KeyboardAcceleratorPlacementMode="Auto">
                             <MenuFlyoutItem.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="S" Modifiers="Control"/>

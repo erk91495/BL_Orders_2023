@@ -422,40 +422,64 @@ public sealed partial class FillOrdersPage : Page
 
     private async Task PrintPalletTicketsAsync()
     {
-        var print = false;
-        if(ViewModel.Order.Allocated != true)
+        if(ViewModel.Order != null)
         {
-
-            var dialog = new ContentDialog()
+            var print = false;
+            if(ViewModel.Order.Allocated != true)
             {
-                XamlRoot = XamlRoot,
-                Title = "Print Confirmation",
-                Content = "This order has not yet been allocated. Are you sure you want to print pallet tickets?",
-                PrimaryButtonText = "Print",
-                CloseButtonText = "Cancel",
-            };
 
-            var result = await dialog.ShowAsync();
-            if(result == ContentDialogResult.Primary)
+                var dialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Print Confirmation",
+                    Content = "This order has not yet been allocated. Are you sure you want to print pallet tickets?",
+                    PrimaryButtonText = "Print",
+                    CloseButtonText = "Cancel",
+                };
+
+                var result = await dialog.ShowAsync();
+                if(result == ContentDialogResult.Primary)
+                {
+                    print = true;
+                }
+            }
+            else
             {
                 print = true;
             }
-        }
-        else
-        {
-            print = true;
-        }
-        if (print)
-        {
-            Palletizer palletizer = new(new(), ViewModel.Order);
-            var pallets = await palletizer.PalletizeAsync();
-            var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
 
-            PrinterSettings printSettings = new();
-            printSettings.Copies = 1;
-            printSettings.Duplex = Duplex.Simplex;
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            if (print && ViewModel.Order.PalletTicketPrinted)
+            {
+                var dialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Print Confirmation",
+                    Content = "Pallet tickets have already been printed for this order. Do you want to reprint the pallet tickets?",
+                    PrimaryButtonText = "Reprint",
+                    CloseButtonText = "Cancel",
+                };
+                var result = await dialog.ShowAsync();
+                if (result != ContentDialogResult.Primary)
+                {
+                    print = false;
+                }
+            }
+
+            if (print)
+            {
+                Palletizer palletizer = new(new(), ViewModel.Order);
+                var pallets = await palletizer.PalletizeAsync();
+                var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+
+                PrinterSettings printSettings = new();
+                printSettings.Copies = 1;
+                printSettings.Duplex = Duplex.Simplex;
+                var printer = new PDFPrinterService(filePath);
+                await printer.PrintPdfAsync(printSettings);
+
+                ViewModel.Order.PalletTicketPrinted = true;
+                await ViewModel.SaveOrderAsync();
+            }
         }
     }
 
