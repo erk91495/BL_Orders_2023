@@ -1,0 +1,1 @@
+ALTER TABLE [tblCustomerWholesale] ADD COD Bit  NOT NULL DEFAULT(0)

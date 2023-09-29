@@ -86,10 +86,12 @@ public sealed partial class PaymentsPage : Page
         if (order.GetTotalPayments() >= order.GetInvoiceTotal())
         {
             order.OrderStatus = Models.Enums.OrderStatus.Complete;
+            order.Paid = true;
         }
         else
         {
             order.OrderStatus = Models.Enums.OrderStatus.Invoiced;
+            order.Paid = false;
         }
         await ViewModel.SaveOrder(order);
     }

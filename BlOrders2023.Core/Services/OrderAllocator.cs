@@ -150,7 +150,7 @@ public class OrderAllocator : IAllocatorService
                             var quantityNeeded = orderedItem.Quantity;
                             if(quantityNeeded <= _remainingInventory[currentProductID])
                             {
-                                orderedItem.QuanAllocated += quantityNeeded;
+                                orderedItem.QuanAllocated += (int)quantityNeeded;
                                 _remainingInventory[currentProductID] -= (int)quantityNeeded;
                                 orderedItem.Allocated = true;
                             }
@@ -160,7 +160,7 @@ public class OrderAllocator : IAllocatorService
                                 orderedItem = order.Items.Where(e => e.ProductID == productIDs[idIndex + 1]).FirstOrDefault();
                                 if(orderedItem != null)
                                 {
-                                    orderedItem.QuanAllocated += quantityNeeded;
+                                    orderedItem.QuanAllocated += (int)quantityNeeded;
                                     
                                 }
                                 else
@@ -168,7 +168,7 @@ public class OrderAllocator : IAllocatorService
                                     var product = _db.Products.Get(productIDs[idIndex + 1],false).First();
                                     OrderItem item = new(product,order)
                                     {
-                                        QuanAllocated = quantityNeeded,
+                                        QuanAllocated = (int)quantityNeeded,
                                         Allocated = true
                                     };
                                     order.Items.Add(item);
@@ -181,14 +181,14 @@ public class OrderAllocator : IAllocatorService
                                 orderedItem = order.Items.Where(e => e.ProductID == productIDs[idIndex - 1]).FirstOrDefault();
                                 if (orderedItem != null)
                                 {
-                                    orderedItem.QuanAllocated += quantityNeeded;
+                                    orderedItem.QuanAllocated += (int)quantityNeeded;
                                 }
                                 else
                                 {
                                     var product = _db.Products.Get(productIDs[idIndex - 1], true).First();
                                     OrderItem item = new(product, order)
                                     {
-                                        QuanAllocated = quantityNeeded,
+                                        QuanAllocated = (int)quantityNeeded,
                                         Allocated = true
                                     };
                                     order.Items.Add(item);

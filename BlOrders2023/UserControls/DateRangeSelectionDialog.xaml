@@ -13,6 +13,7 @@
         <sf:SfCalendarDateRangePicker x:Name="DateRangePicker" 
                                       PlaceholderText="Select a date range" 
                                       SelectedRange="{x:Bind DateRange, Mode=TwoWay}"
-                                      VerticalAlignment="Center"/>
+                                      VerticalAlignment="Center"
+                                      DropDownPlacement="Right"/>
     </StackPanel>
 </ContentDialog>

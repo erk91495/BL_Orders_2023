@@ -56,7 +56,7 @@ public class GS1_128Barcode : IBarcode
     /// Populates the given ShippingItem's Properties from the original scanline values 
     /// DOES NOT UPDATE ShippingItemm.Scanline
     /// </summary>
-    /// <param name="item">The shipping item to update</param>
+    /// <param name="item">The _shipping item to update</param>
     /// <returns>true if all AI's were successfully coonverted to properties</returns>
     public override  bool PopuplateProperties(ref ShippingItem item)
     {
@@ -72,7 +72,7 @@ public class GS1_128Barcode : IBarcode
 
 
     /// <summary>
-    /// Updates the barcode scanline and shipping item scanline based on the properties of the Shipping Item
+    /// Updates the barcode scanline and _shipping item scanline based on the properties of the Shipping Item
     /// </summary>
     /// <param name="item"></param>
     /// <exception cref="InvalidBarcodeExcption">Throws Invalid Barcode Exception if a non supported ai is found</exception>
@@ -248,7 +248,7 @@ public class GS1_128Barcode : IBarcode
                 item.ProductID = prodCode;
                 success = true;
             }
-            //Global Trade Item Number (GTIN) of contained trade items
+            //Global Trade Item Number (GTIN) of contained trade _items
             else if (ai.Equals("02"))
             {
                 throw new NotImplementedException();

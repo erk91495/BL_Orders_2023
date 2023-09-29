@@ -213,6 +213,16 @@ public sealed partial class AllocatorPage : Page
         try
         {
             await ViewModel.AllocatorService.SaveAllocationAsync();
+            ContentDialog d = new()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Allocation Saved",
+                Content = $"The Allocation Has Been Saved",
+                PrimaryButtonText = "OK",
+                DefaultButton = ContentDialogButton.Primary,
+
+            };
+            await d.ShowAsync();
         }
         catch (DbUpdateConcurrencyException ex)
         {
