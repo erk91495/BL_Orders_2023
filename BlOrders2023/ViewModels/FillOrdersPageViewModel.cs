@@ -26,12 +26,12 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
     public ObservableCollection<ShippingItem> Items { get; set; }
     public ObservableCollection<Order> FillableOrders { get; set; }
     public ObservableCollection<Order> FillableOrdersMasterList { get; set; }
-    public OrderStatus OrderStatus
+    public OrderStatus? OrderStatus
     {
-        get => _order.OrderStatus;
+        get => _order == null ? null : _order.OrderStatus; 
         set
         {
-            _order.OrderStatus = value;
+            _order!.OrderStatus = (OrderStatus)value!;
             OnPropertyChanged();
             OnPropertyChanged(nameof(CanPrintInvoice));
             OnPropertyChanged(nameof(CanPrintOrder));
@@ -135,6 +135,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         OnPropertyChanged(nameof(CanPrintOrder));
         OnPropertyChanged(nameof(Memo));
         OnPropertyChanged(nameof(SortedOrderItems));
+        OnPropertyChanged(nameof(OrderStatus));
     }
 
     internal void QueryFillableOrders(string text)

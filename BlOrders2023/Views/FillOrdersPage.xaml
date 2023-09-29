@@ -55,7 +55,7 @@
                    IsPaneOpen="True"
                    VerticalAlignment="Stretch"
                    HorizontalAlignment="Stretch"
-                   OpenPaneLength="370"
+                   OpenPaneLength="390"
                    PanePlacement="Right"
                    PaneBackground="Transparent"
                    RelativePanel.AlignBottomWithPanel="True"
@@ -66,28 +66,40 @@
             <SplitView.Pane>
                 <RelativePanel Background="{ThemeResource SystemAltMediumLowColor}"
                                CornerRadius="20,0,0,20" VerticalAlignment="Stretch">
-
+                    <StackPanel x:Name="OrderStatusStack" 
+                                Orientation="Vertical"
+                                RelativePanel.AlignTopWithPanel="True"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                RelativePanel.AlignRightWithPanel="True">
+                        <TextBlock Text="{x:Bind ViewModel.OrderStatus, Mode=OneWay}"
+                                   HorizontalAlignment="Stretch"
+                                   TextAlignment="Center"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource AllocatedToString}}"
+                                   HorizontalAlignment="Center"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
+                    </StackPanel>
                     <sf:SfDataGrid x:Name="OrderedVsReceivedGrid"
                                        IsReadOnly="True"
                                        AutoGenerateColumns="False"
                                        ItemsSource="{x:Bind ViewModel.SortedOrderItems, Mode=OneWay}"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
-                                       RelativePanel.AlignTopWithPanel="True"
+                                       RelativePanel.Below="OrderStatusStack"
                                        RelativePanel.AlignBottomWithPanel="True"
                                        SelectionMode="None"
                                        SelectionUnit="Cell"
                                        AllowSorting="False"
                                        AllowEditing="False"
-                                       ColumnWidthMode="Star"
+                                       ColumnWidthMode="AutoWithLastColumnFill"
                                        Margin="0,10,0,0"
                                        BorderThickness="0">
                         <sf:SfDataGrid.Columns>
-                            <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
+                            <sf:GridTextColumn HeaderText="ID" MappingName="ProductID"/>
                             <sf:GridNumericColumn HeaderText="Ordered" MappingName="Quantity"/>
                             <sf:GridNumericColumn HeaderText="Allocated" MappingName="QuanAllocated" IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
                             <sf:GridNumericColumn HeaderText="Received" MappingName="QuantityReceived"/>
-                            <sf:GridNumericColumn HeaderText="Total Weight" MappingName="PickWeight" DisplayNumberFormat="N2"/>
+                            <sf:GridNumericColumn HeaderText="Total Lbs." MappingName="PickWeight" DisplayNumberFormat="N2"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
                     <!--<controls:DataGrid ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=OneWay}"
