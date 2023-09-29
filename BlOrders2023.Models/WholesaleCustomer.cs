@@ -58,6 +58,8 @@ public class WholesaleCustomer
         }
     }
 
+    [Required]
+    public bool COD { get; set;}
     public virtual List<Order> Orders { get; set; } = new();
     #endregion Properties
 

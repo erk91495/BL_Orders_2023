@@ -271,7 +271,7 @@ public class Order : ObservableObject
             }
             else
             {
-                var total =  Items.Sum(item => (int)item.Quantity);
+                var total =  Items.Where(i => i.Product.IsCredit != true).Sum(item => (int)item.Quantity);
                 return total;
             }
     }
