@@ -219,6 +219,22 @@ public sealed partial class OrdersPage : Page
     /// <param name="e">event args for the click event</param>
     private async void MenuFlyoutPdfShippingList_Click(object _sender, RoutedEventArgs e) =>
         await PrintShippingList(false);
+
+    /// <summary>
+    /// Handles the click event for the pdf shipping list button
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
+    private async void MenuFlyoutPdfPalletTickets_Click(object _sender, RoutedEventArgs e) =>
+        await PrintPalletTicketsAsync(false);
+
+    /// <summary>
+    /// Handles the click event for the pdf shipping list button
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
+    private async void MenuFlyoutPrintPalletTickets_Click(object _sender, RoutedEventArgs e) =>
+        await PrintPalletTicketsAsync(true);
     #endregion Menu Flyouts
 
     #endregion Orders Grid
@@ -441,7 +457,7 @@ public sealed partial class OrdersPage : Page
             _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
         }
     }
-    private async Task PrintPalletTicketsAsync()
+    private async Task PrintPalletTicketsAsync(bool autoprint = true)
     {
         var print = false;
         if (ViewModel.SelectedOrder.Allocated != true)
@@ -490,11 +506,22 @@ public sealed partial class OrdersPage : Page
             var pallets = await palletizer.PalletizeAsync();
             var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.SelectedOrder, pallets);
 
-            PrinterSettings printSettings = new();
-            printSettings.Copies = 1;
-            printSettings.Duplex = Duplex.Simplex;
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            if(autoprint)
+            {
+                PrinterSettings printSettings = new();
+                printSettings.Copies = 1;
+                printSettings.Duplex = Duplex.Simplex;
+                var printer = new PDFPrinterService(filePath);
+                await printer.PrintPdfAsync(printSettings);
+            }
+            else
+            {
+                LauncherOptions options = new()
+                {
+                    ContentType = "application/pdf"
+                };
+                _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+            }
 
             ViewModel.SelectedOrder.PalletTicketPrinted = true;
             await ViewModel.SaveCurrentOrderAsync();

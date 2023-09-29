@@ -52,6 +52,17 @@
                     <FontIcon Glyph="&#xEA90;"/>
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Click="MenuFlyoutPdfPalletTickets_Click"
+                Text="PDF Pallet Tickets">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xEA90;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Click="MenuFlyoutPrintPalletTickets_Click"
+                Text="Print Pallet Tickets"
+                Icon="Print"/>
         </MenuFlyout>
     </Page.Resources>
     <RelativePanel>
