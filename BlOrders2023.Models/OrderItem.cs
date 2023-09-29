@@ -50,7 +50,7 @@ public class OrderItem : ObservableObject
     [ConcurrencyCheck]
     public float Quantity
     {
-        get => quantity; 
+        get => Product.IsCredit ? 0 : quantity; 
         set => SetProperty(ref quantity, value);
     }
     public decimal ActualCustPrice
