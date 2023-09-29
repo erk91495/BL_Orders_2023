@@ -26,6 +26,7 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
         <vm:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
+        <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -335,8 +336,8 @@
                                       MappingName="ActualCustPrice" 
                                       AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}" 
                                       DisplayNumberFormat="N2"
-                                      UseBindingValue="True"
-                                      ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
+                                      ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"
+                                      DisplayBinding="{Binding Path=ActualCustPrice, Mode=OneWay, Converter={StaticResource WeightFormatConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" 
                                       MappingName="Quantity" 
                                       AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"/>
