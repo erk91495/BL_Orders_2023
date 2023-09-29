@@ -264,6 +264,10 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
                 //Must be a new Order
                 _order = order;
                 IsNewOrder = true;
+                if (_order.Customer.COD)
+                {
+                    Memo = "Cash on Delivery";
+                }
             }
             _items = new ObservableCollection<OrderItem>(_order.Items);
             _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
