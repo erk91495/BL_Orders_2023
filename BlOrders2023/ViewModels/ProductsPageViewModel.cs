@@ -125,7 +125,7 @@ public class ProductsPageViewModel : ObservableRecipient
     private void Product_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         //Have to watch for these property changes because checkboxes dont validate
-        if((e.PropertyName == "FixedPrice" || e.PropertyName == "Inactive") && sender is Product p)
+        if((e.PropertyName == "FixedPrice" || e.PropertyName == "Inactive" || e.PropertyName == "IsCredit") && sender is Product p)
         {
             SaveItem(p);
         }

@@ -12,161 +12,165 @@ namespace BlOrders2023.Models;
 [Table("tblOrdersWholesale")]
 public class Order : ObservableObject
 {
-    private int orderID;
-    private DateTime orderDate;
-    private int custID;
-    private WholesaleCustomer customer = null!;
-    private string takenBy = "";
-    private DateTime pickupDate;
-    private DateTime pickupTime;
-    private ShippingType shipping;
-    private byte boxed;
-    private bool? frozen;
-    private bool? shipped;
-    private short? filled;
-    private short? filledBox;
-    private string? memo;
-    private float? memo_Weight;
-    private decimal? memo_Totl;
-    private short? net;
-    private string? pO_Number;
-    private bool? printed;
-    private bool? oKToProcess;
-    private bool? paid;
-    private bool? allocated;
-    private OrderStatus orderStatus;
-    private ObservableCollection<OrderItem> items;
-    private List<ShippingItem> shippingItems = new();
-    private List<Payment> payments = new();
+    #region Fields
+    private int _orderID;
+    private DateTime _orderDate;
+    private int _custID;
+    private WholesaleCustomer _customer;
+    private string _takenBy;
+    private DateTime _pickupDate;
+    private DateTime _pickupTime;
+    private ShippingType _shipping;
+    private byte _boxed;
+    private bool? _frozen;
+    //private bool? _shipped;
+    //private short? _filled;
+    //private short? _filledBox;
+    private string? _memo;
+    private float? _memoWeight;
+    private decimal? _memoTotl;
+    //private short? _net;
+    private string? _poNumber;
+    //private bool? _printed;
+    //private bool? _oKToProcess;
+    private bool? _paid;
+    private bool? _allocated;
+    private OrderStatus _orderStatus;
+    private ObservableCollection<OrderItem> _items;
+    private List<ShippingItem> _shippingItems = new();
+    private List<Payment> _payments = new();
+    private bool _palletTicketPrinted = false;
+    #endregion Fields
+
     #region Properties
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OrderID
     {
-        get => orderID; 
-        set => SetProperty(ref orderID,value);
+        get => _orderID; 
+        set => SetProperty(ref _orderID,value);
     }
     public DateTime OrderDate
     {
-        get => orderDate; 
-        set => SetProperty(ref orderDate, value);
+        get => _orderDate; 
+        set => SetProperty(ref _orderDate, value);
     }
     public int CustID
     {
-        get => custID; 
-        set => SetProperty(ref custID, value);
+        get => _custID; 
+        set => SetProperty(ref _custID, value);
     }
 
     [ForeignKey("CustID")]
     [JsonIgnore]
     public virtual WholesaleCustomer Customer
     {
-        get => customer; 
-        set => SetProperty(ref customer, value);
+        get => _customer; 
+        set => SetProperty(ref _customer, value);
     }
     public string TakenBy
     {
-        get => takenBy; 
-        set => SetProperty(ref takenBy, value);
+        get => _takenBy; 
+        set => SetProperty(ref _takenBy, value);
     }
     public DateTime PickupDate
     {
-        get => pickupDate; 
-        set => SetProperty(ref pickupDate, value);
+        get => _pickupDate; 
+        set => SetProperty(ref _pickupDate, value);
     }
     public DateTime PickupTime
     {
-        get => pickupTime; 
-        set => SetProperty(ref pickupTime, value);
+        get => _pickupTime; 
+        set => SetProperty(ref _pickupTime, value);
     }
     public ShippingType Shipping
     {
-        get => shipping; 
-        set => SetProperty(ref shipping, value);
+        get => _shipping; 
+        set => SetProperty(ref _shipping, value);
     }
     public byte Boxed
     {
-        get => boxed; 
-        set => SetProperty(ref boxed, value);
+        get => _boxed; 
+        set => SetProperty(ref _boxed, value);
     }
     public bool? Frozen
     {
-        get => frozen; 
-        set => SetProperty(ref frozen, value);
+        get => _frozen; 
+        set => SetProperty(ref _frozen, value);
     }
-    public bool? Shipped
-    {
-        get => shipped; 
-        set => SetProperty(ref shipped, value);
-    }
-    public short? Filled
-    {
-        get => filled; 
-        set => SetProperty(ref filled, value);
-    }
-    public short? FilledBox
-    {
-        get => filledBox; 
-        set => SetProperty(ref filledBox, value);
-    }
+    //public bool? Shipped
+    //{
+    //    get => _shipped; 
+    //    set => SetProperty(ref _shipped, value);
+    //}
+    //public short? Filled
+    //{
+    //    get => _filled; 
+    //    set => SetProperty(ref _filled, value);
+    //}
+    //public short? FilledBox
+    //{
+    //    get => _filledBox; 
+    //    set => SetProperty(ref _filledBox, value);
+    //}
     public string? Memo
     {
-        get => memo; 
-        set => SetProperty(ref memo, value);
+        get => _memo; 
+        set => SetProperty(ref _memo, value);
     }
     public float? Memo_Weight
     {
-        get => memo_Weight; 
-        set => SetProperty(ref memo_Weight, value);
+        get => _memoWeight; 
+        set => SetProperty(ref _memoWeight, value);
     }
     public decimal? Memo_Totl
     {
-        get => memo_Totl; 
-        set => SetProperty(ref memo_Totl, value);
+        get => _memoTotl; 
+        set => SetProperty(ref _memoTotl, value);
     }
-    public short? Net
-    {
-        get => net; 
-        set => SetProperty(ref net, value);
-    }
+    //public short? Net
+    //{
+    //    get => _net; 
+    //    set => SetProperty(ref _net, value);
+    //}
     public string? PO_Number
     {
-        get => pO_Number; 
-        set => SetProperty(ref pO_Number, value);
+        get => _poNumber; 
+        set => SetProperty(ref _poNumber, value);
     }
-    public bool? Printed
-    {
-        get => printed; 
-        set => SetProperty(ref printed, value);
-    }
-    public bool? OKToProcess
-    {
-        get => oKToProcess; 
-        set => SetProperty(ref oKToProcess, value);
-    }
+    //public bool? Printed
+    //{
+    //    get => _printed; 
+    //    set => SetProperty(ref _printed, value);
+    //}
+    //public bool? OKToProcess
+    //{
+    //    get => _oKToProcess; 
+    //    set => SetProperty(ref _oKToProcess, value);
+    //}
     public bool? Paid
     {
-        get => paid; 
-        set => SetProperty(ref paid, value);
+        get => _paid;
+        set => SetProperty(ref _paid, value);
     }
     public bool? Allocated
     {
-        get => allocated; 
-        set => SetProperty(ref allocated, value);
+        get => _allocated; 
+        set => SetProperty(ref _allocated, value);
     }
     public OrderStatus OrderStatus
     {
-        get => orderStatus; 
-        set => SetProperty(ref orderStatus, value);
+        get => _orderStatus; 
+        set => SetProperty(ref _orderStatus, value);
     }
     public virtual ObservableCollection<OrderItem> Items
     {
-        get => items; 
+        get => _items; 
         set    
         {
-            if (items != null)
+            if (_items != null)
             {
-                items.CollectionChanged -= Items_CollectionChanged;
+                _items.CollectionChanged -= Items_CollectionChanged;
             }
             
             
@@ -174,18 +178,18 @@ public class Order : ObservableObject
             {
                 value.CollectionChanged += Items_CollectionChanged;
             }
-            SetProperty(ref items, value);
+            SetProperty(ref _items, value);
         }
     }
     public virtual List<ShippingItem> ShippingItems
     {
-        get => shippingItems; 
-        set => SetProperty(ref shippingItems, value);
+        get => _shippingItems; 
+        set => SetProperty(ref _shippingItems, value);
     }
     public virtual List<Payment> Payments
     {
-        get => payments; 
-        set => SetProperty(ref payments, value);
+        get => _payments; 
+        set => SetProperty(ref _payments, value);
     }
     //Todo should this be a helper class?
     public bool CanFillOrder => (OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled);
@@ -207,6 +211,12 @@ public class Order : ObservableObject
             }
         }
     }
+
+    public bool PalletTicketPrinted
+    {
+        get => _palletTicketPrinted;
+        set => SetProperty(ref _palletTicketPrinted, value);
+    }
     #endregion Properties
 
     #region Fields
@@ -215,13 +225,15 @@ public class Order : ObservableObject
     #region Constructors
     public Order()
     {
+        Customer = null!;
+        TakenBy = string.Empty;
         Memo_Totl = 0M;
         Memo_Weight = 0;
         OrderDate = DateTime.Now;
         Frozen = false;
         //Set the date for today so that sql will accept the time
-        PickupDate = DateTime.Today;
-        PickupTime = DateTime.Today.AddHours(12);
+        _pickupDate = DateTime.Today;
+        _pickupTime = DateTime.Today.AddHours(12);
         OrderStatus = OrderStatus.Ordered;
         Items = new();
         Allocated = false;
@@ -259,7 +271,7 @@ public class Order : ObservableObject
             }
             else
             {
-                var total =  Items.Sum(item => (int)item.Quantity);
+                var total =  Items.Where(i => i.Product.IsCredit != true).Sum(item => (int)item.Quantity);
                 return total;
             }
     }
@@ -272,7 +284,7 @@ public class Order : ObservableObject
             }
             else
             {
-                var total = Items.Sum(item => (int)(item.QuanAllocated ?? 0));
+                var total = Items.Sum(item => (int)(item.QuanAllocated));
                 return total;
             }
     }

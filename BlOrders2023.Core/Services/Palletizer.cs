@@ -65,10 +65,10 @@ public class Palletizer
         Dictionary<Product, int> remainder = new();
         List<List<OrderItem>> GroupedByBox = new()
         {
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BBox).ToList(),
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.CBox).ToList(),
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BreastBox).ToList(),
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.Unknown).ToList()
+            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BBox && i.Product.IsCredit != true).ToList(),
+            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.CBox && i.Product.IsCredit != true).ToList(),
+            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BreastBox && i.Product.IsCredit != true).ToList(),
+            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.Unknown && i.Product.IsCredit != true).ToList()
         };
 
         foreach(var group in GroupedByBox)
@@ -79,7 +79,7 @@ public class Palletizer
                 var maxPerPallet = GetMaxBoxesPerPallet(group[0].Product);
                 foreach(var item in group)
                 {
-                    var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated ?? 0 : item.Quantity);
+                    var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
                     //Make Full Pallets
                     for(var i = 0; i < (int)(quanNeeded / maxPerPallet); i++)
                     {

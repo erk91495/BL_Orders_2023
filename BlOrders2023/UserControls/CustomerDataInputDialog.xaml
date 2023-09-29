@@ -249,7 +249,7 @@
                     HorizontalAlignment="Center"
                     Spacing="10">
             <CheckBox x:Name="SingleProdPerPalletCheckBox" IsChecked="{x:Bind ViewModel.Customer.SingleProdPerPallet, Mode=TwoWay}" Content="Warehouse Pallet Loading" />
-            <!--<CheckBox x:Name="GrocerCheckBox" IsChecked="{x:Bind ViewModel.Customer.isGrocer, Mode=TwoWay}" Content="Grocer"/>-->
+            <CheckBox x:Name="CODCheckBox" IsChecked="{x:Bind ViewModel.Customer.COD, Mode=TwoWay}" Content="Cash On Delivery"/>
             <CheckBox x:Name="InactiveCheckBox" IsChecked="{x:Bind ViewModel.Customer.Inactive, Mode=TwoWay}" Content="Inactive"/>
         </StackPanel>
         <TextBlock Text="* dennotes a required field" HorizontalAlignment="Right"/>

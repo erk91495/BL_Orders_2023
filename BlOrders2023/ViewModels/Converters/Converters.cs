@@ -257,7 +257,19 @@ namespace BlOrders2023.ViewModels.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return ((float)value).ToString("N2");
+            if (value.GetType() == typeof(float))
+            {
+                return ((float)value).ToString("N2");
+            }
+            else if (value.GetType() == typeof(double))
+            {
+                return ((double)value).ToString("N2");
+            }
+            else if(value.GetType() == typeof(decimal))
+            {
+                return ((decimal)value).ToString("N2");
+            }
+            throw new NotSupportedException();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -342,6 +354,18 @@ namespace BlOrders2023.ViewModels.Converters
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             return (int)Math.Round((double)value,0);
+        }
+    }
+
+    public class AllocatedToString : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return (bool)value ? "Allocated" : "";
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return value.ToString().Equals("Allocated");
         }
     }
 }

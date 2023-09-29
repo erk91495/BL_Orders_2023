@@ -103,6 +103,13 @@ public class PalletLoadingReport :IReport
 
                 });
 
+                table.Header(header =>
+                {
+                    header.Cell();
+                    header.Cell();
+                    header.Cell().Text("Quantity");
+                });
+
                 foreach (var product in _pallet.Items.Keys)
                 {
                     table.Cell().Element(CellStyle).Text($"{product.ProductName}").Style(tableTextStyle);
@@ -143,6 +150,7 @@ public class PalletLoadingReport :IReport
                 row.RelativeItem().Text($"Total Orderd: {_order.GetTotalOrdered()}").Style(smallFooterStyle);
                 var totalReceived = (_order.Allocated == true) ? _order.GetTotalAllocated() : _order.GetTotalOrdered();
                 row.RelativeItem().Text($"Total Allocated: {totalReceived}").Style(smallFooterStyle);
+
             });
             column.Item().AlignBottom().AlignRight().Row(footer =>
             {

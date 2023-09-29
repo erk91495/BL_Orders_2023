@@ -198,7 +198,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     public bool HasPreviousOrder { get; set; } = false;
 
     public bool CanAddItems => !HasErrors && _order.OrderStatus == OrderStatus.Ordered;
-    public bool CanDeleteItems => _order.OrderStatus < OrderStatus.Invoiced;
+    public bool CanDeleteItems => _order.OrderStatus < OrderStatus.Filling;
 
     public bool CanPrintInvoice => _order.CanPrintInvoice;
     public bool CanPrintOrder => _order.CanPrintOrder;
@@ -264,6 +264,10 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
                 //Must be a new Order
                 _order = order;
                 IsNewOrder = true;
+                if (_order.Customer.COD)
+                {
+                    Memo = "Cash on Delivery";
+                }
             }
             _items = new ObservableCollection<OrderItem>(_order.Items);
             _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
@@ -542,7 +546,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
                 else
                 {
                     item.Allocated = null;
-                    item.QuanAllocated = null;
+                    item.QuanAllocated = 0;
                 }
             }
             Order.Allocated = false;

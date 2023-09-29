@@ -105,7 +105,7 @@ public class InventoryDetailsReport : IReport
                 {
                     var allOrderItems = _orders.SelectMany(o => o.Items.Where(i => i.ProductID == item.ProductID));
                     var totalOrdered = allOrderItems.Sum(i => i.Quantity);
-                    var totalAllocated = allOrderItems.Sum(i => i.QuanAllocated ?? 0);
+                    var totalAllocated = allOrderItems.Sum(i => i.QuanAllocated);
                     var totalReceived = allOrderItems.Sum(i => i.QuantityReceived);
                     table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);

@@ -25,6 +25,8 @@
         <vm:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <vm:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
+        <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -97,6 +99,7 @@
                     <MenuFlyout Placement="Bottom">
                         <MenuFlyoutItem Text="Print Order" Icon="Print" Click="PrintOrderFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintOrder, Mode=OneWay}"/>
                         <MenuFlyoutItem Text="Print Invoice" Icon="Print" Click="PrintInvoiceFlyoutItem_Click" IsEnabled="{x:Bind ViewModel.CanPrintInvoice, Mode=OneWay}"/>
+                        <MenuFlyoutItem Text="Print Pallet Tickets" Icon="Print" Click="PrintPalletTicketsFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Save Order" Icon="Save" Click="SaveOrderFlyoutItem_Click" KeyboardAcceleratorPlacementMode="Auto">
                             <MenuFlyoutItem.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="S" Modifiers="Control"/>
@@ -333,8 +336,8 @@
                                       MappingName="ActualCustPrice" 
                                       AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}" 
                                       DisplayNumberFormat="N2"
-                                      UseBindingValue="True"
-                                      ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
+                                      ValueBinding="{Binding Path=ActualCustPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"
+                                      DisplayBinding="{Binding Path=ActualCustPrice, Mode=OneWay, Converter={StaticResource WeightFormatConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Ordered" 
                                       MappingName="Quantity" 
                                       AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"/>
@@ -342,7 +345,7 @@
                                       MappingName="QuanAllocated" 
                                       AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
                                       IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                      ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
+                                      ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource IntToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" 
                                       MappingName="QuantityReceived"/>
                 <sf:GridNumericColumn HeaderText="Total Price" 
@@ -353,7 +356,7 @@
                                       UseBindingValue="False" 
                                       MappingName="UnboundColumn" 
                                       ColumnWidthMode="SizeToCells" 
-                                      IsHidden="{x:Bind ViewModel.CanDeleteItems, Converter={StaticResource BoolNegationConverter}}">
+                                      IsHidden="{x:Bind ViewModel.CanDeleteItems, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                     <sf:GridUnboundColumn.CellTemplate>
                         <DataTemplate x:DataType="local:FillOrdersPage">
                             <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">

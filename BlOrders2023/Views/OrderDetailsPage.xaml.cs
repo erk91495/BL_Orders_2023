@@ -24,6 +24,7 @@ using BlOrders2023.UserControls;
 using CommunityToolkit.WinUI;
 using System.Diagnostics;
 using Castle.Core.Resource;
+using BlOrders2023.Core.Services;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -639,6 +640,11 @@ public sealed partial class OrderDetailsPage : Page
         _= PrintInvoiceAsync();
     }
 
+    private void PrintPalletTicketsFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        _ = PrintPalletTicketsAsync();
+    }
+
     private async Task PrintInvoiceAsync()
     {
         var printInvoice = false;
@@ -755,6 +761,66 @@ public sealed partial class OrderDetailsPage : Page
                 ViewModel.OrderStatus = OrderStatus.Filling;
                 _ = ViewModel.SaveCurrentOrderAsync();
             }
+        }
+    }
+
+    private async Task PrintPalletTicketsAsync()
+    {
+        var print = false;
+        if (ViewModel.Order.Allocated != true)
+        {
+
+            var dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Print Confirmation",
+                Content = "This order has not yet been allocated. Are you sure you want to print pallet tickets?",
+                PrimaryButtonText = "Print",
+                CloseButtonText = "Cancel",
+            };
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                print = true;
+            }
+        }
+        else
+        {
+            print = true;
+        }
+
+        if (print && ViewModel.Order.PalletTicketPrinted)
+        {
+            var dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Print Confirmation",
+                Content = "Pallet tickets have already been printed for this order. Do you want to reprint the pallet tickets?",
+                PrimaryButtonText = "Reprint",
+                CloseButtonText = "Cancel",
+            };
+            var result = await dialog.ShowAsync();
+            if (result != ContentDialogResult.Primary)
+            {
+                print = false;
+            }
+        }
+
+        if (print)
+        {
+            Palletizer palletizer = new(new(), ViewModel.Order);
+            var pallets = await palletizer.PalletizeAsync();
+            var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+
+            PrinterSettings printSettings = new();
+            printSettings.Copies = 1;
+            printSettings.Duplex = Duplex.Simplex;
+            var printer = new PDFPrinterService(filePath);
+            await printer.PrintPdfAsync(printSettings);
+
+            ViewModel.Order.PalletTicketPrinted = true;
+            await ViewModel.SaveCurrentOrderAsync();
         }
     }
 

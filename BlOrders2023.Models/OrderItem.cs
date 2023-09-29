@@ -16,7 +16,7 @@ namespace BlOrders2023.Models;
 public class OrderItem : ObservableObject
 {
     #region Fields
-    private float? quanAllocated;
+    private int quanAllocated;
     private int orderID;
     private Order order = null!;
     private int productID;
@@ -50,7 +50,7 @@ public class OrderItem : ObservableObject
     [ConcurrencyCheck]
     public float Quantity
     {
-        get => quantity; 
+        get => Product.IsCredit ? 0 : quantity; 
         set => SetProperty(ref quantity, value);
     }
     public decimal ActualCustPrice
@@ -78,9 +78,9 @@ public class OrderItem : ObservableObject
         set => SetProperty(ref product, value);
     }
 
-    public float? QuanAllocated
+    public int QuanAllocated
     {
-        get => quanAllocated ?? 0; 
+        get => quanAllocated; 
         set => SetProperty(ref quanAllocated, value);
     }
 
