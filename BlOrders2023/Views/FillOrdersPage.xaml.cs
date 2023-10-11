@@ -130,11 +130,11 @@ public sealed partial class FillOrdersPage : Page
             OrderedVsReceivedGrid.View.Refresh();
             if (ViewModel.Order?.OrderStatus <= OrderStatus.Ordered)
             {
-                ViewModel.Order.OrderStatus = OrderStatus.Filling;
+                ViewModel.OrderStatus = OrderStatus.Filling;
             }
             if (ViewModel.Order.AllItemsReceived)
             {
-                ViewModel.Order.OrderStatus = OrderStatus.Filled;
+                ViewModel.OrderStatus = OrderStatus.Filled;
             }
             await TrySaveOrderAsync();
         }
