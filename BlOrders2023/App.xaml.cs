@@ -23,6 +23,8 @@ using Microsoft.Data.SqlClient;
 using BlOrders2023.Exceptions;
 using CommunityToolkit.WinUI;
 using System.Diagnostics;
+using NLog;
+using System.Media;
 
 namespace BlOrders2023;
 
@@ -150,8 +152,10 @@ public partial class App : Application
 
     private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
     {
+        SystemSounds.Exclamation.Play();
         if(e.ExceptionObject is Exception ex)
         {
+            LogException(e.ExceptionObject as Exception);
             var message = $"{ex.ToString()} \r\n";
             var title = $"{"AppDisplayName".GetLocalized()} {nameof(e)}";
             try
@@ -177,6 +181,8 @@ public partial class App : Application
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
+        SystemSounds.Exclamation.Play();
+        LogException(e.Exception);
         if(e.Exception is SqlException || e.Exception is VersionMismatchException)
         {
             if (App.GetService<INavigationService>() is NavigationService nav)
@@ -216,13 +222,14 @@ public partial class App : Application
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
+        LogInfoMessage("Application Launched");
         base.OnLaunched(args);
         await App.GetService<IActivationService>().ActivateAsync(args);
         try
         {
             var db = App.GetNewDatabase();
             var DBVersion = db.dbVersion;
-            var SupportedDBVersion = new Version(1, 0, 5);
+            var SupportedDBVersion = new Version(1, 0, 4);
             if (!SupportedDBVersion.Equals(DBVersion))
             {
                 var version = Package.Current.Id.Version;
@@ -230,6 +237,7 @@ public partial class App : Application
                 var message = "The application version you are running is not compatible with the current Database version\r\n" +
                     $"Please install the latest version of the application\r\nApplication Version: {versionString}\r\n" +
                     $"Supported Database Version: {SupportedDBVersion}. Actual Database Version: {DBVersion}";
+                LogErrorMessage(message);
                 System.Windows.Forms.MessageBox.Show(message, $"{"AppDisplayName".GetLocalized()} DatabaseVersionMismatch", System.Windows.Forms.MessageBoxButtons.OK);
                 Exit();
             }
@@ -245,6 +253,22 @@ public partial class App : Application
                 }
             });
         }
+    }
+
+    private void LogException(Exception e)
+    {
+        var logger = LogManager.GetCurrentClassLogger();
+        logger.Error(e, e.Message);
+    }
+    private void LogInfoMessage(string message)
+    {
+        var logger = LogManager.GetCurrentClassLogger();
+        logger.Info(message);
+    }
+    private void LogErrorMessage(string message)
+    {
+        var logger = LogManager.GetCurrentClassLogger();
+        logger.Error(message);
     }
 
     public static IBLDatabase GetNewDatabase()
