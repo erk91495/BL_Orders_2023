@@ -539,14 +539,17 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
             List<OrderItem> itemsCopy = new (Items);
             foreach(var item in itemsCopy) 
             {
-                if (item.QuantityReceived == 0 && item.Quantity == 0)
-                {
-                    Items.Remove(item);
-                }
-                else
-                {
-                    item.Allocated = null;
-                    item.QuanAllocated = 0;
+            //is credit items are not allocated so do nothing for them
+                if(!item.Product.IsCredit){
+                    if (item.QuantityReceived == 0 && item.Quantity == 0)
+                    {
+                        Items.Remove(item);
+                    }
+                    else
+                    {
+                        item.Allocated = null;
+                        item.QuanAllocated = 0;
+                    }
                 }
             }
             Order.Allocated = false;
