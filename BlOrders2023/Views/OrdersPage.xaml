@@ -199,6 +199,13 @@
                             <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"
                                    FontSize="{StaticResource MediumFontSize}"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Taken By:"  
+                                       FontSize="{StaticResource MediumFontSize}" 
+                                       Padding="0,0,10,0"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedOrder.TakenBy, Mode=OneWay}"
+                                   FontSize="{StaticResource MediumFontSize}"/>
+                        </StackPanel>
                     </StackPanel>
                     <Grid x:Name="ItemsGridStack"
                                 RelativePanel.AlignRightWithPanel="True"

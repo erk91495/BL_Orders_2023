@@ -107,7 +107,7 @@ public class WholesaleInvoice : IReport
                 //Padding 
                 row.RelativeItem(1);
 
-                //Ship To:
+                //Bill To:
                 row.RelativeItem(9).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                 {
                     column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Bill To:");
@@ -116,8 +116,8 @@ public class WholesaleInvoice : IReport
                     {
                         row.RelativeItem().PaddingLeft(3).Column(column =>
                         {
-                            column.Item().Text($"{_order.Customer.Address}").Style(normalTextStyle);
-                            column.Item().Text($"{_order.Customer.CityStateZip()}").Style(normalTextStyle);
+                            column.Item().Text($"{_order.Customer.BillingAddress}").Style(normalTextStyle);
+                            column.Item().Text($"{_order.Customer.BillingCityStateZip()}").Style(normalTextStyle);
                             column.Item().Text($"{_order.Customer.Buyer}").Style(normalTextStyle);
                             if (!_order.Customer.Email.IsNullOrEmpty())
                             {
@@ -132,7 +132,7 @@ public class WholesaleInvoice : IReport
                 //Padding 
                 row.RelativeItem(4);
 
-                //Bill To:
+                //Ship To:
                 row.RelativeItem(9).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                 {
 
@@ -142,8 +142,8 @@ public class WholesaleInvoice : IReport
                     {
                         row.RelativeItem().PaddingLeft(3).Column(column =>
                         {
-                            column.Item().Text($"{_order.Customer.BillingAddress}").Style(normalTextStyle);
-                            column.Item().Text($"{_order.Customer.BillingCityStateZip()}").Style(normalTextStyle);
+                            column.Item().Text($"{_order.Customer.Address}").Style(normalTextStyle);
+                            column.Item().Text($"{_order.Customer.CityStateZip()}").Style(normalTextStyle);
                         });
                     });
                 });

@@ -213,8 +213,8 @@ public class AggregateInvoiceReport : IReport
                 }
 
                 table.Cell().Element(FooterCellStyle).Text("Total: ").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{aggregateItems.Sum(i => i.QuantityReceived)}").Style(tableHeaderStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{aggregateItems.Sum(i => i.Quantity)}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{aggregateItems.Sum(i => i.QuantityReceived)}").Style(tableHeaderStyle);
                 table.Cell();
                 table.Cell().Element(FooterCellStyle).Text($"{aggregateItems.Sum(i => i.PickWeight):N2}").Style(tableHeaderStyle);
                 table.Cell();
