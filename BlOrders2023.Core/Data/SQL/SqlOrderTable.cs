@@ -196,7 +196,7 @@ internal class SqlOrderTable : IOrderTable
         return _db.Orders
             .Where(o => 
                 o.CustID == customer.CustID 
-                && o.OrderStatus == Models.Enums.OrderStatus.Invoiced)
+                && o.OrderStatus <= Models.Enums.OrderStatus.Invoiced)
             .ToList();
     }
 
