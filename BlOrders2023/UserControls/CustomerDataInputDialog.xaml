@@ -123,7 +123,7 @@
             <!--Shipping Address-->
             <TextBlock Text="Shipping Address" Grid.Row="4" Grid.Column="0"/>
             <StackPanel Orientation="Vertical" Grid.Row="5" Grid.Column="0">
-                <TextBlock Text="Address: " />
+                <TextBlock Text="Address: *" />
                 <TextBox x:Name="AddressTextBox" 
                          Text="{x:Bind ViewModel.Address, Mode=TwoWay}" 
                          Width="200" 
@@ -134,7 +134,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="0">
-                <TextBlock Text="City: " />
+                <TextBlock Text="City: *" />
                 <TextBox x:Name="CityTextBox" 
                          Text="{x:Bind ViewModel.City, Mode=TwoWay}" 
                          Width="200"  
@@ -145,7 +145,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="7" Grid.Column="0">
-                <TextBlock Text="State: " />
+                <TextBlock Text="State: *" />
                 <sf:SfComboBox x:Name="StateComboBox"
                           SelectedValue="{x:Bind ViewModel.State, Mode=TwoWay}"
                           Width="200">
@@ -156,7 +156,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="8" Grid.Column="0">
-                <TextBlock Text="Zip Code: " />
+                <TextBlock Text="Zip Code: *" />
                 <TextBox x:Name="ZipCodeTextBox" 
                          Text="{x:Bind ViewModel.ZipCode, Mode=TwoWay}" 
                          Width="200"  
@@ -169,7 +169,7 @@
             <!--Billing Address-->
             <TextBlock Text="Billing Address" Grid.Row="4" Grid.Column="1"/>
             <StackPanel Orientation="Vertical" Grid.Row="5" Grid.Column="1">
-                <TextBlock Text="Address: " />
+                <TextBlock Text="Address: *" />
                 <TextBox x:Name="BillingAddressTextBox" 
                          Text="{x:Bind ViewModel.BillingAddress, Mode=TwoWay}" 
                          Width="200"  
@@ -181,7 +181,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="1">
-                <TextBlock Text="City: " />
+                <TextBlock Text="City: *" />
                 <TextBox x:Name="BillingCityTextBox" 
                          Text="{x:Bind ViewModel.BillingCity, Mode=TwoWay}" 
                          Width="200"  HorizontalAlignment="Left"
@@ -192,7 +192,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="7" Grid.Column="1">
-                <TextBlock Text="State: " />
+                <TextBlock Text="State: *" />
                 <sf:SfComboBox x:Name="BillingStateComboBox" 
                           SelectedValue="{x:Bind ViewModel.BillingState, Mode=TwoWay}" 
                           Width="200"
@@ -204,7 +204,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="8" Grid.Column="1">
-                <TextBlock Text="Zip Code: " />
+                <TextBlock Text="Zip Code: *" />
                 <TextBox x:Name="BillingZipCodeTextBox" 
                          Text="{x:Bind ViewModel.BillingZipCode, Mode=TwoWay}" 
                          Width="200"  
@@ -252,7 +252,7 @@
             <CheckBox x:Name="CODCheckBox" IsChecked="{x:Bind ViewModel.Customer.COD, Mode=TwoWay}" Content="Cash On Delivery"/>
             <CheckBox x:Name="InactiveCheckBox" IsChecked="{x:Bind ViewModel.Customer.Inactive, Mode=TwoWay}" Content="Inactive"/>
         </StackPanel>
-        <TextBlock Text="* dennotes a required field" HorizontalAlignment="Right"/>
+        <TextBlock Text="* denotes a required field" HorizontalAlignment="Right"/>
     </StackPanel>
 
 </ContentDialog>
