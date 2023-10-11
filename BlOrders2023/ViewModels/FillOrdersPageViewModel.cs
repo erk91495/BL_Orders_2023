@@ -100,7 +100,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         FillableOrders.Clear();
         FillableOrdersMasterList.Clear();
         foreach (var order in orders.Where( e => e.OrderStatus == Models.Enums.OrderStatus.Ordered ||
-                                            e.OrderStatus ==  Models.Enums.OrderStatus.Filling || e.OrderStatus == Models.Enums.OrderStatus.Filling).OrderBy(o => o.PickupDate).ToList())
+                                            e.OrderStatus ==  Models.Enums.OrderStatus.Filling || e.OrderStatus == Models.Enums.OrderStatus.Filled).OrderBy(o => o.PickupDate).ToList())
         {
             FillableOrders.Add(order);
             FillableOrdersMasterList.Add(order);
