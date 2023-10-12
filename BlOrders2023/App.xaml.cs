@@ -179,7 +179,7 @@ public partial class App : Application
         }
     }
 
-    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         SystemSounds.Exclamation.Play();
         LogException(e.Exception);
@@ -204,7 +204,7 @@ public partial class App : Application
                     Title = title,
                     PrimaryButtonText = "ok"
                 };
-                _ = dialog.ShowAsync();
+                await dialog.ShowAsync();
             }
         }
         catch (Exception)

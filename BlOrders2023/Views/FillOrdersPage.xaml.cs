@@ -33,6 +33,7 @@ public sealed partial class FillOrdersPage : Page
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private readonly ReportGenerator reportGenerator;
+    private Task SaveOrderTask = null;
     #endregion Fields
     public FillOrdersPageViewModel ViewModel
     {
@@ -518,6 +519,11 @@ public sealed partial class FillOrdersPage : Page
             await ShowLockedoutDialog("DbUpdateException", $"An error occured while trying to save your Order. Please contact your system administrator\r\n" +
                 $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}");
         }
+
+    }
+    private async Task WaitTen()
+    {
+        await Task.Delay(10000);
     }
 
     private void RemoveItemCheckBox_Checked(object sender, RoutedEventArgs e)
