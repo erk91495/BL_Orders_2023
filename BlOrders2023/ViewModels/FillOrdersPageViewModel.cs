@@ -65,6 +65,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
     private Order? _order;
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private readonly IBLDatabase _orderDB = App.GetNewDatabase();
+    private SemaphoreSlim _SaveSemaphore = new(1);
     #endregion Fields
 
     #region Consturctors
@@ -190,7 +191,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         Items.Add(item);
         _order?.ShippingItems.Add(item);
         IncremantOrderedItem(item);
-        await _orderDB.Orders.UpsertAsync(_order);
+        await SaveOrderAsync();
     }
 
     internal async Task DeleteShippingItemAsync(ShippingItem item)
@@ -251,19 +252,34 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     internal async Task DeleteAllShippingItemsAsync()
     {
+        Items.Clear();
         await Task.Run(() =>
         {
             _order.ShippingItems.Clear();
-            foreach (var item in Items)
+            var itemsCopy = new ObservableCollection<OrderItem>(_order.Items);
+            foreach (var item in itemsCopy)
             {
-                DecrementOrderedItem(item);
+                if(!item.Product.IsCredit && item.Quantity == 0 && item.QuantityReceived ==0 && item.QuanAllocated == 0)
+                {
+                    _order.Items.Remove(item);
+                }
             }
         });
-        Items.Clear();
         OnPropertyChanged(nameof(Items));
     }
 
-    internal async Task SaveOrderAsync() => await _orderDB.Orders.UpsertAsync(_order);
+    internal async Task SaveOrderAsync()
+    {
+        await _SaveSemaphore.WaitAsync();
+        try
+        {
+            await _orderDB.Orders.UpsertAsync(_order);
+        }
+        finally
+        {
+            _SaveSemaphore.Release();
+        }
+    }
 
     #region Validators
     public string GetErrorMessage(string name)
