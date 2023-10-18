@@ -177,4 +177,12 @@ public class ReportGenerator
         report.GeneratePdf(filePath);
         return filePath;
     }
+
+    public string GenerateOutOfStateSalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new OutOfStateSalesReport(CompanyInfo, orders, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(OutOfStateSalesReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
 }

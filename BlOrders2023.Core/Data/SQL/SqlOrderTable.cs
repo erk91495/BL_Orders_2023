@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using BlOrders2023.Models.Enums;
 
 namespace BlOrders2023.Core.Data.SQL;
 
@@ -311,6 +312,10 @@ internal class SqlOrderTable : IOrderTable
         return await _db.SaveChangesAsync();
     }
 
+    public IEnumerable<Order> GetOutOfStateOrders(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return _db.Orders.Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate && o.Customer.State != States.OH.ToString()).ToList();
+    }
 
     #endregion Methods
 }
