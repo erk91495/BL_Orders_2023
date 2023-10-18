@@ -63,4 +63,9 @@ public class ReportsPageViewModel : ObservableRecipient
     {
         return App.GetNewDatabase().Inventory.GetInventory();
     }
+
+    internal IEnumerable<Order> GetOutOfStateOrders(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return App.GetNewDatabase().Orders.GetOutOfStateOrders(startDate, endDate);
+    }
 }

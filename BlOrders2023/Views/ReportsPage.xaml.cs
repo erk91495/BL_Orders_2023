@@ -453,6 +453,19 @@ public sealed partial class ReportsPage : Page
                 }
 
             }
+            else if(control.ReportType == typeof(OutOfStateSalesReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    var orders = ViewModel.GetOutOfStateOrders(startDate, endDate);
+                    var currentInventory = ViewModel.GetInventory();
+                    reportPath = reportGenerator.GenerateOutOfStateSalesReport(orders, startDate, endDate);
+                }
+            }
             else
             {
                 ContentDialog d = new()

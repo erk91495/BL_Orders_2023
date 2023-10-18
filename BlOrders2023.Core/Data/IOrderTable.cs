@@ -21,4 +21,5 @@ public interface IOrderTable
     Order Upsert(Order order, bool overwrite=false);
     void Delete(Order order);
     Task<IEnumerable<Order>> GetUnpaidInvoicesAsync();
+    IEnumerable<Order> GetOutOfStateOrders(DateTimeOffset startDate, DateTimeOffset endDate);
 }
