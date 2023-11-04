@@ -43,8 +43,9 @@ internal class SqlShipDetailsTable : IShipDetailsTable
 
     public async Task<bool> IsDuplicateScanline(string scanline)
     {
-        var item = await _db.ShippingItems.Where(item => item.Scanline == scanline).FirstOrDefaultAsync();
-        return item != null;
+        //var item = await _db.ShippingItems.Where(item => item.Scanline == scanline).FirstOrDefaultAsync();
+        var item = await _db.ShippingItems.FromSql($"[dbo].[usp_DuplicateScanlineCheck] {scanline}").ToListAsync();
+        return item.FirstOrDefault() != null;
     }
 
     public async Task UpsertAsync(List<ShippingItem> items)
