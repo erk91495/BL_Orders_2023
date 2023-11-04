@@ -84,6 +84,7 @@ public class InventoryPageViewModel : ObservableRecipient
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 Inventory = new(inventory);
+                ClearAdjustmentQuantity();
                 IsLoading = false;
                 OnPropertyChanged(nameof(Inventory));
             });
@@ -105,9 +106,17 @@ public class InventoryPageViewModel : ObservableRecipient
         foreach (var item in Inventory)
         {
             item.QuantityOnHand += item.AdjustmentQuantity;
+        }
+    }
+
+    internal void ClearAdjustmentQuantity()
+    {
+        foreach (var item in Inventory)
+        {
             item.AdjustmentQuantity = 0;
         }
     }
+
     internal async Task SaveAllAsync()
     {
         CalculateAdjustments();
