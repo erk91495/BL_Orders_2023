@@ -27,6 +27,7 @@
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
         <vm:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
         <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
+        <vm:NullBoolConverter x:Key="NullBoolConverter"/>
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -217,7 +218,8 @@
                     <TextBlock Text="Allocated:" 
                                VerticalAlignment="Center"
                                Padding="0,0,10,0"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.Order.Allocated, Mode=TwoWay}" 
+                    <CheckBox IsChecked="{x:Bind ViewModel.Order.Allocated, Mode=TwoWay}"
+                              IsEnabled="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource NullBoolConverter}}"
                               VerticalAlignment="Center"
                               IsTabStop="False"
                               Unchecked="AllocationCheckBox_UnChecked"/>
