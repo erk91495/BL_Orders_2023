@@ -57,7 +57,7 @@ public sealed partial class FillOrdersPage : Page
             if (scanlineText.Contains('\r'))
             {
                 var scanline = scanlineText.Split('\r').First().Trim();
-                box.Text = scanlineText[(scanline.Length + 1)..];
+                box.Text = box.Text[(scanline.Length + 1)..];
                 if (RemoveItemCheckBox.IsChecked != true)
                 {
                     ShippingItem item = new()

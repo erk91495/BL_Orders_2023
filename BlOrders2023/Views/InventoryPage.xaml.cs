@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -10,6 +11,7 @@ using System.Windows.Forms;
 using BlOrders2023.Contracts.Services;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
+using BlOrders2023.Reporting;
 using BlOrders2023.Services;
 using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
@@ -153,6 +155,10 @@ public sealed partial class InventoryPage : Page
         if (_Modified)
         {
             await ViewModel.SaveAllAsync();
+            var generator = new ReportGenerator(App.CompanyInfo);
+            var path = generator.GenerateCurrentInventoryReport(ViewModel.Inventory);
+            PDFPrinterService printerService = new(path);
+            _ = printerService.PrintPdfAsync();
             ContentDialog contentDialog = new()
             {
                 XamlRoot = XamlRoot,
@@ -161,6 +167,7 @@ public sealed partial class InventoryPage : Page
                 DefaultButton = ContentDialogButton.Primary,
             };
             await contentDialog.ShowAsync();
+            ViewModel.ClearAdjustmentQuantity();
             _Modified = false;
         }
         else

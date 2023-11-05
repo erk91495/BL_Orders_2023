@@ -63,13 +63,19 @@ public class Palletizer
     {
         List<Pallet> pallets = new();
         Dictionary<Product, int> remainder = new();
-        List<List<OrderItem>> GroupedByBox = new()
+
+
+        List<List<OrderItem>> GroupedByBox = new();
+        //{
+        //    _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BBox && i.Product.IsCredit != true).ToList(),
+        //    _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.CBox && i.Product.IsCredit != true).ToList(),
+        //    _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BreastBox && i.Product.IsCredit != true).ToList(),
+        //    _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.Unknown && i.Product.IsCredit != true).ToList()
+        //};
+        foreach (var boxType in Enum.GetValues<BoxType>())
         {
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BBox && i.Product.IsCredit != true).ToList(),
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.CBox && i.Product.IsCredit != true).ToList(),
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BreastBox && i.Product.IsCredit != true).ToList(),
-            _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.Unknown && i.Product.IsCredit != true).ToList()
-        };
+            GroupedByBox.Add(_currentOrder.Items.Where(i => GetBoxType(i.Product) == boxType && i.Product.IsCredit != true).ToList());
+        }
 
         foreach(var group in GroupedByBox)
         {
@@ -221,10 +227,13 @@ public class Palletizer
         switch(boxType)
         {
             case BoxType.BBox:
+            case BoxType.NonGMO_BBox:
                 return Config.BBoxesPerPallet;
             case BoxType.CBox:
+            case BoxType.NonGMO_CBox:
                 return Config.CBoxesPerPallet;
             case BoxType.BreastBox:
+            case BoxType.NonGMOBreastBox:
                 return Config.BreastBoxesPerPallet;
             case BoxType.Unknown:
             default:
