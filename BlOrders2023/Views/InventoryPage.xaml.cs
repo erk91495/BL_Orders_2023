@@ -168,6 +168,7 @@ public sealed partial class InventoryPage : Page
             };
             await contentDialog.ShowAsync();
             ViewModel.ClearAdjustmentQuantity();
+            await ViewModel.SaveAllAsync();
             _Modified = false;
         }
         else

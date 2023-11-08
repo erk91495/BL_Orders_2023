@@ -65,7 +65,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
     private Order? _order;
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private readonly IBLDatabase _orderDB = App.GetNewDatabase();
-    private SemaphoreSlim _SaveSemaphore = new(1);
+    private readonly SemaphoreSlim _SaveSemaphore = new(1);
+    private readonly SemaphoreSlim _AddItemSemaphore = new(1);
     #endregion Fields
 
     #region Consturctors
@@ -163,35 +164,43 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     internal async Task ReceiveItemAsync(ShippingItem item, bool checkDuplicate = true)
     {
-        //Mainly for canned stuff where upc is the scanline
-        var product = _orderDB.Products.GetByALU(item.Scanline);
-        if(product == null)
+        await _AddItemSemaphore.WaitAsync();
+        try
         {
-            product = _orderDB.Products.Get(item.ProductID).FirstOrDefault();
-        }
-
-        if (product == null)
-        {
-            throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
-        }
-        else
-        {
-            item.Product = product;
-            item.ProductID = product.ProductID;
-        }
-
-        if(checkDuplicate)
-        {
-            var duplicate = await _orderDB.ShipDetails.IsDuplicateScanline(item.Scanline);
-            if (duplicate)
+            //Mainly for canned stuff where upc is the scanline
+            var product = _orderDB.Products.GetByALU(item.Scanline);
+            if(product == null)
             {
-                throw new DuplicateBarcodeException("Duplicate Scanline", item.Scanline);
-            } 
+                product = _orderDB.Products.Get(item.ProductID).FirstOrDefault();
+            }
+
+            if (product == null)
+            {
+                throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
+            }
+            else
+            {
+                item.Product = product;
+                item.ProductID = product.ProductID;
+            }
+
+            if(checkDuplicate)
+            {
+                var duplicate = await _orderDB.ShipDetails.IsDuplicateScanline(item.Scanline);
+                if (duplicate)
+                {
+                    throw new DuplicateBarcodeException("Duplicate Scanline", item.Scanline);
+                } 
+            }
+            Items.Add(item);
+            _order?.ShippingItems.Add(item);
+            IncremantOrderedItem(item);
+            await SaveOrderAsync();
         }
-        Items.Add(item);
-        _order?.ShippingItems.Add(item);
-        IncremantOrderedItem(item);
-        await SaveOrderAsync();
+        finally
+        {
+            _AddItemSemaphore.Release();
+        }
     }
 
     internal async Task DeleteShippingItemAsync(ShippingItem item)
