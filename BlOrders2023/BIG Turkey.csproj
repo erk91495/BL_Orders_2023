@@ -17,6 +17,13 @@
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <PackageIcon>Square150x150Logo.scale-100.png</PackageIcon>
     <AssemblyName>BIGTurkey</AssemblyName>
+    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Never</AppxBundle>
+    <AppInstallerUri>\\bl4\Company\BLData\BIG Turkey\Releases</AppInstallerUri>
   </PropertyGroup>
   <ItemGroup>
     <Content Remove="Assets\BadgeLogo.scale-100.png" />

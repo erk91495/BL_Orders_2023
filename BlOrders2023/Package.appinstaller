@@ -10,8 +10,12 @@
               Publisher="{Publisher}"
               Uri="{MainPackageUri}"/>
 
+	<UpdateURIs>
+        <UpdateURI>\\bl4\Company\BLData\BIG Turkey\Releases\BIGTurkey.appinstaller</UpdateURI>
+    </UpdateURIs>
+		
   <UpdateSettings>
-    <OnLaunch HoursBetweenUpdateChecks="0" />
+    <OnLaunch HoursBetweenUpdateChecks="0" ShowPrompt="true" UpdateBlocksActivation="true"/>
   </UpdateSettings>
 
 </AppInstaller>
