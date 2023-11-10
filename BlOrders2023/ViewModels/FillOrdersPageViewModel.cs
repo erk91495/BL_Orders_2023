@@ -59,6 +59,9 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     public bool CanPrintInvoice => _order?.CanPrintInvoice ?? false;
     public bool CanPrintOrder => _order?.CanPrintOrder ?? false;
+
+    public int TotalOrdered =>  _order != null ? (int)(_order.Items.Sum(i => i.Quantity)) : 0;
+    public int TotalReceived => _order != null ? _order.ShippingItems.Sum(i => i.QuanRcvd) ?? 0 : 0;
     #endregion Properties
 
     #region Fields
@@ -138,6 +141,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         OnPropertyChanged(nameof(Memo));
         OnPropertyChanged(nameof(SortedOrderItems));
         OnPropertyChanged(nameof(OrderStatus));
+        OnPropertyChanged(nameof(TotalOrdered));
+        OnPropertyChanged(nameof(TotalReceived));
     }
 
     internal void QueryFillableOrders(string text)
@@ -196,6 +201,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
             Items.Add(item);
             _order?.ShippingItems.Add(item);
             IncremantOrderedItem(item);
+            OnPropertyChanged(nameof(TotalReceived));
             //await SaveOrderAsync();
         }
         finally
@@ -222,6 +228,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         });
         OnPropertyChanged(nameof(SortedOrderItems));
         OnPropertyChanged(nameof(Items));
+        OnPropertyChanged(nameof(TotalReceived));
     }
 
 

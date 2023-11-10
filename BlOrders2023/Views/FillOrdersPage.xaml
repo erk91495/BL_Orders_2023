@@ -86,7 +86,7 @@
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.Below="OrderStatusStack"
-                                       RelativePanel.AlignBottomWithPanel="True"
+                                       RelativePanel.Above="TotalsGrid"
                                        SelectionMode="None"
                                        SelectionUnit="Cell"
                                        AllowSorting="False"
@@ -102,6 +102,25 @@
                             <sf:GridNumericColumn HeaderText="Total Lbs." MappingName="PickWeight" DisplayNumberFormat="N2"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
+
+                    <Grid x:Name="TotalsGrid"
+                          RelativePanel.AlignLeftWithPanel="True"
+                          RelativePanel.AlignRightWithPanel="True"
+                          RelativePanel.AlignBottomWithPanel="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center">
+                            <TextBlock Text="Total Ordered:" Margin="0,0,10,0"/>
+                            <TextBlock Text="{x:Bind ViewModel.TotalOrdered, Mode=OneWay}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center">
+                            <TextBlock Text="Total Received:" Margin="0,0,10,0"/>
+                            <TextBlock Text="{x:Bind ViewModel.TotalReceived, Mode=OneWay}"/>
+                        </StackPanel>
+
+                    </Grid>
                     <!--<controls:DataGrid ItemsSource="{x:Bind ViewModel.OrderedVsReceivedItems, Mode=OneWay}"
                                        AutoGenerateColumns="True"
                                        RelativePanel.AlignLeftWithPanel="True"
