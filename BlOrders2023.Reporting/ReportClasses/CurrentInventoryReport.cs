@@ -97,11 +97,20 @@ public  class CurrentInventoryReport : IReport
                     table.Cell().Element(CellStyle).Text($"{item.QuantityOnHand}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.AdjustmentQuantity}").Style(tableTextStyle);
 
-
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
                     }
+
+                }
+
+                table.Cell().Element(FooterCellStyle).Text($"").Style(tableTextStyle);
+                table.Cell().Element(FooterCellStyle).Text($"Totals:").Style(tableTextStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.QuantityOnHand)}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.AdjustmentQuantity)}").Style(tableHeaderStyle);
+                static IContainer FooterCellStyle(IContainer container)
+                {
+                    return container.PaddingVertical(2);
                 }
 
             });

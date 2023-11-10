@@ -116,11 +116,29 @@ public class InventoryDetailsReport : IReport
                     table.Cell().Element(CellStyle).Text($"{totalAllocated - totalReceived}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.QuantityOnHand}").Style(tableTextStyle);
 
-
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
                     }
+
+                }
+
+                var allOrderItemsTotals = _orders.SelectMany(o => o.Items);
+                var totalOrderedTotals = allOrderItemsTotals.Sum(i => i.Quantity);
+                var totalAllocatedTotals = allOrderItemsTotals.Sum(i => i.QuanAllocated);
+                var totalReceivedTotals = allOrderItemsTotals.Sum(i => i.QuantityReceived);
+                table.Cell().Element(FooterCellStyle).Text($"Totals:").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{totalOrderedTotals}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{totalAllocatedTotals}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{totalReceivedTotals}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{totalAllocatedTotals - totalReceivedTotals}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.QuantityOnHand)}").Style(tableHeaderStyle);
+
+
+                static IContainer FooterCellStyle(IContainer container)
+                {
+                    return container.PaddingVertical(2);
                 }
 
             });
