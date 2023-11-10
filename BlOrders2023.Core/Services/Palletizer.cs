@@ -80,38 +80,53 @@ public class Palletizer
         foreach(var group in GroupedByBox)
         {
             Dictionary<Product, int> groupRemainder = new();
-            if(! group.IsNullOrEmpty()){
+            if(!group.IsNullOrEmpty()){
                 //All items are grouped by box type so we can just grab the first one
                 var maxPerPallet = GetMaxBoxesPerPallet(group[0].Product);
-                foreach(var item in group)
+                var boxType = GetBoxType(group[0].Product);
+                if(boxType != BoxType.Unknown)
                 {
-                    var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
-                    //Make Full Pallets
-                    for(var i = 0; i < (int)(quanNeeded / maxPerPallet); i++)
+                    foreach (var item in group)
                     {
-                        Pallet p = new(_currentOrder.OrderID);
-                        p.Items.Add(item.Product, maxPerPallet);
-                        pallets.Add(p);
+                        var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
+                        //Make Full Pallets
+                        for (var i = 0; i < (int)(quanNeeded / maxPerPallet); i++)
+                        {
+                            Pallet p = new(_currentOrder.OrderID);
+                            p.Items.Add(item.Product, maxPerPallet);
+                            pallets.Add(p);
+                        }
+
+                        //Make Remainder Pallet
+                        if (quanNeeded % maxPerPallet != 0)
+                        {
+                            groupRemainder.Add(item.Product, quanNeeded % maxPerPallet);
+                        }
+
                     }
 
-                    //Make Remainder Pallet
-                    if(quanNeeded % maxPerPallet != 0)
+                    //try to combine as many pallets as you can for each group
+                    pallets = pallets.Concat(CombinePallets(ref groupRemainder, maxPerPallet)).ToList();
+                    foreach (var item in groupRemainder)
                     {
-                        groupRemainder.Add(item.Product, quanNeeded % maxPerPallet);
+                        remainder.Add(item.Key, item.Value);
                     }
-
                 }
-                //try to combine as many pallets as you can for each group
-                pallets = pallets.Concat(CombinePallets(ref groupRemainder, maxPerPallet)).ToList();
-
-                foreach(var item in groupRemainder)
+                //All Unknown Items Go On The same Pallet
+                else
                 {
-                    remainder.Add(item.Key, item.Value);
+                    Pallet p = new Pallet(_currentOrder.OrderID);
+                    foreach (var item in group)
+                    {
+                        var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
+                        p.Items.Add(item.Product, quanNeeded);
+                    }
+                    pallets.Add(p);
                 }
-
             }
 
         }
+
         //last chance to combine pallets 
         pallets = pallets.Concat(CombinePallets(ref remainder, Config.MixedBoxesPerPallet)).ToList();
         if(!remainder.IsNullOrEmpty()){
