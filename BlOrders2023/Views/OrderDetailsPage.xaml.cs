@@ -344,10 +344,12 @@ public sealed partial class OrderDetailsPage : Page
     {
         if (_doomed != null)
         {
+
             if(_doomed.QuantityReceived == 0)
             {
                 ViewModel.Items.Remove(_doomed);
                 ViewModel.SaveCurrentOrder();
+                _doomed = null;
             }
             else
             {
@@ -361,7 +363,6 @@ public sealed partial class OrderDetailsPage : Page
                 _ = dialog.ShowAsync();
             }
         }
-        _doomed = null;
     }
 
     /// <summary>
@@ -382,6 +383,7 @@ public sealed partial class OrderDetailsPage : Page
             var point = e.GetCurrentPoint(visualcontainer).Position;
             var rowColumnIndex = visualcontainer.PointToCellRowColumnIndex(point);
             var recordIndex = OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex);
+            //Debugger.Log(1, "Warning", $" Record Index: {recordIndex}\r\n");
             if (recordIndex < 0)
             {
                 return;
@@ -405,6 +407,7 @@ public sealed partial class OrderDetailsPage : Page
                     //var gridColumn = OrderedItems.Columns[OrderedItems.ResolveToGridVisibleColumnIndex(rowColumnIndex.ColumnIndex)];
                     //For getting the record, need to resolve the corresponding record index from row index                     
                     _doomed = OrderedItems.View.Records[OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex)].Data as OrderItem;
+                    //Debugger.Log(1,"Warning", $"doomed is {_doomed} id: {_doomed.ProductID}\r\n");
                 }
 
             }
@@ -626,10 +629,6 @@ public sealed partial class OrderDetailsPage : Page
         }
     }
 
-    #endregion Event Handlers
-
-    #endregion Methods
-
     private void PrintOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
         _ = PrintOrderAsync();
@@ -637,7 +636,7 @@ public sealed partial class OrderDetailsPage : Page
 
     private void PrintInvoiceFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
-        _= PrintInvoiceAsync();
+        _ = PrintInvoiceAsync();
     }
 
     private void PrintPalletTicketsFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -645,6 +644,9 @@ public sealed partial class OrderDetailsPage : Page
         _ = PrintPalletTicketsAsync();
     }
 
+    #endregion Event Handlers
+
+    #endregion Methods
     private async Task PrintInvoiceAsync()
     {
         var printInvoice = false;
