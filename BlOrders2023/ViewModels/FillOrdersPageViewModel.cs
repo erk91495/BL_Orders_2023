@@ -165,6 +165,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
     internal async Task ReceiveItemAsync(ShippingItem item, bool checkDuplicate = true)
     {
         await _AddItemSemaphore.WaitAsync();
+        await _SaveSemaphore.WaitAsync();
         try
         {
             //Mainly for canned stuff where upc is the scanline
@@ -195,10 +196,11 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
             Items.Add(item);
             _order?.ShippingItems.Add(item);
             IncremantOrderedItem(item);
-            await SaveOrderAsync();
+            //await SaveOrderAsync();
         }
         finally
         {
+            _SaveSemaphore.Release();
             _AddItemSemaphore.Release();
         }
     }
