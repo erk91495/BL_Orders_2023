@@ -5,16 +5,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using BlOrders2023.Exceptions;
 using System.Diagnostics;
-using Windows.Management.Update;
 using System.Media;
-using BlOrders2023.Contracts.ViewModels;
-using Microsoft.UI.Xaml.Navigation;
 using Microsoft.IdentityModel.Tokens;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using BlOrders2023.UserControls;
 using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
-using Microsoft.Identity.Client;
 using Microsoft.EntityFrameworkCore;
 using BlOrders2023.Models.Enums;
 using BlOrders2023.Reporting;
@@ -23,8 +18,6 @@ using System.Drawing.Printing;
 using BlOrders2023.Core.Services;
 using Syncfusion.UI.Xaml.DataGrid;
 using Microsoft.UI.Xaml.Input;
-using WinUIEx;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BlOrders2023.Views;
 
@@ -78,8 +71,9 @@ public sealed partial class FillOrdersPage : Page
                     {
                         Debug.WriteLine(e.ToString());
                         var prodCode = e.Data["ProductID"];
+                        App.LogWarningMessage($"Product ID: {prodCode} was not found in the database\r\n");
                         await ShowLockedoutDialog("Product Not Found", 
-                            string.Format("Product ID: {0} was not found in the database\r\n", prodCode)); 
+                            $"Product ID: {prodCode} was not found in the database\r\n"); 
                     } 
                     catch (InvalidBarcodeExcption e)
                     {
@@ -87,12 +81,14 @@ public sealed partial class FillOrdersPage : Page
                         var ai = e.Data["AI"];
                         var s = e.Data["Scanline"];
                         var location = e.Data["Location"];
+                        App.LogWarningMessage($"Could not parse scanline {s} at {location}\r\nAI: {ai}");
                         await ShowLockedoutDialog(e.Message,
-                            string.Format("Could not parse scanline {0} at {1}\r\nAI: {2}", s, location, ai));
+                            $"Could not parse scanline {s} at {location}\r\nAI: {ai}");
                     }
                     catch (UnknownBarcodeFormatException e)
                     {
                         Debug.WriteLine(e.ToString());
+                        App.LogWarningMessage($"{e.Message}");
                         await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
                     }
 

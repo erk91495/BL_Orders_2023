@@ -255,20 +255,26 @@ public partial class App : Application
         }
     }
 
-    private void LogException(Exception e)
+    public static void LogException(Exception e)
     {
         var logger = LogManager.GetCurrentClassLogger();
         logger.Error(e, e.Message);
     }
-    private void LogInfoMessage(string message)
+    public static void LogInfoMessage(string message)
     {
         var logger = LogManager.GetCurrentClassLogger();
         logger.Info(message);
     }
-    private void LogErrorMessage(string message)
+    public static void LogErrorMessage(string message)
     {
         var logger = LogManager.GetCurrentClassLogger();
         logger.Error(message);
+    }
+
+    public static void LogWarningMessage(string message)
+    {
+        var logger = LogManager.GetCurrentClassLogger();
+        logger.Warn(message);
     }
 
     public static IBLDatabase GetNewDatabase()
