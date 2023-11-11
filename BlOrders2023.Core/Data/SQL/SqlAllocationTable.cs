@@ -25,7 +25,9 @@ internal class SqlAllocationTable : IAllocationTable
     {
         _db = db;
     }
+    #endregion Constructors
 
+    #region Methods
     public async Task<IEnumerable<int>> GetAllocatableOrderIDsAsync(DateTimeOffset item1, DateTimeOffset item2, AllocatorMode allocationMode)
     {
         if(allocationMode == AllocatorMode.Both)
@@ -62,9 +64,7 @@ internal class SqlAllocationTable : IAllocationTable
         }
     }
     public IEnumerable<AllocationGroup> GetAllocationGroups() => _db.AllocationGroups.ToList();
-    #endregion Constructors
 
-    #region Methods
     public async Task<IEnumerable<AllocationGroup>> GetAllocationGroupsAsync()
     {
         return await _db.AllocationGroups.ToListAsync();
