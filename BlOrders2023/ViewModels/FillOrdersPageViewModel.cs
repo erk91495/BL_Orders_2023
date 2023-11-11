@@ -174,12 +174,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         try
         {
             //Mainly for canned stuff where upc is the scanline
-            var product = _orderDB.Products.GetByALU(item.Scanline);
-            if(product == null)
-            {
-                product = _orderDB.Products.Get(item.ProductID).FirstOrDefault();
-            }
-
+            //A USP could make this 1 query instead of 2
+            var product = _orderDB.Products.GetByALU(item.Scanline) ?? _orderDB.Products.Get(item.ProductID).FirstOrDefault();
             if (product == null)
             {
                 throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
