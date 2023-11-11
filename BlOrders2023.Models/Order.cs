@@ -289,6 +289,19 @@ public class Order : ObservableObject
             }
     }
 
+    public int GetTotalOrderedAllocated()
+    {
+        if (Items.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            var total = Items.Where(i => i.Allocated == true).Sum(item => (int)(item.QuanAllocated));
+            return total;
+        }
+    }
+
     public decimal GetTotalPayments()
     {
         if (Payments.IsNullOrEmpty())

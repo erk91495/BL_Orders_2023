@@ -1,5 +1,6 @@
 ﻿
 using System.Reflection;
+using System.Xml;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
 using QuestPDF.Fluent;
@@ -117,10 +118,10 @@ public class AllocationSummaryReport : IReport
 
                 foreach (var order in _orders)
                 {
-
+                    var quanOrdered = order.Items.Where(i => i.Allocated == true).Sum(i => (int)i.Quantity);
                     table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{order.GetTotalOrdered()}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{quanOrdered}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{order.GetTotalAllocated()}").Style(tableTextStyle);
                     static IContainer CellStyle(IContainer container)
                     {
@@ -129,7 +130,7 @@ public class AllocationSummaryReport : IReport
                 }
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableTextStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(i => i.GetTotalOrdered())}").Style(tableTextStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetTotalOrderedAllocated())}").Style(tableTextStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(i => i.GetTotalAllocated())}").Style(tableTextStyle);
                 static IContainer FooterCellStyle(IContainer container)
                 {
