@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using BlOrders2023.Models;
@@ -41,7 +42,7 @@ public class InventoryDetailsReport : IReport
         {
             page.Margin(20);
             page.MarginLeft(0.75f, Unit.Inch);
-            page.Size(PageSizes.Letter);
+            page.Size(PageSizes.Letter.Landscape());
 
             page.Header().Height(100).Background(Colors.Grey.Lighten1);
             page.Header().Element(ComposeHeader);
@@ -83,17 +84,18 @@ public class InventoryDetailsReport : IReport
                     column.RelativeColumn(2);
                     column.RelativeColumn(2);
                     column.RelativeColumn(2);
-
+                    column.RelativeColumn(2);
                 });
 
                 table.Header(header =>
                 {
                     header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Starting Inventory").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Ordered").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Ordered (Not Allocated)").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Allocated").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Received").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).Text("Allocated - Received").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Available Inventory").Style(tableHeaderStyle);
 
                     static IContainer CellStyle(IContainer container)
@@ -101,20 +103,45 @@ public class InventoryDetailsReport : IReport
                         return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
                     }
                 });
-
+                
+                var totalOrdered = 0;
+                var totalAllocated = 0;
+                var totalReceived = 0;
+                var totalOrderedNonAllocated = 0;
+                var totalAvailable = 0;
                 foreach (var item in _items.OrderBy(i => i.SortIndex))
                 {
                     var allOrderItems = _orders.SelectMany(o => o.Items.Where(i => i.ProductID == item.ProductID));
-                    var totalOrdered = allOrderItems.Sum(i => i.Quantity);
-                    var totalAllocated = allOrderItems.Sum(i => i.QuanAllocated);
-                    var totalReceived = allOrderItems.Sum(i => i.QuantityReceived);
+                    var productTotalOrdered = (int)allOrderItems.Sum(i => i.Quantity);
+                    var productTotalAllocated = allOrderItems.Sum(i => i.QuanAllocated);
+                    var productTotalReceived = allOrderItems.Sum(i => i.QuantityReceived);
+                    var productTotalOrderedNonAllocated = allOrderItems.Where(i => i.Allocated != true).Sum(i => (int)i.Quantity);
+                    var availibleInventory = item.QuantityOnHand - productTotalOrderedNonAllocated;
+
+                    totalOrdered += productTotalOrdered;
+                    totalAllocated += productTotalAllocated;
+                    totalReceived += productTotalReceived;
+                    totalOrderedNonAllocated += productTotalOrderedNonAllocated;
+                    totalAvailable += availibleInventory;
+
+
+                    //header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
+                    //header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
+                    //header.Cell().Element(CellStyle).Text("Starting Inventory").Style(tableHeaderStyle);
+                    //header.Cell().Element(CellStyle).Text("Ordered").Style(tableHeaderStyle);
+                    //header.Cell().Element(CellStyle).Text("Ordered (Not Allocated)").Style(tableHeaderStyle);
+                    //header.Cell().Element(CellStyle).Text("Allocated").Style(tableHeaderStyle);
+                    //header.Cell().Element(CellStyle).Text("Received").Style(tableHeaderStyle);
+                    //header.Cell().Element(CellStyle).Text("Available Inventory").Style(tableHeaderStyle);
+
                     table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{totalOrdered}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{totalAllocated}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{totalReceived}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{totalAllocated - totalReceived}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.QuantityOnHand}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{productTotalOrdered}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{productTotalOrderedNonAllocated}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{productTotalAllocated}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{productTotalReceived}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{availibleInventory}").Style(tableTextStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -123,17 +150,25 @@ public class InventoryDetailsReport : IReport
 
                 }
 
-                var allOrderItemsTotals = _orders.SelectMany(o => o.Items);
-                var totalOrderedTotals = allOrderItemsTotals.Sum(i => i.Quantity);
-                var totalAllocatedTotals = allOrderItemsTotals.Sum(i => i.QuanAllocated);
-                var totalReceivedTotals = allOrderItemsTotals.Sum(i => i.QuantityReceived);
+                //header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
+                //header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
+                //header.Cell().Element(CellStyle).Text("Current Inventory").Style(tableHeaderStyle);
+                //header.Cell().Element(CellStyle).Text("Ordered").Style(tableHeaderStyle);
+                //header.Cell().Element(CellStyle).Text("Allocated").Style(tableHeaderStyle);
+                //header.Cell().Element(CellStyle).Text("Received (Allocated)").Style(tableHeaderStyle);
+                //header.Cell().Element(CellStyle).Text("Received (Not Allocated)").Style(tableHeaderStyle);
+                //header.Cell().Element(CellStyle).Text("On Hand").Style(tableHeaderStyle);
+                //header.Cell().Element(CellStyle).Text("Available Inventory").Style(tableHeaderStyle);
+
                 table.Cell().Element(FooterCellStyle).Text($"Totals:").Style(tableHeaderStyle);
                 table.Cell().Element(FooterCellStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{totalOrderedTotals}").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{totalAllocatedTotals}").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{totalReceivedTotals}").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{totalAllocatedTotals - totalReceivedTotals}").Style(tableHeaderStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.QuantityOnHand)}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{totalOrdered}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{totalOrderedNonAllocated}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{totalAllocated}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{totalReceived}").Style(tableHeaderStyle);
+
+                table.Cell().Element(FooterCellStyle).Text($"{totalAvailable}").Style(tableHeaderStyle);
 
 
                 static IContainer FooterCellStyle(IContainer container)
