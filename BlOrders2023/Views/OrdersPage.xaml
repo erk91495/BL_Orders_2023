@@ -199,6 +199,12 @@
                             <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"
                                    FontSize="{StaticResource MediumFontSize}"/>
                         </StackPanel>
+                        <TextBlock FontSize="{StaticResource MediumFontSize}" 
+                                   Padding="0,0,10,0">
+                            <Run Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"/>
+                            <Run Text=" Date: "/>
+                            <Run Text="{x:Bind ViewModel.SelectedOrder.PickupDate.ToShortDateString(), Mode=OneWay}"/>
+                        </TextBlock>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Taken By:"  
                                        FontSize="{StaticResource MediumFontSize}" 
