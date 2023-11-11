@@ -43,9 +43,20 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
         set => SetProperty(ref _currentInventory, value);
 
     }
+
+    public AllocatorMode AllocatorMode
+    {
+        get => AllocatorConfig.AllocatorMode; 
+        set
+        {
+            AllocatorConfig.AllocatorMode = value;
+            OnPropertyChanged();
+        }
+
+    }
     #endregion Properties
 
-    #region Constructors
+        #region Constructors
     public AllocatorPageViewModel()
     {
         AllocatorConfig = new OrderAllocatorConfiguration();

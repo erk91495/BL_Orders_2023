@@ -128,7 +128,7 @@
                     <StackPanel x:Name="AllocationModeStack" Orientation="Horizontal"
                                 RelativePanel.AlignTopWithPanel="True">
                         <TextBlock Text="AllocationMode:" Margin="0,0,10,0" FontSize="20" FontWeight="Bold"/>
-                        <TextBlock Text="{x:Bind ViewModel.AllocatorConfig.AllocatorMode, Mode=OneWay}" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.AllocatorMode, Mode=OneWay}" FontSize="20" FontWeight="Bold"/>
                     </StackPanel>
 
                     <Button RelativePanel.AlignRightWithPanel="True"
@@ -243,7 +243,7 @@
                             <controls:DataGridTemplateColumn Header="Total Ordered" Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Order">
-                                        <TextBlock Text="{x:Bind GetTotalAllocatedOrdered()}"/>
+                                        <TextBlock Text="{x:Bind GetTotalOrderedAllocated()}"/>
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>

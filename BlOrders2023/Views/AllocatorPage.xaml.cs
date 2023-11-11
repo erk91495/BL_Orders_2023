@@ -92,7 +92,7 @@ public sealed partial class AllocatorPage : Page
         {
             if (comboBox.SelectedItem is AllocatorMode mode)
             {
-                ViewModel.AllocatorConfig.AllocatorMode = mode;
+                ViewModel.AllocatorMode = mode;
             }
             //-1  will be the value if TEST mode type is selected during debug, but TEST is not compiled into Release Builds
             if (((int)ViewModel.AllocatorConfig.AllocatorMode) == -1)
