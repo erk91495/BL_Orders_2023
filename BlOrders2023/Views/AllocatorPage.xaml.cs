@@ -42,7 +42,6 @@ public sealed partial class AllocatorPage : Page
 {
     #region Fields
     private readonly NavigationService _navigationService;
-
     #endregion Fields
 
     #region Properties
@@ -199,13 +198,28 @@ public sealed partial class AllocatorPage : Page
 
     private async void btn_SavePrint_Click(object sender, RoutedEventArgs e)
     {
+        //Want to lock out save buttons to prevent double clicks
+        btn_Save.IsEnabled = false;
+        btn_SavePrint.IsEnabled = false;
+        rng_SavePrint.Visibility = Visibility.Visible;
         await SaveAllocation();
         await PrintAllocationSummary();
+        rng_SavePrint.Visibility = Visibility.Collapsed;
+        btn_Save.IsEnabled = true;
+        btn_SavePrint.IsEnabled = true;
     }
 
     private async void btn_Save_Click(object sender, RoutedEventArgs e)
     {
+        //Want to lock out save buttons to prevent double clicks
+        btn_Save.IsEnabled = false;
+        btn_SavePrint.IsEnabled = false;
+        rng_Save.Visibility = Visibility.Visible;
         await SaveAllocation();
+        rng_Save.Visibility = Visibility.Collapsed;
+        //Want to lock out save button to prevent double clicks
+        btn_Save.IsEnabled = true;
+        btn_SavePrint.IsEnabled = true;
     }
 
     private async Task SaveAllocation()

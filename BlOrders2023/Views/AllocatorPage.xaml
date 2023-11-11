@@ -90,8 +90,35 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="btn_Save" Content="Save" Click="btn_Save_Click" Grid.Column="0" HorizontalAlignment="Center" Width="120"/>
-                        <Button x:Name="btn_SavePrint" Content="Save and Print" Click="btn_SavePrint_Click" Grid.Column="1" HorizontalAlignment="Center" Width="120"/>
+                        <Button x:Name="btn_Save" Click="btn_Save_Click" Grid.Column="0" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Stretch">
+                            <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                <TextBlock Text="Save" 
+                                           RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+                                <ProgressRing x:Name="rng_Save"
+                                              IsActive="True" 
+                                              MaxHeight="12" 
+                                              MaxWidth="12" 
+                                              Visibility="Collapsed"
+                                              RelativePanel.AlignRightWithPanel="True"
+                                              RelativePanel.AlignVerticalCenterWithPanel="True"/>
+                            </RelativePanel>
+                        </Button>
+                        <Button x:Name="btn_SavePrint" Click="btn_SavePrint_Click" Grid.Column="1" HorizontalAlignment="Center" Width="120">
+                            <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                <ProgressRing x:Name="rng_SavePrint"
+                                              IsActive="True" 
+                                              MaxHeight="12" 
+                                              MaxWidth="12" 
+                                              Visibility="Collapsed"
+                                              RelativePanel.AlignRightWithPanel="True"
+                                              RelativePanel.AlignVerticalCenterWithPanel="True"
+                                              Margin="10,0,0,0"/>
+                                <TextBlock Text="Save &amp; Print"
+                                           RelativePanel.LeftOf="rng_SavePrint"
+                                           TextWrapping="NoWrap"/>
+
+                            </RelativePanel>
+                        </Button>
                     </Grid>
                 </RelativePanel>
             </SplitView.Pane>
