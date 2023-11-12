@@ -220,7 +220,7 @@ public class PickList : IReport
                         return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
                     }
                 });
-
+                var totalAllocated = 0;
                 foreach (var item in _order.Items.OrderBy(i => i.ProductID))
                 {
 
@@ -229,7 +229,17 @@ public class PickList : IReport
                     itemsTable.Cell().Element(CellStyle).Text($"{item.Quantity}").Style(tableTextStyle);
                     if (_order.Allocated == true)
                     {
-                        itemsTable.Cell().Element(CellStyle).Text($"{item.QuanAllocated}").Style(tableTextStyle);
+                        if (item.Allocated == true)
+                        {
+                            itemsTable.Cell().Element(CellStyle).Text($"{item.QuanAllocated}").Style(tableTextStyle);
+                            totalAllocated += item.QuanAllocated;
+                        }
+                        else
+                        {
+                            itemsTable.Cell().Element(CellStyle).Text($"{item.Quantity}").Style(tableTextStyle);
+                            totalAllocated += (int)item.Quantity;
+                        }
+                        
                     }
                     static IContainer CellStyle(IContainer container)
                     {
@@ -241,7 +251,7 @@ public class PickList : IReport
                 itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.Quantity)}").Style(tableTextStyle);
                 if (_order.Allocated == true)
                 {
-                    itemsTable.Cell().Element(FooterCellStyle).Text($"{_order.Items.Sum(i => i.QuanAllocated)}").Style(tableTextStyle);
+                    itemsTable.Cell().Element(FooterCellStyle).Text($"{totalAllocated}").Style(tableTextStyle);
                 }
                 static IContainer FooterCellStyle(IContainer container)
                 {
