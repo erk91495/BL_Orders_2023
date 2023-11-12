@@ -297,7 +297,7 @@ public class Order : ObservableObject
         }
         else
         {
-            var total = Items.Where(i => i.Allocated == true).Sum(item => (int)(item.QuanAllocated));
+            var total = Items.Where(i => i.Allocated == true).Sum(item => (int)(item.Quantity));
             return total;
         }
     }
