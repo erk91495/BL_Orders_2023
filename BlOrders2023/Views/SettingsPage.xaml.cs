@@ -25,6 +25,7 @@ public sealed partial class SettingsPage : Page
     {
         var settingsService = App.GetService<ILocalSettingsService>();
         settingsService.SaveSetting(LocalSettingsKeys.DBConnectionString, DatabaseSettings.ConnectionString);
+        settingsService.SaveSetting(LocalSettingsKeys.DBSettingsSet, true);
         base.OnNavigatingFrom(e);
     }
 }

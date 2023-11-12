@@ -1,4 +1,6 @@
 ﻿using BlOrders2023.Contracts.Services;
+using BlOrders2023.Helpers;
+using BlOrders2023.Services;
 using BlOrders2023.ViewModels;
 using Microsoft.UI.Xaml;
 
@@ -22,7 +24,16 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
 
     protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
-        _navigationService.NavigateTo(typeof(OrdersPageViewModel).FullName!, args.Arguments);
+        var settings = App.GetService<ILocalSettingsService>();
+        if (!settings.ReadSetting<bool>(LocalSettingsKeys.DBSettingsSet))
+        {
+            _navigationService.NavigateTo(typeof(SettingsViewModel).FullName!, args.Arguments);
+        }
+        else
+        {
+            _navigationService.NavigateTo(typeof(OrdersPageViewModel).FullName!, args.Arguments);
+        }
+        
 
         await Task.CompletedTask;
     }

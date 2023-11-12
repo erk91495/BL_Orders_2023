@@ -9,4 +9,5 @@ public static class LocalSettingsKeys
 {
     public static string FirstRun = "FirstRun";
     public static string DBConnectionString = "ConnectionString";
+    public static string DBSettingsSet = "DBSettingsSet";
 }

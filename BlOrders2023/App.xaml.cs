@@ -140,8 +140,9 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 
-        var db = App.GetNewDatabase();
+
 #if DEBUG
+        var db = App.GetNewDatabase();
         if (db.DbConnection.DataSource == "BL4" && db.DbConnection.Database == "BL_Enterprise")
         {
             var message = "You are running a production DB with a debug application version.";

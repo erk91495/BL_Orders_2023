@@ -49,6 +49,10 @@ public class LocalSettingsService : ILocalSettingsService
         {
             WriteDefaultLocalSettings();
         }
+        else
+        {
+            AddMissingSettings();
+        }
     }
 
     //private async Task WriteDefaultLocalSettingsAsync()
@@ -66,6 +70,26 @@ public class LocalSettingsService : ILocalSettingsService
     {
         SaveSetting(LocalSettingsKeys.FirstRun, false);
         SaveSetting(LocalSettingsKeys.DBConnectionString, "Data Source=BL4;Initial Catalog=BL_Enterprise;User ID=;Trust Server Certificate=True;Authentication=ActiveDirectoryIntegrated");
+        SaveSetting(LocalSettingsKeys.DBSettingsSet, false);
+    }
+
+    private void AddMissingSettings()
+    {
+        if(!SettingKeyExists(LocalSettingsKeys.FirstRun))
+        {
+            SaveSetting(LocalSettingsKeys.FirstRun, false);
+        }
+
+        if (!SettingKeyExists(LocalSettingsKeys.DBConnectionString))
+        {
+            SaveSetting(LocalSettingsKeys.DBConnectionString, "Data Source=BL4;Initial Catalog=BL_Enterprise;User ID=;Trust Server Certificate=True;Authentication=ActiveDirectoryIntegrated");
+        }
+
+        if (!SettingKeyExists(LocalSettingsKeys.DBSettingsSet))
+        {
+            SaveSetting(LocalSettingsKeys.DBSettingsSet, false);
+        }
+        
     }
 
     private async Task InitializeAsync()
@@ -162,6 +186,19 @@ public class LocalSettingsService : ILocalSettingsService
             _settings[key] = Json.Stringify(value);
 
             _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings);
+        }
+    }
+
+    private bool SettingKeyExists(string key)
+    {
+        if(RuntimeHelper.IsMSIX)
+        {
+            return ApplicationData.Current.LocalSettings.Values.ContainsKey(key);
+        }
+        else
+        {
+            Initialize();
+            return _settings.ContainsKey(key);
         }
     }
 }
