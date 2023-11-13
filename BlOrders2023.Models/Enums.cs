@@ -95,3 +95,14 @@ public enum  AllocatorMode
     Grocer,
     Both,
 }
+
+public enum BoxType
+{
+    Unknown,
+    BBox,
+    CBox,
+    NonGMO_BBox,
+    NonGMO_CBox,
+    BreastBox,
+    NonGMOBreastBox,
+}

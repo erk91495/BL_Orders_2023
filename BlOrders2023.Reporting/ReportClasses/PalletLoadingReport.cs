@@ -1,4 +1,5 @@
 ﻿using BlOrders2023.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
@@ -79,6 +80,14 @@ public class PalletLoadingReport :IReport
                 dateCol.Item().AlignRight().ShowIf(_order.Shipping == Models.Enums.ShippingType.Pickup).Text($"{_order.Shipping} Time: {_order.PickupTime.ToShortTimeString()}").Style(giantTextSize);
             });
             headerCol.Item().LineHorizontal(0.5f);
+            headerCol.Item().PaddingBottom(10).Row(row =>
+            {
+                row.RelativeItem().Text($"{_order.Customer.CustomerName}").Style(giantTextSize);
+                row.RelativeItem().AlignRight().Column(col => {
+                    col.Item().Text($"Order ID: {_order.OrderID}").Style(normalTextStyle).SemiBold();
+                    col.Item().ShowIf(!_order.PO_Number.IsNullOrEmpty()).Text($"PO: {_order.PO_Number}").Style(normalTextStyle);
+                });
+            });
         });
     }
 
@@ -86,14 +95,6 @@ public class PalletLoadingReport :IReport
     {
 
         container.Column(column => {
-            column.Item().PaddingBottom(10).Row(row =>
-            {
-                row.RelativeItem().Text($"{_order.Customer.CustomerName}").Style(giantTextSize);
-                row.RelativeItem().AlignRight().Column(col =>{ 
-                    col.Item().Text($"Order ID: {_order.OrderID}").Style(normalTextStyle).SemiBold();
-                    col.Item().ShowIf(!_order.PO_Number.IsNullOrEmpty()).Text($"PO: {_order.PO_Number}").Style(normalTextStyle);
-                });
-            });
             column.Item().Table(table => {
                 table.ColumnsDefinition(column =>
                 {

@@ -1,27 +1,21 @@
-﻿using System;
+﻿#define DAN_IS_LOADING_PALLETS
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BlOrders2023.Core.Contracts.Services;
 using BlOrders2023.Core.Helpers;
 using BlOrders2023.Models;
+using BlOrders2023.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
+using ServiceStack;
 
 namespace BlOrders2023.Core.Services;
-public class Palletizer
+public class Palletizer : IPalletizer
 {
-    private enum BoxType
-    {
-        Unknown,
-        BBox,
-        CBox,
-        NonGMO_BBox,
-        NonGMO_CBox,
-        BreastBox,
-        NonGMOBreastBox,
-    }
-
     #region Properties
     public PalletizerConfig Config { get; set; }
     #endregion Properties
@@ -45,13 +39,176 @@ public class Palletizer
         IEnumerable<Pallet> result;
         if(_currentOrder.Customer.SingleProdPerPallet == false)
         {
+#if DAN_IS_LOADING_PALLETS
+            result = await GenerateSeperateFullPalletsAsync();
+#else //DAN_IS_LOADING_PALLETS
             result = await GenerateFullPalletsAsync();
+#endif //DAN_IS_LOADING_PALLETS
         }
         else
         {
             result = await GenerateSingleProductPalletsAsync();
         }
         return result;
+    }
+    private async Task<IEnumerable<Pallet>> GenerateSeperateFullPalletsAsync()
+    {
+        return await Task.Run(GenerateSeperateFullPallets);
+    }
+    private IEnumerable<Pallet> GenerateSeperateFullPallets()
+    {
+        List<Pallet> pallets = new();
+        List<Pallet> partialPallet = new();
+        Dictionary<Product, int> remainder = new();
+
+
+        List<List<OrderItem>> GroupedByBox = new();
+        foreach (var boxType in Enum.GetValues<BoxType>())
+        {
+            GroupedByBox.Add(_currentOrder.Items.Where(i => GetBoxType(i.Product) == boxType && i.Product.IsCredit != true).ToList());
+        }
+
+        foreach (var group in GroupedByBox)
+        {
+            Dictionary<Product, int> groupRemainder = new();
+            if (!group.IsNullOrEmpty())
+            {
+                var maxPerPallet = GetMaxBoxesPerPallet(group[0].Product);
+                var boxType = GetBoxType(group[0].Product);
+                foreach (var item in group)
+                {
+                    var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
+                    //Make Full Pallets
+                    for (var i = 0; i < (int)(quanNeeded / maxPerPallet); i++)
+                    {
+                        Pallet p = new(_currentOrder.OrderID);
+                        p.Items.Add(item.Product, maxPerPallet);
+                        pallets.Add(p);
+                    }
+
+                    //Make Remainder Pallet
+                    if (quanNeeded % maxPerPallet != 0)
+                    {
+                        groupRemainder.Add(item.Product, quanNeeded % maxPerPallet);
+                    }
+                }
+                //try to combine as many pallets as you can for each group
+                pallets = pallets.Concat(CombinePallets(ref groupRemainder, maxPerPallet)).ToList();
+                Pallet groupPallet = new(_currentOrder.OrderID);
+                foreach (var item in groupRemainder)
+                {
+                    var spaceOnPallet = maxPerPallet - groupPallet.Items.Values.Sum(q => q);
+                    if ( spaceOnPallet >= item.Value)
+                    {
+                        groupPallet.Items.Add(item.Key, item.Value);
+                    }
+                    else
+                    {
+                        groupPallet.Items.Add(item.Key, spaceOnPallet);
+                        pallets.Add(groupPallet);
+                        groupPallet = new(_currentOrder.OrderID);
+                        groupPallet.Items.Add(item.Key, item.Value - spaceOnPallet);
+                    }
+                }
+                partialPallet.Add(groupPallet);
+            }
+        }
+
+        CombineBCPallets(ref pallets, partialPallet);
+
+        NumberPallets(pallets);
+        return pallets;
+    }
+
+    private void CombineBCPallets(ref List<Pallet> pallets, List<Pallet> partials)
+    {
+        var groupedPallets = new List<Pallet>[3]{new(), new(), new()};
+        foreach(var pallet in partials)
+        {
+            var currentType = GetBoxType(pallet.Items.First().Key);
+
+            switch(currentType) 
+            {
+                case BoxType.BBox:
+                case BoxType.CBox:
+                    groupedPallets[0].Add(pallet);
+                    break;
+
+                case BoxType.NonGMO_BBox:
+                case BoxType.NonGMO_CBox:
+                    groupedPallets[1].Add(pallet);
+                    break;
+
+                default:
+                    pallets.Add(pallet);
+                    break;
+            }
+        }
+
+        var groupedList = groupedPallets[0];
+        if (!groupedList.IsNullOrEmpty())
+        {
+            if (groupedList.Count > 2)
+            {
+                throw new Exception("Too Many Partial Pallets To Combine");
+            }
+            else
+            {
+                if(groupedList.Count == 2)
+                {
+                    if(groupedList[0].Items.Values.Sum(o => o) + groupedList[1].Items.Values.Sum(o => o) <= Config.MixedBoxesPerPallet)
+                    {
+                        Pallet p = new(_currentOrder.OrderID);
+                        foreach(var item in groupedList[0].Items)
+                        {
+                            p.Items.Add(item.Key,item.Value);
+                        }
+                        foreach (var item in groupedList[1].Items)
+                        {
+                            p.Items.Add(item.Key, item.Value);
+                        }
+                        pallets.Add(p);
+                    }
+                }
+                else
+                {
+                    pallets.Add(groupedPallets[0][0]);
+                }
+            }
+        }
+
+        groupedList = groupedPallets[1];
+        if (!groupedList.IsNullOrEmpty())
+        {
+            
+            if (groupedList.Count > 2)
+            {
+                throw new Exception("Too Many Partial Pallets To Combine");
+            }
+            else
+            {
+                if (groupedList.Count == 2)
+                {
+                    if (groupedList[0].Items.Values.Sum(o => o) + groupedList[1].Items.Values.Sum(o => o) <= Config.MixedBoxesPerPallet)
+                    {
+                        Pallet p = new(_currentOrder.OrderID);
+                        foreach (var item in groupedList[0].Items)
+                        {
+                            p.Items.Add(item.Key, item.Value);
+                        }
+                        foreach (var item in groupedList[1].Items)
+                        {
+                            p.Items.Add(item.Key, item.Value);
+                        }
+                        pallets.Add(p);
+                    }
+                }
+                else
+                {
+                    pallets.Add(groupedList[0]);
+                }
+            }
+        }
     }
 
     private async Task<IEnumerable<Pallet>> GenerateFullPalletsAsync()
@@ -308,5 +465,5 @@ public class Palletizer
                 return BoxType.Unknown;
         }
     }
-    #endregion Methods
+#endregion Methods
 }
