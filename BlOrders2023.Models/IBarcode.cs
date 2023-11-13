@@ -9,7 +9,6 @@ namespace BlOrders2023.Models
 
     public abstract class IBarcode
     {
-
         protected IBarcode(ShippingItem item) { }
         protected IBarcode(string scanline) { }
         public abstract string Scanline { get; }

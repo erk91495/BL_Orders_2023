@@ -134,7 +134,6 @@ public class OrderItem : ObservableObject
         {
             if (Order != null && !Order.ShippingItems.IsNullOrEmpty())
             {
-            
                 return Order.ShippingItems.Where(item => item.ProductID == ProductID).Sum(item => item.QuanRcvd ?? 0);
             }
             else

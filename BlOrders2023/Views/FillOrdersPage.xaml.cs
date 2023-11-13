@@ -72,9 +72,9 @@ public sealed partial class FillOrdersPage : Page
                         Debug.WriteLine(e.ToString());
                         var prodCode = e.Data["ProductID"];
                         App.LogWarningMessage($"Product ID: {prodCode} was not found in the database\r\n");
-                        await ShowLockedoutDialog("Product Not Found", 
-                            $"Product ID: {prodCode} was not found in the database\r\n"); 
-                    } 
+                        await ShowLockedoutDialog("Product Not Found",
+                            $"Product ID: {prodCode} was not found in the database\r\n");
+                    }
                     catch (InvalidBarcodeExcption e)
                     {
                         Debug.WriteLine(e.ToString());
