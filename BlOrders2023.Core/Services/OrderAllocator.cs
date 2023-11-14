@@ -343,6 +343,7 @@ public class OrderAllocator : IAllocatorService
                                             QuanAllocated = extra,
                                             Quantity = 0,
                                             ExtraNeeded = 0,
+                                            Allocated = true,
                                         };
                                         currentOrder.Items.Add(newItem);
                                     }
@@ -365,6 +366,7 @@ public class OrderAllocator : IAllocatorService
                                             QuanAllocated = extra,
                                             Quantity = 0,
                                             ExtraNeeded = 0,
+                                            Allocated = true,
                                         };
                                         currentOrder.Items.Add(newItem);
                                     }
