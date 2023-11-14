@@ -169,6 +169,11 @@ public class Palletizer : IPalletizer
                         }
                         pallets.Add(p);
                     }
+                    else
+                    {
+                        pallets.Add(groupedList[0]);
+                        pallets.Add(groupedList[1]);
+                    }
                 }
                 else
                 {
@@ -201,6 +206,11 @@ public class Palletizer : IPalletizer
                             p.Items.Add(item.Key, item.Value);
                         }
                         pallets.Add(p);
+                    }
+                    else
+                    {
+                        pallets.Add(groupedList[0]);
+                        pallets.Add(groupedList[1]);
                     }
                 }
                 else
