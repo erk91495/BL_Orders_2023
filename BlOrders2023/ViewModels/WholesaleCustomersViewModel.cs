@@ -82,10 +82,17 @@ public class WholesaleCustomersViewModel : ObservableRecipient, INavigationAware
         _db.Customers.Upsert(SelectedCustomer, overwrite);
     }
 
-    internal void Reload()
+    internal void Reload(string filter = null)
     {
         _db = App.GetNewDatabase();
-        _ = LoadCustomers();
+        if(filter != null)
+        {
+            QueryCustomers(filter);
+        }
+        else
+        {
+            _ = LoadCustomers();
+        }  
     }
 
 

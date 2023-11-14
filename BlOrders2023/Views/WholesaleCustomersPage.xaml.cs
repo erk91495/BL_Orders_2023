@@ -36,7 +36,7 @@ public sealed partial class WholesaleCustomersPage : Page
             XamlRoot = XamlRoot,
         };
         await control.ShowAsync();
-        ViewModel.Reload();
+        ViewModel.Reload(CustomerSearch.Text);
     }
 
     private void MenuFlyoutAdd_Click(object sender, RoutedEventArgs e)
@@ -84,7 +84,7 @@ public sealed partial class WholesaleCustomersPage : Page
             }
             else if (result == ContentDialogResult.Secondary)
             {
-                ViewModel.Reload();
+                ViewModel.Reload(CustomerSearch.Text);
                 return true;
             }
             else
@@ -126,7 +126,7 @@ public sealed partial class WholesaleCustomersPage : Page
         };
         await dialog.ShowAsync();
 
-        ViewModel.Reload();
+        ViewModel.Reload(CustomerSearch.Text);
     }
 
     /// <summary>

@@ -123,7 +123,7 @@ public class WholesaleInvoice : IReport
                             {
                                 column.Item().Text($"{_order.Customer.Email.Trim()}").Style(normalTextStyle);
                             }
-                            column.Item().Text($"{_order.Customer.Phone}").Style(normalTextStyle);
+                            column.Item().Text($"{_order.Customer.PhoneString()}").Style(normalTextStyle);
 
                         });
                     });
