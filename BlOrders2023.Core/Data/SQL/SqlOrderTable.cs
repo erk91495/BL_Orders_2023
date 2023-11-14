@@ -76,8 +76,8 @@ internal class SqlOrderTable : IOrderTable
     {
         return _db.Orders
             .Where(o => o.Frozen == true && o.PickupDate >= startDate && o.PickupDate <= endDate)
-            .OrderBy(o => o.PickupDate)
-            .ThenBy(o => o.PickupTime)
+            .OrderBy(o => o.PickupDate.Date)
+            .ThenBy(o => o.PickupTime.TimeOfDay)
             .ToList();
     }
 
@@ -171,19 +171,19 @@ internal class SqlOrderTable : IOrderTable
     {
         return _db.Orders
             .Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate)
-            .OrderBy(o => o.PickupDate)
+            .OrderBy(o => o.PickupDate.Date)
             .ThenByDescending(o => o.Shipping)
-            .ThenBy(o => o.PickupTime)
+            .ThenBy(o => o.PickupTime.TimeOfDay)
             .ThenBy(o => o.Customer.CustomerName)
-            .ToList();
+            .ToArray();
     }
 
     public IEnumerable<Order> GetNonFrozenByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return _db.Orders
             .Where(o => o.Frozen != true && o.PickupDate >= startDate && o.PickupDate <= endDate)
-            .OrderBy(o => o.PickupDate)
-            .ThenBy(o => o.PickupTime)
+            .OrderBy(o => o.PickupDate.Date)
+            .ThenBy(o => o.PickupTime.TimeOfDay)
             .ToList();
     }
 
@@ -212,9 +212,9 @@ internal class SqlOrderTable : IOrderTable
     {
         return _db.Orders
             .Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate)
-            .OrderBy(o => o.PickupDate)
+            .OrderBy(o => o.PickupDate.Date)
             .ThenBy(o => o.Customer.CustomerName)
-            .ThenBy(o => o.PickupTime)
+            .ThenBy(o => o.PickupTime.TimeOfDay)
             .ToList();
     }
 
