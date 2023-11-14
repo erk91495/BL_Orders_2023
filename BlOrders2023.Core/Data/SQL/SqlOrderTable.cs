@@ -172,7 +172,9 @@ internal class SqlOrderTable : IOrderTable
         return _db.Orders
             .Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate)
             .OrderBy(o => o.PickupDate)
+            .ThenByDescending(o => o.Shipping)
             .ThenBy(o => o.PickupTime)
+            .ThenBy(o => o.Customer.CustomerName)
             .ToList();
     }
 
