@@ -263,6 +263,10 @@ public class Order : ObservableObject
         return decimal.Round(total,2);
     }
 
+    /// <summary>
+    /// Gets the total number of items ordered
+    /// </summary>
+    /// <returns></returns>
     public int GetTotalOrdered()
     {
             if (Items.IsNullOrEmpty())
@@ -276,19 +280,27 @@ public class Order : ObservableObject
             }
     }
 
+    /// <summary>
+    /// Gets the number of items allocated by the allocator
+    /// </summary>
+    /// <returns></returns>
     public int GetTotalAllocated()
     {
-            if (Items.IsNullOrEmpty())
-            {
-                return 0;
-            }
-            else
-            {
-                var total = Items.Sum(item => (int)(item.QuanAllocated));
-                return total;
-            }
+        if (Items.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+        var total = Items.Where(i => i.Allocated == true).Sum(item => (int)(item.QuanAllocated));
+        return total;
+        }
     }
 
+    /// <summary>
+    /// Gets the total quantity ordered for all of the allocated items
+    /// </summary>
+    /// <returns></returns>
     public int GetTotalOrderedAllocated()
     {
         if (Items.IsNullOrEmpty())
@@ -298,6 +310,23 @@ public class Order : ObservableObject
         else
         {
             var total = Items.Where(i => i.Allocated == true).Sum(item => (int)(item.Quantity));
+            return total;
+        }
+    }
+
+    /// <summary>
+    /// Gets the total number of items given (ordered or allocated)
+    /// </summary>
+    /// <returns></returns>
+    public int GetTotalGiven()
+    {
+        if (Items.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            var total = Items.Sum(item => item.Allocated != true ? (int)(item.Quantity) : item.QuanAllocated);
             return total;
         }
     }
@@ -338,6 +367,7 @@ public class Order : ObservableObject
 
         OnPropertyChanged(nameof(GetTotalAllocated));
         OnPropertyChanged(nameof(GetTotalOrdered));
+        OnPropertyChanged(nameof(GetTotalGiven));
     }
 
     private void ShippingItemOnPropertyChanged(object? sender, PropertyChangedEventArgs e)

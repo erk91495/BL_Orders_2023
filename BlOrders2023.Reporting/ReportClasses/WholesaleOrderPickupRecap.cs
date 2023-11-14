@@ -119,7 +119,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                         {
                             table.Cell().Element(CellStyle).Text($"{order.PickupTime.ToString("t")}").Style(tableTextStyle);
                         }
-                        table.Cell().Element(CellStyle).Text($"{order.GetTotalOrdered()}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.GetTotalGiven()}").Style(tableTextStyle);
                         static IContainer CellStyle(IContainer container)
                         {
                             return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);

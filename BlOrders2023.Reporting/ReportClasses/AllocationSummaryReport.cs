@@ -118,7 +118,7 @@ public class AllocationSummaryReport : IReport
 
                 foreach (var order in _orders)
                 {
-                    var quanOrdered = order.Items.Where(i => i.Allocated == true).Sum(i => (int)i.Quantity);
+                    var quanOrdered = order.GetTotalOrderedAllocated();
                     table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{quanOrdered}").Style(tableTextStyle);
