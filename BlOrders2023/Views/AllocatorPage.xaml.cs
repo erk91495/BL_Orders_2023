@@ -42,6 +42,7 @@ public sealed partial class AllocatorPage : Page
 {
     #region Fields
     private readonly NavigationService _navigationService;
+    private bool _unsavedChanges = false;
     #endregion Fields
 
     #region Properties
@@ -59,7 +60,36 @@ public sealed partial class AllocatorPage : Page
     #endregion Constructors
 
     #region Methods
+    protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        if(_unsavedChanges)
+        {
+            e.Cancel = true;
+            ContentDialog dialog = new()
+            {
+                XamlRoot = XamlRoot,
+                Title = "Unsaved Changes",
+                Content = "Allocation edits have not been saved. Are you sure you want to leave?",
+                PrimaryButtonText = "Leave",
+                CloseButtonText = "Stay",
+                DefaultButton = ContentDialogButton.Close,
+            };
 
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                _unsavedChanges = false;
+                Frame.Navigate(e.SourcePageType, e.Parameter);
+            }
+
+        }
+        else
+        {
+            base.OnNavigatingFrom(e);
+        }
+        
+    }
+        
     public async Task ShowAllocationTypeSelectionAync()
     {
         StackPanel mainStack = new()
@@ -129,6 +159,7 @@ public sealed partial class AllocatorPage : Page
         try
         {
             await ViewModel.StartAllocationAsync();
+            _unsavedChanges = true;
         }
         catch (AllocationFailedException e)
         {
@@ -219,7 +250,6 @@ public sealed partial class AllocatorPage : Page
         rng_Save.Visibility = Visibility.Collapsed;
         //Want to lock out save button to prevent double clicks
         btn_Save.IsEnabled = true;
-        btn_SavePrint.IsEnabled = true;
     }
 
     private async Task SaveAllocation()
@@ -227,6 +257,7 @@ public sealed partial class AllocatorPage : Page
         try
         {
             await ViewModel.AllocatorService.SaveAllocationAsync();
+            _unsavedChanges = false;
             ContentDialog d = new()
             {
                 XamlRoot = XamlRoot,
@@ -306,7 +337,7 @@ public sealed partial class AllocatorPage : Page
                     {
                         e.IsValid = true;
                         ViewModel.UpdateInventory(inventoryItem, (newVal - oldVal) * -1);
-
+                        _unsavedChanges = true;
                     }
                     else
                     {
