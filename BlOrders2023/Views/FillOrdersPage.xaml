@@ -97,7 +97,7 @@
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="ID" MappingName="ProductID"/>
                             <sf:GridNumericColumn HeaderText="Ordered" MappingName="Quantity"/>
-                            <sf:GridNumericColumn HeaderText="Allocated" MappingName="QuanAllocated" IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                            <sf:GridNumericColumn HeaderText="Allocated" MappingName="Given" IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
                             <sf:GridNumericColumn HeaderText="Received" MappingName="QuantityReceived"/>
                             <sf:GridNumericColumn HeaderText="Total Lbs." MappingName="PickWeight" DisplayNumberFormat="N2"/>
                         </sf:SfDataGrid.Columns>

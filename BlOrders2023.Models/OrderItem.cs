@@ -27,6 +27,7 @@ public class OrderItem : ObservableObject
     private Product product = null!;
     private int extraNeeded;
     private bool? allocated;
+    private int given;
     #endregion Fields
 
     #region Properties
@@ -51,7 +52,11 @@ public class OrderItem : ObservableObject
     public float Quantity
     {
         get => Product.IsCredit ? 0 : quantity; 
-        set => SetProperty(ref quantity, value);
+        set
+        {
+            SetProperty(ref quantity, value);
+            OnPropertyChanged(nameof(Given));
+        }
     }
     public decimal ActualCustPrice
     {
@@ -81,7 +86,11 @@ public class OrderItem : ObservableObject
     public int QuanAllocated
     {
         get => quanAllocated; 
-        set => SetProperty(ref quanAllocated, value);
+        set
+        { 
+            SetProperty(ref quanAllocated, value);
+            OnPropertyChanged(nameof(Given));
+        }
     }
 
     public bool? Allocated
@@ -97,6 +106,12 @@ public class OrderItem : ObservableObject
         get => extraNeeded; 
         set => SetProperty( ref extraNeeded, value);
     }
+
+    /// <summary>
+    /// If the item is allocated returns QuanAllocated else returns Quantity
+    /// </summary>
+    [NotMapped]
+    public int Given => Allocated == true ?  (int)quantity : quanAllocated;
 
     [NotMapped]
     public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
