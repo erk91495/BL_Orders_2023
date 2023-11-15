@@ -61,9 +61,15 @@
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
             <MenuFlyoutItem
+                Click="MenuFlyoutPrintOrder_Click"
+                Text="Print Order"
+                Icon="Print"
+                IsEnabled="{x:Bind ViewModel.SelectedOrder.CanPrintOrder, Mode=OneWay}"/>
+            <MenuFlyoutItem
                 Click="MenuFlyoutPrintPalletTickets_Click"
                 Text="Print Pallet Tickets"
                 Icon="Print"/>
+
         </MenuFlyout>
     </Page.Resources>
     <RelativePanel>

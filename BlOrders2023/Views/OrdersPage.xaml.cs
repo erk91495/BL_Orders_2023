@@ -202,7 +202,13 @@ public sealed partial class OrdersPage : Page
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the click event</param>
     private async void MenuFlyoutPdfOrder_Click(object _sender, RoutedEventArgs e) => await PrintOrderAsync(false);
-        
+
+    /// <summary>
+    /// Handles the click event for the print order button
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
+    private async void MenuFlyoutPrintOrder_Click(object _sender, RoutedEventArgs e) => await PrintOrderAsync(true);
 
     /// <summary>
     /// Handles the click event for the pdf invoice button
