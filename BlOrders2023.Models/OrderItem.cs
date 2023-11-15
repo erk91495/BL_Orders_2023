@@ -111,7 +111,7 @@ public class OrderItem : ObservableObject
     /// If the item is allocated returns QuanAllocated else returns Quantity
     /// </summary>
     [NotMapped]
-    public int Given => Allocated == true ?  (int)quantity : quanAllocated;
+    public int Given => Allocated != true ?  (int)quantity : quanAllocated;
 
     [NotMapped]
     public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
