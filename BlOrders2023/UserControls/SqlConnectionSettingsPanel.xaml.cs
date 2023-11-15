@@ -8,6 +8,7 @@ using ServiceStack.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -83,6 +84,7 @@ namespace BlOrders2023.UserControls
             {
                 builder.DataSource = value;
                 OnPropertyChanged();
+                _ = RefreshDatabaseList();
             }
         }
 
@@ -212,7 +214,7 @@ namespace BlOrders2023.UserControls
             {
                 // Remove initial catalog
                 var connector = new SqlConnectionStringBuilder(builder.ConnectionString);
-                connector.InitialCatalog = String.Empty;
+                connector.InitialCatalog = string.Empty;
 
                 var databases = new List<string>();
 
@@ -221,11 +223,12 @@ namespace BlOrders2023.UserControls
                     await connection.OpenAsync();
 
                     using var command = connection.CreateCommand();
-                    command.CommandText = "SELECT [name] FROM sys.databases ORDER BY [name]";
+                    command.CommandText = "SELECT [name] FROM sys.databases WHERE state = 0 ORDER BY [name]";
 
                     using SqlDataReader reader = await command.ExecuteReaderAsync();
                     while (await reader.ReadAsync())
                     {
+                        Debug.WriteLine($"Found {Server} Database {reader.GetString(0)}");
                         var dbname = reader.GetString(0);
                         if (dbname == "BL_Enterprise" || dbname == "BL_Enterprise_North")
                         {
