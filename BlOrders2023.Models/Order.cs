@@ -203,7 +203,7 @@ public class Order : ObservableObject
             if(Items.IsNullOrEmpty()) return false;
             if (Allocated ?? false)
             {
-                return Items.All(i => i.QuanAllocated == i.QuantityReceived);
+                return Items.All(i => i.Given == i.QuantityReceived);
             }
             else
             {
