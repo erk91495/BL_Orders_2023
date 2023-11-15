@@ -45,7 +45,6 @@ public sealed partial class OrderDetailsPage : Page
     #endregion Properties
 
     #region Fields
-    private OrderItem? _doomed;
     private bool _deleteOrder;
     private bool _canLeave = false;
     private readonly ReportGenerator reportGenerator;
@@ -336,82 +335,13 @@ public sealed partial class OrderDetailsPage : Page
     }
 
     /// <summary>
-    /// Deletes the given row from the datagrid
-    /// </summary>
-    /// <param name="sender">a delete button</param>
-    /// <param name="e">the event args for the click event</param>
-    private void DeleteRow_Click(object sender, RoutedEventArgs e)
-    {
-        if (_doomed != null)
-        {
-
-            if(_doomed.QuantityReceived == 0)
-            {
-                ViewModel.Items.Remove(_doomed);
-                ViewModel.SaveCurrentOrder();
-                _doomed = null;
-            }
-            else
-            {
-                ContentDialog dialog = new ContentDialog()
-                {
-                    XamlRoot = XamlRoot,
-                    Title = "Error",
-                    Content = "Quantity received must be 0 before this item can be removed",
-                    PrimaryButtonText = "Ok",
-                };
-                _ = dialog.ShowAsync();
-            }
-        }
-    }
-
-    /// <summary>
     /// Tracks pointer movements so we know which item to delete from the datagrid
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void OrderedItems_PointerMoved(object sender, PointerRoutedEventArgs e)
     {
-        if (OrderedItems != null)
-        {
-            var visualcontainer = OrderedItems.GetType()?.GetProperty("VisualContainer", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(OrderedItems) as VisualContainer;
-            if (visualcontainer == null)
-            {
-                return;
-            }
 
-            var point = e.GetCurrentPoint(visualcontainer).Position;
-            var rowColumnIndex = visualcontainer.PointToCellRowColumnIndex(point);
-            var recordIndex = OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex);
-            //Debugger.Log(1, "Warning", $" Record Index: {recordIndex}\r\n");
-            if (recordIndex < 0)
-            {
-                return;
-            }
-
-            //When the rowindex is zero , the row will be header row
-            if (!rowColumnIndex.IsEmpty)
-            {
-                if (OrderedItems.View.TopLevelGroup != null)
-                {
-                    // Get the current row record while grouping
-                    var record = OrderedItems.View.TopLevelGroup.DisplayElements[recordIndex];
-                    if (record is RecordEntry r)
-                    {
-                        _doomed = r.Data as OrderItem;
-                    }
-                }
-                else
-                {
-                    //Gets the column from ColumnsCollection by resolving the corresponding column index from  GridVisibleColumnIndex                      
-                    //var gridColumn = OrderedItems.Columns[OrderedItems.ResolveToGridVisibleColumnIndex(rowColumnIndex.ColumnIndex)];
-                    //For getting the record, need to resolve the corresponding record index from row index                     
-                    _doomed = OrderedItems.View.Records[OrderedItems.ResolveToRecordIndex(rowColumnIndex.RowIndex)].Data as OrderItem;
-                    //Debugger.Log(1,"Warning", $"doomed is {_doomed} id: {_doomed.ProductID}\r\n");
-                }
-
-            }
-        }
     }
 
     private async void DeleteOrderFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -903,6 +833,29 @@ public sealed partial class OrderDetailsPage : Page
         if(!ViewModel.HasErrors){
             Order order = new(ViewModel.Customer);
             Frame.Navigate(typeof(OrderDetailsPage), order);
+        }
+    }
+
+    private void OrderedItems_CellTapped(object sender, GridCellTappedEventArgs e)
+    {
+        if(e.Record is OrderItem doomed && doomed != null && e.Column.MappingName == "DeleteCell")
+        {
+            if (doomed.QuantityReceived == 0)
+            {
+                ViewModel.Items.Remove(doomed);
+                ViewModel.SaveCurrentOrder();
+            }
+            else
+            {
+                ContentDialog dialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Error",
+                    Content = "Quantity received must be 0 before this item can be removed",
+                    PrimaryButtonText = "Ok",
+                };
+                _ = dialog.ShowAsync();
+            }
         }
     }
 }

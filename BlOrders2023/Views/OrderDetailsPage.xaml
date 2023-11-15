@@ -320,6 +320,7 @@
                        SelectionUnit="Row"
                        EditorSelectionBehavior="MoveLast"
                        PointerMoved="OrderedItems_PointerMoved"
+                       CellTapped="OrderedItems_CellTapped"
                        IsTabStop="False"
                        IsReadOnly="{x:Bind ViewModel.CanAddItems, Mode=OneWay}">
 
@@ -356,12 +357,12 @@
                                       DisplayNumberFormat="N2"/>
                 <sf:GridUnboundColumn HeaderText="" 
                                       UseBindingValue="False" 
-                                      MappingName="UnboundColumn" 
+                                      MappingName="DeleteCell" 
                                       ColumnWidthMode="SizeToCells" 
                                       IsHidden="{x:Bind ViewModel.CanDeleteItems, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                     <sf:GridUnboundColumn.CellTemplate>
                         <DataTemplate x:DataType="local:FillOrdersPage">
-                            <Button x:Name="DeleteRow" Click="DeleteRow_Click" IsTabStop="False">
+                            <Button x:Name="DeleteRow" IsTabStop="False">
                                 <SymbolIcon Symbol="Delete"/>
                             </Button>
                         </DataTemplate>
