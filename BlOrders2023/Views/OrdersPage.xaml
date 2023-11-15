@@ -13,6 +13,7 @@
 
     <Page.Resources>
         <uiConverters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <vm:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
         
         <MenuFlyout x:Key="DataGridContextMenu">
             <MenuFlyoutItem
@@ -192,19 +193,24 @@
                             <TextBlock Text="{x:Bind ViewModel.SelectedOrder.PO_Number, Mode=OneWay}"
                                        FontSize="{StaticResource MediumFontSize}"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <!--<StackPanel Orientation="Horizontal">
                             <TextBlock x:Uid="Order_ShippingType"  
                                        FontSize="{StaticResource MediumFontSize}" 
                                        Padding="0,0,10,0"/>
                             <TextBlock Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"
                                    FontSize="{StaticResource MediumFontSize}"/>
+                        </StackPanel>-->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontSize="{StaticResource MediumFontSize}" 
+                                       Padding="0,0,10,0">
+                                <Run Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"/>
+                                <Run Text="Date:"/>
+                                <Run Text="{x:Bind ViewModel.SelectedOrder.PickupDate.ToShortDateString(), Mode=OneWay}"/>
+                            </TextBlock>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedOrder.PickupTime.ToShortTimeString(), Mode=OneWay}" 
+                                       FontSize="{StaticResource MediumFontSize}"
+                                       Visibility="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup}"/>
                         </StackPanel>
-                        <TextBlock FontSize="{StaticResource MediumFontSize}" 
-                                   Padding="0,0,10,0">
-                            <Run Text="{x:Bind ViewModel.SelectedOrder.Shipping, Mode=OneWay}"/>
-                            <Run Text=" Date: "/>
-                            <Run Text="{x:Bind ViewModel.SelectedOrder.PickupDate.ToShortDateString(), Mode=OneWay}"/>
-                        </TextBlock>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Taken By:"  
                                        FontSize="{StaticResource MediumFontSize}" 
