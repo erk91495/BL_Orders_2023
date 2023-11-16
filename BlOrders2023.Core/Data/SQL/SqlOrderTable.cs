@@ -200,12 +200,17 @@ internal class SqlOrderTable : IOrderTable
             .Where(o => 
                 o.CustID == customer.CustID 
                 && o.OrderStatus <= Models.Enums.OrderStatus.Invoiced)
+            .OrderBy(o => o.PickupDate.Date)
+            .ThenBy(o => o.Customer.CustomerName)
             .ToList();
     }
 
     public async Task<IEnumerable<Order>> GetUnpaidInvoicesAsync()
     {
-        return await _db.Orders.Where(o => o.OrderStatus == Models.Enums.OrderStatus.Invoiced).ToListAsync();
+        return await _db.Orders.Where(o => o.OrderStatus == Models.Enums.OrderStatus.Invoiced)
+                               .OrderBy(o => o.PickupDate.Date)
+                               .ThenBy(o => o.Customer.CustomerName)
+                               .ToListAsync();
     }
 
     public IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate)
