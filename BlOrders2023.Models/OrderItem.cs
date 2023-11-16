@@ -29,6 +29,8 @@ public class OrderItem : ObservableObject
     private bool? allocated;
     private bool quanRcvdInitialized = false;
     private int quanRcvd;
+    private bool pickWeightInitialized = false;
+    private float pickWeight;
     #endregion Fields
 
     #region Properties
@@ -115,7 +117,18 @@ public class OrderItem : ObservableObject
     public int Given => Allocated == true ?  (int)quantity : quanAllocated;
 
     [NotMapped]
-    public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
+    public float PickWeight
+    {
+        get
+        {
+            if (!pickWeightInitialized)
+            {
+                InitializePickWeight();
+            }
+            return pickWeight;
+        }
+        private set => SetProperty(ref pickWeight, value);
+    }
     [NotMapped]
     public int QuantityReceived
     {
@@ -167,6 +180,22 @@ public class OrderItem : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Assumes the item has been added before the increment method is called.
+    /// </summary>
+    /// <param name="value"></param>
+    public void IncrementPickWeight(float value)
+    {
+        if (!quanRcvdInitialized)
+        {
+            InitializePickWeight();
+        }
+        else
+        {
+            pickWeight += value;
+        }
+    }
+
     private void InitializeQuanRcvd()
     {
         if (!quanRcvdInitialized)
@@ -175,6 +204,16 @@ public class OrderItem : ObservableObject
             quanRcvdInitialized = true;
         }
     }
+
+    private void InitializePickWeight()
+    {
+        if (!pickWeightInitialized)
+        {
+            pickWeight = Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
+            pickWeightInitialized = true;
+        }
+    }
+
     private int CalcQuantityReceived()
     {
         if (Product.IsCredit)
@@ -206,7 +245,7 @@ public class OrderItem : ObservableObject
             {
                 return ActualCustPrice;
             }
-            return decimal.Round(ActualCustPrice * (decimal)(PickWeight ?? 0),2);
+            return decimal.Round(ActualCustPrice * (decimal)(PickWeight),2);
         }
     }
 
