@@ -1,9 +1,11 @@
 ﻿using System.Reflection;
+using System.Reflection.PortableExecutable;
 using BlOrders2023.Models;
 using Microsoft.IdentityModel.Tokens;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+
 
 namespace BlOrders2023.Reporting.ReportClasses;
 
@@ -90,7 +92,7 @@ public class ShippingList : IReport
 
     private void ComposeContent(IContainer container)
     {
-
+        var numberOfColumns = 4;
         container.Column(column => {
 
             var idList = _order.ShippingItems.Select(i => i.ProductID).Distinct().OrderBy(i => i);
@@ -100,40 +102,67 @@ public class ShippingList : IReport
                 {
                     table.ColumnsDefinition(column =>
                     {
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-
+                        for(var i = 0; i < numberOfColumns; i++)
+                        {
+                            column.RelativeColumn(2);
+                            column.RelativeColumn(2);
+                            column.RelativeColumn(2);
+                        }
                     });
 
                     table.Header(header =>
                     {
-                        header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
-
-                        header.Cell().Element(CellStyle).Text("Quantity").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Net Wt").Style(tableHeaderStyle);
+                        for (var i = 0; i < numberOfColumns; i++)
+                        {
+                            header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
+                            header.Cell().Element(CellStyle).Text("Quantity").Style(tableHeaderStyle);
+                            header.Cell().Element(CellStyle).Text("Net Wt").Style(tableHeaderStyle);
+                        }
 
                         static IContainer CellStyle(IContainer container)
                         {
-                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                            return container.DefaultTextStyle(x => x.SemiBold()).BorderBottom(1).BorderColor(Colors.Black).AlignCenter().AlignMiddle();
                         }
                     });
 
                     foreach (var item in _order.ShippingItems.Where(i => i.ProductID == id))
                     {
 
-                        table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
+                        table.Cell().BorderLeft(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{item.QuanRcvd}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{item.PickWeight:F2}").Style(tableTextStyle);
+                        table.Cell().BorderRight(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).Text($"{item.PickWeight:F2}").Style(tableTextStyle);
                         static IContainer CellStyle(IContainer container)
                         {
-                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2).AlignCenter().AlignMiddle();
                         }
                     }
 
-                    table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableTextStyle);
-                    table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableTextStyle);
-                    table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableTextStyle);
+                    var remainder = _order.ShippingItems.Where(i => i.ProductID == id).Count() % numberOfColumns;
+                    if(remainder > 0)
+                    {
+                        for (var i = 0; i < numberOfColumns - remainder; i++)
+                        {
+                            table.Cell().Element(CellStyle);
+                            table.Cell().Element(CellStyle);
+                            table.Cell().Element(CellStyle);
+                            static IContainer CellStyle(IContainer container)
+                            {
+                                return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                            }
+                        }
+                    }
+
+
+                    for (var i = 0; i < numberOfColumns - 1; i++)
+                    {
+                        table.Cell().Element(FooterCellStyle);
+                        table.Cell().Element(FooterCellStyle);
+                        table.Cell().Element(FooterCellStyle);
+                    }
+
+                    table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableHeaderStyle);
                     static IContainer FooterCellStyle(IContainer container)
                     {
                         return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
