@@ -27,7 +27,10 @@ public class OrderItem : ObservableObject
     private Product product = null!;
     private int extraNeeded;
     private bool? allocated;
-    private int given;
+    private bool quanRcvdInitialized = false;
+    private int quanRcvd;
+    private bool pickWeightInitialized = false;
+    private float pickWeight;
     #endregion Fields
 
     #region Properties
@@ -114,9 +117,31 @@ public class OrderItem : ObservableObject
     public int Given => Allocated != true ?  (int)quantity : quanAllocated;
 
     [NotMapped]
-    public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
+    public float PickWeight
+    {
+        get
+        {
+            if (!pickWeightInitialized)
+            {
+                InitializePickWeight();
+            }
+            return pickWeight;
+        }
+        private set => SetProperty(ref pickWeight, value);
+    }
     [NotMapped]
-    public int QuantityReceived => CalcQuantityReceived();
+    public int QuantityReceived
+    {
+        get
+        {
+            if (!quanRcvdInitialized)
+            {
+                InitializeQuanRcvd();
+            }
+            return quanRcvd;
+        }
+        private set => SetProperty(ref quanRcvd, value);
+    }
     #endregion Properties
 
     #region Constructors
@@ -139,6 +164,56 @@ public class OrderItem : ObservableObject
     #endregion Constructors 
 
     #region Methods
+    /// <summary>
+    /// Assumes the item has been added before the increment method is called.
+    /// </summary>
+    /// <param name="value"></param>
+    public void IncrementQuanRcvd(int value)
+    {
+        if (!quanRcvdInitialized)
+        {
+            InitializeQuanRcvd();
+        }
+        else
+        {
+            QuantityReceived += value;
+        }
+    }
+
+    /// <summary>
+    /// Assumes the item has been added before the increment method is called.
+    /// </summary>
+    /// <param name="value"></param>
+    public void IncrementPickWeight(float value)
+    {
+        if (!quanRcvdInitialized)
+        {
+            InitializePickWeight();
+        }
+        else
+        {
+            pickWeight += value;
+        }
+    }
+
+    private void InitializeQuanRcvd()
+    {
+        if (!quanRcvdInitialized)
+        {
+            quanRcvd = CalcQuantityReceived();
+            quanRcvdInitialized = true;
+        }
+    }
+
+    private void InitializePickWeight()
+    {
+        if (!pickWeightInitialized)
+        {
+            pickWeight = Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
+            pickWeightInitialized = true;
+        }
+    }
+
     private int CalcQuantityReceived()
     {
         if (Product.IsCredit)
@@ -170,7 +245,7 @@ public class OrderItem : ObservableObject
             {
                 return ActualCustPrice;
             }
-            return decimal.Round(ActualCustPrice * (decimal)(PickWeight ?? 0),2);
+            return decimal.Round(ActualCustPrice * (decimal)(PickWeight),2);
         }
     }
 

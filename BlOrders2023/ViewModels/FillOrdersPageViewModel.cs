@@ -240,6 +240,14 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
             };
             _order.Items.Add(orderItem);
+            orderItem.IncrementQuanRcvd(1);
+            orderItem.IncrementPickWeight(item.PickWeight ?? 0);
+        }
+        else
+        {
+            ordered.IncrementQuanRcvd(1);
+            ordered.IncrementPickWeight(item.PickWeight ?? 0);
+
         }
     }
 
@@ -259,6 +267,14 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
                     _order.Items.Remove(ordered);
                 });
 
+            }
+            else
+            {
+                await dispatcherQueue.EnqueueAsync(() =>
+                {
+                    ordered.IncrementQuanRcvd(-1);
+                    ordered.IncrementPickWeight(-1 * item.PickWeight ?? 0);
+                });   
             }
         }
     }

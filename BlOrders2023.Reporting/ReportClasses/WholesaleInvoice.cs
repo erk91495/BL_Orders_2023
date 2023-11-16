@@ -260,6 +260,22 @@ public class WholesaleInvoice : IReport
                     }
                 }
 
+                table.Cell().Element(FooterCellStyle).Text("Total:").Style(tableHeaderStyle);
+
+                table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_order.GetTotalOrdered()}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_order.GetTotalGiven()}").Style(tableHeaderStyle);
+
+                table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Sum(i => i.PickWeight):N2}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle);
+
+                static IContainer FooterCellStyle(IContainer container)
+                {
+                    return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
+                }
+
             });
         });
     }
