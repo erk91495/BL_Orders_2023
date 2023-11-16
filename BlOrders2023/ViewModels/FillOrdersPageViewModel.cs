@@ -240,6 +240,11 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
             };
             _order.Items.Add(orderItem);
+            orderItem.IncrementQuanRcvd(1);
+        }
+        else
+        {
+            ordered.IncrementQuanRcvd(1);
         }
     }
 
@@ -259,6 +264,13 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
                     _order.Items.Remove(ordered);
                 });
 
+            }
+            else
+            {
+                await dispatcherQueue.EnqueueAsync(() =>
+                {
+                    ordered.IncrementQuanRcvd(-1);
+                });   
             }
         }
     }

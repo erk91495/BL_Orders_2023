@@ -27,7 +27,8 @@ public class OrderItem : ObservableObject
     private Product product = null!;
     private int extraNeeded;
     private bool? allocated;
-    private int given;
+    private bool quanRcvdInitialized = false;
+    private int quanRcvd;
     #endregion Fields
 
     #region Properties
@@ -116,7 +117,18 @@ public class OrderItem : ObservableObject
     [NotMapped]
     public float? PickWeight => Order.ShippingItems.Where(i => i.ProductID == ProductID).Sum(i => i.PickWeight ?? 0);
     [NotMapped]
-    public int QuantityReceived => CalcQuantityReceived();
+    public int QuantityReceived
+    {
+        get
+        {
+            if (!quanRcvdInitialized)
+            {
+                InitializeQuanRcvd();
+            }
+            return quanRcvd;
+        }
+        private set => SetProperty(ref quanRcvd, value);
+    }
     #endregion Properties
 
     #region Constructors
@@ -139,6 +151,30 @@ public class OrderItem : ObservableObject
     #endregion Constructors 
 
     #region Methods
+    /// <summary>
+    /// Assumes the item has been added before the increment method is called.
+    /// </summary>
+    /// <param name="value"></param>
+    public void IncrementQuanRcvd(int value)
+    {
+        if (!quanRcvdInitialized)
+        {
+            InitializeQuanRcvd();
+        }
+        else
+        {
+            QuantityReceived += value;
+        }
+    }
+
+    private void InitializeQuanRcvd()
+    {
+        if (!quanRcvdInitialized)
+        {
+            quanRcvd = CalcQuantityReceived();
+            quanRcvdInitialized = true;
+        }
+    }
     private int CalcQuantityReceived()
     {
         if (Product.IsCredit)
