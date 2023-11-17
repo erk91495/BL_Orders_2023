@@ -282,7 +282,7 @@ public class OrderAllocator : IAllocatorService
 
 
                     float extraPortion = 0;
-                    if ((idIndex + 1) < (productIDs.Count - 1) && totalExtraNeeded != 0)
+                    if ((idIndex + 1) < (productIDs.Count) && totalExtraNeeded != 0)
                     {
                         extraPortion = _remainingInventory[productIDs[idIndex + 1]] / totalExtraNeeded;
                     }
