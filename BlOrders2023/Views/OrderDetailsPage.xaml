@@ -109,6 +109,11 @@
                         <MenuFlyoutItem Text="New Order" Icon="Add" Click="NewOrderFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Delete Order" Icon="Delete" Click="DeleteOrderFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Allow Status Changes" Icon="Edit" Click="StatusFlyoutItem_Click" IsEnabled="{x:Bind vm:Converters.Not(ViewModel.HasErrors)}"/>
+                        <MenuFlyoutItem Text="Fill Order" Click="MenuFlyoutItemFillOrder_Click" IsEnabled="{x:Bind ViewModel.Order.CanFillOrder, Mode=OneWay}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF133;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

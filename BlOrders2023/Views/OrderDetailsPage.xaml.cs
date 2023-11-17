@@ -858,4 +858,16 @@ public sealed partial class OrderDetailsPage : Page
             }
         }
     }
+
+    /// <summary>
+    /// Navigates to the FillOrdersPage passing in the current selected order id as a parameter
+    /// </summary>
+    private void NavigateToFillOrdersPage() =>
+        Frame.Navigate(typeof(FillOrdersPage), ViewModel.Order.OrderID);
+
+    private async void MenuFlyoutItemFillOrder_Click(object sender, RoutedEventArgs e)
+    {
+        await TrySaveCurrentOrderAsync();
+        NavigateToFillOrdersPage();
+    }
 }
