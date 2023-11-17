@@ -427,6 +427,11 @@ public sealed partial class OrdersPage : Page
             PrinterSettings printSettings = new();
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
+            if (ViewModel.SelectedOrder.OrderStatus == OrderStatus.Ordered)
+            {
+                ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Filling;
+                await ViewModel.SaveCurrentOrderAsync();
+            }
         }
         else
         {
@@ -436,11 +441,7 @@ public sealed partial class OrdersPage : Page
             };
             _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
         }
-        if(ViewModel.SelectedOrder.OrderStatus == OrderStatus.Ordered)
-        {
-            ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Filling;
-            await ViewModel.SaveCurrentOrderAsync();
-        }
+
     }
 
     private async Task PrintShippingList(bool autoprint = true)
