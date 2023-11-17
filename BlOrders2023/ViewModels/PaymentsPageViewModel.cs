@@ -155,7 +155,7 @@ public class PaymentsPageViewModel: ObservableRecipient
 
         IOrderTable table = _db.Orders;
 
-        var results = await table.GetUnpaidInvoicesAsync();
+        var results = await table.GetUnpaidInvoicedInvoicesAsync();
         await dispatcherQueue.EnqueueAsync(() =>
         {
             foreach (Order o in results)

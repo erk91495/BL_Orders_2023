@@ -14,12 +14,13 @@ public interface IOrderTable
     IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate);
     Task<IEnumerable<Order>> GetByCustomerIDAndPickupDateAsync(IEnumerable<int> CustomerIDs, DateTimeOffset startDate, DateTimeOffset endDate);
     IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer);
+    IEnumerable<Order> GetUnpaidInvoicedInvoices(WholesaleCustomer customer);
     Order Reload(Order orderID);
     Task<Order> UpsertAsync(Order order);
     Task<int> UpsertAsync(IEnumerable<Order> orders);
     Task DeleteAsync(Order order);
     Order Upsert(Order order, bool overwrite=false);
     void Delete(Order order);
-    Task<IEnumerable<Order>> GetUnpaidInvoicesAsync();
+    Task<IEnumerable<Order>> GetUnpaidInvoicedInvoicesAsync();
     IEnumerable<Order> GetOutOfStateOrders(DateTimeOffset startDate, DateTimeOffset endDate);
 }

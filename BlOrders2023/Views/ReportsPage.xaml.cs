@@ -230,7 +230,7 @@ public sealed partial class ReportsPage : Page
                 if (res == ContentDialogResult.Primary && custDialog.ViewModel != null && custDialog.ViewModel.SelectedCustomer != null)
                 {
                     customer = custDialog.ViewModel.SelectedCustomer;
-                    var values = ViewModel.GetUnpaidInvoices(customer);
+                    var values = ViewModel.GetUnpaidInvoicedInvoices(customer);
                     reportPath = reportGenerator.GenerateUnpaidInvoicesReport(values);
                     
                 }

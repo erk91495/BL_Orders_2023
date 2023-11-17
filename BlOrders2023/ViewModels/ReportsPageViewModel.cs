@@ -31,9 +31,9 @@ public class ReportsPageViewModel : ObservableRecipient
         return App.GetNewDatabase().ShipDetails.GetOrderTotals(startDate, endDate);
     }
 
-    internal IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer)
+    internal IEnumerable<Order> GetUnpaidInvoicedInvoices(WholesaleCustomer customer)
     {
-        return App.GetNewDatabase().Orders.GetUnpaidInvoices(customer);
+        return App.GetNewDatabase().Orders.GetUnpaidInvoicedInvoices(customer);
     }
 
     internal IEnumerable<Payment> GetWholesalePayments(DateTimeOffset startDate, DateTimeOffset endDate)
@@ -47,7 +47,7 @@ public class ReportsPageViewModel : ObservableRecipient
 
     internal async Task<IEnumerable<Order>> GetOutstandingOrdersAsync()
     {
-        return await App.GetNewDatabase().Orders.GetUnpaidInvoicesAsync();
+        return await App.GetNewDatabase().Orders.GetUnpaidInvoicedInvoicesAsync();
     }
 
     internal IEnumerable<Product> GetProducts()

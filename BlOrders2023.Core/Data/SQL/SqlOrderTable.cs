@@ -198,14 +198,24 @@ internal class SqlOrderTable : IOrderTable
     {
         return _db.Orders
             .Where(o => 
-                o.CustID == customer.CustID 
+                o.CustID == customer.CustID )
+            .OrderBy(o => o.PickupDate.Date)
+            .ThenBy(o => o.Customer.CustomerName)
+            .ToList();
+    }
+
+    public IEnumerable<Order> GetUnpaidInvoicedInvoices(WholesaleCustomer customer)
+    {
+        return _db.Orders
+            .Where(o =>
+                o.CustID == customer.CustID
                 && o.OrderStatus <= Models.Enums.OrderStatus.Invoiced)
             .OrderBy(o => o.PickupDate.Date)
             .ThenBy(o => o.Customer.CustomerName)
             .ToList();
     }
 
-    public async Task<IEnumerable<Order>> GetUnpaidInvoicesAsync()
+    public async Task<IEnumerable<Order>> GetUnpaidInvoicedInvoicesAsync()
     {
         return await _db.Orders.Where(o => o.OrderStatus == Models.Enums.OrderStatus.Invoiced)
                                .OrderBy(o => o.PickupDate.Date)
