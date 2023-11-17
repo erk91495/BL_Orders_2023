@@ -1,7 +1,9 @@
 ﻿#define DAN_IS_LOADING_PALLETS
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,6 +13,7 @@ using BlOrders2023.Core.Helpers;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
+using Nito.Collections;
 using ServiceStack;
 
 namespace BlOrders2023.Core.Services;
@@ -75,42 +78,57 @@ public class Palletizer : IPalletizer
             {
                 var maxPerPallet = GetMaxBoxesPerPallet(group[0].Product);
                 var boxType = GetBoxType(group[0].Product);
-                foreach (var item in group)
+                if (boxType != BoxType.Unknown)
                 {
-                    var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
-                    //Make Full Pallets
-                    for (var i = 0; i < (int)(quanNeeded / maxPerPallet); i++)
+                    foreach (var item in group)
                     {
-                        Pallet p = new(_currentOrder.OrderID);
-                        p.Items.Add(item.Product, maxPerPallet);
-                        pallets.Add(p);
-                    }
+                        var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
+                        //Make Full Pallets
+                        for (var i = 0; i < (int)(quanNeeded / maxPerPallet); i++)
+                        {
+                            Pallet p = new(_currentOrder.OrderID);
+                            p.Items.Add(item.Product, maxPerPallet);
+                            pallets.Add(p);
+                        }
 
-                    //Make Remainder Pallet
-                    if (quanNeeded % maxPerPallet != 0)
-                    {
-                        groupRemainder.Add(item.Product, quanNeeded % maxPerPallet);
+                        //Make Remainder Pallet
+                        if (quanNeeded % maxPerPallet != 0)
+                        {
+                            groupRemainder.Add(item.Product, quanNeeded % maxPerPallet);
+                        }
+                    }
+                    //try to combine as many pallets as you can for each group
+                    pallets = pallets.Concat(CombinePalletsBetter(ref groupRemainder, maxPerPallet)).ToList();
+                    if(groupRemainder.Count > 0) {
+                        Pallet groupPallet = new(_currentOrder.OrderID);
+                        foreach (var item in groupRemainder)
+                        {
+                            var spaceOnPallet = maxPerPallet - groupPallet.Items.Values.Sum(q => q);
+                            if (spaceOnPallet >= item.Value)
+                            {
+                                groupPallet.Items.Add(item.Key, item.Value);
+                            }
+                            else
+                            {
+                                groupPallet.Items.Add(item.Key, spaceOnPallet);
+                                pallets.Add(groupPallet);
+                                groupPallet = new(_currentOrder.OrderID);
+                                groupPallet.Items.Add(item.Key, item.Value - spaceOnPallet);
+                            }
+                        }
+                        partialPallet.Add(groupPallet);
                     }
                 }
-                //try to combine as many pallets as you can for each group
-                pallets = pallets.Concat(CombinePallets(ref groupRemainder, maxPerPallet)).ToList();
-                Pallet groupPallet = new(_currentOrder.OrderID);
-                foreach (var item in groupRemainder)
+                else
                 {
-                    var spaceOnPallet = maxPerPallet - groupPallet.Items.Values.Sum(q => q);
-                    if ( spaceOnPallet >= item.Value)
+                    Pallet p = new Pallet(_currentOrder.OrderID);
+                    foreach (var item in group)
                     {
-                        groupPallet.Items.Add(item.Key, item.Value);
+                        var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
+                        p.Items.Add(item.Product, quanNeeded);
                     }
-                    else
-                    {
-                        groupPallet.Items.Add(item.Key, spaceOnPallet);
-                        pallets.Add(groupPallet);
-                        groupPallet = new(_currentOrder.OrderID);
-                        groupPallet.Items.Add(item.Key, item.Value - spaceOnPallet);
-                    }
+                    pallets.Add(p);
                 }
-                partialPallet.Add(groupPallet);
             }
         }
 
@@ -233,12 +251,6 @@ public class Palletizer : IPalletizer
 
 
         List<List<OrderItem>> GroupedByBox = new();
-        //{
-        //    _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BBox && i.Product.IsCredit != true).ToList(),
-        //    _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.CBox && i.Product.IsCredit != true).ToList(),
-        //    _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.BreastBox && i.Product.IsCredit != true).ToList(),
-        //    _currentOrder.Items.Where(i => GetBoxType(i.Product) == BoxType.Unknown && i.Product.IsCredit != true).ToList()
-        //};
         foreach (var boxType in Enum.GetValues<BoxType>())
         {
             GroupedByBox.Add(_currentOrder.Items.Where(i => GetBoxType(i.Product) == boxType && i.Product.IsCredit != true).ToList());
@@ -273,7 +285,7 @@ public class Palletizer : IPalletizer
                     }
 
                     //try to combine as many pallets as you can for each group
-                    pallets = pallets.Concat(CombinePallets(ref groupRemainder, maxPerPallet)).ToList();
+                    pallets = pallets.Concat(CombinePalletsBetter(ref groupRemainder, maxPerPallet)).ToList();
                     foreach (var item in groupRemainder)
                     {
                         remainder.Add(item.Key, item.Value);
@@ -294,8 +306,17 @@ public class Palletizer : IPalletizer
 
         }
 
+        //these pallets are already to big to combine
+        foreach(var item in remainder.Where(i => i.Value > Config.MixedBoxesPerPallet))
+        {
+            Pallet p = new Pallet(_currentOrder.OrderID);
+            p.Items.Add(item.Key, item.Value);
+            remainder.Remove(item.Key);
+            pallets.Add(p);
+        }
+
         //last chance to combine pallets 
-        pallets = pallets.Concat(CombinePallets(ref remainder, Config.MixedBoxesPerPallet)).ToList();
+        pallets = pallets.Concat(CombinePalletsBetter(ref remainder, Config.MixedBoxesPerPallet)).ToList();
         if(!remainder.IsNullOrEmpty()){
             Pallet lastPallet = new(_currentOrder.OrderID);
             foreach(var item in remainder)
@@ -315,20 +336,21 @@ public class Palletizer : IPalletizer
         //try to combine as many pallets as you can for each group
         List<Pallet> pallets = new();
         Pallet pallet = new(_currentOrder.OrderID);
-        var totalNeeded = remainder.Values.Sum();
-        var enumerator = remainder.Keys.GetEnumerator();
+        var sortedRemainder = remainder.OrderByDescending(p => p.Value).ToDictionary();
+        var totalNeeded = sortedRemainder.Values.Sum();
+        var enumerator = sortedRemainder.Keys.GetEnumerator();
         enumerator.MoveNext();
         var remainingPalletSpace = maxPerPallet;
         while (totalNeeded >= remainingPalletSpace && enumerator.Current != null)
         {
-            if (remainder[enumerator.Current] < remainingPalletSpace)
+            if (sortedRemainder[enumerator.Current] < remainingPalletSpace)
             {
                 //Add items to pallet
-                pallet.Items.Add(enumerator.Current, remainder[enumerator.Current]);
-                remainingPalletSpace -= remainder[enumerator.Current];
-                totalNeeded -= remainder[enumerator.Current];
+                pallet.Items.Add(enumerator.Current, sortedRemainder[enumerator.Current]);
+                remainingPalletSpace -= sortedRemainder[enumerator.Current];
+                totalNeeded -= sortedRemainder[enumerator.Current];
                 //get next item
-                remainder.Remove(enumerator.Current);
+                sortedRemainder.Remove(enumerator.Current);
                 enumerator.MoveNext();
             }
             else
@@ -340,15 +362,110 @@ public class Palletizer : IPalletizer
 
                 totalNeeded -= remainingPalletSpace;
                 //decement the item
-                remainder[enumerator.Current] -= remainingPalletSpace;
-                if(remainder[enumerator.Current] <= 0)
+                sortedRemainder[enumerator.Current] -= remainingPalletSpace;
+                if(sortedRemainder[enumerator.Current] <= 0)
                 {
-                    remainder.Remove(enumerator.Current);
+                    sortedRemainder.Remove(enumerator.Current);
                     enumerator.MoveNext();
                 }
                 remainingPalletSpace = maxPerPallet;
 
             }
+        }
+
+        return pallets;
+    }
+
+    private IEnumerable<Pallet> CombinePalletsBetter(ref Dictionary<Product, int> remainder, int maxPerPallet) 
+    {
+        //try to combine as many pallets as you can for each group
+        List<Pallet> pallets = new();
+        Pallet pallet = new(_currentOrder.OrderID);
+        var remainingPalletSpace = maxPerPallet;
+        var sortedRemainder = remainder.OrderByDescending(p => p.Value).ToDictionary();
+        var deque = new Deque<KeyValuePair<Product, int>>(sortedRemainder.Count());
+        foreach( var kvp in sortedRemainder)
+        {
+            deque.AddToBack(kvp);
+        }
+        KeyValuePair<Product, int>? frontItem = null;
+        KeyValuePair<Product, int>? backItem = null;
+        if (!deque.IsNullOrEmpty())
+        {
+            frontItem = deque.RemoveFromFront();
+        }
+        if (!deque.IsNullOrEmpty())
+        {
+            backItem = deque.RemoveFromBack();
+        }
+        while(deque.Count > 0 && frontItem != null && backItem != null)
+        {
+            if(frontItem != null)
+            {
+                if (remainingPalletSpace > frontItem.Value.Value)
+                {
+                    pallet.Items.Add(frontItem.Value.Key, frontItem.Value.Value);
+                    remainingPalletSpace -= frontItem.Value.Value;
+                }
+                else
+                {
+                    throw new Exception("Full pallet made it into combine??");
+                }
+                while(remainingPalletSpace > 0 && backItem != null)
+                {
+                    if(remainingPalletSpace > backItem.Value.Value)
+                    {
+                        pallet.Items.Add(backItem.Value.Key, backItem.Value.Value);
+                        remainingPalletSpace -= backItem.Value.Value;
+                        if (!deque.IsNullOrEmpty())
+                        {
+                            backItem = deque.RemoveFromBack();
+                        }
+                        else
+                        {
+                            backItem = null;
+                        }
+                        
+                    }
+                    else
+                    {
+                        pallet.Items.Add(backItem.Value.Key, remainingPalletSpace);
+                        backItem = new(backItem.Value.Key, backItem.Value.Value - remainingPalletSpace);
+                        remainingPalletSpace = 0;
+                        
+                    }
+                }
+                pallets.Add(pallet);
+                pallet = new(_currentOrder.OrderID);
+                remainingPalletSpace = maxPerPallet;
+                if (!deque.IsNullOrEmpty())
+                {
+                    frontItem = deque.RemoveFromFront();
+                }
+                else
+                {
+                    frontItem = null;
+                }
+            }
+
+        }
+
+        //clean up we need to get all of the remainder and give them back
+        remainder.Clear();
+        if (!pallet.Items.IsNullOrEmpty())
+        {
+            foreach(var item in pallet.Items) 
+            {
+                remainder.Add(item.Key, item.Value);
+            }
+        }
+        if(frontItem != null)
+        {
+            remainder.Add(frontItem.Value.Key, frontItem.Value.Value);
+        }
+        if (backItem != null)
+        {
+            remainder.Add(backItem.Value.Key, backItem.Value.Value);
         }
 
         return pallets;

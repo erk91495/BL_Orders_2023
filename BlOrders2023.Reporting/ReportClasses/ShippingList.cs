@@ -53,8 +53,8 @@ public class ShippingList : IReport
     {
         container.Column(headerCol =>
         {
-            ///Header Row Contains invoice # Company Name and logo
-            headerCol.Item().AlignCenter().PaddingBottom(10).Row(row =>
+            ///Header Row Contains invoice # Company Name and logo for first page
+            headerCol.Item().ShowOnce().AlignCenter().PaddingBottom(10).Row(row =>
             {
 
                 //Logo
@@ -67,13 +67,13 @@ public class ShippingList : IReport
                     col.Item().AlignCenter().Text($"{_companyInfo.StreetAddress}, {_companyInfo.City}, {_companyInfo.State} {_companyInfo.ShortZipCode}").Style(subTitleStyle);
                     col.Item().AlignCenter().Text($"Phone: {_companyInfo.PhoneString()}          Fax: {_companyInfo.FaxString()}");
                     col.Item().AlignCenter().Text(_companyInfo.Website);
-                    col.Item().AlignCenter().Text("Shipping List").Style(subTitleStyle);
+                    col.Item().AlignCenter().Text("Shipping List").Style(titleStyle);
                 });
 
                 row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
                 {
                     //Invoice Number
-                    column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
+                    column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().Style(subTitleStyle);
                     if (!_order.PO_Number.IsNullOrEmpty())
                     {
                         column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
@@ -87,6 +87,29 @@ public class ShippingList : IReport
 
             });
 
+
+            headerCol.Item().SkipOnce().AlignCenter().PaddingBottom(10).Row(row =>
+            {
+
+                row.RelativeItem(3).AlignLeft().Column(col =>
+                {
+                    col.Item().AlignLeft().Text("Shipping List").Style(titleStyle);
+                });
+
+                row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
+                {
+                    //Invoice Number
+                    column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().Style(subTitleStyle);
+                    if (!_order.PO_Number.IsNullOrEmpty())
+                    {
+                        column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
+                    }
+
+                    column.Item().Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
+
+                });
+
+            });
         });
     }
 
@@ -114,26 +137,26 @@ public class ShippingList : IReport
                     {
                         for (var i = 0; i < numberOfColumns; i++)
                         {
-                            header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
-                            header.Cell().Element(CellStyle).Text("Quantity").Style(tableHeaderStyle);
-                            header.Cell().Element(CellStyle).Text("Net Wt").Style(tableHeaderStyle);
+                            header.Cell().Element(CellStyle).AlignRight().Text("Product ID").Style(tableHeaderStyle);
+                            header.Cell().Element(CellStyle).AlignCenter().Text("Quantity").Style(tableHeaderStyle);
+                            header.Cell().Element(CellStyle).AlignLeft().Text("Net Wt").Style(tableHeaderStyle);
                         }
 
                         static IContainer CellStyle(IContainer container)
                         {
-                            return container.DefaultTextStyle(x => x.SemiBold()).BorderBottom(1).BorderColor(Colors.Black).AlignCenter().AlignMiddle();
+                            return container.DefaultTextStyle(x => x.SemiBold()).BorderBottom(1).BorderColor(Colors.Black).AlignMiddle();
                         }
                     });
 
                     foreach (var item in _order.ShippingItems.Where(i => i.ProductID == id))
                     {
 
-                        table.Cell().BorderLeft(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{item.QuanRcvd}").Style(tableTextStyle);
-                        table.Cell().BorderRight(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).Text($"{item.PickWeight:F2}").Style(tableTextStyle);
+                        table.Cell().BorderLeft(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).AlignRight().Text($"{item.ProductID}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).AlignCenter().Text($"{item.QuanRcvd}").Style(tableTextStyle);
+                        table.Cell().BorderRight(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).AlignLeft().Text($"{item.PickWeight:F2}").Style(tableTextStyle);
                         static IContainer CellStyle(IContainer container)
                         {
-                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2).AlignCenter().AlignMiddle();
+                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2).AlignMiddle();
                         }
                     }
 
