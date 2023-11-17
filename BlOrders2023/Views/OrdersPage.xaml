@@ -309,6 +309,11 @@
                             <sf:GridDateColumn HeaderText="Pickup Date" MappingName="PickupDate"/>
                             <sf:GridTextColumn HeaderText="Order Status" MappingName="OrderStatus" UseBindingValue="True"/>
                         </sf:SfDataGrid.Columns>
+                        <sf:SfDataGrid.FilterPopupStyle>
+                            <Style TargetType="sf:GridFilterControl">
+                                <Setter Property="FilterPopupWidth" Value="320" />
+                            </Style>
+                        </sf:SfDataGrid.FilterPopupStyle>
                     </sf:SfDataGrid>
 
                     <muxc:ProgressBar
