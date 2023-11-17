@@ -122,8 +122,12 @@ public sealed partial class FillOrdersPage : Page
             //    item.Scanline += "_" + DateTime.Now.ToString("ddMMMMyyyyHHmmssff");
             //}
             await ViewModel.ReceiveItemAsync(item,!isFixedBarcode);
-            OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
-            OrderedItems.ColumnSizer.Refresh(); 
+            //only resize to the first item b/c its slow when i have lots of items O(n)
+            if(ViewModel.Order.ShippingItems.Count <= 1)
+            {
+                OrderedItems.ColumnSizer.ResetAutoCalculationforAllColumns();
+                OrderedItems.ColumnSizer.Refresh(); 
+            }
             OrderedVsReceivedGrid.View.Refresh();
             if (ViewModel.Order?.OrderStatus <= OrderStatus.Ordered)
             {
