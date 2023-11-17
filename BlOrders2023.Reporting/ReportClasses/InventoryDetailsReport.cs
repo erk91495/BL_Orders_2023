@@ -41,7 +41,7 @@ public class InventoryDetailsReport : IReport
         container.Page(page =>
         {
             page.Margin(20);
-            page.MarginLeft(0.75f, Unit.Inch);
+            page.MarginTop(0.75f, Unit.Inch);
             page.Size(PageSizes.Letter.Landscape());
 
             page.Header().Height(100).Background(Colors.Grey.Lighten1);
