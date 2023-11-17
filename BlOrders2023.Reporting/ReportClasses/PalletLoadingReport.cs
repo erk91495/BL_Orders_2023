@@ -16,6 +16,7 @@ public class PalletLoadingReport :IReport
     private readonly CompanyInfo _companyInfo;
 
     private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).FontColor(Colors.Black);
+    private readonly TextStyle poStyle = TextStyle.Default.FontSize(28).FontColor(Colors.Black);
     private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(18).FontColor(Colors.Black);
     private readonly TextStyle giantTextSize = TextStyle.Default.FontSize(30).SemiBold().FontColor(Colors.Black);
     private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(18);
@@ -26,8 +27,6 @@ public class PalletLoadingReport :IReport
     #endregion Fields
     #region Properties
     #endregion Properties
-
-
 
     public PalletLoadingReport(CompanyInfo companyInfo, Order order, Pallet pallet)
     {
@@ -85,7 +84,7 @@ public class PalletLoadingReport :IReport
                 row.RelativeItem().Text($"{_order.Customer.CustomerName}").Style(giantTextSize);
                 row.RelativeItem().AlignRight().Column(col => {
                     col.Item().Text($"Order ID: {_order.OrderID}").Style(normalTextStyle).SemiBold();
-                    col.Item().ShowIf(!_order.PO_Number.IsNullOrEmpty()).Text($"PO: {_order.PO_Number}").Style(normalTextStyle);
+                    col.Item().BorderTop(12).BorderColor(Colors.Transparent).ShowIf(!_order.PO_Number.IsNullOrEmpty()).Text($"PO: {_order.PO_Number}").Style(poStyle).SemiBold();
                 });
             });
         });
