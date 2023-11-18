@@ -466,6 +466,17 @@ public sealed partial class ReportsPage : Page
                     reportPath = reportGenerator.GenerateOutOfStateSalesReport(orders, startDate, endDate);
                 }
             }
+            else if(control.ReportType == typeof(BillOfLadingReport))
+            {
+                var customers = ViewModel.GetWholesaleCustomers();
+                var dialog = new CustomerOrderSelectionDialog(customers)
+                {
+                    XamlRoot = XamlRoot
+                };
+                dialog.CustomerChanged += CustomerOrderSelectionDialog_CustomerChanged;
+                await dialog.ShowAsync();
+
+            }
             else
             {
                 ContentDialog d = new()
@@ -488,6 +499,19 @@ public sealed partial class ReportsPage : Page
                 _ = Launcher.LaunchUriAsync(new Uri(reportPath), options);
             }
 
+        }
+    }
+
+    private async void CustomerOrderSelectionDialog_CustomerChanged(object? sender, CustomerChangedEventArgs e)
+    {
+        if(sender is CustomerOrderSelectionDialog dialog && e.Customer != null)
+        {
+            var orders =  await ViewModel.GetOrdersByCustomerIdAndPickupDateAsync(new List<int>(){e.Customer.CustID}, DateTimeOffset.MinValue, DateTimeOffset.MaxValue);
+            dialog.SuggestedOrders.Clear();
+            foreach (var order in orders.Where(o => o.OrderStatus == Models.Enums.OrderStatus.Invoiced))
+            {
+                dialog.SuggestedOrders.Add(order);
+            }
         }
     }
 

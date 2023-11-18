@@ -54,6 +54,10 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
             }
             CheckValidation(Memo, nameof(Memo));
             OnPropertyChanged();
+            if (!HasErrors)
+            {
+                _ = SaveOrderAsync();
+            }
         }
     }
 
