@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using BlOrders2023.Models;
+using Castle.Core.Resource;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
@@ -40,7 +41,7 @@ public sealed partial class CustomerOrderSelectionDialog : ContentDialog, INotif
     private ObservableCollection<WholesaleCustomer> _suggestedCustomers = new();
     private ObservableCollection<Order> _suggestedOrders = new();
     private WholesaleCustomer? _selectedCustomer;
-    private ObservableCollection<Order> selectedOrders = new();
+    private List<Order> selectedOrders = new();
 
     public event PropertyChangedEventHandler? PropertyChanged;
     public event EventHandler<CustomerChangedEventArgs>? CustomerChanged;
@@ -78,7 +79,7 @@ public sealed partial class CustomerOrderSelectionDialog : ContentDialog, INotif
         }
     }
 
-    public ObservableCollection<Order> SelectedOrders
+    public List<Order> SelectedOrders
     {
         get => selectedOrders;    
         set 
@@ -171,6 +172,14 @@ public sealed partial class CustomerOrderSelectionDialog : ContentDialog, INotif
     private void OnCustomerChanged()
     {
         CustomerChanged?.Invoke(this, new(_selectedCustomer));
+    }
+
+    private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (OrderSelection.SelectedItems != null)
+        {
+            SelectedOrders = OrderSelection.SelectedItems.OfType<Order>().ToList();
+        }
     }
     #endregion Methods
 }

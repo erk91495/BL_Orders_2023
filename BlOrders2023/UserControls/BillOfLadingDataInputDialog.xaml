@@ -6,9 +6,38 @@
     xmlns:local="using:BlOrders2023.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    xmlns:sfCal="using:Syncfusion.UI.Xaml.Calendar"
+    xmlns:sfEdit="using:Syncfusion.UI.Xaml.Editors"
+    xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
+    xmlns:dg="using:CommunityToolkit.WinUI"
+    mc:Ignorable="d"
+    PrimaryButtonText="Next"
+    CloseButtonText="Cancel">
 
-    <Grid>
+    <ContentDialog.Resources>
+        <x:Double x:Key="ContentDialogMaxWidth">1200</x:Double>
+        <x:Double x:Key="ContentDialogMaxHeight">1000</x:Double> 
+    </ContentDialog.Resources>
 
-    </Grid>
+    <StackPanel Orientation="Vertical">
+        <StackPanel x:Name="AppointmentTimeStack" Orientation="Horizontal" Width="1800" Spacing="24">
+            <TextBlock Text="Appointment Date: " VerticalAlignment="Center"/>
+            <sfCal:SfCalendarDatePicker SelectedDate="{x:Bind AppointmentDate, Mode=TwoWay}"/>
+            <sfEdit:SfTimePicker SelectedTime="{x:Bind AppointmentTime, Mode=TwoWay}"/>
+        </StackPanel>
+
+        <sf:SfDataGrid x:Name="ItemsGrid"
+                       ItemsSource="{x:Bind Items, Mode=TwoWay}"
+                       AutoGenerateColumns="False"
+                       ColumnWidthMode="Auto"
+                       IsReadOnly="False">
+            <sf:SfDataGrid.Columns>
+                <sf:GridNumericColumn MappingName="NumberOfPallets" HeaderText="Pallets" IsReadOnly="False" AllowEditing="True" />
+                <sf:GridTextColumn IsReadOnly="True" MappingName="NumberOfCases" HeaderText="Cases"/>
+                <sf:GridTextColumn IsReadOnly="True" MappingName="ProductID" HeaderText="ID"/>
+                <sf:GridTextColumn IsReadOnly="True" MappingName="ProductName" HeaderText="Name" ColumnWidthMode="AutoLastColumnFill"/>
+                <sf:GridTextColumn IsReadOnly="True" MappingName="NetWt"/>
+            </sf:SfDataGrid.Columns>
+        </sf:SfDataGrid>        
+    </StackPanel>
 </ContentDialog>

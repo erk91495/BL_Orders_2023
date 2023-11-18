@@ -11,6 +11,7 @@
     xmlns:converters="using:BlOrders2023.ViewModels.Converters"
     mc:Ignorable="d"
     PrimaryButtonText="Next"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     CloseButtonText="Cancel">
 
     <StackPanel VerticalAlignment="Stretch" Spacing="14">
@@ -39,7 +40,7 @@
             x:Name="OrderSelection"
             SelectionMode="Multiple"
             PlaceholderText="Add Orders..."
-            ItemsSource="{x:Bind SuggestedOrders, Mode=Oneway}"
+            ItemsSource="{x:Bind SuggestedOrders, Mode=OneWay}"
             GotFocus="OrderSelection_GotFocus"
             LostFocus="OrderSelection_LostFocus"
             DisplayMemberPath="OrderID"

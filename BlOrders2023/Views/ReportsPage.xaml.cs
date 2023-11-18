@@ -474,7 +474,16 @@ public sealed partial class ReportsPage : Page
                     XamlRoot = XamlRoot
                 };
                 dialog.CustomerChanged += CustomerOrderSelectionDialog_CustomerChanged;
-                await dialog.ShowAsync();
+                var res = await dialog.ShowAsync();
+                if(res == ContentDialogResult.Primary)
+                {
+                    var orders = dialog.SelectedOrders;
+                    var billOfLadingInput = new BillOfLadingDataInputDialog(orders)
+                    {
+                        XamlRoot = XamlRoot
+                    };
+                    await billOfLadingInput.ShowAsync();
+                }
 
             }
             else
