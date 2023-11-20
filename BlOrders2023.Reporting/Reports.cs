@@ -27,5 +27,6 @@ public static class Reports
         typeof(CurrentInventoryReport),
         typeof(InventoryDetailsReport),
         typeof(OutOfStateSalesReport),
+        typeof(BillOfLadingReport),
     }; 
 }

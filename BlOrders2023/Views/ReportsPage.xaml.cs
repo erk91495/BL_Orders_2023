@@ -466,6 +466,42 @@ public sealed partial class ReportsPage : Page
                     reportPath = reportGenerator.GenerateOutOfStateSalesReport(orders, startDate, endDate);
                 }
             }
+            else if(control.ReportType == typeof(BillOfLadingReport))
+            {
+                var customers = ViewModel.GetWholesaleCustomers();
+                var dialog = new CustomerOrderSelectionDialog(customers)
+                {
+                    XamlRoot = XamlRoot
+                };
+                dialog.CustomerChanged += CustomerOrderSelectionDialog_CustomerChanged;
+                var res = await dialog.ShowAsync();
+                if(res == ContentDialogResult.Primary)
+                {
+                    var orders = dialog.SelectedOrders;
+                    var customer = dialog.SelectedCustomer;
+                    var billOfLadingInput = new BillOfLadingDataInputDialog(orders)
+                    {
+                        XamlRoot = XamlRoot
+                    };
+                    res = await billOfLadingInput.ShowAsync();
+                    if(res == ContentDialogResult.Primary)
+                    {
+                        var items = billOfLadingInput.Items;
+                        var carrier = billOfLadingInput.CarrierName;
+                        var trailerNumber = billOfLadingInput.TrailerNumber;
+                        var trailerSeal = billOfLadingInput.TrailerSeal;
+                        DateTime? appointmentDate = null;
+                        if(billOfLadingInput.AppointmentDate != null && billOfLadingInput.AppointmentTime != null)
+                        {
+                            var inputDate = billOfLadingInput.AppointmentDate.Value;
+                            var inputTime = billOfLadingInput.AppointmentTime.Value;
+                            appointmentDate = new DateTime(inputDate.Year, inputDate.Month, inputDate.Day, inputTime.Hour, inputTime.Minute, inputTime.Second);
+                        }
+                        reportPath = reportGenerator.GenerateBillOfLadingReport(orders,items,customer,carrier,trailerNumber,trailerSeal, appointmentDate);
+                    }
+                }
+
+            }
             else
             {
                 ContentDialog d = new()
@@ -473,7 +509,7 @@ public sealed partial class ReportsPage : Page
                     XamlRoot = XamlRoot,
                     Title = "Error",
                     Content = $"Sorry the person writing ths progam made a mistake because the Report Type \"{control.ReportType}\" " +
-                    $"was not found. \r\n Please ask the programmer nicely if they forgot something.",
+                    $"was not found. \r\n Please nicely ask the programmer if they forgot something.",
                     PrimaryButtonText = "ok",
                 };
                 await d.ShowAsync();
@@ -488,6 +524,19 @@ public sealed partial class ReportsPage : Page
                 _ = Launcher.LaunchUriAsync(new Uri(reportPath), options);
             }
 
+        }
+    }
+
+    private async void CustomerOrderSelectionDialog_CustomerChanged(object? sender, CustomerChangedEventArgs e)
+    {
+        if(sender is CustomerOrderSelectionDialog dialog && e.Customer != null)
+        {
+            var orders =  await ViewModel.GetOrdersByCustomerIdAndPickupDateAsync(new List<int>(){e.Customer.CustID}, DateTimeOffset.MinValue, DateTimeOffset.MaxValue);
+            dialog.SuggestedOrders.Clear();
+            foreach (var order in orders.Where(o => o.OrderStatus == Models.Enums.OrderStatus.Invoiced))
+            {
+                dialog.SuggestedOrders.Add(order);
+            }
         }
     }
 

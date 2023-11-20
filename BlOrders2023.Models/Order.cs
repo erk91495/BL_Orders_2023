@@ -331,6 +331,23 @@ public class Order : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Gets the total number of items given (ordered or allocated)
+    /// </summary>
+    /// <returns></returns>
+    public int GetTotalReceived()
+    {
+        if (Items.IsNullOrEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            var total = Items.Sum(item => item.QuantityReceived);
+            return total;
+        }
+    }
+
     public decimal GetTotalPayments()
     {
         if (Payments.IsNullOrEmpty())

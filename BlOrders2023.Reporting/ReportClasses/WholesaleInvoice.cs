@@ -264,7 +264,7 @@ public class WholesaleInvoice : IReport
 
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{_order.GetTotalOrdered()}").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_order.GetTotalGiven()}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_order.GetTotalReceived()}").Style(tableHeaderStyle);
 
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Sum(i => i.PickWeight):N2}").Style(tableHeaderStyle);

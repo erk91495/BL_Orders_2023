@@ -68,4 +68,9 @@ public class ReportsPageViewModel : ObservableRecipient
     {
         return App.GetNewDatabase().Orders.GetOutOfStateOrders(startDate, endDate);
     }
+
+    internal IEnumerable<WholesaleCustomer> GetWholesaleCustomers()
+    {
+        return App.GetNewDatabase().Customers.Get();
+    }
 }

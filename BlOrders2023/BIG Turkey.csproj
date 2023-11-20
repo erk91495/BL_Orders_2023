@@ -116,6 +116,12 @@
 	<None Update="nlog.config">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="UserControls\CustomerOrderSelectionDialog.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
+	<Page Update="UserControls\BillOfLadingDataInputDialog.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="UserControls\SqlConnectionSettingsPanel.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -166,6 +172,8 @@
   <ItemGroup>
     <None Remove="Styles\AllocationDataGridStyle.xaml" />
     <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
+    <None Remove="UserControls\BillOfLadingDataInputDialog.xaml" />
+    <None Remove="UserControls\CustomerOrderSelectionDialog.xaml" />
     <None Remove="UserControls\PaymentDataInputControl.xaml" />
     <None Remove="UserControls\SqlConnectionSettingsPanel.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
