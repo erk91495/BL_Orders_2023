@@ -18,6 +18,7 @@ using System.Drawing.Printing;
 using BlOrders2023.Core.Services;
 using Syncfusion.UI.Xaml.DataGrid;
 using Microsoft.UI.Xaml.Input;
+using NLog;
 
 namespace BlOrders2023.Views;
 
@@ -499,6 +500,11 @@ public sealed partial class FillOrdersPage : Page
         if (!ViewModel.HasErrors)
         {
             _ = TrySaveOrderAsync();
+        }
+        else
+        {
+            var logger = LogManager.GetCurrentClassLogger();
+            logger.Info($"Didn't save memo. Order Had Errors {ViewModel.GetErrors()}");
         }
     }
 

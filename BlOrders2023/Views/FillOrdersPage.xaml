@@ -242,7 +242,8 @@
                                  Background="Transparent"
                                  BorderBrush="{ThemeResource TextFillColorPrimary}"
                                  BorderThickness="1"
-                                 LostFocus="MemoBox_LostFocus"/>
+                                 LostFocus="MemoBox_LostFocus"
+                                 IsEnabled="{x:Bind ViewModel.HasOrder, Mode=OneWay}"/>
                     </StackPanel>
 
                     <StackPanel x:Name="CustomerInfo"  
