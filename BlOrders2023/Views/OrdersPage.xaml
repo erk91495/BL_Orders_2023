@@ -87,7 +87,7 @@
             RelativePanel.AlignRightWithPanel="True">
 
             <AppBarElementContainer VerticalContentAlignment="Center">
-                <TextBox x:Name="SeachBox"
+                <TextBox x:Name="SearchBox"
                          TextChanged="SeachBox_TextChanged"
                          MinWidth="300"
                          VerticalAlignment="Stretch"

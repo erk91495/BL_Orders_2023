@@ -20,6 +20,8 @@ using System.Drawing.Printing;
 using System.Media;
 using BlOrders2023.Helpers;
 using BlOrders2023.Core.Services;
+using CommunityToolkit.WinUI;
+using System.Diagnostics;
 
 namespace BlOrders2023.Views;
 
@@ -51,7 +53,13 @@ public sealed partial class OrdersPage : Page
     {
         ViewModel = App.GetService<OrdersPageViewModel>();
         reportGenerator = new(App.CompanyInfo);
-        InitializeComponent();       
+        InitializeComponent();
+        Loaded += OrdersPage_Loaded;
+    }
+
+    private void OrdersPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        DispatcherQueue.EnqueueAsync( () => SearchBox.Focus(FocusState.Programmatic));
     }
     #endregion Constructors
 
