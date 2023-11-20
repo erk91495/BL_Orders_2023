@@ -106,7 +106,7 @@ namespace BlOrders2023.Reporting.ReportClasses
                     {
                         table.Cell().Element(CellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{order.Customer.CustID}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.Customer.Phone}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.Customer.PhoneString()}").Style(tableTextStyle);
 
                         table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
 
