@@ -10,17 +10,22 @@
     xmlns:sfEdit="using:Syncfusion.UI.Xaml.Editors"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:dg="using:CommunityToolkit.WinUI"
+    xmlns:converters="using:BlOrders2023.ViewModels.Converters"
     mc:Ignorable="d"
     PrimaryButtonText="Next"
     CloseButtonText="Cancel">
-
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMaxWidth">1200</x:Double>
-        <x:Double x:Key="ContentDialogMaxHeight">1000</x:Double> 
+        <x:Double x:Key="ContentDialogMaxHeight">1000</x:Double>
+        <converters:NullIntToDoubleConverter x:Key="NullIntToDoubleConverter"/>
     </ContentDialog.Resources>
 
-    <StackPanel Orientation="Vertical">
-        <StackPanel x:Name="AppointmentTimeStack" Orientation="Horizontal" Width="1800" Spacing="24">
+    <RelativePanel>
+        <StackPanel x:Name="AppointmentTimeStack" 
+                    Orientation="Horizontal" 
+                    Width="1800" 
+                    Spacing="24"
+                    RelativePanel.AlignTopWithPanel="True">
             <TextBlock Text="Appointment Date: " VerticalAlignment="Center"/>
             <sfCal:SfCalendarDatePicker SelectedDate="{x:Bind AppointmentDate, Mode=TwoWay}"/>
             <sfEdit:SfTimePicker SelectedTime="{x:Bind AppointmentTime, Mode=TwoWay}"/>
@@ -30,14 +35,41 @@
                        ItemsSource="{x:Bind Items, Mode=TwoWay}"
                        AutoGenerateColumns="False"
                        ColumnWidthMode="Auto"
-                       IsReadOnly="False">
+                       IsReadOnly="False"
+                       RelativePanel.Below="AppointmentTimeStack"
+                       RelativePanel.Above="TruckInfoStack"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignRightWithPanel="True">
             <sf:SfDataGrid.Columns>
-                <sf:GridNumericColumn MappingName="NumberOfPallets" HeaderText="Pallets" IsReadOnly="False" AllowEditing="True" />
+                <sf:GridNumericColumn MappingName="NumberOfPallets" 
+                                      HeaderText="Pallets" 
+                                      IsReadOnly="False" 
+                                      AllowEditing="True"
+                                      ValueBinding="{Binding Path=NumberOfPallets, Mode=TwoWay,  Converter={StaticResource NullIntToDoubleConverter}}"/>
                 <sf:GridTextColumn IsReadOnly="True" MappingName="NumberOfCases" HeaderText="Cases"/>
                 <sf:GridTextColumn IsReadOnly="True" MappingName="ProductID" HeaderText="ID"/>
                 <sf:GridTextColumn IsReadOnly="True" MappingName="ProductName" HeaderText="Name" ColumnWidthMode="AutoLastColumnFill"/>
                 <sf:GridTextColumn IsReadOnly="True" MappingName="NetWt"/>
             </sf:SfDataGrid.Columns>
-        </sf:SfDataGrid>        
-    </StackPanel>
+        </sf:SfDataGrid>
+
+        <StackPanel x:Name="TruckInfoStack"
+                    Orientation="Horizontal" 
+                    Spacing="12"
+                    RelativePanel.AlignBottomWithPanel="True">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="Carrier Name:" VerticalAlignment="Center"/>
+                <TextBox Text="{x:Bind CarrierName, Mode=TwoWay}" MinWidth="100"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="Trailer Number:" VerticalAlignment="Center"/>
+                <TextBox Text="{x:Bind TrailerNumber, Mode=TwoWay}" MinWidth="100"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="Seal Number:" VerticalAlignment="Center"/>
+                <TextBox Text="{x:Bind TrailerSeal, Mode=TwoWay}" MinWidth="100"/>
+            </StackPanel>
+        </StackPanel>
+
+    </RelativePanel>
 </ContentDialog>

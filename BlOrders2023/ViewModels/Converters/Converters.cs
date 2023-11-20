@@ -357,6 +357,18 @@ namespace BlOrders2023.ViewModels.Converters
         }
     }
 
+    public class NullIntToDoubleConverter : IValueConverter
+    {
+        public object? Convert(object value, Type targetType, object parameter, string language)
+        {
+            return value != null ? double.Parse(value.ToString()) : null;
+        }
+        public object? ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return value != null ? (int)Math.Round((double)value, 0) : null;
+        }
+    }
+
     public class AllocatedToString : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

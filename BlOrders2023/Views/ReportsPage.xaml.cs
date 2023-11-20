@@ -478,11 +478,27 @@ public sealed partial class ReportsPage : Page
                 if(res == ContentDialogResult.Primary)
                 {
                     var orders = dialog.SelectedOrders;
+                    var customer = dialog.SelectedCustomer;
                     var billOfLadingInput = new BillOfLadingDataInputDialog(orders)
                     {
                         XamlRoot = XamlRoot
                     };
-                    await billOfLadingInput.ShowAsync();
+                    res = await billOfLadingInput.ShowAsync();
+                    if(res == ContentDialogResult.Primary)
+                    {
+                        var items = billOfLadingInput.Items;
+                        var carrier = billOfLadingInput.CarrierName;
+                        var trailerNumber = billOfLadingInput.TrailerNumber;
+                        var trailerSeal = billOfLadingInput.TrailerSeal;
+                        DateTime? appointmentDate = null;
+                        if(billOfLadingInput.AppointmentDate != null && billOfLadingInput.AppointmentTime != null)
+                        {
+                            var inputDate = billOfLadingInput.AppointmentDate.Value;
+                            var inputTime = billOfLadingInput.AppointmentTime.Value;
+                            appointmentDate = new DateTime(inputDate.Year, inputDate.Month, inputDate.Day, inputTime.Hour, inputTime.Minute, inputTime.Second);
+                        }
+                        reportPath = reportGenerator.GenerateBillOfLadingReport(orders,items,customer,carrier,trailerNumber,trailerSeal, appointmentDate);
+                    }
                 }
 
             }
@@ -493,7 +509,7 @@ public sealed partial class ReportsPage : Page
                     XamlRoot = XamlRoot,
                     Title = "Error",
                     Content = $"Sorry the person writing ths progam made a mistake because the Report Type \"{control.ReportType}\" " +
-                    $"was not found. \r\n Please ask the programmer nicely if they forgot something.",
+                    $"was not found. \r\n Please nicely ask the programmer if they forgot something.",
                     PrimaryButtonText = "ok",
                 };
                 await d.ShowAsync();

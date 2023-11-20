@@ -31,6 +31,9 @@ public sealed partial class BillOfLadingDataInputDialog : ContentDialog
     public DateTimeOffset? AppointmentTime { get; set; } = null;
 
     public ObservableCollection<BillOfLadingItem> Items { get; set; } = new();
+    public string CarrierName { get; set; }
+    public string TrailerNumber { get; set; }
+    public string TrailerSeal { get; set; }
     #endregion Properties
 
     #region Constructors
