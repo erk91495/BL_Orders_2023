@@ -13,6 +13,7 @@ using QuestPDF.Infrastructure;
 using static QuestPDF.Helpers.Colors;
 
 namespace BlOrders2023.Reporting.ReportClasses;
+[System.ComponentModel.DisplayName("Bill Of Lading Report")]
 public class BillOfLadingReport : IReport
 {
     private IEnumerable<Order> _orders;
@@ -24,8 +25,8 @@ public class BillOfLadingReport : IReport
     private string _trailerSeal;
     private DateTime? _appointmentTime;
 
-    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
+    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Black);
+    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Black);
     private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
@@ -53,13 +54,13 @@ public class BillOfLadingReport : IReport
 
             page.Margin(20);
 
-            page.Header().Height(100).Background(Colors.Grey.Lighten1);
+            page.Header().Height(100).Background(Grey.Lighten1);
             page.Header().Element(ComposeHeader);
 
-            page.Content().Background(Colors.Grey.Lighten3);
+            page.Content().Background(Grey.Lighten3);
             page.Content().Element(ComposeContent);
 
-            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
+            page.Footer().Height(20).Background(Grey.Lighten1);
             page.Footer().Element(ComposeFooter);
 
         });
@@ -102,7 +103,7 @@ public class BillOfLadingReport : IReport
                 row.RelativeItem(10).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                 {
 
-                    column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Ship To:");
+                    column.Item().Background(Grey.Lighten3).Border(1).PaddingLeft(3).Text("Ship To:");
                     column.Item().PaddingLeft(3).Text($"{_customer.CustomerName}").Style(subTitleStyle);
                     column.Item().Row(row =>
                     {
@@ -120,7 +121,7 @@ public class BillOfLadingReport : IReport
                 {
                     shipperCol.Item().Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                     {
-                        column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Shipper:");
+                        column.Item().Background(Grey.Lighten3).Border(1).PaddingLeft(3).Text("Shipper:");
                         column.Item().PaddingLeft(3).Text($"{_companyInfo.LongCompanyName}").Style(subTitleStyle);
                         column.Item().Row(row =>
                         {
@@ -143,7 +144,7 @@ public class BillOfLadingReport : IReport
                 //Bill To:
                 row.RelativeItem(10).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                 {
-                    column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Bill To:");
+                    column.Item().Background(Grey.Lighten3).Border(1).PaddingLeft(3).Text("Bill To:");
                     column.Item().PaddingLeft(3).Text($"{_customer.CustomerName}").Style(subTitleStyle);
                     column.Item().Row(row =>
                     {
@@ -169,7 +170,7 @@ public class BillOfLadingReport : IReport
 
             mainCol.Item().PaddingTop(12).Row(poRow =>
             {
-                poRow.RelativeItem().AlignRight().Text($"Appointment Time: {_appointmentTime}").Style(subTitleStyle);
+                poRow.RelativeItem().Text($"Appointment Time: {_appointmentTime}").Style(subTitleStyle);
             });
 
             mainCol.Item().PaddingTop(12).Row(poRow => 
@@ -201,7 +202,7 @@ public class BillOfLadingReport : IReport
                     header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
 
                     header.Cell().Element(CellStyle).Text("Gross Wt. (lbs)").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).AlignRight().Text("Net Wt. (lbs)").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Net Wt. (lbs)").Style(tableHeaderStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -212,7 +213,10 @@ public class BillOfLadingReport : IReport
                 // step 3
                 foreach (var item in _billOfLadingItems)
                 {
-                    table.Cell().Element(CellStyle).Text($"{item.NumberOfPallets}").Style(tableTextStyle);
+
+                    //they dont want to see zeros so hide them
+                    var pallets = item.NumberOfPallets != 0 ? item.NumberOfPallets.ToString() : string.Empty;
+                    table.Cell().Element(CellStyle).Text($"{pallets}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.NumberOfCases}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
@@ -223,7 +227,7 @@ public class BillOfLadingReport : IReport
 
                     static IContainer CellStyle(IContainer container)
                     {
-                        return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                        return container.BorderBottom(1).BorderColor(Grey.Lighten2).PaddingVertical(2);
                     }
                 }
 
@@ -237,7 +241,7 @@ public class BillOfLadingReport : IReport
 
                 static IContainer FooterCellStyle(IContainer container)
                 {
-                    return container.BorderBottom(1).BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
+                    return container.BorderBottom(1).BorderTop(1).BorderColor(Black).PaddingVertical(2);
                 }
             });
             mainCol.Item().PaddingTop(12).AlignCenter().AlignMiddle().Text($"KEEP REFRIGERATED AT AT 28-32° F").Style(subTitleStyle);
