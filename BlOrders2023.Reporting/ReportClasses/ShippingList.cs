@@ -183,12 +183,12 @@ public class ShippingList : IReport
                         table.Cell().Element(FooterCellStyle);
                     }
 
-                    table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableHeaderStyle);
-                    table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableHeaderStyle);
-                    table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableHeaderStyle).FontSize(9);
+                    table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.QuanRcvd)}").Style(tableHeaderStyle).FontSize(9);
+                    table.Cell().Element(FooterCellStyle).AlignLeft().Text($"{_order.ShippingItems.Where(i => i.ProductID == id).Sum(i => i.PickWeight):F2}").Style(tableHeaderStyle).FontSize(9);
                     static IContainer FooterCellStyle(IContainer container)
                     {
-                        return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
+                        return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2).PaddingBottom(8);
                     }
                 });
             }
