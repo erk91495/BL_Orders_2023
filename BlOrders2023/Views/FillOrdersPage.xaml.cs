@@ -19,6 +19,7 @@ using BlOrders2023.Core.Services;
 using Syncfusion.UI.Xaml.DataGrid;
 using Microsoft.UI.Xaml.Input;
 using NLog;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace BlOrders2023.Views;
 
@@ -40,6 +41,19 @@ public sealed partial class FillOrdersPage : Page
         InitializeComponent();
         reportGenerator = new(App.CompanyInfo);
         OrderedItems.SelectionController = new FillOrdersGridSelectionController(OrderedItems);
+        Loaded += FillOrdersPage_Loaded;
+    }
+
+    private void FillOrdersPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.ParameterPassed)
+        {
+            DispatcherQueue.EnqueueAsync(() => Scanline.Focus(FocusState.Programmatic));
+        }
+        else
+        {
+            DispatcherQueue.EnqueueAsync(() => OrderLookup.Focus(FocusState.Programmatic));
+        }
     }
 
     private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)

@@ -63,9 +63,9 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     public bool CanPrintInvoice => _order?.CanPrintInvoice ?? false;
     public bool CanPrintOrder => _order?.CanPrintOrder ?? false;
-
     public int TotalOrdered =>  _order != null ? (int)(_order.Items.Sum(i => i.Quantity)) : 0;
     public int TotalReceived => _order != null ? _order.ShippingItems.Sum(i => i.QuanRcvd) ?? 0 : 0;
+    public bool ParameterPassed { get; private set; } = false;
     #endregion Properties
 
     #region Fields
@@ -93,11 +93,12 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         var orderID = parameter as int?;
-        await LoadFillableOrders();
         if (orderID != null)
         {
+            ParameterPassed = true;
             await LoadOrder((int)orderID); 
         }
+        await LoadFillableOrders();
     }
 
     public void OnNavigatedFrom() { }
