@@ -21,7 +21,9 @@
                         PlaceholderText="Select A Customer..."
                         QuerySubmitted="CustomerSelection_QuerySubmitted"                        
                         MinWidth="500"
-                        AutoMaximizeSuggestionArea="True">
+                        AutoMaximizeSuggestionArea="True"
+                        GotFocus="CustomerSelection_GotFocus"
+                        LostFocus="CustomerSelection_LostFocus">
             <AutoSuggestBox.ItemTemplate>
                 <DataTemplate x:DataType="model:WholesaleCustomer">
                     <StackPanel Orientation="Horizontal"

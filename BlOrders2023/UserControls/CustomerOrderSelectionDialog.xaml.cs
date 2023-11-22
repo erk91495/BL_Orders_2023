@@ -119,6 +119,16 @@ public sealed partial class CustomerOrderSelectionDialog : ContentDialog, INotif
         }
     }
 
+    private void CustomerSelection_GotFocus(object sender, RoutedEventArgs e)
+    {
+        CustomerSelection.IsSuggestionListOpen = true;
+    }
+
+    private void CustomerSelection_LostFocus(object sender, RoutedEventArgs e)
+    {
+        CustomerSelection.IsSuggestionListOpen = false;
+    }
+
     /// <summary>
     /// Triggers when a customer has been selected or when the user submits a name using the return key
     /// </summary>

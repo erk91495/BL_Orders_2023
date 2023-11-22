@@ -238,8 +238,7 @@ public sealed partial class FillOrdersPage : Page
         }
         else if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
         {
-            OrderLookup.Text = null;
-            ViewModel.QueryFillableOrders(string.Empty);
+
             
         }
     }
