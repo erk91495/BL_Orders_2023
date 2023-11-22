@@ -59,8 +59,8 @@ public class WholesalePaymentsReport : IReport
             row.RelativeItem(2).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Wholesale Payments").Style(titleStyle);
             row.RelativeItem(1).AlignRight().Column(column =>
             {
-                column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);
-                column.Item().Text($"To: {_endDate.ToString("M/d/yy")}").Style(subTitleStyle);
+                column.Item().Text($"From: {_startDate:M/d/yy}").Style(subTitleStyle);
+                column.Item().Text($"To: {_endDate:M/d/yy}").Style(subTitleStyle);
             });
         });
     }

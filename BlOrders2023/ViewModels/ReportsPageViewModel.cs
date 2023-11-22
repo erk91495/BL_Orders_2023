@@ -38,7 +38,7 @@ public class ReportsPageViewModel : ObservableRecipient
 
     internal IEnumerable<Payment> GetWholesalePayments(DateTimeOffset startDate, DateTimeOffset endDate)
     {
-        return App.GetNewDatabase().Payments.GetPayments(startDate.Date,endDate.Date);
+        return App.GetNewDatabase().Payments.GetPayments(startDate.DateTime,endDate.DateTime);
     }
     internal async Task<IEnumerable<Order>> GetOrdersByCustomerIdAndPickupDateAsync(IEnumerable<int>  custIds, DateTimeOffset startDate, DateTimeOffset endDate)
     {

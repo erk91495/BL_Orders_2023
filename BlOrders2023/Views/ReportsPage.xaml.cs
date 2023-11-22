@@ -164,8 +164,8 @@ public sealed partial class ReportsPage : Page
 
                 if (dateTuple.Item1 != null && dateTuple.Item2 != null)
                 {
-                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
-                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    DateTimeOffset startDate = new DateTimeOffset(dateTuple.Item1.Value.Year, dateTuple.Item1.Value.Month, dateTuple.Item1.Value.Day, 0, 0, 0,TimeSpan.Zero);
+                    DateTimeOffset endDate = new DateTimeOffset(dateTuple.Item2.Value.Year, dateTuple.Item2.Value.Month, dateTuple.Item2.Value.Day, 23, 59, 59, TimeSpan.Zero);
                     var values = ViewModel.GetWholesalePayments(startDate, endDate);
                     reportPath = reportGenerator.GenerateWholesalePaymentsReport(values, startDate, endDate);
                 }
