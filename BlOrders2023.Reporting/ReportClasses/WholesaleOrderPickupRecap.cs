@@ -7,151 +7,162 @@ using System;
 using System.Collections.Generic;
 
 
-namespace BlOrders2023.Reporting.ReportClasses
+namespace BlOrders2023.Reporting.ReportClasses;
+
+[System.ComponentModel.DisplayName("Wholesale Order Pickup Recap")]
+public class WholesaleOrderPickupRecap : IReport
 {
-    [System.ComponentModel.DisplayName("Wholesale Order Pickup Recap")]
-    public class WholesaleOrderPickupRecap : IReport
+    private readonly CompanyInfo _companyInfo;
+    private IEnumerable<Order> _orders;
+    private DateTimeOffset _startDate;
+    private DateTimeOffset _endDate;
+
+    public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
+    public static readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
+    public static readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
+    public static readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
+    public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
+    public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
+
+    public WholesaleOrderPickupRecap(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
-        private readonly CompanyInfo _companyInfo;
-        private IEnumerable<Order> _orders;
-        private DateTimeOffset _startDate;
-        private DateTimeOffset _endDate;
+        _companyInfo = companyInfo;
+        _orders = orders;
+        _startDate = startDate;
+        _endDate = endDate;
+    }
 
-        public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-        public static readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-        public static readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-        public static readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-        public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-        public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-
-        public WholesaleOrderPickupRecap(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    public void Compose(IDocumentContainer container)
+    {
+        container.Page(page =>
         {
-            _companyInfo = companyInfo;
-            _orders = orders;
-            _startDate = startDate;
-            _endDate = endDate;
-        }
+            page.Margin(20);
+            page.Size(PageSizes.Letter);
 
-        public void Compose(IDocumentContainer container)
+            page.Header().Height(100).Background(Colors.Grey.Lighten1);
+            page.Header().Element(ComposeHeader);
+
+            page.Content().Background(Colors.Grey.Lighten3);
+            page.Content().Element(ComposeContent);
+
+            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
+            page.Footer().Element(ComposeFooter);
+
+        });
+    }
+
+    private void ComposeHeader(IContainer container)
+    {
+        container.Row(row =>
         {
-            container.Page(page =>
+            row.RelativeItem(2).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Wholesale Order Pickup Recap").Style(titleStyle);
+            row.RelativeItem(1).AlignRight().Column( column =>
             {
-                page.Margin(20);
-                page.Size(PageSizes.Letter);
-
-                page.Header().Height(100).Background(Colors.Grey.Lighten1);
-                page.Header().Element(ComposeHeader);
-
-                page.Content().Background(Colors.Grey.Lighten3);
-                page.Content().Element(ComposeContent);
-
-                page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-                page.Footer().Element(ComposeFooter);
-
+                column.Item().Text($"From: {_startDate:M/d/yy}").Style(subTitleStyle);
+                column.Item().Text($"To: {_endDate:M/d/yy}").Style(subTitleStyle);
             });
-        }
+        });
+    }
 
-        private void ComposeHeader(IContainer container)
-        {
-            container.Row(row =>
+    private void ComposeContent(IContainer container)
+    {
+        container.Column(column => {
+            //Items
+            column.Item().Table(table =>
             {
-                row.RelativeItem(2).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Wholesale Order Pickup Recap").Style(titleStyle);
-                row.RelativeItem(1).AlignRight().Column( column =>
+                table.ColumnsDefinition(column =>
                 {
-                    column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);
-                    column.Item().Text($"To: {_endDate.ToString("M/d/yy")}").Style(subTitleStyle);
+                    column.RelativeColumn(8);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(4);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
+
                 });
-            });
-        }
 
-        private void ComposeContent(IContainer container)
-        {
-            container.Column(column => {
-                //Items
-                column.Item().Table(table =>
+                table.Header(header =>
                 {
-                    table.ColumnsDefinition(column =>
+                    header.Cell().Element(CellStyle).AlignLeft().Text("Customer Name").Style(tableHeaderStyle);
+
+                    header.Cell().Element(CellStyle).AlignCenter().Text("Customer ID").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).AlignCenter().Text("Phone").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).AlignCenter().Text("Order ID").Style(tableHeaderStyle);
+
+                    header.Cell().Element(CellStyle).AlignCenter().Text("Pickup Date").Style(tableHeaderStyle);
+
+                    header.Cell().Element(CellStyle).AlignCenter().Text("Pickup Time").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).AlignCenter().Text("Cases Ordered").Style(tableHeaderStyle);
+
+
+                    static IContainer CellStyle(IContainer container)
                     {
-                        column.RelativeColumn(8);
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-                        column.RelativeColumn(2);
-
-                    });
-
-                    table.Header(header =>
-                    {
-                        header.Cell().Element(CellStyle).Text("Customer Name").Style(tableHeaderStyle);
-
-                        header.Cell().Element(CellStyle).Text("Customer ID").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Phone").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Order ID").Style(tableHeaderStyle);
-
-                        header.Cell().Element(CellStyle).Text("Pickup Date").Style(tableHeaderStyle);
-
-                        header.Cell().Element(CellStyle).Text("Pickup Time").Style(tableHeaderStyle);
-                        header.Cell().Element(CellStyle).Text("Cases Ordered").Style(tableHeaderStyle);
-
-
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
-                        }
-                    });
-
-                    foreach (var order in _orders)
-                    {
-                        table.Cell().Element(CellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.Customer.CustID}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.Customer.PhoneString()}").Style(tableTextStyle);
-
-                        table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
-
-                        table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yyyy")}").Style(tableTextStyle);
-                        if(order.Shipping == Models.Enums.ShippingType.Delivery)
-                        {
-                            table.Cell().Element(CellStyle).Text($"Delivery").Style(tableTextStyle).Italic();
-                        }
-                        else
-                        {
-                            table.Cell().Element(CellStyle).Text($"{order.PickupTime.ToString("t")}").Style(tableTextStyle);
-                        }
-                        table.Cell().Element(CellStyle).Text($"{order.GetTotalGiven()}").Style(tableTextStyle);
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
-                        }
+                        return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
                     }
                 });
-            });
-        }
 
-        private void ComposeFooter(IContainer container)
-        {
-            container.AlignBottom().Column(column =>
-            {
-                column.Item().AlignBottom().AlignRight().Row(footer =>
+                foreach (var order in _orders)
                 {
-                    footer.RelativeItem().AlignLeft().Text(time =>
-                    {
-                        time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                        time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
-                    });
+                    table.Cell().Element(CellStyle).AlignLeft().Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).AlignCenter().Text($"{order.Customer.CustID}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).AlignCenter().Text($"{order.Customer.PhoneString()}").Style(tableTextStyle);
 
-                    footer.RelativeItem().AlignRight().Text(page =>
+                    table.Cell().Element(CellStyle).AlignCenter().Text($"{order.OrderID}").Style(tableTextStyle);
+
+                    table.Cell().Element(CellStyle).AlignCenter().Text($"{order.PickupDate:M/d/yyyy}").Style(tableTextStyle);
+                    if(order.Shipping == Models.Enums.ShippingType.Delivery)
                     {
-                        page.Span("pg. ").Style(smallFooterStyle);
-                        page.CurrentPageNumber().Style(smallFooterStyle);
-                        page.Span(" of ").Style(smallFooterStyle);
-                        page.TotalPages().Style(smallFooterStyle);
-                    });
+                        table.Cell().Element(CellStyle).AlignCenter().Text($"Delivery").Style(tableTextStyle).Italic();
+                    }
+                    else
+                    {
+                        table.Cell().Element(CellStyle).AlignCenter().Text($"{order.PickupTime:t}").Style(tableTextStyle);
+                    }
+                    table.Cell().Element(CellStyle).AlignCenter().Text($"{order.GetTotalGiven()}").Style(tableTextStyle);
+                    static IContainer CellStyle(IContainer container)
+                    {
+                        return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
+                    }
+                }
+
+                table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle).Text($"Total:").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_orders.Sum(order => order.GetTotalGiven())}").Style(tableHeaderStyle);
+                static IContainer FooterCellStyle(IContainer container)
+                {
+                    return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
+                }
+            });
+        });
+    }
+
+    private void ComposeFooter(IContainer container)
+    {
+        container.AlignBottom().Column(column =>
+        {
+            column.Item().AlignBottom().AlignRight().Row(footer =>
+            {
+                footer.RelativeItem().AlignLeft().Text(time =>
+                {
+                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
+                    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
                 });
 
+                footer.RelativeItem().AlignRight().Text(page =>
+                {
+                    page.Span("pg. ").Style(smallFooterStyle);
+                    page.CurrentPageNumber().Style(smallFooterStyle);
+                    page.Span(" of ").Style(smallFooterStyle);
+                    page.TotalPages().Style(smallFooterStyle);
+                });
             });
 
-        }
+        });
+
     }
 }

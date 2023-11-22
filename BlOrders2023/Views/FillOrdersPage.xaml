@@ -33,7 +33,7 @@
                             <TextBlock Text="{x:Bind PickWeight}" Padding="0,0,5,0" VerticalAlignment="Center"/>
                             <TextBlock Text="lbs." VerticalAlignment="Center"/>
                         </StackPanel>
-                        
+
                     </StackPanel>
                 </Expander.Header>
                 <Expander.Content>
@@ -44,7 +44,6 @@
                 </Expander.Content>
             </Expander>
         </DataTemplate>
-
     </Page.Resources>
 
 
@@ -352,7 +351,7 @@
                                    ColumnWidthMode="AutoWithLastColumnFill"
                                    CurrentCellEndEdit="OrderedItems_CurrentCellEndEdit"
                                    CopyGridCellContent="OrderedItems_CopyGridCellContent">
-                        
+
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="SizeToCells"/>
