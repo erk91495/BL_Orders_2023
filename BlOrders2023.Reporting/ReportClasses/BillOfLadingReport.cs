@@ -173,9 +173,11 @@ public class BillOfLadingReport : IReport
                 poRow.RelativeItem().Text($"Appointment Time: {_appointmentTime}").Style(subTitleStyle);
             });
 
-            mainCol.Item().PaddingTop(12).Row(poRow => 
+            mainCol.Item().PaddingTop(2).Row(poRow => 
             {
-                poRow.RelativeItem().AlignRight().Text($"PO(s): {string.Join(",", _orders.Where(o => !o.PO_Number.IsNullOrEmpty()).Select(o => o.PO_Number))}").Style(subTitleStyle);
+                poRow.RelativeItem(10);
+                poRow.RelativeItem(1);
+                poRow.RelativeItem(10).AlignLeft().Text($"PO(s): {string.Join(",", _orders.Where(o => !o.PO_Number.IsNullOrEmpty()).Select(o => o.PO_Number))}").Style(subTitleStyle).FontSize(15);
             });
 
             mainCol.Item().Table(table =>
@@ -196,9 +198,8 @@ public class BillOfLadingReport : IReport
                     
 
                     header.Cell().Element(CellStyle).Text("# Of Pallets").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).Text("# Of Cases").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Vendor Product Code").Style(tableHeaderStyle);
-
+                    header.Cell().Element(CellStyle).Text("# Of Cases").Style(tableHeaderStyle);
                     header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
 
                     header.Cell().Element(CellStyle).Text("Gross Wt. (lbs)").Style(tableHeaderStyle);
@@ -217,8 +218,8 @@ public class BillOfLadingReport : IReport
                     //they dont want to see zeros so hide them
                     var pallets = item.NumberOfPallets != 0 ? item.NumberOfPallets.ToString() : string.Empty;
                     table.Cell().Element(CellStyle).Text($"{pallets}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item.NumberOfCases}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.NumberOfCases}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
 
                     table.Cell().Element(CellStyle).Text($"{item.GrossWt:N2}").Style(tableTextStyle);
@@ -232,9 +233,8 @@ public class BillOfLadingReport : IReport
                 }
 
                 table.Cell().Element(FooterCellStyle).Text($"{_billOfLadingItems.Sum(i => i.NumberOfPallets)}").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_billOfLadingItems.Sum(i => i.NumberOfCases)}").Style(tableHeaderStyle);
-
                 table.Cell().Element(FooterCellStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_billOfLadingItems.Sum(i => i.NumberOfCases)}").Style(tableHeaderStyle);
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{_billOfLadingItems.Sum(i => i.GrossWt):N2}").Style(tableHeaderStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{_billOfLadingItems.Sum(i => i.NetWt):N2}").Style(tableHeaderStyle);
@@ -244,7 +244,7 @@ public class BillOfLadingReport : IReport
                     return container.BorderBottom(1).BorderTop(1).BorderColor(Black).PaddingVertical(2);
                 }
             });
-            mainCol.Item().PaddingTop(12).AlignCenter().AlignMiddle().Text($"KEEP REFRIGERATED AT AT 28-32° F").Style(subTitleStyle);
+            mainCol.Item().PaddingTop(12).AlignCenter().AlignMiddle().Text($"KEEP REFRIGERATED AT 28-32° F").Style(subTitleStyle);
 
             mainCol.Item().PaddingTop(12).Row(row =>
             {
@@ -273,7 +273,7 @@ public class BillOfLadingReport : IReport
 
                     });
 
-                    signCol.Item().PaddingTop(12).Text($"Cosignee (To): {_companyInfo.LongCompanyName.ToUpper()}").Bold();
+                    signCol.Item().PaddingTop(12).Text($"Cosignee (To): {_customer.CustomerName.ToUpper()}").Bold();
                     signCol.Item().Row(row =>
                     {
                         row.AutoItem().Text($"Received By: ");
