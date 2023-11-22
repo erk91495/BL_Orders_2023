@@ -122,13 +122,13 @@ public class BillOfLadingReport : IReport
                     shipperCol.Item().Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                     {
                         column.Item().Background(Grey.Lighten3).Border(1).PaddingLeft(3).Text("Shipper:");
-                        column.Item().PaddingLeft(3).Text($"{_companyInfo.LongCompanyName}").Style(subTitleStyle);
+                        column.Item().PaddingLeft(3).Text($"{_companyInfo.LongCompanyName.ToUpper()}").Style(subTitleStyle);
                         column.Item().Row(row =>
                         {
                             row.RelativeItem().PaddingLeft(3).Column(column =>
                             {
-                                column.Item().Text($"{_companyInfo.StreetAddress}").Style(normalTextStyle);
-                                column.Item().Text($"{_companyInfo.City}, {_companyInfo.State} {_companyInfo.ShortZipCode}").Style(normalTextStyle);
+                                column.Item().Text($"{_companyInfo.StreetAddress.ToUpper()}").Style(normalTextStyle);
+                                column.Item().Text($"{_companyInfo.City.ToUpper()}, {_companyInfo.State.ToUpper()} {_companyInfo.ShortZipCode}").Style(normalTextStyle);
                                 column.Item().Text($"{_companyInfo.PhoneString()}").Style(normalTextStyle);
 
                             });
@@ -265,7 +265,7 @@ public class BillOfLadingReport : IReport
 
                     });
                     
-                    signCol.Item().PaddingTop(12).Text($"Carrier: {_carrierName ?? string.Empty.ToUpper()}").Bold();
+                    signCol.Item().PaddingTop(12).Text($"Carrier: {_carrierName.ToUpper() ?? string.Empty}").Bold();
                     signCol.Item().Row(row =>
                     {
                         row.AutoItem().Text($"Received By: ");
