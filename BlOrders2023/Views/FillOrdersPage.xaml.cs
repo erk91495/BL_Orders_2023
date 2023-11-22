@@ -152,6 +152,7 @@ public sealed partial class FillOrdersPage : Page
             {
                 ViewModel.OrderStatus = OrderStatus.Filled;
             }
+            OrderedItems.ScrollInView(new (ViewModel.Items.Count(),0));
             await TrySaveOrderAsync();
         }
         catch (DuplicateBarcodeException e)
