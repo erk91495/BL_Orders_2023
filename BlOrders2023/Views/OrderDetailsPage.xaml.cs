@@ -490,7 +490,8 @@ public sealed partial class OrderDetailsPage : Page
                     {
                         var price = decimal.Parse(inputControl?.Value!);
                         ViewModel.AddItem(productToAdd, 1, price);
-                         
+                        OrderedItems.ScrollInView(new(ViewModel.Items.Count(), 0));
+
                     }
 
                 }
@@ -500,6 +501,7 @@ public sealed partial class OrderDetailsPage : Page
                     if (quantity != int.MaxValue)
                     {
                         ViewModel.AddItem(productToAdd, quantity);
+                        OrderedItems.ScrollInView(new(ViewModel.Items.Count(), 0));
                     }
                 }
             }
