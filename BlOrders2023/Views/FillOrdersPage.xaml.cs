@@ -19,7 +19,6 @@ using BlOrders2023.Core.Services;
 using Syncfusion.UI.Xaml.DataGrid;
 using Microsoft.UI.Xaml.Input;
 using NLog;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace BlOrders2023.Views;
 
@@ -28,7 +27,6 @@ public sealed partial class FillOrdersPage : Page
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private readonly ReportGenerator reportGenerator;
-    private Task SaveOrderTask = null;
     #endregion Fields
     public FillOrdersPageViewModel ViewModel
     {
@@ -227,7 +225,7 @@ public sealed partial class FillOrdersPage : Page
 
     }
 
-    private void LockOutKeyPresses(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+    private void LockOutKeyPresses(object sender, KeyRoutedEventArgs e)
     {
         e.Handled = true;
     }
