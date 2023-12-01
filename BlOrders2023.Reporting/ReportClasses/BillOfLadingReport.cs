@@ -263,15 +263,19 @@ public class BillOfLadingReport : IReport
                     {
                         row.AutoItem().Text($"Shipped By: ");
                         row.AutoItem().Text($"                                                                              ").Underline(true);
-
+                        row.ConstantItem(25);
+                        row.AutoItem().Text($"Date: ");
+                        row.AutoItem().Text($"                                                                              ").Underline(true);
                     });
                     
-                    signCol.Item().PaddingTop(12).Text($"Carrier: {_carrierName.ToUpper() ?? string.Empty}").Bold();
+                    signCol.Item().PaddingTop(12).Text($"Carrier: {(_carrierName ?? string.Empty).ToUpper()}").Bold();
                     signCol.Item().Row(row =>
                     {
                         row.AutoItem().Text($"Received By: ");
                         row.AutoItem().Text($"                                                                              ").Underline(true);
-
+                        row.ConstantItem(20);
+                        row.AutoItem().Text($"Date: ");
+                        row.AutoItem().Text($"                                                                              ").Underline(true);
                     });
 
                     signCol.Item().PaddingTop(12).Text($"Cosignee (To): {_customer.CustomerName.ToUpper()}").Bold();
@@ -279,7 +283,9 @@ public class BillOfLadingReport : IReport
                     {
                         row.AutoItem().Text($"Received By: ");
                         row.AutoItem().Text($"                                                                              ").Underline(true);
-
+                        row.ConstantItem(20);
+                        row.AutoItem().Text($"Date: ");
+                        row.AutoItem().Text($"                                                                              ").Underline(true);
                     });
                 });
             });
