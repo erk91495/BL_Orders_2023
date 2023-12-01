@@ -72,6 +72,8 @@ public class ShippingList : IReport
 
                 row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
                 {
+
+                    column.Item().Text($"{_order.Shipping} Date: {_order.PickupDate.ToShortDateString()}").SemiBold().Style(subTitleStyle);
                     //Invoice Number
                     column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().Style(subTitleStyle);
                     if (!_order.PO_Number.IsNullOrEmpty())
