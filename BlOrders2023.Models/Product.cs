@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -26,6 +27,8 @@ public class Product : ObservableObject
     private string? _ALUCode;
     private bool _inactive;
     private bool _isCredit;
+    private int? _boxID;
+    private Box? _box;
     #endregion Fields
 
     #region Properties
@@ -105,6 +108,21 @@ public class Product : ObservableObject
         set => SetProperty(ref _isCredit, value);
     }
 
+    
+    public int? BoxID
+    {
+        get => _boxID;
+        set => SetProperty(ref _boxID, value);
+    }
+
+    [ForeignKey(nameof(BoxID))]
+    [JsonIgnore]
+    public virtual Box? Box
+    {
+        get => _box;
+        set => SetProperty(ref _box, value);
+    }
+
     #endregion Properties
     public Product()
     {
@@ -123,6 +141,8 @@ public class Product : ObservableObject
         ALUCode = product.ALUCode;
         Inactive = product.Inactive;
         IsCredit = product.IsCredit;
+        BoxID = product.BoxID;
+        Box = product.Box;
     }
     public override string ToString()
     {
