@@ -376,14 +376,24 @@
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
         <StackPanel x:Name="InvoiceTotalStack" 
-                    RelativePanel.Above="NavigationButtonGrid" 
+                    RelativePanel.AlignBottomWithPanel="True"
                     RelativePanel.AlignRightWithPanel="True" 
-                    Orientation="Horizontal"
+                    Orientation="Vertical"
                     Spacing="10">
-            <TextBlock Text="Invoice Total: $" FontWeight="Bold" FontSize="{StaticResource MediumFontSize}"/>
-            <TextBlock Text="{x:Bind ViewModel.Order.GetInvoiceTotal(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+            <TextBlock>
+                <Run Text="Invoice Total: $" FontWeight="Bold" FontSize="{StaticResource MediumFontSize}"/>
+                <Run Text="{x:Bind ViewModel.Order.GetInvoiceTotal(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+            </TextBlock>
+            <TextBlock>
+                <Run Text="Payments:      $" FontWeight="Bold" FontSize="{StaticResource MediumFontSize}"/>
+                <Run Text="{x:Bind ViewModel.Order.GetTotalPayments(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+            </TextBlock>
+            <TextBlock>
+                <Run Text="Balace Due:    $" FontWeight="Bold" FontSize="{StaticResource MediumFontSize}"/>
+                <Run Text="{x:Bind ViewModel.Order.GetBalanceDue(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+            </TextBlock>
         </StackPanel>
-        <Grid x:Name="NavigationButtonGrid" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+        <Grid x:Name="NavigationButtonGrid" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.LeftOf="InvoiceTotalStack">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>

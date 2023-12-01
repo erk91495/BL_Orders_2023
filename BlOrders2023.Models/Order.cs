@@ -356,13 +356,13 @@ public class Order : ObservableObject, IConvertible
         }
         else
         {
-            return Payments.Sum(p => p.PaymentAmount ?? 0);
+            return Math.Round(Payments.Sum(p => p.PaymentAmount ?? 0), 2);
         }
     }
 
     public decimal GetBalanceDue()
     {
-        return GetInvoiceTotal() - GetTotalPayments();
+        return Math.Round(GetInvoiceTotal() - GetTotalPayments(), 2);
     }
 
     private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
