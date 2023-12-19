@@ -845,7 +845,7 @@ public sealed partial class OrderDetailsPage : Page
             if (doomed.QuantityReceived == 0)
             {
                 ViewModel.Items.Remove(doomed);
-                ViewModel.SaveCurrentOrder();
+                _ = ViewModel.SaveCurrentOrderAsync();
             }
             else
             {
