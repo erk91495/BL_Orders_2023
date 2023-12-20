@@ -38,7 +38,7 @@ public class Order : ObservableObject, IConvertible
     private OrderStatus _orderStatus;
     private ObservableCollection<OrderItem> _items;
     private List<ShippingItem> _shippingItems = new();
-    private List<Payment> _payments = new();
+    private ObservableCollection<Payment> _payments;
     private bool _palletTicketPrinted = false;
     #endregion Fields
 
@@ -186,10 +186,23 @@ public class Order : ObservableObject, IConvertible
         get => _shippingItems; 
         set => SetProperty(ref _shippingItems, value);
     }
-    public virtual List<Payment> Payments
+    public virtual ObservableCollection<Payment> Payments
     {
         get => _payments; 
-        set => SetProperty(ref _payments, value);
+        set 
+        {
+            if (_payments != null)
+            {
+                _payments.CollectionChanged -= Payments_CollectionChanged;
+            }
+
+
+            if (value != null)
+            {
+                value.CollectionChanged += Payments_CollectionChanged;
+            }
+            SetProperty(ref _payments, value);
+        }
     }
     //Todo should this be a helper class?
     public bool CanFillOrder => (OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled);
@@ -236,6 +249,7 @@ public class Order : ObservableObject, IConvertible
         _pickupTime = DateTime.Today.AddHours(12);
         OrderStatus = OrderStatus.Ordered;
         Items = new();
+        Payments = new();
         Allocated = false;
     }
 
@@ -249,51 +263,60 @@ public class Order : ObservableObject, IConvertible
 
 
     #region Methods
-    public decimal GetInvoiceTotal()
+    public decimal InvoiceTotal
     {
-        decimal total = 0;
-        if (!Items.IsNullOrEmpty())
+        get
         {
-            foreach(var item in Items)
+            decimal total = 0;
+            if (!Items.IsNullOrEmpty())
             {
-                total += item.GetTotalPrice;
+                foreach (var item in Items)
+                {
+                    total += item.GetTotalPrice;
+                }
             }
+            total += Memo_Totl ?? 0;
+            return decimal.Round(total, 2);
         }
-        total += Memo_Totl ?? 0;
-        return decimal.Round(total,2);
     }
 
     /// <summary>
     /// Gets the total number of items ordered
     /// </summary>
     /// <returns></returns>
-    public int GetTotalOrdered()
+    public int TotalOrdered
     {
+        get
+        {
             if (Items.IsNullOrEmpty())
             {
                 return 0;
             }
             else
             {
-                var total =  Items.Where(i => i.Product.IsCredit != true).Sum(item => (int)item.Quantity);
+                var total = Items.Where(i => i.Product.IsCredit != true).Sum(item => (int)item.Quantity);
                 return total;
             }
+        }
     }
 
     /// <summary>
     /// Gets the number of items allocated by the allocator
     /// </summary>
     /// <returns></returns>
-    public int GetTotalAllocated()
+    public int TotalAllocated
     {
-        if (Items.IsNullOrEmpty())
+        get
         {
-            return 0;
-        }
-        else
-        {
-        var total = Items.Where(i => i.Allocated == true).Sum(item => (int)(item.QuanAllocated));
-        return total;
+            if (Items.IsNullOrEmpty())
+            {
+                return 0;
+            }
+            else
+            {
+                var total = Items.Where(i => i.Allocated == true).Sum(item => (int)(item.QuanAllocated));
+                return total;
+            }
         }
     }
 
@@ -301,16 +324,19 @@ public class Order : ObservableObject, IConvertible
     /// Gets the total quantity ordered for all of the allocated items
     /// </summary>
     /// <returns></returns>
-    public int GetTotalOrderedAllocated()
+    public int TotalOrderedAllocated
     {
-        if (Items.IsNullOrEmpty())
+        get
         {
-            return 0;
-        }
-        else
-        {
-            var total = Items.Where(i => i.Allocated == true).Sum(item => (int)(item.Quantity));
-            return total;
+            if (Items.IsNullOrEmpty())
+            {
+                return 0;
+            }
+            else
+            {
+                var total = Items.Where(i => i.Allocated == true).Sum(item => (int)(item.Quantity));
+                return total;
+            }
         }
     }
 
@@ -318,16 +344,19 @@ public class Order : ObservableObject, IConvertible
     /// Gets the total number of items given (ordered or allocated)
     /// </summary>
     /// <returns></returns>
-    public int GetTotalGiven()
+    public int TotalGiven
     {
-        if (Items.IsNullOrEmpty())
+        get
         {
-            return 0;
-        }
-        else
-        {
-            var total = Items.Sum(item => item.Allocated != true ? (int)(item.Quantity) : item.QuanAllocated);
-            return total;
+            if (Items.IsNullOrEmpty())
+            {
+                return 0;
+            }
+            else
+            {
+                var total = Items.Sum(item => item.Allocated != true ? (int)(item.Quantity) : item.QuanAllocated);
+                return total;
+            }
         }
     }
 
@@ -335,35 +364,38 @@ public class Order : ObservableObject, IConvertible
     /// Gets the total number of items given (ordered or allocated)
     /// </summary>
     /// <returns></returns>
-    public int GetTotalReceived()
+    public int TotalReceived
     {
-        if (Items.IsNullOrEmpty())
+        get
         {
-            return 0;
-        }
-        else
-        {
-            var total = Items.Sum(item => item.QuantityReceived);
-            return total;
+            if (Items.IsNullOrEmpty())
+            {
+                return 0;
+            }
+            else
+            {
+                var total = Items.Sum(item => item.QuantityReceived);
+                return total;
+            }
         }
     }
 
-    public decimal GetTotalPayments()
+    public decimal TotalPayments
     {
-        if (Payments.IsNullOrEmpty())
+        get
         {
-            return 0;
-        }
-        else
-        {
-            return Payments.Sum(p => p.PaymentAmount ?? 0);
+            if (Payments.IsNullOrEmpty())
+            {
+                return 0;
+            }
+            else
+            {
+                return Payments.Sum(p => p.PaymentAmount ?? 0);
+            }
         }
     }
 
-    public decimal GetBalanceDue()
-    {
-        return GetInvoiceTotal() - GetTotalPayments();
-    }
+    public decimal BalanceDue => InvoiceTotal - TotalPayments;
 
     private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
@@ -382,15 +414,37 @@ public class Order : ObservableObject, IConvertible
             }
         }
 
-        OnPropertyChanged(nameof(GetTotalAllocated));
-        OnPropertyChanged(nameof(GetTotalOrdered));
-        OnPropertyChanged(nameof(GetTotalGiven));
+        OnPropertyChanged(nameof(TotalAllocated));
+        OnPropertyChanged(nameof(TotalOrdered));
+        OnPropertyChanged(nameof(TotalGiven));
+        OnPropertyChanged(nameof(InvoiceTotal));
+    }
+
+    private void Payments_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
+        {
+            //foreach (INotifyPropertyChanged added in e.NewItems)
+            //{
+            //    added.PropertyChanged += ShippingItemOnPropertyChanged;
+            //}
+        }
+        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove || e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
+        {
+            //foreach (INotifyPropertyChanged removed in e.OldItems)
+            //{
+            //    removed.PropertyChanged -= ShippingItemOnPropertyChanged;
+            //}
+        }
+
+        OnPropertyChanged(nameof(BalanceDue));
+        OnPropertyChanged(nameof(TotalPayments));
     }
 
     private void ShippingItemOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        OnPropertyChanged(nameof(GetTotalAllocated));
-        OnPropertyChanged(nameof(GetTotalOrdered));
+        OnPropertyChanged(nameof(TotalAllocated));
+        OnPropertyChanged(nameof(TotalOrdered));
     }
 
     public override string? ToString()

@@ -119,7 +119,7 @@ public class WholesaleOrderPickupRecap : IReport
                     {
                         table.Cell().Element(CellStyle).AlignCenter().Text($"{order.PickupTime:t}").Style(tableTextStyle);
                     }
-                    table.Cell().Element(CellStyle).AlignCenter().Text($"{order.GetTotalGiven()}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).AlignCenter().Text($"{order.TotalGiven}").Style(tableTextStyle);
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
@@ -132,7 +132,7 @@ public class WholesaleOrderPickupRecap : IReport
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"Total:").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_orders.Sum(order => order.GetTotalGiven())}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{_orders.Sum(order => order.TotalGiven)}").Style(tableHeaderStyle);
                 static IContainer FooterCellStyle(IContainer container)
                 {
                     return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);

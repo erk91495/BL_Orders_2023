@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using BlOrders2023.Models;
 using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -47,6 +48,7 @@ public sealed partial class PaymentsPage : Page
         await ViewModel.QueryCustomers();
         await ViewModel.QueryPaymentMethods();
         await ViewModel.QueryUnpaidInvoices();
+        await DispatcherQueue.EnqueueAsync(() => PaymentsGrid.View.Refresh());
     }
 
     private async void NewPaymentButton_Click(object sender, RoutedEventArgs e)
@@ -83,7 +85,7 @@ public sealed partial class PaymentsPage : Page
     }
     private async Task SaveOrder(Order order)
     {
-        if (order.GetTotalPayments() >= order.GetInvoiceTotal())
+        if (order.TotalPayments >= order.InvoiceTotal)
         {
             order.OrderStatus = Models.Enums.OrderStatus.Complete;
             order.Paid = true;

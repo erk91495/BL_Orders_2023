@@ -27,6 +27,7 @@ internal class SqlPaymentsTable : IPaymentsTable
             result = await _db.Payments.Where(p => p.PaymentID.ToString().Contains(query) || p.Customer.CustomerName.Contains(query) )
                                     .Include(p => p.PaymentMethod)
                                     .Include(p => p.Customer)
+                                    .Include(p => p.Order)
                                     .OrderByDescending(p => p.PaymentID)
                                     .ToListAsync();
         }
@@ -38,6 +39,7 @@ internal class SqlPaymentsTable : IPaymentsTable
         {
             await _db.Entry(item).Reference(p => p.Customer).LoadAsync();
             await _db.Entry(item).Reference(p => p.PaymentMethod).LoadAsync();
+            //await _db.Entry(item).Reference(o => o.Order).LoadAsync();
         }
         return result;
 

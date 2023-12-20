@@ -381,7 +381,7 @@
                     Orientation="Horizontal"
                     Spacing="10">
             <TextBlock Text="Invoice Total: $" FontWeight="Bold" FontSize="{StaticResource MediumFontSize}"/>
-            <TextBlock Text="{x:Bind ViewModel.Order.GetInvoiceTotal(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+            <TextBlock Text="{x:Bind ViewModel.Order.InvoiceTotal, Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
         </StackPanel>
         <Grid x:Name="NavigationButtonGrid" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <Grid.ColumnDefinitions>

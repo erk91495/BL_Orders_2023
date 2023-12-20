@@ -280,11 +280,11 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
             //If its a new payment the value hasn't been applied to the balance due yet
             if(_payment != null && _payment.PaymentID != 0)
             {
-                return string.Format($"{SelectedOrder.GetBalanceDue():C}");
+                return string.Format($"{SelectedOrder.BalanceDue:C}");
             }
             else
             {
-                return string.Format($"{SelectedOrder.GetBalanceDue() - (decimal)(PaymentAmount ?? 0):C}");
+                return string.Format($"{SelectedOrder.BalanceDue - (decimal)(PaymentAmount ?? 0):C}");
             }
         }
         else

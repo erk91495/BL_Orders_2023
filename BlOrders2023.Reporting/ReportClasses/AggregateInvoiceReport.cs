@@ -108,8 +108,8 @@ public class AggregateInvoiceReport : IReport
                     foreach(Order order in _orders)
                     {
                         invoicesTable.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
-                        invoicesTable.Cell().Element(CellStyle).Text($"{order.GetInvoiceTotal():C}").Style(tableTextStyle);
-                        invoicesTable.Cell().Element(CellStyle).Text($"{order.GetBalanceDue():C}").Style(tableTextStyle);
+                        invoicesTable.Cell().Element(CellStyle).Text($"{order.InvoiceTotal:C}").Style(tableTextStyle);
+                        invoicesTable.Cell().Element(CellStyle).Text($"{order.BalanceDue:C}").Style(tableTextStyle);
                         invoicesTable.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yy")}").Style(tableTextStyle);
 
                         static IContainer CellStyle(IContainer container)
@@ -119,8 +119,8 @@ public class AggregateInvoiceReport : IReport
                     }
 
                     invoicesTable.Cell().Element(FooterCellStyle).Text("Total").Style(tableHeaderStyle);
-                    invoicesTable.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
-                    invoicesTable.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetBalanceDue()):C}").Style(tableHeaderStyle);
+                    invoicesTable.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.InvoiceTotal):C}").Style(tableHeaderStyle);
+                    invoicesTable.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.BalanceDue):C}").Style(tableHeaderStyle);
                     invoicesTable.Cell().Element(FooterCellStyle).Text("").Style(tableHeaderStyle);
 
                     static IContainer FooterCellStyle(IContainer container)
@@ -218,7 +218,7 @@ public class AggregateInvoiceReport : IReport
                 table.Cell();
                 table.Cell().Element(FooterCellStyle).Text($"{aggregateItems.Sum(i => i.PickWeight):N2}").Style(tableHeaderStyle);
                 table.Cell();
-                table.Cell().Element(FooterCellStyle).AlignRight().Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).AlignRight().Text($"{_orders.Sum(o => o.InvoiceTotal):C}").Style(tableHeaderStyle);
 
                 static IContainer FooterCellStyle(IContainer container)
                 {

@@ -116,7 +116,7 @@ public class OutOfStateSalesReport : IReport
                         table.Cell().Element(CellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{order.Customer.BillingAddress}{order.Customer.BillingCityStateZip()}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToShortDateString()}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.GetInvoiceTotal():N2}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.InvoiceTotal:N2}").Style(tableTextStyle);
                         static IContainer CellStyle(IContainer container)
                         {
                             return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
@@ -126,7 +126,7 @@ public class OutOfStateSalesReport : IReport
                     table.Cell().Element(SubHeaderCellStyle);
                     table.Cell().Element(SubHeaderCellStyle);
                     table.Cell().Element(SubHeaderCellStyle).AlignTop().Text($"Total:").Style(tableTextStyle).SemiBold();
-                    table.Cell().Element(SubHeaderCellStyle).AlignTop().Text($"{group.ToList().Sum(o => o.GetInvoiceTotal()):N2}").Style(tableTextStyle).SemiBold();
+                    table.Cell().Element(SubHeaderCellStyle).AlignTop().Text($"{group.ToList().Sum(o => o.InvoiceTotal):N2}").Style(tableTextStyle).SemiBold();
                     static IContainer SubHeaderCellStyle(IContainer container)
                     {
                         return container.PaddingVertical(4);
@@ -138,7 +138,7 @@ public class OutOfStateSalesReport : IReport
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"Report Total: ").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.InvoiceTotal):C}").Style(tableHeaderStyle);
 
                 static IContainer FooterCellStyle(IContainer container)
                 {
