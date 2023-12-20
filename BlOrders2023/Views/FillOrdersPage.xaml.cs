@@ -40,6 +40,15 @@ public sealed partial class FillOrdersPage : Page
         reportGenerator = new(App.CompanyInfo);
         OrderedItems.SelectionController = new FillOrdersGridSelectionController(OrderedItems);
         Loaded += FillOrdersPage_Loaded;
+        OrderedItems.QueryUnboundColumnValue += OrderedItems_QueryUnboundColumnValue;
+    }
+
+    private void OrderedItems_QueryUnboundColumnValue(object? sender, GridUnboundColumnEventsArgs e)
+    {
+        if (e.UnBoundAction == UnboundActions.QueryData && e.Column.MappingName == "Index" && e.Record is ShippingItem currentItem)
+        {
+            e.Value = ViewModel.Items.IndexOf(currentItem) + 1;
+        }
     }
 
     private void FillOrdersPage_Loaded(object sender, RoutedEventArgs e)
