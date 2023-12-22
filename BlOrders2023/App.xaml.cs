@@ -130,6 +130,7 @@ public partial class App : Application
             services.AddTransient<InventoryPageViewModel>();
             services.AddTransient<PaymentsPage>();
             services.AddTransient<PaymentsPageViewModel>();
+            services.AddTransient<ProductDataInputDialogViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

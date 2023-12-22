@@ -59,19 +59,18 @@
 
             <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
                 <TextBlock Text="Customer Name: " />
-                <TextBox Header="Product ID" x:Name="ProductName" Text="{x:Bind Product.ProductID, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
-                <TextBlock Text="{x:Bind GetErrorMessage('ProductID'), Mode=OneWay}" 
-                               
+                <TextBox Header="Product ID" Text="{x:Bind ViewModel.ProductID, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
+                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('ProductID'), Mode=OneWay}" 
+                               Visibility="{x:Bind ViewModel.VisibleIfError('ProductID'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
-                <!--Visibility="{x:Bind .VisibleIfError('ProductID'), Mode=OneWay}"-->
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0">
-                <TextBox Header="Product Name" Text="{x:Bind Product.ProductName, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
-                <TextBlock Text="{x:Bind GetErrorMessage('ProductName'), Mode=OneWay}" 
-                               
+                <TextBox Header="Product Name" Text="{x:Bind ViewModel.ProductName, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
+                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('ProductName'), Mode=OneWay}" 
+                                               Visibility="{x:Bind ViewModel.VisibleIfError('ProductName'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
-                <!--Visibility="{x:Bind .VisibleIfError('ProductID'), Mode=OneWay}"-->
+
             </StackPanel>
         </Grid>
     </StackPanel>

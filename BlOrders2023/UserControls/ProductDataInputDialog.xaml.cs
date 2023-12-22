@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,6 +10,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using BlOrders2023.Models;
+using BlOrders2023.UserControls.ViewModels;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -24,12 +27,12 @@ using Windows.Foundation.Collections;
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace BlOrders2023.UserControls;
-public sealed partial class ProductDataInputDialog : ContentDialog, INotifyPropertyChanged
+public sealed partial class ProductDataInputDialog : ContentDialog
 {
 
     #region Fields
     private Product _product;
-    private Dictionary<string,string> _errors;
+    public ProductDataInputDialogViewModel ViewModel { get; }
     #endregion Fields
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -46,13 +49,14 @@ public sealed partial class ProductDataInputDialog : ContentDialog, INotifyPrope
         }
     }
 
-    public bool HasErrors => !_errors.IsNullOrEmpty();
     #endregion Properties
     public ProductDataInputDialog(Product prod)
     {
         this.InitializeComponent();
-        _errors = new();
         Product = prod;
+        ViewModel = App.GetService<ProductDataInputDialogViewModel>();
+        ViewModel.Product = Product;
+
     }
 
     /// <summary>
@@ -62,18 +66,5 @@ public sealed partial class ProductDataInputDialog : ContentDialog, INotifyPrope
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    public IEnumerable<ValidationResult> GetErrors()
-    {
-        Collection<ValidationResult> result = new();
-        ValidationContext context = new(Product);
-        var res = Validator.TryValidateObject(Product, context, result, true);
-        return result;
-    }
-
-    public string GetErrorMessage(string? propertyName)
-    {
-        return GetErrors().ToString();
     }
 }
