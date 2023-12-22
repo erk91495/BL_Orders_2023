@@ -116,6 +116,9 @@
 	<None Update="nlog.config">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="UserControls\ProductDataInputDialog.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="UserControls\CustomerOrderSelectionDialog.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -175,6 +178,7 @@
     <None Remove="UserControls\BillOfLadingDataInputDialog.xaml" />
     <None Remove="UserControls\CustomerOrderSelectionDialog.xaml" />
     <None Remove="UserControls\PaymentDataInputControl.xaml" />
+    <None Remove="UserControls\ProductDataInputDialog.xaml" />
     <None Remove="UserControls\SqlConnectionSettingsPanel.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
     <None Remove="Views\InventoryPage.xaml" />

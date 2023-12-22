@@ -58,5 +58,6 @@ public class Box : ObservableObject
     #endregion Constructors
 
     #region Methods
+    public override string ToString() => BoxName;
     #endregion Methods
 }

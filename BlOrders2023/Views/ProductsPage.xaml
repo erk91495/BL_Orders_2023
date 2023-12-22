@@ -19,6 +19,12 @@
     <Page.Resources>
         <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
         <vm:NullBoolConverter x:Key="NullBoolConverter"/>
+        <MenuFlyout x:Key="DataGridContextMenu">
+            <MenuFlyoutItem
+                Click="MenuFlyoutItem_Click"
+                Icon="Edit"
+                Text="Edit"/>
+        </MenuFlyout>
     </Page.Resources>
     <RelativePanel>
         <muxc:ProgressBar
@@ -52,8 +58,11 @@
                        AddNewRowPosition="Top"
                        DataValidationMode="InView"
                        AddNewRowInitiating="ProductsGrid_AddNewRowInitiating"
+                       CurrentCellValidating="ProductsGrid_CurrentCellValidating"
                        CurrentCellValidated="ProductsGrid_CurrentCellValidated"
-                       CopyGridCellContent="ProductsGrid_CopyGridCellContent">
+                       CopyGridCellContent="ProductsGrid_CopyGridCellContent"
+                       ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                       ContextFlyout="{StaticResource DataGridContextMenu}">
             
             <sf:SfDataGrid.Columns>
                 <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" IsReadOnly="True"/>
@@ -78,6 +87,8 @@
                  <!--If you are adding a checkbox dont forget to add it to the property changed list in the view model-->                
                 <sf:GridCheckBoxColumn MappingName="Inactive" AllowEditing="True"/>
                 <sf:GridCheckBoxColumn MappingName="IsCredit" AllowEditing="True"/>
+                <sf:GridNumericColumn MappingName="PalletHeight" AllowEditing="True"/>
+                <sf:GridComboBoxColumn MappingName="Box" ItemsSource="{x:Bind ViewModel.Boxes, Mode=OneWay}"/>
 
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>

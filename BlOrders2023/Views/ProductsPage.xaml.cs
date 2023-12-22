@@ -26,6 +26,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.ObjectModel;
 using BlOrders2023.Helpers;
+using BlOrders2023.UserControls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -65,7 +66,7 @@ public sealed partial class ProductsPage : Page
 
     private void ProductsGrid_AddNewRowInitiating(object sender, AddNewRowInitiatingEventArgs e)
     {
-
+        
     }
 
     private void ProductsGrid_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
@@ -77,11 +78,19 @@ public sealed partial class ProductsPage : Page
             {
                 case "ProductID":
                     {
-                        Task<bool> dupCheck = Task.Run<bool>(async () => await ProductsPageViewModel.ProductIDExists(prod.ProductID));
-                        if (dupCheck.Result)
+                        if(prod.ProductID != 0)
                         {
-                            e.IsValid = false;
-                            e.ErrorMessage = "Product ID must be unique";
+                            Task<bool> dupCheck = Task.Run<bool>(async () => await ProductsPageViewModel.ProductIDExists(prod.ProductID));
+                            if (dupCheck.Result)
+                            {
+                                e.IsValid = false;
+                                e.ErrorMessage = "Product ID must be unique";
+                            }
+                        }
+                        else
+                        {
+                            e.IsValid=false;
+                            e.ErrorMessage = "Product ID cannot be 0";
                         }
                         break;
                     }
@@ -108,7 +117,7 @@ public sealed partial class ProductsPage : Page
         {
             Collection<ValidationResult> result = new();
             ValidationContext context = new(p);
-            if(Validator.TryValidateObject(p, context, result,true))
+            if (!Validator.TryValidateObject(p, context, result, true))
             {
                 ViewModel.SaveItem(p);
             }
@@ -120,4 +129,13 @@ public sealed partial class ProductsPage : Page
         DatagridCellCopy.CopyGridCellContent(sender, e);
     }
     #endregion Methods
+
+    private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        var ProductDialog = new ProductDataInputDialog(new(){ProductID = 612})
+        {
+            XamlRoot = XamlRoot
+        };
+        _ = ProductDialog.ShowAsync();
+    }
 }

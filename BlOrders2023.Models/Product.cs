@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BlOrders2023.Models;
@@ -29,11 +23,12 @@ public class Product : ObservableObject
     private bool _isCredit;
     private int? _boxID;
     private Box? _box;
+    private int? _palletHeight;
     #endregion Fields
 
     #region Properties
     [Key]
-    [Required]
+    [Range(1, int.MaxValue)]
     public int ProductID
     {
         get => _productID; 
@@ -120,7 +115,24 @@ public class Product : ObservableObject
     public virtual Box? Box
     {
         get => _box;
-        set => SetProperty(ref _box, value);
+        set 
+        {
+            SetProperty(ref _box, value);
+            if(value != null)
+            {
+                BoxID = value.ID;
+            }
+            else
+            {
+                BoxID = null;
+            }
+            
+        }
+    }
+    public int? PalletHeight
+    {
+        get => _palletHeight;
+        set => SetProperty( ref _palletHeight, value);
     }
 
     #endregion Properties
