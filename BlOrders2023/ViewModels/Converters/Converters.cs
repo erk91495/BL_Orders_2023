@@ -27,6 +27,7 @@ using Microsoft.Identity.Client;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlOrders2023.ViewModels.Converters
@@ -378,6 +379,21 @@ namespace BlOrders2023.ViewModels.Converters
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             return value.ToString().Equals("Allocated");
+        }
+    }
+
+    public class NullIntToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return value == null ? (string)null : value.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            int temp;
+            if (string.IsNullOrEmpty((string)value) || !int.TryParse((string)value, out temp)) return null;
+            else return temp;
         }
     }
 }

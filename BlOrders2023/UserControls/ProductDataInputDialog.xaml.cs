@@ -31,32 +31,19 @@ public sealed partial class ProductDataInputDialog : ContentDialog
 {
 
     #region Fields
-    private Product _product;
     public ProductDataInputDialogViewModel ViewModel { get; }
     #endregion Fields
 
     public event PropertyChangedEventHandler? PropertyChanged;
-    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
     #region Properties
-    public Product Product
-    {
-        get => _product;
-        set
-        {
-            _product = value;
-            OnPropertyChanged(nameof(Product));
-        }
-    }
 
     #endregion Properties
     public ProductDataInputDialog(Product prod)
     {
         this.InitializeComponent();
-        Product = prod;
         ViewModel = App.GetService<ProductDataInputDialogViewModel>();
-        ViewModel.Product = Product;
-
+        ViewModel.Product = prod;
     }
 
     /// <summary>

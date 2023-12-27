@@ -11,7 +11,7 @@ public class Product : ObservableObject
     #region Fields
     private int _productID;
     private string? _productName;
-    private short? _noPerCase;
+    //private short? _noPerCase;
     private decimal _wholesalePrice;
     private decimal _kettteringPrice;
     private string? _UPCCode;
@@ -41,11 +41,13 @@ public class Product : ObservableObject
         get => _productName; 
         set => SetProperty(ref _productName, value);
     }
-    public short? NoPerCase
-    {
-        get => _noPerCase; 
-        set => SetProperty(ref _noPerCase, value);
-    }
+
+    //public short? NoPerCase
+    //{
+    //    get => _noPerCase; 
+    //    set => SetProperty(ref _noPerCase, value);
+    //}
+
     [Column("Price_(Wholesale)")]
     public decimal WholesalePrice
     {
@@ -143,7 +145,7 @@ public class Product : ObservableObject
     {
         ProductID = product.ProductID;
         ProductName = product.ProductName;
-        NoPerCase = product.NoPerCase;
+        //NoPerCase = product.NoPerCase;
         WholesalePrice = product.WholesalePrice;
         KetteringPrice = product.KetteringPrice;
         UPCCode = product.UPCCode;

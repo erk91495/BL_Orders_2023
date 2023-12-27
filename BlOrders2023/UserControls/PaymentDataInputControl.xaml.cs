@@ -39,7 +39,6 @@ public sealed partial class PaymentDataInputControl : ContentDialog, INotifyProp
 
     #region Properties
     public event PropertyChangedEventHandler? PropertyChanged;
-    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
     public IEnumerable<WholesaleCustomer>? Customers { get; set; }
     public DateTimeOffset PaymentDate { get; set; }

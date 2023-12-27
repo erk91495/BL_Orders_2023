@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using BlOrders2023.Models;
-using Castle.Core.Resource;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using CommunityToolkit.WinUI;
+using System.Collections.ObjectModel;
 
 namespace BlOrders2023.UserControls.ViewModels;
 public class ProductDataInputDialogViewModel: ObservableValidator
 {
     #region Fields
     private Product _product;
+    private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     #endregion Fields
 
     #region Properties
@@ -43,21 +42,24 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         OnPropertyChanged(nameof(IsCredit));
         OnPropertyChanged(nameof(BoxID));
         OnPropertyChanged(nameof(Box));
-        OnPropertyChanged(nameof(BoxID));
         OnPropertyChanged(nameof(PalletHeight));
     }
 
-    public int ProductID
+    [Required]
+    [Range(1,int.MaxValue)]
+    public int? ProductID
     {
-        get => _product.ProductID;
+        get => _product.ProductID != 0 ? _product.ProductID : null;
         set
         {
-            _product.ProductID = value;
-            ValidateProperty(_product.ProductID, nameof(ProductID));
+            _product.ProductID = value ?? 0;
+            ValidateProperty(value, nameof(ProductID));
             OnPropertyChanged();
         }
     }
 
+    [Required]
+    [MinLength(1)]
     public string? ProductName
     {
         get => _product.ProductName;
@@ -69,6 +71,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         }
     }
 
+    [Required]
     public decimal WholesalePrice
     {
         get => _product.WholesalePrice;
@@ -191,9 +194,35 @@ public class ProductDataInputDialogViewModel: ObservableValidator
             OnPropertyChanged();
         }
     }
+
+    public ObservableCollection<Box> Boxes = new();
+
     #endregion Properties
 
+    #region Constructors
+    public ProductDataInputDialogViewModel()
+    {
+        ErrorsChanged += HasErrorsChanged;
+        _ = GetBoxesAsync();
+    }
+    #endregion Constructors
+
     #region Methods
+
+    public async Task GetBoxesAsync()
+    {
+        var db = App.GetNewDatabase();
+        var classes = await Task.Run(() => db.Boxes.GetAsync(asNoTracking: true));
+        await dispatcherQueue.EnqueueAsync(() =>
+        {
+            foreach (var custClass in classes)
+            {
+                Boxes.Add(custClass);
+            }
+            OnPropertyChanged(nameof(Box));
+        });
+    }
+
     private void HasErrorsChanged(object? sender, System.ComponentModel.DataErrorsChangedEventArgs e)
     {
         OnPropertyChanged(nameof(GetErrorMessage));
