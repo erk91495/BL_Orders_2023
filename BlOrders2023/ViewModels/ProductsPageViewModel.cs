@@ -51,11 +51,13 @@ public class ProductsPageViewModel : ObservableRecipient
         }
     }
 
-    public ObservableCollection<Box> Boxes
-    {
-        get => _boxes;
-        set => SetProperty(ref _boxes, value);
-    }
+    public Product? SelectedProduct { get; set; }
+
+    //public ObservableCollection<Box> Boxes
+    //{
+    //    get => _boxes;
+    //    set => SetProperty(ref _boxes, value);
+    //}
     #endregion Properties
 
     #region Fields
@@ -71,7 +73,7 @@ public class ProductsPageViewModel : ObservableRecipient
     {
         _products = new();
         _ = QueryProducts();
-        _ = QueryBoxes();
+        //_ = QueryBoxes();
     }
     #endregion Constructors
 
@@ -116,45 +118,45 @@ public class ProductsPageViewModel : ObservableRecipient
         }
     }
 
-    public async Task QueryBoxes(string? query = null)
-    {
-        if (!string.IsNullOrWhiteSpace(query))
-        {
-            await dispatcherQueue.EnqueueAsync(() =>
-            {
-                IsLoading = true;
-                Products.Clear();
-            });
+    //public async Task QueryBoxes(string? query = null)
+    //{
+    //    if (!string.IsNullOrWhiteSpace(query))
+    //    {
+    //        await dispatcherQueue.EnqueueAsync(() =>
+    //        {
+    //            IsLoading = true;
+    //            Products.Clear();
+    //        });
 
-            IBoxTable table = App.GetNewDatabase().Boxes;
+    //        IBoxTable table = App.GetNewDatabase().Boxes;
 
-            var boxes = await Task.Run(() => table.GetAsync());
-            await dispatcherQueue.EnqueueAsync(() =>
-            {
-                Boxes = new(boxes);
-                IsLoading = false;
-                OnPropertyChanged(nameof(Boxes));
-            });
-        }
-        else
-        {
-            await dispatcherQueue.EnqueueAsync(() =>
-            {
-                IsLoading = true;
-                Products.Clear();
-            });
+    //        var boxes = await Task.Run(() => table.GetAsync());
+    //        await dispatcherQueue.EnqueueAsync(() =>
+    //        {
+    //            Boxes = new(boxes);
+    //            IsLoading = false;
+    //            OnPropertyChanged(nameof(Boxes));
+    //        });
+    //    }
+    //    else
+    //    {
+    //        await dispatcherQueue.EnqueueAsync(() =>
+    //        {
+    //            IsLoading = true;
+    //            Products.Clear();
+    //        });
 
-            IBoxTable table = App.GetNewDatabase().Boxes;
-            var boxes = await Task.Run(() => table.Get());
+    //        IBoxTable table = App.GetNewDatabase().Boxes;
+    //        var boxes = await Task.Run(() => table.Get());
 
-            await dispatcherQueue.EnqueueAsync(() =>
-            {
-                Boxes = new(boxes);
-                IsLoading = false;
-                OnPropertyChanged(nameof(Boxes));
-            });
-        }
-    }
+    //        await dispatcherQueue.EnqueueAsync(() =>
+    //        {
+    //            Boxes = new(boxes);
+    //            IsLoading = false;
+    //            OnPropertyChanged(nameof(Boxes));
+    //        });
+    //    }
+    //}
 
     internal async void SaveItem(Product p)
     {

@@ -27,6 +27,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Collections.ObjectModel;
 using BlOrders2023.Helpers;
 using BlOrders2023.UserControls;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -62,11 +63,6 @@ public sealed partial class ProductsPage : Page
             //TODO: need to handle delete
             //ViewModel.DeleteItem(item);
         }
-    }
-
-    private void ProductsGrid_AddNewRowInitiating(object sender, AddNewRowInitiatingEventArgs e)
-    {
-        
     }
 
     private void ProductsGrid_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
@@ -132,10 +128,34 @@ public sealed partial class ProductsPage : Page
 
     private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
-        var ProductDialog = new ProductDataInputDialog(new(){ProductID = 612})
+        if(ViewModel.SelectedProduct != null)
+        {        
+            var ProductDialog = new ProductDataInputDialog(ViewModel.SelectedProduct)
+            {
+                XamlRoot = XamlRoot
+            };
+            ProductDialog.PrimaryButtonClick += ProductDialog_PrimaryButtonClick;
+            _ = ProductDialog.ShowAsync();
+        }
+    }
+
+    private void NewProduct_Click(object sender, RoutedEventArgs e)
+    {
+        Product p = new Product();
+        var ProductDialog = new ProductDataInputDialog(p)
         {
             XamlRoot = XamlRoot
         };
+        ProductDialog.PrimaryButtonClick += ProductDialog_PrimaryButtonClick;
         _ = ProductDialog.ShowAsync();
+
+    }
+
+    private void ProductDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if(sender is ProductDataInputDialog dialog)
+        {
+            Debug.WriteLine( dialog.ViewModel.Product.ToString() ); 
+        }
     }
 }

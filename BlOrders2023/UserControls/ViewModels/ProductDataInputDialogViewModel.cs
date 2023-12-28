@@ -129,7 +129,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
 
     public bool? FixedPrice
     {
-        get => _product.FixedPrice;
+        get => _product.FixedPrice ?? false;
         set
         {
             _product.FixedPrice = value;

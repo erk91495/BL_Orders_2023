@@ -17,9 +17,10 @@
     mc:Ignorable="d"
     MinWidth="1200"
     CornerRadius="10"
-    PrimaryButtonText="Create Customer"
+    PrimaryButtonText="Save Product"
     CloseButtonText="Cancel"
     FlowDirection="LeftToRight"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.HasErrors, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
     >
 
 
@@ -28,6 +29,7 @@
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
         <vmconverters:EnumToStringConverter x:Key="EnumToStringConverter"/>
         <vmconverters:NullIntToStringConverter x:Key="NullIntToStringConverter"/>
+        <vmconverters:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
     </ContentDialog.Resources>
 
     <StackPanel Orientation="Vertical" Margin="10">
@@ -74,14 +76,14 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0">
-                <TextBox Header="Wholesale Price" Text="{x:Bind ViewModel.WholesalePrice, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
+                <NumberBox Header="Wholesale Price" Value="{x:Bind ViewModel.WholesalePrice, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}" Width="200" HorizontalAlignment="Left" />
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('WholesalePrice'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('WholesalePrice'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1">
-                <TextBox Header="Kettering Price" Text="{x:Bind ViewModel.KetteringPrice, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
+                <NumberBox Header="Kettering Price" Value="{x:Bind ViewModel.KetteringPrice, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}" Width="200" HorizontalAlignment="Left" />
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('KetteringPrice'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('KetteringPrice'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
