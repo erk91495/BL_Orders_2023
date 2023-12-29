@@ -155,7 +155,20 @@ public sealed partial class ProductsPage : Page
     {
         if(sender is ProductDataInputDialog dialog)
         {
-            Debug.WriteLine( dialog.ViewModel.Product.ToString() ); 
+            var tempProduct = dialog.Product;
+            Debug.WriteLine(tempProduct);
+            Debug.WriteLine(tempProduct.Box);
+            ViewModel.SaveItem(tempProduct);
+            if (ViewModel.Products.Contains(tempProduct))
+            {
+                ViewModel.Products[ViewModel.Products.IndexOf(tempProduct)] = tempProduct;
+            }
+            else
+            {
+                ViewModel.Products.Add(tempProduct);
+                ProductsGrid.View.Refresh();
+            }
+
         }
     }
 }

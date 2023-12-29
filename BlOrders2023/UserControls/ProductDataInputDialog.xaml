@@ -118,7 +118,12 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="0">
-                <ComboBox Header="Box" Text="{x:Bind ViewModel.Box, Mode=OneWay}" Width="200" HorizontalAlignment="Left"  ItemsSource="{x:Bind ViewModel.Boxes, Mode=OneWay}"/>
+                <ComboBox Header="Box" 
+                          SelectedItem="{x:Bind ViewModel.Box, Mode=OneWay}" 
+                          Width="200" 
+                          HorizontalAlignment="Left"  
+                          ItemsSource="{x:Bind ViewModel.Boxes, Mode=OneWay}"
+                          SelectionChanged="ComboBox_SelectionChanged"/>
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Box'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('Box'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>

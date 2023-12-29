@@ -6,6 +6,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using CommunityToolkit.WinUI;
 using System.Collections.ObjectModel;
+using BlOrders2023.ViewModels;
 
 namespace BlOrders2023.UserControls.ViewModels;
 public class ProductDataInputDialogViewModel: ObservableValidator
@@ -47,14 +48,31 @@ public class ProductDataInputDialogViewModel: ObservableValidator
 
     [Required]
     [Range(1,int.MaxValue)]
+    //[CustomValidation(typeof(ProductDataInputDialogViewModel), nameof(ValidateProductIDUnique))]
     public int? ProductID
     {
         get => _product.ProductID != 0 ? _product.ProductID : null;
         set
         {
-            _product.ProductID = value ?? 0;
-            ValidateProperty(value, nameof(ProductID));
-            OnPropertyChanged();
+            if(value != _product.ProductID) 
+            {
+                if (value != null)
+                {
+                    Product temp;
+                    if (!IsProductIDUnique((int)value, out temp))
+                    {
+                        Product = temp;
+                        OnAllPropertiesChanged();
+                    }
+                    else
+                    {
+                        Product = new() { ProductID = (int)value};
+                        _product.ProductID = (int)value;
+                    }
+                    OnPropertyChanged();
+                }
+                ValidateProperty(value, nameof(ProductID));
+            }
         }
     }
 
@@ -223,6 +241,20 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         });
     }
 
+    #region Validation 
+
+    public bool IsProductIDUnique(int value, out Product foundProduct)
+    {
+        foundProduct = null;
+        Task<bool> dupCheck = Task.Run<bool>(async () => await ProductsPageViewModel.ProductIDExists(value));
+        if (dupCheck.Result)
+        {
+            foundProduct = App.GetNewDatabase().Products.GetIncludeInactive(value).First();
+            return false;
+        }
+        return true;
+    }
+
     private void HasErrorsChanged(object? sender, System.ComponentModel.DataErrorsChangedEventArgs e)
     {
         OnPropertyChanged(nameof(GetErrorMessage));
@@ -268,5 +300,6 @@ public class ProductDataInputDialogViewModel: ObservableValidator
             return Visibility.Collapsed;
         }
     }
+    #endregion Validation
     #endregion Methods
 }

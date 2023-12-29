@@ -31,19 +31,24 @@ public sealed partial class ProductDataInputDialog : ContentDialog
 {
 
     #region Fields
-    public ProductDataInputDialogViewModel ViewModel { get; }
+    private ProductDataInputDialogViewModel ViewModel { get; }
     #endregion Fields
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
     #region Properties
+    public Product Product
+    {
+        get => ViewModel.Product; 
+        private set => ViewModel.Product = value;
+    }
 
     #endregion Properties
     public ProductDataInputDialog(Product prod)
     {
         this.InitializeComponent();
         ViewModel = App.GetService<ProductDataInputDialogViewModel>();
-        ViewModel.Product = prod;
+        Product = prod;
     }
 
     /// <summary>
@@ -53,5 +58,13 @@ public sealed partial class ProductDataInputDialog : ContentDialog
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(e.AddedItems.First() is Box selecteBox) 
+        {
+            ViewModel.BoxID = selecteBox.ID;
+        }
     }
 }
