@@ -42,7 +42,17 @@
                   PlaceholderText="Search..."/>
             </AppBarElementContainer>
             <AppBarButton Icon="Add" Label="Add Product" Click="NewProduct_Click"/>
-            <AppBarButton Icon="More"/>
+            <AppBarButton Icon="More">
+                <AppBarButton.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem Text="Box Types" Click="MenuFlyoutItem_Click_BoxTypes">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE7B8;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
         </CommandBar>
 
         <muxc:ProgressBar

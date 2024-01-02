@@ -28,6 +28,7 @@ using System.Collections.ObjectModel;
 using BlOrders2023.Helpers;
 using BlOrders2023.UserControls;
 using System.Diagnostics;
+using BlOrders2023.UserControls.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -194,5 +195,14 @@ public sealed partial class ProductsPage : Page
             ViewModel.FilterText = textBox.Text;
             ProductsGrid.View.RefreshFilter();
         }
+    }
+
+    private void MenuFlyoutItem_Click_BoxTypes(object sender, RoutedEventArgs e)
+    {
+        GridEditorDialog dialog = new(App.GetService<BoxGridEditorViewModel>())
+        {
+            XamlRoot = XamlRoot
+        };
+        dialog.ShowAsync();
     }
 }

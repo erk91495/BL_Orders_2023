@@ -131,6 +131,7 @@ public partial class App : Application
             services.AddTransient<PaymentsPage>();
             services.AddTransient<PaymentsPageViewModel>();
             services.AddTransient<ProductDataInputDialogViewModel>();
+            services.AddTransient<BoxGridEditorViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
