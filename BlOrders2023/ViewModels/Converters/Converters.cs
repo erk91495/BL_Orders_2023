@@ -25,6 +25,7 @@
 using BlOrders2023.Models.Enums;
 using Microsoft.Identity.Client;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using System;
 using System.ComponentModel;

@@ -99,6 +99,16 @@ public sealed partial class ProductsPage : Page
                         }
                         break;
                     }
+                case "PalletHeight":
+                    {
+
+                        if (e.NewValue != null && !int.TryParse(e.NewValue.ToString(), out _))
+                        {
+                            e.IsValid = false;
+                            e.ErrorMessage = "Pallet Height must be a whole number";
+                        }
+                        break;
+                    }
                 default:
                     {
                         break;
@@ -169,6 +179,20 @@ public sealed partial class ProductsPage : Page
                 ProductsGrid.View.Refresh();
             }
 
+        }
+    }
+
+    private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        TextBox? textBox = sender as TextBox;
+        if (ProductsGrid.View.Filter == null)
+        {
+            ProductsGrid.View.Filter = ViewModel.FilterProducts;
+        }
+        if (textBox != null && textBox.Text != null)
+        {
+            ViewModel.FilterText = textBox.Text;
+            ProductsGrid.View.RefreshFilter();
         }
     }
 }

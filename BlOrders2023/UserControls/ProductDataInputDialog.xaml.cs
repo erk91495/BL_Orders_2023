@@ -22,6 +22,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Globalization.NumberFormatting;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,6 +50,18 @@ public sealed partial class ProductDataInputDialog : ContentDialog
         this.InitializeComponent();
         ViewModel = App.GetService<ProductDataInputDialogViewModel>();
         Product = prod;
+
+
+        IncrementNumberRounder rounder = new IncrementNumberRounder();
+        rounder.Increment = 0.01;
+        rounder.RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp;
+
+        DecimalFormatter formatter = new DecimalFormatter();
+        formatter.IntegerDigits = 1;
+        formatter.FractionDigits = 2;
+        formatter.NumberRounder = rounder;
+        WholesalePriceBox.NumberFormatter = formatter;
+        KetteringPriceBox.NumberFormatter = formatter;
     }
 
     /// <summary>
@@ -62,9 +75,9 @@ public sealed partial class ProductDataInputDialog : ContentDialog
 
     private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if(e.AddedItems.First() is Box selecteBox) 
-        {
-            ViewModel.BoxID = selecteBox.ID;
-        }
+        //if(e.AddedItems.First() is Box selecteBox) 
+        //{
+        //    ViewModel.Box = selecteBox;
+        //}
     }
 }

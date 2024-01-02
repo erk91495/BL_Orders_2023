@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.Design;
+using System.Numerics;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -117,20 +119,9 @@ public class Product : ObservableObject
     public virtual Box? Box
     {
         get => _box;
-        set 
-        {
-            SetProperty(ref _box, value);
-            if(value != null)
-            {
-                BoxID = value.ID;
-            }
-            else
-            {
-                BoxID = null;
-            }
-            
-        }
+        set => SetProperty(ref _box, value);
     }
+    [Range(0, int.MaxValue)]
     public int? PalletHeight
     {
         get => _palletHeight;

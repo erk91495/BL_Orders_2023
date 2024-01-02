@@ -59,5 +59,7 @@ public class Box : ObservableObject
 
     #region Methods
     public override string ToString() => BoxName;
+
+    public override bool Equals(object? obj) => ID == (obj as Box).ID;
     #endregion Methods
 }

@@ -58,13 +58,14 @@ public class ProductsPageViewModel : ObservableRecipient
     //    get => _boxes;
     //    set => SetProperty(ref _boxes, value);
     //}
+
+    public string FilterText = string.Empty;
     #endregion Properties
 
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private bool _isLoading;
     private ObservableCollection<Product> _products;
-    private ObservableCollection<Box> _boxes;
     
     #endregion Fields
 
@@ -183,6 +184,33 @@ public class ProductsPageViewModel : ObservableRecipient
     internal static async Task<bool> ProductIDExists(int productId)
     {
         return await App.GetNewDatabase().Products.IdExists(productId);
+    }
+
+    public bool FilterProducts(object p)
+    {
+        if (p is Product prod)
+        {
+            if (FilterText.IsNullOrEmpty())
+            {
+                return true;
+            }
+            else
+            {
+                var nullableChecks = false;
+                nullableChecks |= prod.Box != null && prod.Box.BoxName.Contains(FilterText);
+                if (prod.ProductName.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase) || 
+                    prod.ProductID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase) ||
+                    nullableChecks)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
     #endregion Methods
 }

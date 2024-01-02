@@ -17,6 +17,7 @@
     <Page.Resources>
         <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
         <vm:NullBoolConverter x:Key="NullBoolConverter"/>
+        <vm:NullIntToDoubleConverter x:Key="NullIntToDoubleConverter"/>
         <MenuFlyout x:Key="DataGridContextMenu">
             <MenuFlyoutItem
                 Click="MenuFlyoutItem_Click"
@@ -33,14 +34,15 @@
              DefaultLabelPosition="Right"
              RelativePanel.AlignRightWithPanel="True">
 
-            <!--<AppBarElementContainer VerticalContentAlignment="Center">
+            <AppBarElementContainer VerticalContentAlignment="Center">
                 <TextBox x:Name="SearchBox"
-                  TextChanged="SeachBox_TextChanged"
+                  TextChanged="SearchBox_TextChanged"
                   MinWidth="300"
                   VerticalAlignment="Stretch"
                   PlaceholderText="Search..."/>
-            </AppBarElementContainer>-->
+            </AppBarElementContainer>
             <AppBarButton Icon="Add" Label="Add Product" Click="NewProduct_Click"/>
+            <AppBarButton Icon="More"/>
         </CommandBar>
 
         <muxc:ProgressBar
@@ -89,7 +91,9 @@
                 <!--If you are adding a checkbox dont forget to add it to the property changed list in the view model-->                
                 <sf:GridCheckBoxColumn MappingName="Inactive" AllowEditing="True"/>
                 <!--<sf:GridCheckBoxColumn MappingName="IsCredit" AllowEditing="True"/>-->
-                <sf:GridNumericColumn MappingName="PalletHeight" AllowEditing="True"/>
+                <sf:GridNumericColumn MappingName="PalletHeight" 
+                                      AllowEditing="True"
+                                      ValueBinding="{Binding Path=PalletHeight, Mode=TwoWay, Converter={StaticResource NullIntToDoubleConverter }}"/>
                 <sf:GridTextColumn MappingName="Box" AllowEditing="False" IsReadOnly="True"/>
 
             </sf:SfDataGrid.Columns>

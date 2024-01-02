@@ -30,6 +30,7 @@
         <vmconverters:EnumToStringConverter x:Key="EnumToStringConverter"/>
         <vmconverters:NullIntToStringConverter x:Key="NullIntToStringConverter"/>
         <vmconverters:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
+        <vmconverters:NullIntToDoubleConverter x:Key="NullIntToDoubleConverter"/>
     </ContentDialog.Resources>
 
     <StackPanel Orientation="Vertical" Margin="10">
@@ -76,14 +77,14 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0">
-                <NumberBox Header="Wholesale Price" Value="{x:Bind ViewModel.WholesalePrice, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}" Width="200" HorizontalAlignment="Left" />
+                <NumberBox x:Name="WholesalePriceBox" Header="Wholesale Price" Value="{x:Bind ViewModel.WholesalePrice, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}" Width="200" HorizontalAlignment="Left" />
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('WholesalePrice'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('WholesalePrice'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1">
-                <NumberBox Header="Kettering Price" Value="{x:Bind ViewModel.KetteringPrice, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}" Width="200" HorizontalAlignment="Left" />
+                <NumberBox x:Name="KetteringPriceBox"  Header="Kettering Price" Value="{x:Bind ViewModel.KetteringPrice, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}" Width="200" HorizontalAlignment="Left" />
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('KetteringPrice'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('KetteringPrice'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
@@ -119,18 +120,17 @@
 
             <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="0">
                 <ComboBox Header="Box" 
-                          SelectedItem="{x:Bind ViewModel.Box, Mode=OneWay}" 
+                          SelectedItem="{x:Bind ViewModel.Box, Mode=TwoWay}"
                           Width="200" 
                           HorizontalAlignment="Left"  
-                          ItemsSource="{x:Bind ViewModel.Boxes, Mode=OneWay}"
-                          SelectionChanged="ComboBox_SelectionChanged"/>
+                          ItemsSource="{x:Bind ViewModel.Boxes, Mode=OneWay}"/>
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Box'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('Box'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="1">
-                <TextBox Header="Pallet Height" Text="{x:Bind ViewModel.PalletHeight, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
+                <TextBox Header="Pallet Height" Text="{x:Bind ViewModel.PalletHeight, Mode=TwoWay, Converter={StaticResource NullIntToStringConverter}}" Width="200" HorizontalAlignment="Left" />
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('PalletHeight'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('PalletHeight'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>

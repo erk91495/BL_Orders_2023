@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml;
 using CommunityToolkit.WinUI;
 using System.Collections.ObjectModel;
 using BlOrders2023.ViewModels;
+using ServiceStack;
 
 namespace BlOrders2023.UserControls.ViewModels;
 public class ProductDataInputDialogViewModel: ObservableValidator
@@ -78,6 +79,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
 
     [Required]
     [MinLength(1)]
+    [MaxLength(40)]
     public string? ProductName
     {
         get => _product.ProductName;
@@ -112,6 +114,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         }
     }
 
+    [MaxLength(15)]
     public string? UPCCode
     {
         get => _product.UPCCode;
@@ -123,6 +126,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         }
     }
 
+    [MaxLength(15)]
     public string? KPCCode
     {
         get => _product.KPCCode;
@@ -134,6 +138,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         }
     }
 
+    [MaxLength(50)]
     public string? ALUCode
     {
         get => _product.ALUCode;
@@ -156,6 +161,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         }
     }
 
+    [StringLength(8)]
     public string? CompanyCode
     {
         get => _product.CompanyCode;
@@ -167,6 +173,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         }
     }
 
+    [Required]
     public bool Inactive
     {
         get => _product.Inactive;
@@ -178,6 +185,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         }
     }
 
+    [Required]
     public bool IsCredit
     {
         get => _product.IsCredit;
@@ -200,8 +208,21 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         }
     }
 
-    public Box? Box => _product.Box;
+    public Box? Box 
+    { 
+        get => _product.Box; 
+        set
+        {
+            if(value != _product.Box)
+            {
+                _product.Box = value;
+                OnPropertyChanged();
+            }
 
+        }
+    }
+
+    [Range(0, int.MaxValue)]
     public int? PalletHeight
     {
         get => _product?.PalletHeight;
@@ -237,6 +258,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
             {
                 Boxes.Add(custClass);
             }
+            OnPropertyChanged(nameof(Boxes));
             OnPropertyChanged(nameof(Box));
         });
     }
