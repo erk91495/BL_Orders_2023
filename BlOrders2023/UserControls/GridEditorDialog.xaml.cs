@@ -17,15 +17,16 @@ using BlOrders2023.UserControls.ViewModels;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace BlOrders2023.ViewModels;
+namespace BlOrders2023.UserControls;
 
 public sealed partial class GridEditorDialog : ContentDialog
 {
     public IGridEditorViewModel ViewModel { get; }
 
-    public GridEditorDialog(IGridEditorViewModel vm)
+    public GridEditorDialog(Type viewModelType)
     {
-        ViewModel = vm;
-        this.InitializeComponent();        
+        ViewModel = App.GetService<IGridEditorViewModel>(viewModelType);
+        this.InitializeComponent();
+        ViewModel.MapColumns(this.DataGrid);
     }
 }

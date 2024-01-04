@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -19,11 +20,13 @@ public class Box : ObservableObject
     private double _boxWidth;
     private double _boxHeight;
 
+    [Range(1, int.MaxValue)]
     public int ID
     {
         get => _id;
         set => SetProperty(ref _id, value);
     }
+    [MaxLength(100)]
     public string BoxName
     {
         get => _boxName;

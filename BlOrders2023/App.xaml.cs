@@ -53,6 +53,17 @@ public partial class App : Application
         return service;
     }
 
+    public static T GetService<T>(Type serviceType)
+    where T : class
+    {
+        if ((App.Current as App)!.Host.Services.GetService(serviceType) is not T service)
+        {
+            throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
+        }
+
+        return service;
+    }
+
     public static WindowEx MainWindow { get; } = new MainWindow();
 	
 	public static UIElement? AppTitlebar { get; set; }

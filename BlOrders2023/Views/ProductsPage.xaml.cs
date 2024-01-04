@@ -199,7 +199,7 @@ public sealed partial class ProductsPage : Page
 
     private void MenuFlyoutItem_Click_BoxTypes(object sender, RoutedEventArgs e)
     {
-        GridEditorDialog dialog = new(App.GetService<BoxGridEditorViewModel>())
+        GridEditorDialog dialog = new(typeof(BoxGridEditorViewModel))
         {
             XamlRoot = XamlRoot
         };

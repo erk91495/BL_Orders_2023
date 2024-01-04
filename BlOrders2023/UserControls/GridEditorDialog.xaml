@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ContentDialog
-    x:Class="BlOrders2023.ViewModels.GridEditorDialog"
+    x:Class="BlOrders2023.UserControls.GridEditorDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:BlOrders2023.ViewModels"
+    xmlns:local="using:BlOrders2023.UserControls.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
@@ -21,11 +21,11 @@
         <sf:SfDataGrid x:Name="DataGrid"
                        ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                        CurrentCellValidating="ViewModel.ValidateItems"
-                       AutoGenerateColumns="True"
+                       AutoGenerateColumns="False"
                        DataValidationMode="InView"
-                       AddNewRowPosition="FixedTop"
+                       EditorSelectionBehavior="MoveLast"
+                       EditTrigger="OnTap"
                        AllowEditing="True">
         </sf:SfDataGrid>
-        <Button Content="test" IsEnabled="{x:Bind ViewModel.CanSave, Mode=OneWay}"/>
     </Grid>
 </ContentDialog>
