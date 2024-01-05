@@ -49,7 +49,7 @@ public class OrderAllocator : IAllocatorService
         _config = config;
         //Task<IEnumerable<Order>> ordersTask = _db.Orders.GetAsync();
         ////ordersTask.Start();
-        //Task<IEnumerable<InventoryItem>> inventoryTask = _db.Inventory.GetInventoryAsync();
+        //Task<IEnumerable<InventoryItem>> inventoryTask = _db.Inventory.GetAsync();
         ////inventoryTask.Start();
         //Task<IEnumerable<AllocationGroup>> allocationGroupsTask = _db.Allocation.GetAllocationGroupsAsync();
         ////allocationGroupsTask.Start();

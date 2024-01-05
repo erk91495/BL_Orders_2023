@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.Design;
+using System.Numerics;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BlOrders2023.Models;
@@ -16,7 +13,7 @@ public class Product : ObservableObject
     #region Fields
     private int _productID;
     private string? _productName;
-    private short? _noPerCase;
+    //private short? _noPerCase;
     private decimal _wholesalePrice;
     private decimal _kettteringPrice;
     private string? _UPCCode;
@@ -26,11 +23,14 @@ public class Product : ObservableObject
     private string? _ALUCode;
     private bool _inactive;
     private bool _isCredit;
+    private int? _boxID;
+    private Box? _box;
+    private int? _palletHeight;
     #endregion Fields
 
     #region Properties
     [Key]
-    [Required]
+    [Range(1, int.MaxValue)]
     public int ProductID
     {
         get => _productID; 
@@ -43,11 +43,13 @@ public class Product : ObservableObject
         get => _productName; 
         set => SetProperty(ref _productName, value);
     }
-    public short? NoPerCase
-    {
-        get => _noPerCase; 
-        set => SetProperty(ref _noPerCase, value);
-    }
+
+    //public short? NoPerCase
+    //{
+    //    get => _noPerCase; 
+    //    set => SetProperty(ref _noPerCase, value);
+    //}
+
     [Column("Price_(Wholesale)")]
     public decimal WholesalePrice
     {
@@ -105,6 +107,27 @@ public class Product : ObservableObject
         set => SetProperty(ref _isCredit, value);
     }
 
+    
+    public int? BoxID
+    {
+        get => _boxID;
+        set => SetProperty(ref _boxID, value);
+    }
+
+    [ForeignKey(nameof(BoxID))]
+    [JsonIgnore]
+    public virtual Box? Box
+    {
+        get => _box;
+        set => SetProperty(ref _box, value);
+    }
+    [Range(0, int.MaxValue)]
+    public int? PalletHeight
+    {
+        get => _palletHeight;
+        set => SetProperty( ref _palletHeight, value);
+    }
+
     #endregion Properties
     public Product()
     {
@@ -113,7 +136,7 @@ public class Product : ObservableObject
     {
         ProductID = product.ProductID;
         ProductName = product.ProductName;
-        NoPerCase = product.NoPerCase;
+        //NoPerCase = product.NoPerCase;
         WholesalePrice = product.WholesalePrice;
         KetteringPrice = product.KetteringPrice;
         UPCCode = product.UPCCode;
@@ -123,6 +146,8 @@ public class Product : ObservableObject
         ALUCode = product.ALUCode;
         Inactive = product.Inactive;
         IsCredit = product.IsCredit;
+        BoxID = product.BoxID;
+        Box = product.Box;
     }
     public override string ToString()
     {

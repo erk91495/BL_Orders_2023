@@ -123,8 +123,8 @@ public class AllocationDetailsReport : IReport
                 {
                     table.Cell().Element(MainTableCellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
                     table.Cell().Element(MainTableCellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
-                    table.Cell().Element(MainTableCellStyle).Text($"{order.GetTotalOrderedAllocated()}").Style(tableTextStyle);
-                    table.Cell().Element(MainTableCellStyle).Text($"{order.GetTotalAllocated()}").Style(tableTextStyle);
+                    table.Cell().Element(MainTableCellStyle).Text($"{order.TotalOrderedAllocated}").Style(tableTextStyle);
+                    table.Cell().Element(MainTableCellStyle).Text($"{order.TotalAllocated}").Style(tableTextStyle);
                     table.Cell().ColumnSpan(4).Inlined(inlined => 
                     {
                         inlined.Spacing(10);
@@ -174,8 +174,8 @@ public class AllocationDetailsReport : IReport
                 }
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).PaddingRight(1).AlignRight().Text("Total: ").Style(tableTextStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetTotalOrderedAllocated())}").Style(tableTextStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(i => i.GetTotalAllocated())}").Style(tableTextStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.TotalOrderedAllocated)}").Style(tableTextStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(i => i.TotalAllocated)}").Style(tableTextStyle);
                 static IContainer FooterCellStyle(IContainer container)
                 {
                     return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);

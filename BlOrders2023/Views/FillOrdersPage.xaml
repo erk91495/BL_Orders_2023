@@ -351,8 +351,11 @@
                                    ColumnWidthMode="AutoWithLastColumnFill"
                                    CurrentCellEndEdit="OrderedItems_CurrentCellEndEdit"
                                    CopyGridCellContent="OrderedItems_CopyGridCellContent">
-
+                        <sf:SfDataGrid.Resources>
+                            <SolidColorBrush x:Key="SyncfusionDataGridRowBackgroundPointerOver" Color="{StaticResource SystemAccentColor}"/>
+                        </sf:SfDataGrid.Resources>
                         <sf:SfDataGrid.Columns>
+                            <sf:GridUnboundColumn HeaderText="Index" MappingName="Index"/>
                             <sf:GridTextColumn HeaderText="Product ID" MappingName="ProductID"/>
                             <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" IsReadOnly="True" ColumnWidthMode="SizeToCells"/>
                             <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline" ColumnWidthMode="AutoWithLastColumnFill" IsReadOnly="False"/>

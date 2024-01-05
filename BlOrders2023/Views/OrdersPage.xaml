@@ -302,7 +302,9 @@
                                    NavigationMode="Row"
                                    SelectionChanged="OrdersGrid_SelectionChanged"
                                    CopyGridCellContent="OrdersGrid_CopyGridCellContent">
-
+                        <sf:SfDataGrid.Resources>
+                            <SolidColorBrush x:Key="SyncfusionDataGridRowBackgroundPointerOver" Color="{StaticResource SystemAccentColor}"/>
+                        </sf:SfDataGrid.Resources>
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderID"/>
                             <sf:GridTextColumn HeaderText="CustomerName" MappingName="Customer.CustomerName" TextWrapping="NoWrap" ColumnWidthMode="Star"/>

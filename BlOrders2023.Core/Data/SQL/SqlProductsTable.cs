@@ -106,6 +106,33 @@ internal class SqlProductsTable : IProductsTable
 
     }
 
+    public IEnumerable<Product> GetIncludeInactive(int? ProductID = null, bool tracking = true)
+    {
+        if (tracking)
+        {
+            if (ProductID == null)
+            {
+                return _db.Products.OrderBy(product => product.ProductID).ToList();
+            }
+            else
+            {
+                return _db.Products.Where(p => p.ProductID == ProductID).ToList();
+            }
+        }
+        else
+        {
+            if (ProductID == null)
+            {
+                return _db.Products.OrderBy(product => product.ProductID).AsNoTrackingWithIdentityResolution().ToList();
+            }
+            else
+            {
+                return _db.Products.Where(p => p.ProductID == ProductID).AsNoTrackingWithIdentityResolution().ToList();
+            }
+        }
+
+    }
+
     public async Task<IEnumerable<Product>> GetAsync(string value, bool tracking) 
     {
         if (tracking)

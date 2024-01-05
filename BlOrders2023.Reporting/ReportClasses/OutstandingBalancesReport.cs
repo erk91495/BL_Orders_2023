@@ -105,7 +105,7 @@ public class OutstandingBalancesReport : IReport
                     table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yy")}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{order.GetBalanceDue():C}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{order.BalanceDue:C}").Style(tableTextStyle);
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
@@ -115,7 +115,7 @@ public class OutstandingBalancesReport : IReport
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"Total: ").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetBalanceDue()):C}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.BalanceDue):C}").Style(tableHeaderStyle);
 
                 static IContainer FooterCellStyle(IContainer container)
                 {

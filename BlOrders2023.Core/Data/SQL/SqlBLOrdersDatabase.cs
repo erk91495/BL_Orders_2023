@@ -39,6 +39,8 @@ public class SqlBLOrdersDatabase : IBLDatabase
 
     public IAllocationTable Allocation => new SqlAllocationTable(_dbContext);
 
+    public IBoxTable Boxes => new SqlBoxTable(_dbContext);
+
     public Version dbVersion 
     {
         get

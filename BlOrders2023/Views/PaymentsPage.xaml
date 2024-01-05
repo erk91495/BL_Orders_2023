@@ -60,6 +60,9 @@
                 <sf:GridTextColumn HeaderText="Order ID" MappingName="OrderId"/>
                 <sf:GridTextColumn HeaderText="Customer" MappingName="Customer.CustomerName" ColumnWidthMode="Star"/>
                 <sf:GridNumericColumn HeaderText="Amount" MappingName="PaymentAmount" DisplayNumberFormat="C2"/>
+                <sf:GridNumericColumn HeaderText="Invoice Total" MappingName="Order.InvoiceTotal" DisplayNumberFormat="C2"/>
+                <sf:GridNumericColumn HeaderText="Total Payemnts" MappingName="Order.TotalPayments" DisplayNumberFormat="C2"/>
+                <sf:GridNumericColumn HeaderText="Balance Due" MappingName="Order.BalanceDue" DisplayNumberFormat="C2"/>
                 <sf:GridDateColumn HeaderText="Paid On" MappingName="PaymentDate" DisplayDateFormat="d"/>
                 <sf:GridTextColumn HeaderText="Payment Method" MappingName="PaymentMethod"/>
                 <sf:GridTextColumn HeaderText="Check\Account Number" MappingName="CheckNumber"/>

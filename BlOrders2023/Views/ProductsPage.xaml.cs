@@ -26,6 +26,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.ObjectModel;
 using BlOrders2023.Helpers;
+using BlOrders2023.UserControls;
+using System.Diagnostics;
+using BlOrders2023.UserControls.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -63,11 +66,6 @@ public sealed partial class ProductsPage : Page
         }
     }
 
-    private void ProductsGrid_AddNewRowInitiating(object sender, AddNewRowInitiatingEventArgs e)
-    {
-
-    }
-
     private void ProductsGrid_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
     {
         if (e.RowData is Product prod)
@@ -77,11 +75,19 @@ public sealed partial class ProductsPage : Page
             {
                 case "ProductID":
                     {
-                        Task<bool> dupCheck = Task.Run<bool>(async () => await ProductsPageViewModel.ProductIDExists(prod.ProductID));
-                        if (dupCheck.Result)
+                        if(prod.ProductID != 0)
                         {
-                            e.IsValid = false;
-                            e.ErrorMessage = "Product ID must be unique";
+                            Task<bool> dupCheck = Task.Run<bool>(async () => await ProductsPageViewModel.ProductIDExists(prod.ProductID));
+                            if (dupCheck.Result)
+                            {
+                                e.IsValid = false;
+                                e.ErrorMessage = "Product ID must be unique";
+                            }
+                        }
+                        else
+                        {
+                            e.IsValid=false;
+                            e.ErrorMessage = "Product ID cannot be 0";
                         }
                         break;
                     }
@@ -91,6 +97,16 @@ public sealed partial class ProductsPage : Page
                         {
                             e.IsValid = false;
                             e.ErrorMessage = "The Product Name cannot be empty";
+                        }
+                        break;
+                    }
+                case "PalletHeight":
+                    {
+
+                        if (e.NewValue != null && !int.TryParse(e.NewValue.ToString(), out _))
+                        {
+                            e.IsValid = false;
+                            e.ErrorMessage = "Pallet Height must be a whole number";
                         }
                         break;
                     }
@@ -108,7 +124,7 @@ public sealed partial class ProductsPage : Page
         {
             Collection<ValidationResult> result = new();
             ValidationContext context = new(p);
-            if(Validator.TryValidateObject(p, context, result,true))
+            if (!Validator.TryValidateObject(p, context, result, true))
             {
                 ViewModel.SaveItem(p);
             }
@@ -120,4 +136,73 @@ public sealed partial class ProductsPage : Page
         DatagridCellCopy.CopyGridCellContent(sender, e);
     }
     #endregion Methods
+
+    private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        if(ViewModel.SelectedProduct != null)
+        {        
+            var ProductDialog = new ProductDataInputDialog(ViewModel.SelectedProduct)
+            {
+                XamlRoot = XamlRoot
+            };
+            ProductDialog.PrimaryButtonClick += ProductDialog_PrimaryButtonClick;
+            _ = ProductDialog.ShowAsync();
+        }
+    }
+
+    private void NewProduct_Click(object sender, RoutedEventArgs e)
+    {
+        Product p = new Product();
+        var ProductDialog = new ProductDataInputDialog(p)
+        {
+            XamlRoot = XamlRoot
+        };
+        ProductDialog.PrimaryButtonClick += ProductDialog_PrimaryButtonClick;
+        _ = ProductDialog.ShowAsync();
+
+    }
+
+    private void ProductDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if(sender is ProductDataInputDialog dialog)
+        {
+            var tempProduct = dialog.Product;
+            Debug.WriteLine(tempProduct);
+            Debug.WriteLine(tempProduct.Box);
+            ViewModel.SaveItem(tempProduct);
+            if (ViewModel.Products.Contains(tempProduct))
+            {
+                ViewModel.Products[ViewModel.Products.IndexOf(tempProduct)] = tempProduct;
+            }
+            else
+            {
+                ViewModel.Products.Add(tempProduct);
+                ProductsGrid.View.Refresh();
+            }
+
+        }
+    }
+
+    private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        TextBox? textBox = sender as TextBox;
+        if (ProductsGrid.View.Filter == null)
+        {
+            ProductsGrid.View.Filter = ViewModel.FilterProducts;
+        }
+        if (textBox != null && textBox.Text != null)
+        {
+            ViewModel.FilterText = textBox.Text;
+            ProductsGrid.View.RefreshFilter();
+        }
+    }
+
+    private void MenuFlyoutItem_Click_BoxTypes(object sender, RoutedEventArgs e)
+    {
+        GridEditorDialog dialog = new(typeof(BoxGridEditorViewModel))
+        {
+            XamlRoot = XamlRoot
+        };
+        dialog.ShowAsync();
+    }
 }

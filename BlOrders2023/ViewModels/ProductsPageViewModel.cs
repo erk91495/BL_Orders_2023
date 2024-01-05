@@ -50,13 +50,22 @@ public class ProductsPageViewModel : ObservableRecipient
             OnPropertyChanged(nameof(IsLoading));
         }
     }
+
+    public Product? SelectedProduct { get; set; }
+
+    //public ObservableCollection<Box> Boxes
+    //{
+    //    get => _boxes;
+    //    set => SetProperty(ref _boxes, value);
+    //}
+
+    public string FilterText = string.Empty;
     #endregion Properties
 
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private bool _isLoading;
     private ObservableCollection<Product> _products;
-
     
     #endregion Fields
 
@@ -65,6 +74,7 @@ public class ProductsPageViewModel : ObservableRecipient
     {
         _products = new();
         _ = QueryProducts();
+        //_ = QueryBoxes();
     }
     #endregion Constructors
 
@@ -109,6 +119,46 @@ public class ProductsPageViewModel : ObservableRecipient
         }
     }
 
+    //public async Task QueryBoxes(string? query = null)
+    //{
+    //    if (!string.IsNullOrWhiteSpace(query))
+    //    {
+    //        await dispatcherQueue.EnqueueAsync(() =>
+    //        {
+    //            IsLoading = true;
+    //            Products.Clear();
+    //        });
+
+    //        IBoxTable table = App.GetNewDatabase().Boxes;
+
+    //        var boxes = await Task.Run(() => table.GetAsync());
+    //        await dispatcherQueue.EnqueueAsync(() =>
+    //        {
+    //            Boxes = new(boxes);
+    //            IsLoading = false;
+    //            OnPropertyChanged(nameof(Boxes));
+    //        });
+    //    }
+    //    else
+    //    {
+    //        await dispatcherQueue.EnqueueAsync(() =>
+    //        {
+    //            IsLoading = true;
+    //            Products.Clear();
+    //        });
+
+    //        IBoxTable table = App.GetNewDatabase().Boxes;
+    //        var boxes = await Task.Run(() => table.Get());
+
+    //        await dispatcherQueue.EnqueueAsync(() =>
+    //        {
+    //            Boxes = new(boxes);
+    //            IsLoading = false;
+    //            OnPropertyChanged(nameof(Boxes));
+    //        });
+    //    }
+    //}
+
     internal async void SaveItem(Product p)
     {
         IProductsTable table = App.GetNewDatabase().Products;
@@ -125,7 +175,7 @@ public class ProductsPageViewModel : ObservableRecipient
     private void Product_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         //Have to watch for these property changes because checkboxes dont validate
-        if((e.PropertyName == "FixedPrice" || e.PropertyName == "Inactive" || e.PropertyName == "IsCredit") && sender is Product p)
+        if((e.PropertyName == "FixedPrice" || e.PropertyName == "Inactive" || e.PropertyName == "IsCredit" || e.PropertyName == "Box") && sender is Product p)
         {
             SaveItem(p);
         }
@@ -134,6 +184,33 @@ public class ProductsPageViewModel : ObservableRecipient
     internal static async Task<bool> ProductIDExists(int productId)
     {
         return await App.GetNewDatabase().Products.IdExists(productId);
+    }
+
+    public bool FilterProducts(object p)
+    {
+        if (p is Product prod)
+        {
+            if (FilterText.IsNullOrEmpty())
+            {
+                return true;
+            }
+            else
+            {
+                var nullableChecks = false;
+                nullableChecks |= prod.Box != null && prod.Box.BoxName.Contains(FilterText);
+                if (prod.ProductName.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase) || 
+                    prod.ProductID.ToString().Contains(FilterText, StringComparison.CurrentCultureIgnoreCase) ||
+                    nullableChecks)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
     #endregion Methods
 }

@@ -264,8 +264,8 @@ public class WholesaleInvoice : IReport
                 table.Cell().Element(FooterCellStyle).Text("Total:").Style(tableHeaderStyle);
 
                 table.Cell().Element(FooterCellStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_order.GetTotalOrdered()}").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_order.GetTotalReceived()}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_order.TotalOrdered}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_order.TotalReceived}").Style(tableHeaderStyle);
 
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{_order.ShippingItems.Sum(i => i.PickWeight):N2}").Style(tableHeaderStyle);
@@ -289,8 +289,6 @@ public class WholesaleInvoice : IReport
             {
                 column.Item().AlignRight().Text($"Memo Total:{_order.Memo_Totl:C}");
             }
-            
-
             column.Item().AlignBottom().AlignRight().Row(footer =>
             {
                 footer.RelativeItem().AlignLeft().Text(time =>

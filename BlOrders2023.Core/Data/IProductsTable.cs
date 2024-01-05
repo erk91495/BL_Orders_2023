@@ -12,4 +12,5 @@ public interface IProductsTable
     Task<bool> IdExists(int productID);
     Product? GetByALU(string upc);
     Task<IEnumerable<Product>> GetIncludeInactiveAsync(int? ProductID = null, bool tracking = true);
+    IEnumerable<Product> GetIncludeInactive(int? ProductID = null, bool tracking = true);
 }
