@@ -15,6 +15,12 @@ namespace BlOrders2023.ViewModels;
 public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
 {
     #region Properties
+    public bool HasChanges 
+    { 
+        get; 
+        set; 
+    } = false;
+
     public ObservableCollection<OrderItem> Items
     {
         get => _items;
@@ -46,8 +52,13 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.OrderID;
         set
         {
-            _order.OrderID = value;
-            OnPropertyChanged();
+            if(value != _order.OrderID)
+            {
+                HasChanges = true;
+                _order.OrderID = value;
+                OnPropertyChanged();
+            }
+
         }
     }
 
@@ -61,16 +72,20 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     {
         get => _order.OrderStatus;
         set 
-        { 
-            _order.OrderStatus = value; 
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(CanPrintInvoice));
-            OnPropertyChanged(nameof(CanPrintOrder));
-            OnPropertyChanged(nameof(CanDeleteItems));
-            OnPropertyChanged(nameof(CanAddItems));
-            //check if we have errors for loading in a new order
-            if(!HasErrors){
-                SaveCurrentOrder();
+        {
+            if (value != _order.OrderStatus)
+            {
+                HasChanges = true;
+                _order.OrderStatus = value; 
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CanPrintInvoice));
+                OnPropertyChanged(nameof(CanPrintOrder));
+                OnPropertyChanged(nameof(CanDeleteItems));
+                OnPropertyChanged(nameof(CanAddItems));
+                //check if we have errors for loading in a new order
+                if(!HasErrors){
+                    SaveCurrentOrder();
+                }
             }
         }
     }
@@ -80,15 +95,19 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.PO_Number;
         set
         {
-            if (value.IsNullOrEmpty())
+            if (value != _order.PO_Number)
             {
-                _order.PO_Number = null;
+                HasChanges = true;
+                if (value.IsNullOrEmpty())
+                {
+                    _order.PO_Number = null;
+                }
+                else
+                {
+                    _order.PO_Number = value;
+                }
+                OnPropertyChanged();
             }
-            else
-            {
-                _order.PO_Number = value;
-            }
-            OnPropertyChanged();
         }
     }
 
@@ -99,9 +118,13 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.Shipping;
         set
         {
-            _order.Shipping = value;
-            CheckValidation(value, nameof(Shipping));
-            OnPropertyChanged();
+            if (value != _order.Shipping)
+            {
+                HasChanges = true;
+                _order.Shipping = value;
+                CheckValidation(value, nameof(Shipping));
+                OnPropertyChanged();
+            }
         }
     }
 
@@ -112,11 +135,13 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.TakenBy;
         set
         {
-            _order.TakenBy = value.Trim();
-            CheckValidation(value, nameof(TakenBy));
-
-            OnPropertyChanged();
-
+            if (value != _order.TakenBy)
+            {
+                HasChanges = true;
+                _order.TakenBy = value.Trim();
+                CheckValidation(value, nameof(TakenBy));
+                OnPropertyChanged();
+            }
         }
     }
 
@@ -127,9 +152,13 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.PickupDate;
         set
         {
-            _order.PickupDate = value;
-            CheckValidation(value, nameof(PickupDate));
-            OnPropertyChanged();
+            if (value != _order.PickupDate)
+            {
+                HasChanges = true;
+                _order.PickupDate = value;
+                CheckValidation(value, nameof(PickupDate));
+                OnPropertyChanged();
+            }
         }
     }
 
@@ -138,8 +167,12 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.PickupTime;
         set
         {
-            _order.PickupTime = value;
-            OnPropertyChanged();
+            if (value != _order.PickupTime)
+            {
+                HasChanges = true;
+                _order.PickupTime = value;
+                OnPropertyChanged();
+            }
         }
     }
 
@@ -148,8 +181,12 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.Frozen;
         set
         {
-            _order.Frozen = value;
-            OnPropertyChanged();
+            if (value != _order.Frozen)
+            {
+                HasChanges = true;
+                _order.Frozen = value;
+                OnPropertyChanged();
+            }
         }
     }
 
@@ -159,16 +196,20 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.Memo;
         set
         {
-            if (value.IsNullOrEmpty())
+            if (value != _order.Memo)
             {
-                _order.Memo = null;
+                HasChanges = true;
+                if (value.IsNullOrEmpty())
+                {
+                    _order.Memo = null;
+                }
+                else
+                {
+                    _order.Memo = value?.Trim();
+                }
+                CheckValidation(Memo, nameof(Memo));
+                OnPropertyChanged();
             }
-            else
-            {
-                _order.Memo = value?.Trim();
-            }
-            CheckValidation(Memo, nameof(Memo));
-            OnPropertyChanged();
         }
     }
 
@@ -177,8 +218,12 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.Memo_Totl;
         set
         {
-            _order.Memo_Totl = value;
-            OnPropertyChanged();
+            if (value != _order.Memo_Totl)
+            {
+                HasChanges = true;
+                _order.Memo_Totl = value;
+                OnPropertyChanged();
+            }
         }
     }
 
@@ -187,8 +232,26 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _order.Memo_Weight;
         set
         {
-            _order.Memo_Weight = value;
-            OnPropertyChanged();
+            if (value != _order.Memo_Weight)
+            {
+                HasChanges = true;
+                _order.Memo_Weight = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public bool? Allocated
+    {
+        get => _order.Allocated;
+        set
+        {
+            if (value != _order.Allocated)
+            {
+                HasChanges = true;
+                _order.Allocated = value;
+                OnPropertyChanged();
+            }
         }
     }
 
@@ -298,6 +361,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
             item.ActualCustPrice = (decimal)actualCustomerPrice;
         }
         Items.Add(item);
+        HasChanges = true;
     }
 
     private void OnAllPropertiesChanged()
@@ -421,12 +485,15 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     /// </summary>
     public async Task SaveCurrentOrderAsync()
     {
-        _order.Items = Items;
-        await _db.Orders.UpsertAsync(_order);
-        if (IsNewOrder)
-        {
-            IsNewOrder = false;
-            ReloadOrder();
+        if(HasChanges){
+            HasChanges = false;
+            _order.Items = Items;
+            await _db.Orders.UpsertAsync(_order);
+            if (IsNewOrder)
+            {
+                IsNewOrder = false;
+                ReloadOrder();
+            }
         }
     }
 
@@ -435,13 +502,16 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     /// </summary>
     public void SaveCurrentOrder(bool overwrite = false)
     {
-        _order.Items = Items;
-        _db.Orders.Upsert(_order, overwrite);
-        if (IsNewOrder)
-        {
-            IsNewOrder = false;
-            // Want to pick up DB generated OrderID
-            ReloadOrder();
+        if(HasChanges) {
+            HasChanges = false;
+            _order.Items = Items;
+            _db.Orders.Upsert(_order, overwrite);
+            if (IsNewOrder)
+            {
+                IsNewOrder = false;
+                // Want to pick up DB generated OrderID
+                ReloadOrder();
+            }
         }
     }
 

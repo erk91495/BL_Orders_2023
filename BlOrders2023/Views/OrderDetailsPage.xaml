@@ -126,7 +126,7 @@
                             FontSize="50"
                             FontWeight="SemiBold"/>-->
             <StackPanel Orientation="Vertical" Spacing="15">
-                
+
                 <ComboBox x:Name="OrderStatusCombo"                  
                       xmlns:ui="using:CommunityToolkit.WinUI"
                       ItemsSource="{ui:EnumValues Type=enums:OrderStatus}"
@@ -135,12 +135,11 @@
                       IsEnabled="False"
                       FontSize="20"
                       HorizontalAlignment="Right"/>
-
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <TextBlock Text="Ordered On:" FontSize="{StaticResource MediumFontSize}"/>
                     <TextBlock Text="{x:Bind ViewModel.Order.OrderDate.ToString(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
                 </StackPanel>
-            </StackPanel>
+                </StackPanel>
         </StackPanel>
         <RelativePanel x:Name="UserInputRanel"
                        RelativePanel.Below="CustomerInfo"
@@ -169,6 +168,14 @@
                     <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('TakenBy'), Mode=OneWay}" 
                                Visibility="{x:Bind ViewModel.VisibleIfError('TakenBy'), Mode=OneWay}" 
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <TextBlock Text="Last Edit:" FontSize="{StaticResource SmallFontSize}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Order.LastEditTime.ToString(), Mode=OneWay}" FontSize="{StaticResource SmallFontSize}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <TextBlock Text="By:" FontSize="{StaticResource SmallFontSize}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Order.LastEditor, Mode=OneWay}" FontSize="{StaticResource SmallFontSize}"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <RadioButtons Header="Shipping Type"
@@ -223,8 +230,8 @@
                     <TextBlock Text="Allocated:" 
                                VerticalAlignment="Center"
                                Padding="0,0,10,0"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.Order.Allocated, Mode=TwoWay}"
-                              IsEnabled="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource NullBoolConverter}}"
+                    <CheckBox IsChecked="{x:Bind ViewModel.Allocated, Mode=TwoWay}"
+                              IsEnabled="{x:Bind ViewModel.Allocated, Mode=OneWay, Converter={StaticResource NullBoolConverter}}"
                               VerticalAlignment="Center"
                               IsTabStop="False"
                               Unchecked="AllocationCheckBox_UnChecked"/>
@@ -354,7 +361,7 @@
                 <sf:GridNumericColumn HeaderText="Quantity Allocated" 
                                       MappingName="QuanAllocated" 
                                       AllowEditing="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
-                                      IsHidden="{x:Bind ViewModel.Order.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                      IsHidden="{x:Bind ViewModel.Allocated, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                                       ValueBinding="{Binding Path=QuanAllocated, Mode=TwoWay,  Converter={StaticResource IntToDoubleConverter}}"/>
                 <sf:GridNumericColumn HeaderText="Quantity Received" 
                                       MappingName="QuantityReceived"/>

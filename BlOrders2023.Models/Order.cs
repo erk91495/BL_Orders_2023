@@ -40,6 +40,8 @@ public class Order : ObservableObject, IConvertible
     private List<ShippingItem> _shippingItems = new();
     private ObservableCollection<Payment> _payments;
     private bool _palletTicketPrinted = false;
+    private string? _lastEditor;
+    private DateTime? _lastEditTime;
     #endregion Fields
 
     #region Properties
@@ -162,6 +164,17 @@ public class Order : ObservableObject, IConvertible
     {
         get => _orderStatus; 
         set => SetProperty(ref _orderStatus, value);
+    }
+
+    public string? LastEditor
+    {
+        get => _lastEditor;
+        set => SetProperty(ref _lastEditor, value);
+    }
+    public DateTime? LastEditTime
+    {
+        get => _lastEditTime;
+        set => SetProperty(ref _lastEditTime, value);
     }
     public virtual ObservableCollection<OrderItem> Items
     {

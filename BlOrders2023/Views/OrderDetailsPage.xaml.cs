@@ -77,23 +77,25 @@ public sealed partial class OrderDetailsPage : Page
 
     private async void MainWindow_Closed(object sender, WindowEventArgs args)
     {
-        args.Handled = true;
-        ContentDialog dialog = new ContentDialog()
-        {
-            XamlRoot = XamlRoot,
-            Title = "Close Application",
-            Content = "Are you sure you want to exit the application? Unsaved changes will be discarded.",
-            PrimaryButtonText = "Exit",
-            CloseButtonText = "Cancel",
-        };
-
-        var res = await dialog.ShowAsync();
-        if (res == ContentDialogResult.Primary)
-        {
-            if (sender is MainWindow window)
+        if(ViewModel.HasChanges) {
+            args.Handled = true;
+            ContentDialog dialog = new ContentDialog()
             {
-                App.MainWindow.Closed -= MainWindow_Closed;
-                App.MainWindow.Close();
+                XamlRoot = XamlRoot,
+                Title = "Close Application",
+                Content = "Are you sure you want to exit the application? Unsaved changes will be discarded.",
+                PrimaryButtonText = "Exit",
+                CloseButtonText = "Cancel",
+            };
+
+            var res = await dialog.ShowAsync();
+            if (res == ContentDialogResult.Primary)
+            {
+                if (sender is MainWindow window)
+                {
+                    App.MainWindow.Closed -= MainWindow_Closed;
+                    App.MainWindow.Close();
+                }
             }
         }
     }

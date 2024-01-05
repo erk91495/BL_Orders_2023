@@ -45,6 +45,7 @@ public class SqlBLOrdersDBContext : DbContext
             v => string.Join(',',v.Select(x => x.ToString())),
             v => v.Split(",", StringSplitOptions.TrimEntries).Select(int.Parse).ToList()
             );
+        modelBuilder.Entity<Order>().ToTable(tb => tb.HasTrigger("tgrOrdersLastUpdateDate"));
     }
 
     public DbSet<InventoryItem> Inventory { get; set; }
