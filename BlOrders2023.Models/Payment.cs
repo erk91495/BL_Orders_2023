@@ -50,6 +50,6 @@ namespace BlOrders2023.Models
         public virtual WholesaleCustomer? Customer { get; set; }
 
         [ForeignKey(nameof(OrderId))]
-        public virtual Order? Order { get; set; } = null!;
+        public virtual Order? Order { get; set; } = null;
     }
 }

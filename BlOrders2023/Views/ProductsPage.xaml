@@ -7,20 +7,54 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:BlOrders2023.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    d:DataContext="{d:DesignInstance Type=vm:ProductsPageViewModel}"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:vm="using:BlOrders2023.ViewModels.Converters"
-    xmlns:models="using:BlOrders2023.Models" 
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    xmlns:models="using:BlOrders2023.Models">
 
     <Page.Resources>
         <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
         <vm:NullBoolConverter x:Key="NullBoolConverter"/>
+        <vm:NullIntToDoubleConverter x:Key="NullIntToDoubleConverter"/>
+        <MenuFlyout x:Key="DataGridContextMenu">
+            <MenuFlyoutItem
+                Click="MenuFlyoutItem_Click"
+                Icon="Edit"
+                Text="Edit"/>
+        </MenuFlyout>
     </Page.Resources>
     <RelativePanel>
+
+        <CommandBar
+             x:Name="CommandBar"
+             HorizontalAlignment="Stretch"
+             Background="Transparent"
+             DefaultLabelPosition="Right"
+             RelativePanel.AlignRightWithPanel="True">
+
+            <AppBarElementContainer VerticalContentAlignment="Center">
+                <TextBox x:Name="SearchBox"
+                  TextChanged="SearchBox_TextChanged"
+                  MinWidth="300"
+                  VerticalAlignment="Stretch"
+                  PlaceholderText="Search..."/>
+            </AppBarElementContainer>
+            <AppBarButton Icon="Add" Label="Add Product" Click="NewProduct_Click"/>
+            <AppBarButton Icon="More">
+                <AppBarButton.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem Text="Box Types" Click="MenuFlyoutItem_Click_BoxTypes">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE7B8;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+
         <muxc:ProgressBar
                     x:Name="progressBar"
                     HorizontalAlignment="Stretch"
@@ -31,10 +65,11 @@
                     Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                     RelativePanel.AlignRightWithPanel="True"
                     RelativePanel.AlignLeftWithPanel="True"
-                    RelativePanel.AlignTopWithPanel="True"/>
+                    RelativePanel.Below="CommandBar"/>
 
         <sf:SfDataGrid x:Name="ProductsGrid"
                        ItemsSource="{x:Bind ViewModel.Products, Mode=TwoWay}"
+                       SelectedItem="{x:Bind ViewModel.SelectedProduct, Mode=TwoWay}"
                        SourceType="models:Product"
                        RelativePanel.Below="progressBar"
                        GridLinesVisibility="Both"
@@ -49,35 +84,27 @@
                        RecordDeleted="ProductsGrid_RecordDeleted"
                        AllowEditing="True"
                        AllowDeleting="False"
-                       AddNewRowPosition="Top"
                        DataValidationMode="InView"
-                       AddNewRowInitiating="ProductsGrid_AddNewRowInitiating"
+                       CurrentCellValidating="ProductsGrid_CurrentCellValidating"
                        CurrentCellValidated="ProductsGrid_CurrentCellValidated"
-                       CopyGridCellContent="ProductsGrid_CopyGridCellContent">
+                       CopyGridCellContent="ProductsGrid_CopyGridCellContent"
+                       ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                       ContextFlyout="{StaticResource DataGridContextMenu}">
             
             <sf:SfDataGrid.Columns>
-                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" IsReadOnly="True"/>
+                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" AllowEditing="False" IsReadOnly="True"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="ProductName" AllowEditing="True"/>
                 <sf:GridNumericColumn x:Name="ColumnWholesalePrice"
                                       HeaderText="Wholesale Price" 
                                       MappingName="WholesalePrice"
                                       ValueBinding="{Binding Path=WholesalePrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
-                <sf:GridNumericColumn x:Name="ColumnKetteringPrice"
-                                      HeaderText="Kettering Price" 
-                                      MappingName="KetteringPrice"
-                                      ValueBinding="{Binding Path=KetteringPrice, Mode=TwoWay,  Converter={StaticResource DecimalToDoubleConverter}}"/>
-                <sf:GridCheckBoxColumn HeaderText="Fixed Price" 
-                                       MappingName="FixedPrice" 
-                                       AllowEditing="True" 
-                                       ValueBinding="{Binding Path=FixedPrice, Mode=TwoWay, Converter={StaticResource NullBoolConverter}}"
-                                       UseBindingValue="True"/>
-                <sf:GridTextColumn MappingName="UPCCode" AllowEditing="True"/>
-                <sf:GridTextColumn MappingName="KPCCode" AllowEditing="True"/>
-                <sf:GridTextColumn MappingName="ALUCode" AllowEditing="True"/>
-                <sf:GridTextColumn HeaderText="Company Code" MappingName="CompanyCode" AllowEditing="True"/>
-                 <!--If you are adding a checkbox dont forget to add it to the property changed list in the view model-->                
+                <!--If you are adding a checkbox dont forget to add it to the property changed list in the view model-->                
                 <sf:GridCheckBoxColumn MappingName="Inactive" AllowEditing="True"/>
-                <sf:GridCheckBoxColumn MappingName="IsCredit" AllowEditing="True"/>
+                <!--<sf:GridCheckBoxColumn MappingName="IsCredit" AllowEditing="True"/>-->
+                <sf:GridNumericColumn MappingName="PalletHeight" 
+                                      AllowEditing="True"
+                                      ValueBinding="{Binding Path=PalletHeight, Mode=TwoWay, Converter={StaticResource NullIntToDoubleConverter }}"/>
+                <sf:GridTextColumn MappingName="Box" AllowEditing="False" IsReadOnly="True"/>
 
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>

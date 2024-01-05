@@ -244,7 +244,7 @@
                             <controls:DataGridTemplateColumn Header="Total Ordered" Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Order">
-                                        <TextBlock Text="{x:Bind GetTotalOrderedAllocated()}"/>
+                                        <TextBlock Text="{x:Bind TotalOrderedAllocated, Mode=OneWay}"/>
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
@@ -253,7 +253,7 @@
                             <controls:DataGridTemplateColumn Header="Total Allocated" Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Order">
-                                        <TextBlock Text="{x:Bind GetTotalAllocated(), Mode=OneWay}"/>
+                                        <TextBlock Text="{x:Bind TotalAllocated, Mode=OneWay}"/>
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>

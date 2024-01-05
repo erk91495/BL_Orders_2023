@@ -127,9 +127,9 @@ namespace BlOrders2023.Reporting.ReportClasses
                     {
                         table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToString("M/d/yy")}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.GetInvoiceTotal():C}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.GetTotalPayments():C}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.GetBalanceDue():C}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.InvoiceTotal:C}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.TotalPayments:C}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.BalanceDue:C}").Style(tableTextStyle);
                         static IContainer CellStyle(IContainer container)
                         {
                             return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
@@ -137,9 +137,9 @@ namespace BlOrders2023.Reporting.ReportClasses
                     }
                     table.Cell().Element(FooterCellStyle).Text("Totals:").Style(tableHeaderStyle);
                     table.Cell().Element(FooterCellStyle).Text("").Style(tableHeaderStyle);                        
-                    table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetInvoiceTotal()):C}").Style(tableHeaderStyle);
-                    table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetTotalPayments()):C}").Style(tableHeaderStyle);
-                    table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.GetBalanceDue()):C}").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.InvoiceTotal):C}").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.TotalPayments):C}").Style(tableHeaderStyle);
+                    table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.BalanceDue):C}").Style(tableHeaderStyle);
 
                     static IContainer FooterCellStyle(IContainer container)
                     {

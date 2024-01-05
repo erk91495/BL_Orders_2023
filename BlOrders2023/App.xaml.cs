@@ -53,6 +53,17 @@ public partial class App : Application
         return service;
     }
 
+    public static T GetService<T>(Type serviceType)
+    where T : class
+    {
+        if ((App.Current as App)!.Host.Services.GetService(serviceType) is not T service)
+        {
+            throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
+        }
+
+        return service;
+    }
+
     public static WindowEx MainWindow { get; } = new MainWindow();
 	
 	public static UIElement? AppTitlebar { get; set; }
@@ -74,7 +85,7 @@ public partial class App : Application
 
     public App()
     {
-        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NHaF5cXmVCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXZfeXRSQmFdVEB/V0U=");
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWH1ccHVRRmFcUEd1WkA=");
         QuestPDF.Settings.License = LicenseType.Community;
 
         InitializeComponent();
@@ -130,6 +141,8 @@ public partial class App : Application
             services.AddTransient<InventoryPageViewModel>();
             services.AddTransient<PaymentsPage>();
             services.AddTransient<PaymentsPageViewModel>();
+            services.AddTransient<ProductDataInputDialogViewModel>();
+            services.AddTransient<BoxGridEditorViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

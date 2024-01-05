@@ -93,13 +93,13 @@
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
-    <PackageReference Include="NLog.WindowsEventLog" Version="5.2.5" />
-    <PackageReference Include="QuestPDF" Version="2023.10.2" />
-    <PackageReference Include="Syncfusion.EJ2.PdfViewer.AspNet.Mvc5" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.Grid.WinUI" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.Licensing" Version="23.1.44" />
+    <PackageReference Include="NLog.WindowsEventLog" Version="5.2.7" />
+    <PackageReference Include="QuestPDF" Version="2023.12.1" />
+    <PackageReference Include="Syncfusion.EJ2.PdfViewer.AspNet.Mvc5" Version="24.1.41" />
+    <PackageReference Include="Syncfusion.Grid.WinUI" Version="24.1.41" />
+    <PackageReference Include="Syncfusion.Licensing" Version="24.1.41" />
     <PackageReference Include="WinUIEx" Version="2.3.3" />
   </ItemGroup>
 
@@ -116,6 +116,12 @@
 	<None Update="nlog.config">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="ViewModels\GridEditorDialog.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
+	<Page Update="UserControls\ProductDataInputDialog.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="UserControls\CustomerOrderSelectionDialog.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -175,7 +181,9 @@
     <None Remove="UserControls\BillOfLadingDataInputDialog.xaml" />
     <None Remove="UserControls\CustomerOrderSelectionDialog.xaml" />
     <None Remove="UserControls\PaymentDataInputControl.xaml" />
+    <None Remove="UserControls\ProductDataInputDialog.xaml" />
     <None Remove="UserControls\SqlConnectionSettingsPanel.xaml" />
+    <None Remove="ViewModels\GridEditorDialog.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
     <None Remove="Views\InventoryPage.xaml" />
     <None Remove="Views\PaymentsPage.xaml" />
