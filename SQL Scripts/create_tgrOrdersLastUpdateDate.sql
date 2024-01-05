@@ -18,13 +18,13 @@ SET NOCOUNT ON;
 	UPDATE [dbo].[tblOrdersWholesale] 
 	SET LastEditTime = GetDate(),
 	    LastEditor = HOST_NAME()
-	FROM dbo.tblUpdate_Temp 
+	FROM dbo.tblOrdersWholesale 
 	INNER JOIN Inserted i
 	ON dbo.tblOrdersWholesale.OrderID = i.OrderID
 END
 GO
 
-ALTER TABLE [dbo].[tblUpdate_Temp] ENABLE TRIGGER [tgrOrdersLastUpdateDate]
+ALTER TABLE [dbo].[tblOrdersWholesale] ENABLE TRIGGER [tgrOrdersLastUpdateDate]
 GO
 
 
