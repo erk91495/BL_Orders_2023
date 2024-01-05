@@ -388,10 +388,8 @@ public class Order : ObservableObject, IConvertible
         }
     }
 
-    public decimal GetBalanceDue()
-    {
-        return Math.Round(GetInvoiceTotal() - GetTotalPayments(), 2);
-    }
+    public decimal BalanceDue => Math.Round(InvoiceTotal - TotalPayments, 2);
+
 
     private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {

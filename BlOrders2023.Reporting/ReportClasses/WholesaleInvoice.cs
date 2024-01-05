@@ -277,7 +277,7 @@ public class WholesaleInvoice : IReport
                     return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
                 }
             });
-            column.Item().ExtendVertical().AlignBottom().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Invoice Total: {_order.GetInvoiceTotal():C}").Bold();
+            column.Item().ExtendVertical().AlignBottom().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Invoice Total: {_order.InvoiceTotal:C}").Bold();
         });
     }
 

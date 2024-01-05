@@ -384,15 +384,15 @@
                     Spacing="10">
             <TextBlock>
                 <Run Text="Invoice Total: $" FontWeight="Bold" FontSize="{StaticResource MediumFontSize}"/>
-                <Run Text="{x:Bind ViewModel.Order.GetInvoiceTotal(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+                <Run Text="{x:Bind ViewModel.Order.InvoiceTotal, Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
             </TextBlock>
             <TextBlock>
                 <Run Text="Payments:      $" FontWeight="Bold" FontSize="{StaticResource MediumFontSize}"/>
-                <Run Text="{x:Bind ViewModel.Order.GetTotalPayments(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+                <Run Text="{x:Bind ViewModel.Order.TotalPayments, Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
             </TextBlock>
             <TextBlock>
                 <Run Text="Balace Due:    $" FontWeight="Bold" FontSize="{StaticResource MediumFontSize}"/>
-                <Run Text="{x:Bind ViewModel.Order.GetBalanceDue(), Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
+                <Run Text="{x:Bind ViewModel.Order.BalanceDue, Mode=OneWay}" FontSize="{StaticResource MediumFontSize}"/>
             </TextBlock>
         </StackPanel>
         <Grid x:Name="NavigationButtonGrid" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.LeftOf="InvoiceTotalStack">
