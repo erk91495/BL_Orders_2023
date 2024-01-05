@@ -351,6 +351,7 @@ public sealed partial class FillOrdersPage : Page
                 {
                     printInvoice = true;
                     printSettings.Copies = 1;
+                    printSettings.Duplex = Duplex.Simplex;
                 }
             }
             //Not all items on order
@@ -369,6 +370,7 @@ public sealed partial class FillOrdersPage : Page
                 {
                     printInvoice = true;
                     printSettings.Copies = 2;
+                    printSettings.Duplex = Duplex.Simplex;
                 }
             }
             //Print invoice
@@ -376,6 +378,7 @@ public sealed partial class FillOrdersPage : Page
             {
                 printInvoice = true;
                 printSettings.Copies = 2;
+                printSettings.Duplex = Duplex.Simplex;
             }
         }
         

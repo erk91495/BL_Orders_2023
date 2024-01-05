@@ -384,18 +384,14 @@ public class Order : ObservableObject, IConvertible
     {
         get
         {
-            if (Payments.IsNullOrEmpty())
-            {
-                return 0;
-            }
-            else
-            {
-                return Payments.Sum(p => p.PaymentAmount ?? 0);
-            }
+            return Math.Round(Payments.Sum(p => p.PaymentAmount ?? 0), 2);
         }
     }
 
-    public decimal BalanceDue => InvoiceTotal - TotalPayments;
+    public decimal GetBalanceDue()
+    {
+        return Math.Round(GetInvoiceTotal() - GetTotalPayments(), 2);
+    }
 
     private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {

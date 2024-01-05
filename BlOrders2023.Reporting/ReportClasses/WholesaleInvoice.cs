@@ -7,6 +7,7 @@ using BlOrders2023.Models;
 using System.Reflection;
 using System.Net;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 
@@ -275,8 +276,8 @@ public class WholesaleInvoice : IReport
                 {
                     return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
                 }
-
             });
+            column.Item().ExtendVertical().AlignBottom().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Invoice Total: {_order.GetInvoiceTotal():C}").Bold();
         });
     }
 
@@ -288,8 +289,6 @@ public class WholesaleInvoice : IReport
             {
                 column.Item().AlignRight().Text($"Memo Total:{_order.Memo_Totl:C}");
             }
-            column.Item().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Invoice Total: {_order.InvoiceTotal:C}").Bold();
-
             column.Item().AlignBottom().AlignRight().Row(footer =>
             {
                 footer.RelativeItem().AlignLeft().Text(time =>
