@@ -4,15 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Models
 {
     [Table("tblPayments")]
-    public class Payment
+    public class Payment: ObservableObject
     {
         #region Fields
         private string? _notes;
+        private decimal? paymentAmount;
         #endregion Fields
         [Key]
         [Column("PaymentID")]
@@ -20,7 +22,22 @@ namespace BlOrders2023.Models
         public int PaymentID { get; set; }
         public int? OrderId { get; set; }
         public int? CustId { get; set; }
-        public decimal? PaymentAmount { get; set; }
+        public decimal? PaymentAmount
+        {
+            get => Math.Round(paymentAmount ?? 0,2); 
+            set 
+            {
+                if(value is null)
+                {
+                    SetProperty( ref paymentAmount, value);
+                }
+                else
+                {
+                    SetProperty(ref paymentAmount, Math.Round((decimal)value, 2));
+                }
+                
+            }
+        }
         public DateTime? PaymentDate { get; set; }
         public string? CreditCardNumber { get; set; }
         public string? CardholdersName { get; set; }

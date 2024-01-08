@@ -107,7 +107,7 @@ public class WholesalePaymentsReport : IReport
                     table.Cell().Element(CellStyle).Text($"{payment.OrderId}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{payment.PaymentID}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{payment.PaymentMethod.Method}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{payment.CheckNumber ?? String.Empty}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{payment.CheckNumber ?? string.Empty}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{payment.PaymentAmount:C}").Style(tableTextStyle);
 
                     static IContainer CellStyle(IContainer container)
