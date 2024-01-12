@@ -9,6 +9,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 namespace BlOrders2023.ViewModels;
 
@@ -26,18 +27,24 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         get => _items;
         set
         {
-            if (_items != value)
-            {
-                value.CollectionChanged += LineItems_Changed;
-            }
-
             if (_items != null)
             {
                 _items.CollectionChanged -= LineItems_Changed;
             }
 
-            _items = value;
-            OnPropertyChanged();
+
+            if (value != null)
+            {
+                value.CollectionChanged += LineItems_Changed;
+            }
+            SetProperty(ref _items, value);
+            if(!_items.IsNullOrEmpty()) 
+            {
+                foreach(var item in _items)
+                {
+                    item.PropertyChanged += OrderItemOnPropertyChanged;
+                }
+            }
         }
 
     }
@@ -288,6 +295,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         _order = new();
         _suggestedProducts = new();
         _items = new();
+        _items.CollectionChanged += this.LineItems_Changed;
         LoadProducts();
     }
     #endregion Constructors
@@ -308,6 +316,27 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     /// </summary>
     private void LineItems_Changed(object? _sender, NotifyCollectionChangedEventArgs e)
     {
+        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
+        {
+            foreach (INotifyPropertyChanged added in e.NewItems)
+            {
+                added.PropertyChanged += OrderItemOnPropertyChanged;
+            }
+        }
+        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove || e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
+        {
+            foreach (INotifyPropertyChanged removed in e.OldItems)
+            {
+                removed.PropertyChanged -= OrderItemOnPropertyChanged;
+            }
+        }
+        HasChanges = true;
+        OnPropertyChanged(nameof(Items));
+    }
+
+    private void OrderItemOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        HasChanges = true;
         OnPropertyChanged(nameof(Items));
     }
 
@@ -332,7 +361,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
                     Memo = "Cash on Delivery";
                 }
             }
-            _items = new ObservableCollection<OrderItem>(_order.Items);
+            Items = new ObservableCollection<OrderItem>(_order.Items);
             _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
             HasNextOrder = _currentOrderIndex < _order.Customer.Orders.Count - 1;
             HasPreviousOrder = _currentOrderIndex > 0;
@@ -419,7 +448,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     internal void ReloadOrder()
     {
         _order = _db.Orders.Reload(_order);
-        _items = new ObservableCollection<OrderItem>(_order.Items);
+        Items = new ObservableCollection<OrderItem>(_order.Items);
         _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);
         HasNextOrder = _currentOrderIndex < _order.Customer.Orders.Count - 1;
         HasPreviousOrder = _currentOrderIndex > 0;
