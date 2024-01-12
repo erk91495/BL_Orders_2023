@@ -7,7 +7,7 @@ using BlOrders2023.Core.Helpers;
 using BlOrders2023.Models;
 
 namespace BlOrders2023.Core.Contracts.Services;
-internal interface IPalletizer
+public interface IPalletizer
 {
    public Task<IEnumerable<Pallet>> PalletizeAsync();
 }

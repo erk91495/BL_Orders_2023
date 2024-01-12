@@ -1,4 +1,4 @@
-﻿#define DAN_IS_LOADING_PALLETS
+﻿//#define DAN_IS_LOADING_PALLETS
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -97,7 +97,7 @@ public class Palletizer : IPalletizer
                             groupRemainder.Add(item.Product, quanNeeded % maxPerPallet);
                         }
                     }
-                    //try to combine as many pallets as you can for each group
+                    //try to combine as many _pallets as you can for each group
                     pallets = pallets.Concat(CombinePalletsBetter(ref groupRemainder, maxPerPallet)).ToList();
                     if(groupRemainder.Count > 0) {
                         Pallet groupPallet = new(_currentOrder.OrderID);
@@ -261,12 +261,13 @@ public class Palletizer : IPalletizer
             Dictionary<Product, int> groupRemainder = new();
             if(!group.IsNullOrEmpty()){
                 //All items are grouped by box type so we can just grab the first one
-                var maxPerPallet = GetMaxBoxesPerPallet(group[0].Product);
+                
                 var boxType = GetBoxType(group[0].Product);
-                if(boxType != BoxType.Unknown)
+                if(boxType != BoxType.Unknown || true)
                 {
                     foreach (var item in group)
                     {
+                        var maxPerPallet = GetMaxBoxesPerPallet(item.Product);
                         var quanNeeded = (int)(item.Allocated == true ? item.QuanAllocated : item.Quantity);
                         //Make Full Pallets
                         for (var i = 0; i < (int)(quanNeeded / maxPerPallet); i++)
@@ -284,8 +285,8 @@ public class Palletizer : IPalletizer
 
                     }
 
-                    //try to combine as many pallets as you can for each group
-                    pallets = pallets.Concat(CombinePalletsBetter(ref groupRemainder, maxPerPallet)).ToList();
+                    //try to combine as many _pallets as you can for each group
+                    pallets = pallets.Concat(CombinePalletsBetter(ref groupRemainder, 50)).ToList();
                     foreach (var item in groupRemainder)
                     {
                         remainder.Add(item.Key, item.Value);
@@ -306,7 +307,7 @@ public class Palletizer : IPalletizer
 
         }
 
-        //these pallets are already to big to combine
+        //these _pallets are already to big to combine
         foreach(var item in remainder.Where(i => i.Value > Config.MixedBoxesPerPallet))
         {
             Pallet p = new Pallet(_currentOrder.OrderID);
@@ -315,7 +316,7 @@ public class Palletizer : IPalletizer
             pallets.Add(p);
         }
 
-        //last chance to combine pallets 
+        //last chance to combine _pallets 
         pallets = pallets.Concat(CombinePalletsBetter(ref remainder, Config.MixedBoxesPerPallet)).ToList();
         if(!remainder.IsNullOrEmpty()){
             Pallet lastPallet = new(_currentOrder.OrderID);
@@ -333,7 +334,7 @@ public class Palletizer : IPalletizer
 
     private IEnumerable<Pallet> CombinePallets(ref Dictionary<Product,int> remainder, int maxPerPallet)
     {
-        //try to combine as many pallets as you can for each group
+        //try to combine as many _pallets as you can for each group
         List<Pallet> pallets = new();
         Pallet pallet = new(_currentOrder.OrderID);
         var sortedRemainder = remainder.OrderByDescending(p => p.Value).ToDictionary();
@@ -378,7 +379,7 @@ public class Palletizer : IPalletizer
 
     private IEnumerable<Pallet> CombinePalletsBetter(ref Dictionary<Product, int> remainder, int maxPerPallet) 
     {
-        //try to combine as many pallets as you can for each group
+        //try to combine as many _pallets as you can for each group
         List<Pallet> pallets = new();
         Pallet pallet = new(_currentOrder.OrderID);
         var remainingPalletSpace = maxPerPallet;
@@ -522,6 +523,15 @@ public class Palletizer : IPalletizer
 
     private int GetMaxBoxesPerPallet(Product product)
     {
+        if(product.Box != null && product.PalletHeight != null)
+        {
+            return product.Box.Ti_Hi * (int)product.PalletHeight;
+        }
+        else
+        {
+            return 50;
+        }
+
         var boxType = GetBoxType(product);
         switch(boxType)
         {

@@ -16,6 +16,7 @@ using BlOrders2023.Reporting;
 using BlOrders2023.Services;
 using System.Drawing.Printing;
 using BlOrders2023.Core.Services;
+using BlOrders2023.Core.Contracts.Services;
 using Syncfusion.UI.Xaml.DataGrid;
 using Microsoft.UI.Xaml.Input;
 using NLog;
@@ -493,7 +494,7 @@ public sealed partial class FillOrdersPage : Page
 
             if (print)
             {
-                Palletizer palletizer = new(new(), ViewModel.Order);
+                IPalletizer palletizer = new Palletizer(new(), ViewModel.Order);
                 var pallets = await palletizer.PalletizeAsync();
                 var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
 
