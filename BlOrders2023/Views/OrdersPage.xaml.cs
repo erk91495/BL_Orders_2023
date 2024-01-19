@@ -521,7 +521,7 @@ public sealed partial class OrdersPage : Page
 
         if (print)
         {
-            IPalletizer palletizer = new BoxPalletizer(new(), ViewModel.SelectedOrder);
+            IPalletizer palletizer = new Palletizer(new(), ViewModel.SelectedOrder);
             var pallets = await palletizer.PalletizeAsync();
             var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.SelectedOrder, pallets);
 

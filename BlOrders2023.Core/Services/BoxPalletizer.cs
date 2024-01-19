@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BlOrders2023.Core.Contracts.Services;
+﻿using BlOrders2023.Core.Contracts.Services;
 using BlOrders2023.Core.Helpers;
 using BlOrders2023.Models;
-using BlOrders2023.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Core.Services;
@@ -16,7 +9,7 @@ public class BoxPalletizer : IPalletizer
     #region Fields
     private readonly Order _currentOrder;
     private readonly PalletizerConfig _config;
-    private List<Pallet> _pallets = new List<Pallet>();
+    private readonly List<Pallet> _pallets = [];
     #endregion Fields
 
     #region Properties
