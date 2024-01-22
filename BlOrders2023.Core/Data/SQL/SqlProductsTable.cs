@@ -189,7 +189,11 @@ internal class SqlProductsTable : IProductsTable
         var exists = await _db.Products.FirstOrDefaultAsync(p => product.ProductID == p.ProductID);
         if (exists == null)
         {
-            _db.Products.Add(product);
+            Product toAdd = new(product);
+            //we dont want to add related items
+            toAdd.Box = null;
+            
+            _db.Products.Add(toAdd);
         }
         else
         {
