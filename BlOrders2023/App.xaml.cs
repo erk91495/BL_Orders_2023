@@ -14,9 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-
 using QuestPDF.Infrastructure;
-
 using Windows.ApplicationModel;
 using Microsoft.UI.Dispatching;
 using Microsoft.Data.SqlClient;
@@ -25,10 +23,7 @@ using CommunityToolkit.WinUI;
 using System.Diagnostics;
 using NLog;
 using System.Media;
-using System.Configuration;
 using Microsoft.Extensions.Configuration;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using Microsoft.Identity.Client;
 
 namespace BlOrders2023;
 
@@ -144,6 +139,7 @@ public partial class App : Application
             services.AddTransient<PaymentsPageViewModel>();
             services.AddTransient<ProductDataInputDialogViewModel>();
             services.AddTransient<BoxGridEditorViewModel>();
+            services.AddTransient<IssueSubmitterDialogViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
@@ -154,7 +150,7 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-        var config =  Host.Services.GetService<IConfiguration>();
+        var config =  GetService<IConfiguration>();
         Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(config["APIkeys:Syncfusion"]);
         QuestPDF.Settings.License = LicenseType.Community;
 

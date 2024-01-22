@@ -83,7 +83,7 @@
             </labs:SettingsCard.HeaderIcon>
             <!-- Will expand the settings card's height -->
             <!--<Expander Header="Open" MinWidth="200"></Expander>-->
-            <Button Content="Open"
+            <Button Content="Show Connection String"
                     MinWidth="200"
                     Style="{StaticResource AccentButtonStyle}">
                 <Button.Flyout>
