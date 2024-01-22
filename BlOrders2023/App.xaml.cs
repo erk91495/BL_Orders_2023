@@ -25,6 +25,10 @@ using CommunityToolkit.WinUI;
 using System.Diagnostics;
 using NLog;
 using System.Media;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Microsoft.Identity.Client;
 
 namespace BlOrders2023;
 
@@ -85,9 +89,6 @@ public partial class App : Application
 
     public App()
     {
-        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWH1ccHVRRmFcUEd1WkA=");
-        QuestPDF.Settings.License = LicenseType.Community;
-
         InitializeComponent();
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
@@ -147,12 +148,15 @@ public partial class App : Application
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
+        ConfigureAppConfiguration( app => app.AddUserSecrets<App>() ).
         Build();
 
         UnhandledException += App_UnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-
+        var config =  Host.Services.GetService<IConfiguration>();
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(config["APIkeys:Syncfusion"]);
+        QuestPDF.Settings.License = LicenseType.Community;
 
 #if DEBUG
         var db = App.GetNewDatabase();
