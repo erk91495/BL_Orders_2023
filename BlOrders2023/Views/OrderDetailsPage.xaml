@@ -28,6 +28,10 @@
         <vm:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
         <vm:WeightFormatConverter x:Key="WeightFormatConverter"/>
         <vm:NullBoolConverter x:Key="NullBoolConverter"/>
+        <Style x:Key="TableSummaryStyle" TargetType="sf:GridTableSummaryCell">
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="Padding" Value="0,0,12,0"/>
+        </Style>
     </Page.Resources>
     <RelativePanel Margin="10,10,10,0">
         <StackPanel x:Name="OrderNumber"
@@ -334,10 +338,29 @@
                        PointerMoved="OrderedItems_PointerMoved"
                        CellTapped="OrderedItems_CellTapped"
                        IsTabStop="False"
-                       IsReadOnly="{x:Bind ViewModel.CanAddItems, Mode=OneWay}">
+                       IsReadOnly="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
+                       TableSummaryCellStyle="{StaticResource TableSummaryStyle}">
             <sf:SfDataGrid.Resources>
                 <SolidColorBrush x:Key="SyncfusionDataGridRowBackgroundPointerOver" Color="{StaticResource SystemAccentColor}"/>
             </sf:SfDataGrid.Resources>
+            <sf:SfDataGrid.TableSummaryRows>
+                <sf:GridTableSummaryRow ShowSummaryInRow="False">
+                    <sf:GridSummaryRow.SummaryColumns>
+                        <sf:GridSummaryColumn Name="Quantity"
+                                              MappingName="Quantity"
+                                              Format="'{Sum}'"
+                                              SummaryType="Int32Aggregate" />
+                        <sf:GridSummaryColumn Name="Allocated"
+                                              MappingName="QuanAllocated"
+                                              Format="'{Sum}'"
+                                              SummaryType="Int32Aggregate" />
+                        <sf:GridSummaryColumn Name="Received"
+                                              MappingName="QuantityReceived"
+                                              Format="'{Sum}'"
+                                              SummaryType="Int32Aggregate" />
+                    </sf:GridSummaryRow.SummaryColumns>
+                </sf:GridTableSummaryRow>
+            </sf:SfDataGrid.TableSummaryRows>
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="Product ID" 
                                    MappingName="ProductID"/>
