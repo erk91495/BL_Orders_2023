@@ -216,6 +216,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
             if(value != _product.Box)
             {
                 _product.Box = value;
+                BoxID = value.ID;
                 OnPropertyChanged();
             }
 

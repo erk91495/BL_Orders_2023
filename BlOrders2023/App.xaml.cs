@@ -14,9 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-
 using QuestPDF.Infrastructure;
-
 using Windows.ApplicationModel;
 using Microsoft.UI.Dispatching;
 using Microsoft.Data.SqlClient;
@@ -25,6 +23,7 @@ using CommunityToolkit.WinUI;
 using System.Diagnostics;
 using NLog;
 using System.Media;
+using Microsoft.Extensions.Configuration;
 
 namespace BlOrders2023;
 
@@ -85,9 +84,6 @@ public partial class App : Application
 
     public App()
     {
-        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWH1ccHVRRmFcUEd1WkA=");
-        QuestPDF.Settings.License = LicenseType.Community;
-
         InitializeComponent();
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
@@ -143,16 +139,20 @@ public partial class App : Application
             services.AddTransient<PaymentsPageViewModel>();
             services.AddTransient<ProductDataInputDialogViewModel>();
             services.AddTransient<BoxGridEditorViewModel>();
+            services.AddTransient<IssueSubmitterDialogViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
+        ConfigureAppConfiguration( app => app.AddJsonFile("apis.json") ).
         Build();
 
         UnhandledException += App_UnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-
+        var config =  GetService<IConfiguration>();
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(config["APIkeys:Syncfusion"]);
+        QuestPDF.Settings.License = LicenseType.Community;
 
 #if DEBUG
         var db = App.GetNewDatabase();

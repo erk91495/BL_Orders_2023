@@ -25,18 +25,7 @@ public class ProductsPageViewModel : ObservableRecipient
     public ObservableCollection<Product> Products 
     { 
         get => _products;
-        set
-        {
-            foreach (var item in _products)
-            {
-                item.PropertyChanged -= Product_PropertyChanged;
-            }
-            SetProperty(ref _products, value);
-            foreach (var item in value)
-            {
-                item.PropertyChanged += Product_PropertyChanged;
-            }
-        }
+        set => SetProperty(ref _products, value);
     }
     /// <summary>
     /// Gets or sets a value that specifies whether orders are being loaded.
@@ -172,14 +161,14 @@ public class ProductsPageViewModel : ObservableRecipient
     }
 
 
-    private void Product_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        //Have to watch for these property changes because checkboxes dont validate
-        if((e.PropertyName == "FixedPrice" || e.PropertyName == "Inactive" || e.PropertyName == "IsCredit" || e.PropertyName == "Box") && sender is Product p)
-        {
-            SaveItem(p);
-        }
-    }
+    //private void Product_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    //{
+    //    //Have to watch for these property changes because checkboxes dont validate
+    //    if((e.PropertyName == "FixedPrice" || e.PropertyName == "Inactive" || e.PropertyName == "IsCredit" || e.PropertyName == "Box") && sender is Product p)
+    //    {
+    //        SaveItem(p);
+    //    }
+    //}
 
     internal static async Task<bool> ProductIDExists(int productId)
     {
