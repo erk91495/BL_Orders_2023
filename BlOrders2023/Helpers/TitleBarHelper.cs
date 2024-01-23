@@ -8,7 +8,7 @@ using Windows.UI;
 
 namespace BlOrders2023.Helpers;
 
-// Helper class to workaround custom title bar bugs.
+// Helper class to workaround custom _title bar bugs.
 // DISCLAIMER: The resource key names and color values used below are subject to change. Do not depend on them.
 // https://github.com/microsoft/TemplateStudio/issues/4516
 internal class TitleBarHelper

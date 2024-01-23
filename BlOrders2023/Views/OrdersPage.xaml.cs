@@ -22,6 +22,7 @@ using BlOrders2023.Helpers;
 using BlOrders2023.Core.Services;
 using CommunityToolkit.WinUI;
 using System.Diagnostics;
+using BlOrders2023.Core.Contracts.Services;
 
 namespace BlOrders2023.Views;
 
@@ -520,7 +521,7 @@ public sealed partial class OrdersPage : Page
 
         if (print)
         {
-            Palletizer palletizer = new(new(), ViewModel.SelectedOrder);
+            IPalletizer palletizer = new Palletizer(new(), ViewModel.SelectedOrder);
             var pallets = await palletizer.PalletizeAsync();
             var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.SelectedOrder, pallets);
 

@@ -186,10 +186,16 @@ public sealed partial class CustomerOrderSelectionDialog : ContentDialog, INotif
 
     private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
+        if (OrderSelection.SelectedItems.IsNullOrEmpty())
+        {
+            args.Cancel = true;
+            return;
+        }
         if (OrderSelection.SelectedItems != null)
         {
             SelectedOrders = OrderSelection.SelectedItems.OfType<Order>().ToList();
         }
+
     }
     #endregion Methods
 }
