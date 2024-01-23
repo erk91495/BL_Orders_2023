@@ -144,7 +144,7 @@ public partial class App : Application
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
-        ConfigureAppConfiguration( app => app.AddUserSecrets<App>() ).
+        ConfigureAppConfiguration( app => app.AddJsonFile("apis.json") ).
         Build();
 
         UnhandledException += App_UnhandledException;
