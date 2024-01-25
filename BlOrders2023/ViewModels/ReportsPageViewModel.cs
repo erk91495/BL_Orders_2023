@@ -73,4 +73,9 @@ public class ReportsPageViewModel : ObservableRecipient
     {
         return App.GetNewDatabase().Customers.Get();
     }
+
+    internal IEnumerable<ShippingItem> GetShippingItems(DateTime startDate, DateTime endDate)
+    {
+        return App.GetNewDatabase().ShipDetails.GetShippingItems(startDate, endDate);
+    }
 }

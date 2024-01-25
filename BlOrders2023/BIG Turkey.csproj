@@ -201,6 +201,7 @@
   
   <ItemGroup>
     <Folder Include="Themes\" />
+    <Folder Include="UserControls\Dialogs\" />
   </ItemGroup>
   
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

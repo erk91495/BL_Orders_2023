@@ -502,6 +502,11 @@ public sealed partial class ReportsPage : Page
                 }
 
             }
+            else if(control.ReportType == typeof(ShippingItemAuditReport))
+            {
+                var items = ViewModel.GetShippingItems(DateTime.Today.AddDays(-76), DateTime.Today);
+                reportPath = reportGenerator.GenerateShippingItemAuditReport(items);
+            }
             else
             {
                 ContentDialog d = new()

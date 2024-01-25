@@ -57,10 +57,17 @@ internal class SqlShipDetailsTable : IShipDetailsTable
             await _db.SaveChangesAsync();
         }
     }
-
     public async Task UpsertAsync(ShippingItem item)
     {
         _db.Update(item);
         await _db.SaveChangesAsync();
+    }
+    public IEnumerable<ShippingItem> GetShippingItems(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return _db.ShippingItems.Where(i => i.PackDate != null &&  i.PackDate.Value.Date >= startDate.Date &&
+                                       i.PackDate.Value.Date <= endDate.Date)
+                                .Include(i => i.Product)
+                                .Include(i => i.Order)
+                                .ThenInclude( i => i.Customer);
     }
 }
