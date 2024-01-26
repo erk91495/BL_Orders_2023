@@ -51,7 +51,7 @@ public static class BarcodeInterpreter
 
         if (!isValidBarcodeType || barcode == null)
         {
-            throw new UnknownBarcodeFormatException("The scanline given did not match a given barcode format");
+            throw new UnknownBarcodeFormatException("The _scanline given did not match a given barcode format");
         }
         else
         {
@@ -118,7 +118,7 @@ public static class BarcodeInterpreter
     }
 
     /// <summary>
-    /// Creates a scanline for the given ShippingItem. Overwrites the scanline property. The ShippingItem's
+    /// Creates a _scanline for the given ShippingItem. Overwrites the _scanline property. The ShippingItem's
     /// properties must be set
     /// </summary>
     /// <param name="item">The given Shipping Item to create a barcodes from</param>
@@ -126,7 +126,7 @@ public static class BarcodeInterpreter
     public static bool SynthesizeBarcode(ref ShippingItem item)
     {
 
-        //TODO: rewrite this to check if properties are null and create a scanline based on the give properties
+        //TODO: rewrite this to check if properties are null and create a _scanline based on the give properties
         // if(Pickweight != 0) { append 3202 + pickweight}
         // if we want to get real fancy allow the user to select ai's and order them then throw errors if values arent populated 
         if (item.PackDate != null && item.Product != null ) {

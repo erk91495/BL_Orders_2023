@@ -16,4 +16,7 @@ public interface IShipDetailsTable
     public Task DeleteAsync(ShippingItem item);
     public IEnumerable<OrderTotalsItem> GetOrderTotals(DateTimeOffset startDate, DateTimeOffset endDate);
     public IEnumerable<ShippingItem> GetShippingItems(DateTimeOffset startDate, DateTimeOffset endDate);
+    public ShippingItem? Get(string scanline);
+    public ShippingItem? Get(int productID, string serial);
+    public IEnumerable<ShippingItem> GetShippingItems(ShippingItem item, bool? matchProductID, bool? matchSerial, bool? matchPackDate, bool? matchScanline, DateTime? startDate, DateTime? endDate);
 }

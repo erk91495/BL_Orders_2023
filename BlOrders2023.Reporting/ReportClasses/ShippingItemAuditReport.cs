@@ -48,7 +48,7 @@ public class ShippingItemAuditReport :IReport
             page.MarginTop(0.75f, Unit.Inch);
             page.Size(PageSizes.Letter.Landscape());
 
-            page.Header().Height(100).Background(Colors.Grey.Lighten1);
+            page.Header().Height(75).Background(Colors.Grey.Lighten1);
             page.Header().Element(ComposeHeader);
 
             page.Content().Background(Colors.Grey.Lighten3);

@@ -15,6 +15,7 @@ using BlOrders2023.Models;
 using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
 using BlOrders2023.UserControls;
+using BlOrders2023.UserControls.Dialogs;
 using BlOrders2023.ViewModels;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
@@ -504,8 +505,37 @@ public sealed partial class ReportsPage : Page
             }
             else if(control.ReportType == typeof(ShippingItemAuditReport))
             {
-                var items = ViewModel.GetShippingItems(DateTime.Today.AddDays(-76), DateTime.Today);
-                reportPath = reportGenerator.GenerateShippingItemAuditReport(items);
+                var dialog = new AuditDataInputDialog(){ XamlRoot = XamlRoot };
+                var res = await dialog.ShowAsync();
+                if(res == ContentDialogResult.Primary)
+                {
+                    var fieldsToMatch = dialog.GetCheckedBoxes();
+                    ShippingItem? item = null;
+                    if (dialog.InputType == InputTypes.Scanline)
+                    {
+                        item = ViewModel.GetShippingItem(dialog.Scanline);
+                    }
+                    else if (dialog.InputType == InputTypes.Serial)
+                    {
+                        item = ViewModel.GetShippingItem(dialog.ProductID, dialog.Serial);
+                    }
+                    if(item != null)
+                    {
+                        DateTime? startDate = null;
+                        DateTime? endDate = null;
+                        if (fieldsToMatch.Contains("DateRange"))
+                        {
+                            DateTime sDate = dialog.DateRange.StartDate.Value.Date;
+                            DateTime eDate = dialog.DateRange.EndDate.Value.Date;
+                            startDate = new DateTime(sDate.Year, sDate.Month, sDate.Day, 0, 0, 0, 0, DateTimeKind.Local);
+                            endDate = new DateTime(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, DateTimeKind.Local);
+                        }
+                        var items = ViewModel.GetShippingItems(item,fieldsToMatch.Contains("ProductID"),fieldsToMatch.Contains("Serial"),
+                            fieldsToMatch.Contains("Packdate"),fieldsToMatch.Contains("Scanline"),startDate,endDate);
+                        reportPath = reportGenerator.GenerateShippingItemAuditReport(items);
+                    }
+                }
+
             }
             else
             {

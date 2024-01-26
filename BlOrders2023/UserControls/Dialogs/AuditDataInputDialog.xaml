@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="BlOrders2023.UserControls.Dialogs.AuditDataInputDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BlOrders2023.UserControls.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:converters="using:BlOrders2023.ViewModels.Converters"
+    xmlns:sf="using:Syncfusion.UI.Xaml.Calendar"
+    mc:Ignorable="d"
+    PrimaryButtonText="Continue"
+    IsPrimaryButtonEnabled="{x:Bind CanSubmit, Mode=OneWay}"
+    CloseButtonText="Cancel">
+
+    <ContentDialog.Resources>
+        <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+    </ContentDialog.Resources>
+
+    <StackPanel Orientation="Vertical">
+        <ComboBox x:Name="InputTypeCombo"                  
+                  Header="Input Type"
+                  ItemsSource="{x:Bind InputTypeList}"
+                  SelectedItem="{x:Bind InputType, Mode=TwoWay}"
+                  SelectedIndex="0"/>
+        <TextBox x:Name="ScanlineBox" Header="Scanline"  Text="{x:Bind Scanline, Mode=TwoWay}"
+                 Visibility="{x:Bind InputType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Scanline,  FallbackValue=Collapsed, Mode=OneWay}"/>
+        <Grid ColumnSpacing="10"
+              Visibility="{x:Bind InputType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Serial,  FallbackValue=Collapsed, Mode=OneWay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="ProductIDBox" Header="Product ID" Text="{x:Bind ProductID, Mode=TwoWay}" Grid.Column="0"/>
+            <TextBox x:Name="SerialBox" Header="Serial" Text="{x:Bind Serial, Mode=TwoWay}" Grid.Column="1"/>
+        </Grid>
+        <TextBlock Text="Match On:"/>
+        <Grid x:Name="CheckboxGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <CheckBox x:Name="ckbProductID" Content="Product ID" Grid.Column="0" Grid.Row="0"/>
+            <CheckBox x:Name="ckbSerial" Content="Serial" Grid.Column="1" Grid.Row="0"/>
+            <CheckBox x:Name="ckbPackDate" Content="Pack Date" Grid.Column="0" Grid.Row="1"/>
+            <CheckBox x:Name="ckbScanline" Content="Scanline" Grid.Column="1" Grid.Row="1"/>
+            <CheckBox x:Name="ckbDateRange" Checked="ckbDateRange_Checked" Unchecked="ckbDateRange_Checked" Content="Date Range" Grid.Column="0" Grid.Row="2"/>
+            <sf:SfCalendarDateRangePicker x:Name="DateRangePicker" 
+                                          PlaceholderText="Select a date range" 
+                                          SelectedRange="{x:Bind DateRange, Mode=TwoWay}"
+                                          VerticalAlignment="Center"
+                                          DropDownPlacement="Right"
+                                          Grid.Column="1"
+                                          Grid.Row="2"/>
+        </Grid>
+    </StackPanel>
+</ContentDialog>

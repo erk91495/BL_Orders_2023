@@ -178,7 +178,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         await _SaveSemaphore.WaitAsync();
         try
         {
-            //Mainly for canned stuff where upc is the scanline
+            //Mainly for canned stuff where upc is the _scanline
             //A USP could make this 1 query instead of 2
             var product = _orderDB.Products.GetByALU(item.Scanline) ?? _orderDB.Products.Get(item.ProductID).FirstOrDefault();
             if (product == null)
