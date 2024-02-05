@@ -6,7 +6,6 @@
     xmlns:local="using:BlOrders2023.UserControls.Dialogs"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:converters="using:BlOrders2023.ViewModels.Converters"
     xmlns:sf="using:Syncfusion.UI.Xaml.Calendar"
     mc:Ignorable="d"
@@ -20,7 +19,7 @@
 
     <StackPanel Orientation="Vertical">
         <ComboBox x:Name="InputTypeCombo"                  
-                  Header="Input Type"
+                  Header="Product Lookup"
                   ItemsSource="{x:Bind InputTypeList}"
                   SelectedItem="{x:Bind InputType, Mode=TwoWay}"
                   SelectedIndex="0"/>
@@ -35,7 +34,9 @@
             <TextBox x:Name="ProductIDBox" Header="Product ID" Text="{x:Bind ProductID, Mode=TwoWay}" Grid.Column="0"/>
             <TextBox x:Name="SerialBox" Header="Serial" Text="{x:Bind Serial, Mode=TwoWay}" Grid.Column="1"/>
         </Grid>
+        <Rectangle Margin="0,16,0,16" HorizontalAlignment="Stretch" Height="1" Fill="{ThemeResource TextFillColorPrimary}" />
         <TextBlock Text="Match On:"/>
+        <TextBlock x:Name="MatchErrorBlock" Visibility="Collapsed" Style="{StaticResource ValidatorTextBlockStyle}"/>
         <Grid x:Name="CheckboxGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -46,11 +47,11 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <CheckBox x:Name="ckbProductID" Content="Product ID" Grid.Column="0" Grid.Row="0"/>
-            <CheckBox x:Name="ckbSerial" Content="Serial" Grid.Column="1" Grid.Row="0"/>
-            <CheckBox x:Name="ckbPackDate" Content="Pack Date" Grid.Column="0" Grid.Row="1"/>
-            <CheckBox x:Name="ckbScanline" Content="Scanline" Grid.Column="1" Grid.Row="1"/>
-            <CheckBox x:Name="ckbDateRange" Checked="ckbDateRange_Checked" Unchecked="ckbDateRange_Checked" Content="Date Range" Grid.Column="0" Grid.Row="2"/>
+            <CheckBox x:Name="ckbProductID" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Product ID" Grid.Column="0" Grid.Row="0"/>
+            <CheckBox x:Name="ckbSerial" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Serial" Grid.Column="1" Grid.Row="0"/>
+            <CheckBox x:Name="ckbPackDate" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Pack Date" Grid.Column="0" Grid.Row="1"/>
+            <CheckBox x:Name="ckbScanline" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Scanline" Grid.Column="1" Grid.Row="1"/>
+            <CheckBox x:Name="ckbDateRange" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Pack Date Range" Grid.Column="0" Grid.Row="2"/>
             <sf:SfCalendarDateRangePicker x:Name="DateRangePicker" 
                                           PlaceholderText="Select a date range" 
                                           SelectedRange="{x:Bind DateRange, Mode=TwoWay}"

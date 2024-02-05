@@ -102,9 +102,10 @@ internal class SqlShipDetailsTable : IShipDetailsTable
         {
             predicate.And(i => i.PackageSerialNumber == item.PackageSerialNumber);
         }
-        if (matchPackDate == true && startDate == null && endDate == null)
+        if (matchPackDate == true)
         {
-            predicate.And(i => i.PackDate.GetValueOrDefault().Date ==  item.PackDate.GetValueOrDefault().Date);   
+            var itemDate = item.PackDate.HasValue ? item.PackDate.Value : DateTime.MinValue;
+            predicate.And(i => i.PackDate.Value.Date ==  itemDate.Date);   
         }
         if (matchScanline == true)
         {

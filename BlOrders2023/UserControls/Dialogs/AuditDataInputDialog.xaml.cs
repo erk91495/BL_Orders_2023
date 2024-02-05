@@ -156,10 +156,43 @@ public sealed partial class AuditDataInputDialog : ContentDialog, INotifyPropert
         var dateRangeOk = ckbDateRange.IsChecked == true ? DateRange != null && DateRange.StartDate != null && DateRange.EndDate != null : true;
         var scanlineOk = InputType == InputTypes.Scanline ? !Scanline.IsNullOrEmpty() : true;
         var serialOk = InputType == InputTypes.Serial ? ProductID > 0 : true;
-        return dateRangeOk && scanlineOk && serialOk;
+        var someMatchChecked = (ckbProductID.IsChecked ?? false) 
+            || (ckbSerial.IsChecked ?? false) 
+            || (ckbPackDate.IsChecked ?? false)
+            || (ckbScanline.IsChecked ?? false) 
+            || (ckbDateRange.IsChecked ?? false);
+        var noErrors =  dateRangeOk && scanlineOk && serialOk && someMatchChecked;
+        if (!noErrors)
+        {
+            if (!dateRangeOk)
+            {
+                MatchErrorBlock.Text = "Date Range cannot be empty";
+                MatchErrorBlock.Visibility = Visibility.Visible;
+            }
+            else if(!scanlineOk)
+            {
+                MatchErrorBlock.Text = "Scanline cannot be empty";
+                MatchErrorBlock.Visibility = Visibility.Visible;
+            }else if (!serialOk)
+            {
+                MatchErrorBlock.Text = "ProductID cannot be empty";
+                MatchErrorBlock.Visibility = Visibility.Visible;
+            }
+            else if(!someMatchChecked)
+            {
+                MatchErrorBlock.Text = "At least one match option must be selected";
+                MatchErrorBlock.Visibility = Visibility.Visible;
+            }
+        }
+        else
+        {
+            MatchErrorBlock.Text = "";
+            MatchErrorBlock.Visibility = Visibility.Collapsed;
+        }
+        return noErrors;
     }
 
-    private void ckbDateRange_Checked(object sender, RoutedEventArgs e)
+    private void ckb_Checked(object sender, RoutedEventArgs e)
     {
         OnPropertyChanged(nameof(CanSubmit));
     }

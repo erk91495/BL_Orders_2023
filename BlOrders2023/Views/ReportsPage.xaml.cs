@@ -531,8 +531,34 @@ public sealed partial class ReportsPage : Page
                             endDate = new DateTime(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, DateTimeKind.Local);
                         }
                         var items = ViewModel.GetShippingItems(item,fieldsToMatch.Contains("ProductID"),fieldsToMatch.Contains("Serial"),
-                            fieldsToMatch.Contains("Packdate"),fieldsToMatch.Contains("Scanline"),startDate,endDate);
-                        reportPath = reportGenerator.GenerateShippingItemAuditReport(items);
+                            fieldsToMatch.Contains("PackDate"),fieldsToMatch.Contains("Scanline"),startDate,endDate);
+                        if(!items.IsNullOrEmpty())
+                        {
+                            reportPath = reportGenerator.GenerateShippingItemAuditReport(items);
+                        }
+                        else
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"This error shouldnt happen, but it did",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
+                        
+                    }
+                    else
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "Error",
+                            Content = $"No products were found matching the given criteria",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
                     }
                 }
 
