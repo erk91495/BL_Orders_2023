@@ -104,9 +104,9 @@ public sealed partial class FillOrdersPage : Page
                         var ai = e.Data["AI"];
                         var s = e.Data["Scanline"];
                         var location = e.Data["Location"];
-                        App.LogWarningMessage($"Could not parse scanline {s} at {location}\r\nAI: {ai}");
+                        App.LogWarningMessage($"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
                         await ShowLockedoutDialog(e.Message,
-                            $"Could not parse scanline {s} at {location}\r\nAI: {ai}");
+                            $"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
                     }
                     catch (UnknownBarcodeFormatException e)
                     {
@@ -127,7 +127,7 @@ public sealed partial class FillOrdersPage : Page
                     }
                     else
                     {
-                        await ShowLockedoutDialog("Product Not Found", $"No item with the scanline {scanline} was found on order {ViewModel.Order.OrderID}" +
+                        await ShowLockedoutDialog("Product Not Found", $"No item with the _scanline {scanline} was found on order {ViewModel.Order.OrderID}" +
                             $" Nothing was removed");
                     }
                 }

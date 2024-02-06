@@ -15,6 +15,7 @@ using BlOrders2023.Models;
 using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
 using BlOrders2023.UserControls;
+using BlOrders2023.UserControls.Dialogs;
 using BlOrders2023.ViewModels;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
@@ -498,6 +499,66 @@ public sealed partial class ReportsPage : Page
                             appointmentDate = new DateTime(inputDate.Year, inputDate.Month, inputDate.Day, inputTime.Hour, inputTime.Minute, inputTime.Second);
                         }
                         reportPath = reportGenerator.GenerateBillOfLadingReport(orders,items,customer,carrier,trailerNumber,trailerSeal, appointmentDate);
+                    }
+                }
+
+            }
+            else if(control.ReportType == typeof(ShippingItemAuditReport))
+            {
+                var dialog = new AuditDataInputDialog(){ XamlRoot = XamlRoot };
+                var res = await dialog.ShowAsync();
+                if(res == ContentDialogResult.Primary)
+                {
+                    var fieldsToMatch = dialog.GetCheckedBoxes();
+                    ShippingItem? item = null;
+                    if (dialog.InputType == InputTypes.Scanline)
+                    {
+                        item = ViewModel.GetShippingItem(dialog.Scanline);
+                    }
+                    else if (dialog.InputType == InputTypes.Serial)
+                    {
+                        item = ViewModel.GetShippingItem(dialog.ProductID, dialog.Serial);
+                    }
+                    if(item != null)
+                    {
+                        DateTime? startDate = null;
+                        DateTime? endDate = null;
+                        if (fieldsToMatch.Contains("DateRange"))
+                        {
+                            DateTime sDate = dialog.DateRange.StartDate.Value.Date;
+                            DateTime eDate = dialog.DateRange.EndDate.Value.Date;
+                            startDate = new DateTime(sDate.Year, sDate.Month, sDate.Day, 0, 0, 0, 0, DateTimeKind.Local);
+                            endDate = new DateTime(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, DateTimeKind.Local);
+                        }
+                        var items = ViewModel.GetShippingItems(item,fieldsToMatch.Contains("ProductID"),fieldsToMatch.Contains("Serial"),
+                            fieldsToMatch.Contains("PackDate"),fieldsToMatch.Contains("Scanline"),startDate,endDate);
+                        if(!items.IsNullOrEmpty())
+                        {
+                            reportPath = reportGenerator.GenerateShippingItemAuditReport(items);
+                        }
+                        else
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"This error shouldnt happen, but it did",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
+                        
+                    }
+                    else
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "Error",
+                            Content = $"No products were found matching the given criteria",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
                     }
                 }
 

@@ -189,7 +189,15 @@ public class ReportGenerator
     public string GenerateBillOfLadingReport(IEnumerable<Order> orders, IEnumerable<BillOfLadingItem> items, WholesaleCustomer customer, string carrierName, string trailerNumber, string trailerSeal, DateTime? appointmentDate)
     {
         var report = new BillOfLadingReport(CompanyInfo, orders, items, customer, carrierName, trailerNumber, trailerSeal, appointmentDate);
-        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(OutOfStateSalesReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(BillOfLadingReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
+
+    public string GenerateShippingItemAuditReport(IEnumerable<ShippingItem> items)
+    {
+        var report = new ShippingItemAuditReport(CompanyInfo, items);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ShippingItemAuditReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
         report.GeneratePdf(filePath);
         return filePath;
     }

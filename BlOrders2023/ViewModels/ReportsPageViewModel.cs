@@ -1,4 +1,5 @@
-﻿using BlOrders2023.Models;
+﻿using System.Windows.Forms.Design.Behavior;
+using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BlOrders2023.ViewModels;
@@ -72,5 +73,23 @@ public class ReportsPageViewModel : ObservableRecipient
     internal IEnumerable<WholesaleCustomer> GetWholesaleCustomers()
     {
         return App.GetNewDatabase().Customers.Get();
+    }
+
+    internal IEnumerable<ShippingItem> GetShippingItems(ShippingItem item, bool? matchProductID = null,
+                                                        bool? matchSerial = null, bool? matchPackDate = null,
+                                                        bool? matchScanline = null,
+                                                        DateTime? startDate = null, DateTime? endDate = null)
+    {
+        return App.GetNewDatabase().ShipDetails.GetShippingItems(item, matchProductID, matchSerial, matchPackDate, matchScanline, startDate, endDate);
+    }
+
+    internal ShippingItem? GetShippingItem(string scanline)
+    {
+        return App.GetNewDatabase().ShipDetails.Get(scanline);
+    }
+
+    internal ShippingItem? GetShippingItem(int productID, string serial)
+    {
+        return App.GetNewDatabase().ShipDetails.Get(productID, serial);
     }
 }

@@ -98,11 +98,11 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
     <PackageReference Include="NLog.WindowsEventLog" Version="5.2.8" />
-    <PackageReference Include="Octokit" Version="9.1.0" />
+    <PackageReference Include="Octokit" Version="9.1.2" />
     <PackageReference Include="QuestPDF" Version="2023.12.4" />
-    <PackageReference Include="Syncfusion.EJ2.PdfViewer.AspNet.Mvc5" Version="24.1.46" />
-    <PackageReference Include="Syncfusion.Grid.WinUI" Version="24.1.46" />
-    <PackageReference Include="Syncfusion.Licensing" Version="24.1.46" />
+    <PackageReference Include="Syncfusion.EJ2.PdfViewer.AspNet.Mvc5" Version="24.2.4" />
+    <PackageReference Include="Syncfusion.Grid.WinUI" Version="24.2.4" />
+    <PackageReference Include="Syncfusion.Licensing" Version="24.2.4" />
     <PackageReference Include="WinUIEx" Version="2.3.3" />
   </ItemGroup>
 
@@ -122,6 +122,9 @@
 	<None Update="nlog.config">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="UserControls\Dialogs\AuditDataInputDialog.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="UserControls\IssueSubmitterInputDialog.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -189,6 +192,7 @@
     <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
     <None Remove="UserControls\BillOfLadingDataInputDialog.xaml" />
     <None Remove="UserControls\CustomerOrderSelectionDialog.xaml" />
+    <None Remove="UserControls\Dialogs\AuditDataInputDialog.xaml" />
     <None Remove="UserControls\IssueSubmitterInputDialog.xaml" />
     <None Remove="UserControls\PaymentDataInputControl.xaml" />
     <None Remove="UserControls\ProductDataInputDialog.xaml" />

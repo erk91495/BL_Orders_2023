@@ -1,5 +1,7 @@
 ﻿using BlOrders2023.Models;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Core.Data.SQL;
 
@@ -57,10 +59,64 @@ internal class SqlShipDetailsTable : IShipDetailsTable
             await _db.SaveChangesAsync();
         }
     }
-
     public async Task UpsertAsync(ShippingItem item)
     {
         _db.Update(item);
         await _db.SaveChangesAsync();
+    }
+    public IEnumerable<ShippingItem> GetShippingItems(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return _db.ShippingItems.Where(i => i.PackDate != null &&  i.PackDate.Value.Date >= startDate.Date &&
+                                       i.PackDate.Value.Date <= endDate.Date)
+                                .Include(i => i.Product)
+                                .Include(i => i.Order)
+                                .ThenInclude( i => i.Customer);
+    }
+
+    public ShippingItem? Get(string scanline)
+    {
+        return _db.ShippingItems.Where(s => s.Scanline == scanline).FirstOrDefault();
+    }
+
+    public ShippingItem? Get(int productID, string serial)
+    {
+        if (serial.IsNullOrEmpty())
+        {
+            return _db.ShippingItems.Where(s => s.ProductID == productID).FirstOrDefault();
+        }
+        else
+        {
+            return _db.ShippingItems.Where(s => s.ProductID == productID && s.PackageSerialNumber == serial).FirstOrDefault();
+        }
+        
+    }
+
+    public IEnumerable<ShippingItem> GetShippingItems(ShippingItem item, bool? matchProductID, bool? matchSerial, bool? matchPackDate, bool? matchScanline, DateTime? startDate, DateTime? endDate)
+    {
+        var predicate = PredicateBuilder.New<ShippingItem>(true);
+        if(matchProductID == true)
+        {
+            predicate.And(i => i.ProductID ==  item.ProductID);
+        }
+        if(matchSerial == true)
+        {
+            predicate.And(i => i.PackageSerialNumber == item.PackageSerialNumber);
+        }
+        if (matchPackDate == true)
+        {
+            var itemDate = item.PackDate.HasValue ? item.PackDate.Value : DateTime.MinValue;
+            predicate.And(i => i.PackDate.Value.Date ==  itemDate.Date);   
+        }
+        if (matchScanline == true)
+        {
+            predicate.And(i => i.Scanline == item.Scanline);
+        }
+        if(startDate != null && endDate != null)
+        {
+            predicate.And(i => i.PackDate >= startDate && i.PackDate <= endDate);
+        }
+
+        var items = _db.ShippingItems.Where(predicate).ToList();
+        return items;
     }
 }
