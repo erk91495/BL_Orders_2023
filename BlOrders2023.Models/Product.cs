@@ -26,6 +26,8 @@ public class Product : ObservableObject
     private int? _boxID;
     private Box? _box;
     private int? _palletHeight;
+    private int? _categoryID;
+    private ProductCategory? _category;
     #endregion Fields
 
     #region Properties
@@ -128,6 +130,19 @@ public class Product : ObservableObject
         set => SetProperty( ref _palletHeight, value);
     }
 
+    public int? CategoryID
+    {
+        get => _categoryID; 
+        set => SetProperty(ref _categoryID, value);
+    }
+
+    [ForeignKey(nameof(CategoryID))]
+    [JsonIgnore]
+    public ProductCategory? Category
+    {
+        get => _category;
+        set => SetProperty(ref _category, value);
+    }
     #endregion Properties
     public Product()
     {
@@ -148,6 +163,8 @@ public class Product : ObservableObject
         IsCredit = product.IsCredit;
         BoxID = product.BoxID;
         Box = product.Box;
+        CategoryID = product.CategoryID;
+        Category = product.Category;
     }
     public override string ToString()
     {
