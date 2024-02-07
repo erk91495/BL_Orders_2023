@@ -22,26 +22,33 @@ using Windows.Security.Authentication.Web.Core;
 
 namespace BlOrders2023.UserControls.ViewModels;
 
-public class BoxGridEditorViewModel : ObservableValidator, IGridEditorViewModel
+public class BoxGridEditorViewModel : ObservableValidator, IGridEditorViewModel<Box>
 {
     #region Fields
     private ObservableCollection<Box> items = new();
     private bool _canSave = false;
     private DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private Collection<int> touchedItems = new();
+    private bool _canAddItems = true;
     #endregion Fields
     #region Properties
-    public ObservableCollection<object> Items
+    public ObservableCollection<Box> Items
     {
-        get => items.ToObservableCollection<object>();
-        set => items = value.Cast<Box>().ToObservableCollection<Box>();
+        get => items;
+        set => items = value;
     }
     public Type ItemSourceType { get; set; }
     public bool CanSave
     {
         get => _canSave;
-        private set => SetProperty(ref _canSave, value, nameof(IGridEditorViewModel.CanSave));
+        private set => SetProperty(ref _canSave, value, nameof(CanSave));
     }
+    public bool CanAddItems
+    {
+        get => _canAddItems;
+        set => SetProperty(ref _canAddItems, value);
+    }
+
     #endregion Properties
     #region Constructors
     public BoxGridEditorViewModel()
@@ -112,8 +119,8 @@ public class BoxGridEditorViewModel : ObservableValidator, IGridEditorViewModel
     public void MapColumns(SfDataGrid datagrid)
     {
         datagrid.Columns.Clear();
-        datagrid.Columns.Add(new GridTextColumn() { HeaderText = "ID", MappingName = "ID", AllowEditing = false });
-        datagrid.Columns.Add(new GridTextColumn() { HeaderText = "Box Name", MappingName = "BoxName"});
+        //datagrid.Columns.Add(new GridTextColumn() { HeaderText = "ID", MappingName = "ID", AllowEditing = false });
+        datagrid.Columns.Add(new GridTextColumn() { HeaderText = "Box Name", MappingName = "BoxName", ColumnWidthMode = Syncfusion.UI.Xaml.Grids.ColumnWidthMode.SizeToCells});
         datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Ti Hi", MappingName = "Ti_Hi"});
         datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Box Length", MappingName = "BoxLength"});
         datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Box Width", MappingName = "BoxWidth" });

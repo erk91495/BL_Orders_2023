@@ -12,10 +12,11 @@ using Syncfusion.UI.Xaml.DataGrid;
 
 namespace BlOrders2023.UserControls.ViewModels;
 
-public interface IGridEditorViewModel : INotifyPropertyChanged
+public interface IGridEditorViewModel<T> : INotifyPropertyChanged
 {
+    public bool CanAddItems { get; set; }
     public bool CanSave { get; }
-    public ObservableCollection<object> Items{ get; set; }
+    public ObservableCollection<T> Items{ get; set; }
     public Type ItemSourceType { get; set; }
     public void MapColumns(SfDataGrid datagrid);
     public void ValidateItems(object sender, CurrentCellValidatingEventArgs e);

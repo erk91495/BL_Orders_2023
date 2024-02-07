@@ -52,16 +52,17 @@ public partial class App : Application
         return service;
     }
 
-    public static T GetService<T>(Type serviceType)
-    where T : class
-    {
-        if ((App.Current as App)!.Host.Services.GetService(serviceType) is not T service)
-        {
-            throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
-        }
+    //Works but is kinda ugly look at how GridEditorDialog works instead
+    //public static T GetService<T>(Type serviceType)
+    //where T : class
+    //{
+    //    if ((App.Current as App)!.Host.Services.GetService(serviceType) is not T service)
+    //    {
+    //        throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
+    //    }
 
-        return service;
-    }
+    //    return service;
+    //}
 
     public static WindowEx MainWindow { get; } = new MainWindow();
 	
@@ -138,7 +139,7 @@ public partial class App : Application
             services.AddTransient<PaymentsPage>();
             services.AddTransient<PaymentsPageViewModel>();
             services.AddTransient<ProductDataInputDialogViewModel>();
-            services.AddTransient<BoxGridEditorViewModel>();
+            services.AddTransient<IGridEditorViewModel<Box>,BoxGridEditorViewModel>();
             services.AddTransient<IssueSubmitterDialogViewModel>();
 
             // Configuration

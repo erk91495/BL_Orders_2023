@@ -197,12 +197,12 @@ public sealed partial class ProductsPage : Page
         }
     }
 
-    private void MenuFlyoutItem_Click_BoxTypes(object sender, RoutedEventArgs e)
+    private async void MenuFlyoutItem_Click_BoxTypes(object sender, RoutedEventArgs e)
     {
-        GridEditorDialog dialog = new(typeof(BoxGridEditorViewModel))
+        GridEditorDialog<Box> dialog = new()
         {
             XamlRoot = XamlRoot
         };
-        dialog.ShowAsync();
+        await dialog.ShowAsync();
     }
 }
