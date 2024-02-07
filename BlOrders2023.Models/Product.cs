@@ -138,7 +138,7 @@ public class Product : ObservableObject
 
     [ForeignKey(nameof(CategoryID))]
     [JsonIgnore]
-    public ProductCategory? Category
+    public virtual ProductCategory? Category
     {
         get => _category;
         set => SetProperty(ref _category, value);

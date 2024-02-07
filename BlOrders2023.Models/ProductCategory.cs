@@ -21,6 +21,7 @@ public class ProductCategory : ObservableValidator
     #endregion Fields
 
     #region Properties
+    [Key]
     public int CategoryID
     {
         get => _categoryID;
