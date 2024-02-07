@@ -25,6 +25,7 @@ using CommunityToolkit.WinUI;
 using System.Diagnostics;
 using Castle.Core.Resource;
 using BlOrders2023.Core.Services;
+using CommunityToolkit.WinUI.UI.Controls;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -404,11 +405,25 @@ public sealed partial class OrderDetailsPage : Page
                 //OrderedItems.MoveCurrentCell(rowColumnIndex);
             }
         }
-        if(e.Key == Windows.System.VirtualKey.Tab)
+        else if(e.Key == Windows.System.VirtualKey.Tab)
         {
             //OrderedItems.ClearSelections(false);    
             //DispatcherQueue.TryEnqueue(() => { ProductEntryBox.Focus(FocusState.Programmatic); });
             //var res = ProductEntryBox.Focus(FocusState.Programmatic);
+        }
+        else if (e.Key == Windows.System.VirtualKey.Up || e.Key == Windows.System.VirtualKey.Down ||
+
+            e.Key == Windows.System.VirtualKey.PageUp || e.Key == Windows.System.VirtualKey.PageDown)
+        {
+
+            if (OrderedItems.SelectionController.CurrentCellManager.CurrentRowColumnIndex.ColumnIndex !=0 &&
+                OrderedItems.SelectionController.CurrentCellManager.CurrentCell.IsEditing)
+            {
+
+                OrderedItems.SelectionController.CurrentCellManager.EndEdit();
+
+            }
+
         }
     }
 
