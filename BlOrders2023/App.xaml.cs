@@ -8,7 +8,7 @@ using BlOrders2023.Models;
 using BlOrders2023.Services;
 using BlOrders2023.ViewModels;
 using BlOrders2023.Views;
-using BlOrders2023.UserControls.ViewModels;
+using BlOrders2023.Dialogs.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

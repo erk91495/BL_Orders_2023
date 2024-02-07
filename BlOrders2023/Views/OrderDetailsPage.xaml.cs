@@ -20,7 +20,7 @@ using System.Media;
 using Microsoft.EntityFrameworkCore;
 using BlOrders2023.Reporting;
 using System.Drawing.Printing;
-using BlOrders2023.UserControls;
+using BlOrders2023.Dialogs;
 using CommunityToolkit.WinUI;
 using System.Diagnostics;
 using Castle.Core.Resource;

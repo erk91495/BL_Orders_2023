@@ -15,7 +15,7 @@ using BlOrders2023.Models;
 using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
 using BlOrders2023.UserControls;
-using BlOrders2023.UserControls.Dialogs;
+using BlOrders2023.Dialogs;
 using BlOrders2023.ViewModels;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;

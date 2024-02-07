@@ -7,7 +7,7 @@ using BlOrders2023.Exceptions;
 using System.Diagnostics;
 using System.Media;
 using Microsoft.IdentityModel.Tokens;
-using BlOrders2023.UserControls;
+using BlOrders2023.Dialogs;
 using Microsoft.UI.Dispatching;
 using CommunityToolkit.WinUI;
 using Microsoft.EntityFrameworkCore;

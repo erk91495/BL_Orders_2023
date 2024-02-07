@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using BlOrders2023.Models;
-using BlOrders2023.UserControls;
+using BlOrders2023.Dialogs;
 using BlOrders2023.ViewModels;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
@@ -56,7 +56,7 @@ public sealed partial class PaymentsPage : Page
         var done = false;
         var OneAdded = false;
         while (!done) {
-            PaymentDataInputControl paymentDialog = new(ViewModel.UnpaidInvoices, ViewModel.PaymentMethods)
+            PaymentDataInputDialog paymentDialog = new(ViewModel.UnpaidInvoices, ViewModel.PaymentMethods)
             {
                 XamlRoot = XamlRoot,
                 SecondaryButtonText = "Save and Create New"
@@ -102,7 +102,7 @@ public sealed partial class PaymentsPage : Page
     {
         if(ViewModel.SelectedPayment != null)
         { 
-            PaymentDataInputControl inputControl = new(ViewModel.UnpaidInvoices, ViewModel.PaymentMethods)
+            PaymentDataInputDialog inputControl = new(ViewModel.UnpaidInvoices, ViewModel.PaymentMethods)
             {
                 XamlRoot= XamlRoot
             };

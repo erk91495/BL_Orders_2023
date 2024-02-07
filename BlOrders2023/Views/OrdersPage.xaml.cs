@@ -1,5 +1,5 @@
 ﻿using BlOrders2023.Models;
-using BlOrders2023.UserControls;
+using BlOrders2023.Dialogs;
 using BlOrders2023.ViewModels;
 using BlOrders2023.Reporting;
 using Microsoft.UI.Xaml;
