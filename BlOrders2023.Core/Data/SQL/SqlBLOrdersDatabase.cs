@@ -40,7 +40,7 @@ public class SqlBLOrdersDatabase : IBLDatabase
     public IAllocationTable Allocation => new SqlAllocationTable(_dbContext);
 
     public IBoxTable Boxes => new SqlBoxTable(_dbContext);
-
+    public IProductCategoriesTable ProductCategories => new SqlProductCategoriesTable(_dbContext);
     public Version dbVersion 
     {
         get
@@ -61,4 +61,6 @@ public class SqlBLOrdersDatabase : IBLDatabase
     }
     public DbConnection DbConnection => _dbContext.Database.GetDbConnection();
     public CompanyInfo CompanyInfo => _dbContext.CompanyInfo.AsNoTracking().ToList().First();
+
+    
 }

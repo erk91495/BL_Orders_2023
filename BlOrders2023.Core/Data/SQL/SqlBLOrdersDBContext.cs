@@ -60,6 +60,6 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
     public DbSet<AllocationGroup> AllocationGroups { get; set; }
     public DbSet<CompanyInfo> CompanyInfo { get; set; }
-
     public DbSet<Box> Boxes { get; set; }
+    public DbSet<ProductCategory> ProductCategories { get; set; }
 }
