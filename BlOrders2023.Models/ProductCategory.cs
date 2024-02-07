@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BlOrders2023.Models;
@@ -15,8 +10,8 @@ public class ProductCategory : ObservableValidator
     #region Fields
     private int _categoryID;
     private string _categoryName;
-    private bool _showTotalsOnReport;
-    private int _displayIndex;
+    private bool _showTotalsOnReports;
+    private short _displayIndex;
     private ObservableCollection<Product> products;
     #endregion Fields
 
@@ -35,13 +30,13 @@ public class ProductCategory : ObservableValidator
         set => SetProperty(ref _categoryName, value);
     }
 
-    public bool ShowTotalsOnReport
+    public bool ShowTotalsOnReports
     {
-        get => ShowTotalsOnReport;
-        set => SetProperty(ref _showTotalsOnReport, value);
+        get => _showTotalsOnReports;
+        set => SetProperty(ref _showTotalsOnReports, value);
     }
 
-    public int DisplayIndex
+    public short DisplayIndex
     {
         get => _displayIndex;
         set => SetProperty(ref _displayIndex, value);

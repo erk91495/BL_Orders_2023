@@ -205,4 +205,13 @@ public sealed partial class ProductsPage : Page
         };
         await dialog.ShowAsync();
     }
+
+    private async void MenuFlyoutItem_Click_Categories(object sender, RoutedEventArgs e)
+    {
+        GridEditorDialog<ProductCategory> dialog = new()
+        {
+            XamlRoot = XamlRoot
+        };
+        await dialog.ShowAsync();
+    }
 }

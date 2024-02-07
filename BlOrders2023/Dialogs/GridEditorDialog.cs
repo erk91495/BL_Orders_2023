@@ -15,6 +15,9 @@ using Microsoft.UI.Xaml.Navigation;
 using BlOrders2023.Dialogs.ViewModels;
 using Syncfusion.UI.Xaml.DataGrid;
 using Syncfusion.UI.Xaml.Grids;
+using CommunityToolkit.WinUI.UI.Controls;
+using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -37,8 +40,13 @@ public sealed partial class GridEditorDialog<T> : ContentDialog
         {
             this.DataGrid.AddNewRowPosition = Syncfusion.UI.Xaml.DataGrid.AddNewRowPosition.Top;
         }
+        DataGrid.CurrentCellValueChanged += DataGrid_CurrentCellValueChanged;
     }
 
+    private void DataGrid_CurrentCellValueChanged(object? sender, CurrentCellValueChangedEventArgs e) 
+    {
+        Debugger.Break();
+    }
     private void DataGrid_Loaded(object sender, RoutedEventArgs e)
     {
         DataGrid.ColumnSizer.ResetAutoCalculationforAllColumns();
@@ -74,6 +82,18 @@ public sealed partial class GridEditorDialog<T> : ContentDialog
         Content = grid;
 
         // Hook up event handlers
-        PrimaryButtonClick += ViewModel.Save;
+        PrimaryButtonClick += GridEditorDialog_PrimaryButtonClick;
+    }
+
+    private async void GridEditorDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        try
+        {
+            await ViewModel.SaveAsync();
+        }
+        catch (DbUpdateException e)
+        {
+            App.LogException(e);
+        }
     }
 }

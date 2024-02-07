@@ -20,5 +20,5 @@ public interface IGridEditorViewModel<T> : INotifyPropertyChanged
     public Type ItemSourceType { get; set; }
     public void MapColumns(SfDataGrid datagrid);
     public void ValidateItems(object sender, CurrentCellValidatingEventArgs e);
-    public void Save(ContentDialog sender, ContentDialogButtonClickEventArgs args);
+    public Task SaveAsync();
 }

@@ -1,43 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BlOrders2023.Core.Data;
-using BlOrders2023.Helpers;
 using BlOrders2023.Models;
-using BlOrders2023.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
-using ServiceStack.DataAnnotations;
-using Syncfusion.UI.Xaml.Data;
 using Syncfusion.UI.Xaml.DataGrid;
-using Windows.Security.Authentication.Web.Core;
 
 namespace BlOrders2023.Dialogs.ViewModels;
-
-public class BoxGridEditorViewModel : ObservableValidator, IGridEditorViewModel<Box>
+public class CategoriesGridEditorViewModel : ObservableValidator, IGridEditorViewModel<ProductCategory>
 {
+
     #region Fields
-    private ObservableCollection<Box> items = new();
+    private ObservableCollection<ProductCategory> items = new();
     private bool _canSave = false;
     private DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private Collection<int> touchedItems = new();
     private bool _canAddItems = true;
     #endregion Fields
     #region Properties
-    public ObservableCollection<Box> Items
+    public ObservableCollection<ProductCategory> Items
     {
         get => items;
         set => items = value;
     }
-    public Type ItemSourceType { get; set; }
+    public Type ItemSourceType
+    {
+        get; set;
+    }
     public bool CanSave
     {
         get => _canSave;
@@ -51,21 +47,22 @@ public class BoxGridEditorViewModel : ObservableValidator, IGridEditorViewModel<
 
     #endregion Properties
     #region Constructors
-    public BoxGridEditorViewModel()
+    public CategoriesGridEditorViewModel()
     {
-        _ = QueryBoxesAsync();
+        _ = QueryCategoriesAsync();
     }
     #endregion Constructors
     #region Methods
     public void ValidateItems(object sender, CurrentCellValidatingEventArgs e)
     {
-        if (e.RowData is Box box)
+        if (e.RowData is ProductCategory category)
         {
-            if(e.OldValue != e.NewValue){
+            if (e.OldValue != e.NewValue)
+            {
                 Collection<ValidationResult> result = new();
-                ValidationContext context = new(box);
+                ValidationContext context = new(category);
                 context.MemberName = e.Column.MappingName;
-                var type = box.GetType().GetProperty(e.Column.MappingName).PropertyType;
+                var type = category.GetType().GetProperty(e.Column.MappingName).PropertyType;
                 var newVal = Convert.ChangeType(e.NewValue, type);
                 if (newVal == null || !Validator.TryValidateProperty(newVal, context, result))
                 {
@@ -76,28 +73,28 @@ public class BoxGridEditorViewModel : ObservableValidator, IGridEditorViewModel<
                 else
                 {
                     CanSave = true;
-                    if(!touchedItems.Contains(box.ID))
+                    if (!touchedItems.Contains(category.CategoryID))
                     {
-                        touchedItems.Add(box.ID);
+                        touchedItems.Add(category.CategoryID);
                     }
                 }
             }
         }
     }
 
-    private async Task QueryBoxesAsync()
+    private async Task QueryCategoriesAsync()
     {
         await dispatcherQueue.EnqueueAsync(() =>
         {
             items.Clear();
         });
 
-        IBoxTable table = App.GetNewDatabase().Boxes;
+        IProductCategoriesTable table = App.GetNewDatabase().ProductCategories;
 
-        var boxes = await Task.Run(() => table.GetAsync());
+        var categories = await Task.Run(() => table.GetAsync());
         await dispatcherQueue.EnqueueAsync(() =>
         {
-            foreach(var item in boxes)
+            foreach (var item in categories)
             {
                 items.Add(item);
             }
@@ -107,24 +104,35 @@ public class BoxGridEditorViewModel : ObservableValidator, IGridEditorViewModel<
 
     public async Task SaveAsync()
     {
-        if(CanSave)
+        if (CanSave)
         {
-            foreach(var id in touchedItems)
+            foreach (var id in touchedItems)
             {
-                await App.GetNewDatabase().Boxes.UpsertAsync(items.Where(b => b.ID == id).First());
+                await App.GetNewDatabase().ProductCategories.UpsertAsync(items.First(b => b.CategoryID == id));
             }
         }
     }
 
     public void MapColumns(SfDataGrid datagrid)
     {
+        datagrid.CurrentCellValueChanged += Datagrid_CurrentCellValueChanged;
         datagrid.Columns.Clear();
         //datagrid.Columns.Add(new GridTextColumn() { HeaderText = "ID", MappingName = "ID", AllowEditing = false });
-        datagrid.Columns.Add(new GridTextColumn() { HeaderText = "Box Name", MappingName = "BoxName", ColumnWidthMode = Syncfusion.UI.Xaml.Grids.ColumnWidthMode.SizeToCells});
-        datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Ti Hi", MappingName = "Ti_Hi"});
-        datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Box Length", MappingName = "BoxLength"});
-        datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Box Width", MappingName = "BoxWidth" });
-        datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Box Height", MappingName = "BoxHeight" });
+        datagrid.Columns.Add(new GridTextColumn() { HeaderText = "Category Name", MappingName = "CategoryName", ColumnWidthMode = Syncfusion.UI.Xaml.Grids.ColumnWidthMode.SizeToCells });
+        var column = new GridCheckBoxColumn() { HeaderText = "Show Totals On Reports", MappingName = "ShowTotalsOnReports", DataValidationMode = Syncfusion.UI.Xaml.Grids.GridValidationMode.InView };
+        datagrid.Columns.Add(column);
+        datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Display Index", MappingName = "DisplayIndex" });    
+    }
+
+    private void Datagrid_CurrentCellValueChanged(object? sender, CurrentCellValueChangedEventArgs e)
+    {
+        if(e.Record is ProductCategory category){
+            if (!touchedItems.Contains(category.CategoryID))
+            {
+                touchedItems.Add(category.CategoryID);
+            }
+        }
     }
     #endregion Methods
+
 }
