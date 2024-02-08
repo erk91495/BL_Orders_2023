@@ -10,6 +10,7 @@ public interface IProductCategoriesTable
 {
     public IEnumerable<ProductCategory> Get();
     public Task<IEnumerable<ProductCategory>> GetAsync();
+    public IEnumerable<ProductCategory> GetForReports();
     public Task<IEnumerable<ProductCategory>> GetForReportsAsync();
     public Task UpsertAsync(ProductCategory category);
 

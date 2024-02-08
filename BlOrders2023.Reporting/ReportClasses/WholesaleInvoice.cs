@@ -12,10 +12,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace BlOrders2023.Reporting.ReportClasses;
 
 [System.ComponentModel.DisplayName("Wholesale Invoice")]
-public class WholesaleInvoice : IReport
+public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<ProductCategory> categoriesToTotal) : IReport
 {
-    private readonly CompanyInfo _companyInfo;
-    private readonly Order _order;
+    private readonly CompanyInfo _companyInfo = companyInfo;
+    private readonly Order _order = order;
+    private readonly IEnumerable<ProductCategory> _categoriesToToal = categoriesToTotal;
 
     private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
     private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
@@ -23,12 +24,6 @@ public class WholesaleInvoice : IReport
     private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-
-    public WholesaleInvoice (CompanyInfo companyInfo, Order order)
-    {
-        _companyInfo = companyInfo;
-        _order = order;
-    }
 
     public void Compose(IDocumentContainer container)
     {
@@ -277,7 +272,28 @@ public class WholesaleInvoice : IReport
                     return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
                 }
             });
-            column.Item().ExtendVertical().AlignBottom().AlignRight().PaddingBottom(5).MinimalBox().BorderTop(.5f).Text($"Invoice Total: {_order.InvoiceTotal:C}").Bold();
+            column.Item().AlignRight().PaddingBottom(5).BorderTop(.5f).Text($"Invoice Total: {_order.InvoiceTotal:C}").Bold();
+
+            column.Item().ExtendVertical().AlignBottom().Table(totalsTable => 
+            {
+
+                totalsTable.ColumnsDefinition(column =>
+                {
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
+                });
+
+                var categorizedItems = _order.ShippingItems.Where(i => _categoriesToToal.Contains(i.Product.Category)).GroupBy(i => i.Product.CategoryID);
+                foreach (var group in categorizedItems) 
+                {
+                    totalsTable.Cell().Element(TotalCellStyle).Text($"{group.First().Product.Category.CategoryName}: {group.Sum(i => i.QuanRcvd)}");
+                }
+                static IContainer TotalCellStyle(IContainer container)
+                {
+                    return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
+                }
+            });
         });
     }
 

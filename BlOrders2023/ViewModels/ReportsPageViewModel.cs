@@ -92,4 +92,6 @@ public class ReportsPageViewModel : ObservableRecipient
     {
         return App.GetNewDatabase().ShipDetails.Get(productID, serial);
     }
+
+    internal IEnumerable<ProductCategory> GetTotalsCategories() => App.GetNewDatabase().ProductCategories.GetForReports();
 }

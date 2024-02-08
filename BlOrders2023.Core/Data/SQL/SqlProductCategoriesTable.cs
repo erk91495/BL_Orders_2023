@@ -21,6 +21,7 @@ internal class SqlProductCategoriesTable : IProductCategoriesTable
         var res = await _db.ProductCategories.ToListAsync();
         return res;
     }
+    public IEnumerable<ProductCategory> GetForReports() => _db.ProductCategories.Where(c => c.ShowTotalsOnReports == true).ToList();
     public async Task<IEnumerable<ProductCategory>> GetForReportsAsync() => await _db.ProductCategories.Where(c => c.ShowTotalsOnReports == true).ToListAsync();
     public async Task UpsertAsync(ProductCategory category)
     {

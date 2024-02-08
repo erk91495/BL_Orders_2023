@@ -105,7 +105,8 @@ public sealed partial class ReportsPage : Page
                         var order = ViewModel.GetOrder(id);
                         if (order != null)
                         {
-                            reportPath = reportGenerator.GenerateWholesaleInvoice(order);
+                            var toTotal = ViewModel.GetTotalsCategories();
+                            reportPath = reportGenerator.GenerateWholesaleInvoice(order, toTotal);
                         }
                         else
                         {

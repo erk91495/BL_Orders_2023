@@ -404,7 +404,8 @@ public sealed partial class OrdersPage : Page
 
         if (printInvoice)
         {
-            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder);
+            var toTotal = ViewModel.GetTotalsCategories();
+            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder,toTotal);
 
             
             if (autoprint)

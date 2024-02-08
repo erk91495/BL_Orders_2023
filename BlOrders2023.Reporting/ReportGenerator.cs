@@ -43,9 +43,9 @@ public class ReportGenerator
         }
     }
 
-    public string GenerateWholesaleInvoice(Order order)
+    public string GenerateWholesaleInvoice(Order order, IEnumerable<ProductCategory> categoriesToTotal)
     {
-        var report =  new WholesaleInvoice(CompanyInfo, order);
+        var report =  new WholesaleInvoice(CompanyInfo, order, categoriesToTotal);
         var filePath = TempPath + Path.DirectorySeparatorChar + order.OrderID + "_" + DateTime.Now.ToFileTime() + ".pdf";
         report.GeneratePdf(filePath);
         return filePath;

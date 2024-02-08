@@ -386,7 +386,8 @@ public sealed partial class FillOrdersPage : Page
 
         if (printInvoice)
         {
-            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
+            var toTotal = ViewModel.GetTotalsCategories();
+            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order, toTotal);
 
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);

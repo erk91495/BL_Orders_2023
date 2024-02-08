@@ -191,5 +191,7 @@ public class OrdersPageViewModel : ObservableRecipient
         await _db.Orders.UpsertAsync(SelectedOrder);
     }
 
+    internal IEnumerable<ProductCategory> GetTotalsCategories() => _db.ProductCategories.GetForReports();
+
     #endregion Methods
 }

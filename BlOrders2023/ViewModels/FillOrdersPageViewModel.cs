@@ -370,6 +370,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
     {
         ValidateAllProperties();
     }
+
+    internal IEnumerable<ProductCategory> GetTotalsCategories() => App.GetNewDatabase().ProductCategories.GetForReports();
     #endregion Validators
     #endregion Methods
 

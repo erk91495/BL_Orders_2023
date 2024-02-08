@@ -34,13 +34,14 @@ public sealed partial class GridEditorDialog<T> : ContentDialog
     {
         ViewModel = App.GetService<IGridEditorViewModel<T>>();
         this.InitializeComponent();
-        ViewModel.MapColumns(this.DataGrid);
+        DataGrid.CurrentCellValueChanged += DataGrid_CurrentCellValueChanged;
         DataGrid.Loaded += DataGrid_Loaded;
+        ViewModel.MapColumns(DataGrid);
         if (ViewModel.CanAddItems)
         {
             this.DataGrid.AddNewRowPosition = Syncfusion.UI.Xaml.DataGrid.AddNewRowPosition.Top;
         }
-        DataGrid.CurrentCellValueChanged += DataGrid_CurrentCellValueChanged;
+        
     }
 
     private void DataGrid_CurrentCellValueChanged(object? sender, CurrentCellValueChangedEventArgs e) 
