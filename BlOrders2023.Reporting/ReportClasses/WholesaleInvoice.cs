@@ -24,6 +24,8 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
     private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
+    private readonly TextStyle categoryTotalsStyle = TextStyle.Default.FontSize(9).Italic().SemiBold();
+    private readonly int maxTotalsColumns = 6;
 
     public void Compose(IDocumentContainer container)
     {
@@ -60,16 +62,16 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
     private void ComposeHeader(IContainer container)
     {
         container.Column(headerCol => 
-        { 
+        {
             ///Header Row Contains invoice # Company Name and logo
             headerCol.Item().AlignCenter().PaddingBottom(10).Row(row =>
             {
 
                 //Logo
                 var res = Assembly.GetExecutingAssembly().GetManifestResourceStream("BlOrders2023.Reporting.Assets.Images.BLLogo.bmp");
-                row.RelativeItem(1).AlignLeft().AlignMiddle().Height(75).Image(res).FitHeight();
+                row.RelativeItem(4).AlignLeft().AlignMiddle().Height(75).Image(res).FitHeight();
 
-                row.RelativeItem(3).AlignCenter().Column(col =>
+                row.RelativeItem(12).AlignCenter().Column(col =>
                 {
                     col.Item().AlignCenter().Text(_companyInfo.LongCompanyName).Style(titleStyle);
                     col.Item().AlignCenter().Text($"{_companyInfo.StreetAddress}, {_companyInfo.City}, {_companyInfo.State} {_companyInfo.ShortZipCode}").Style(subTitleStyle);
@@ -77,10 +79,16 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
                     col.Item().AlignCenter().Text(_companyInfo.Website);
                 });
 
-                row.RelativeItem(1).AlignMiddle().AlignRight().Column(column =>
-                {   
+                row.RelativeItem(6).MaxHeight(75).Column(column =>
+                {
+                    column.Item().AlignRight().Text(time =>
+                    {
+                        time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
+                        time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
+                    });
+                    column.Item();
                     //Invoice Number
-                    column.Item().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
+                    column.Item().ExtendVertical().AlignCenter().AlignMiddle().Text($"Invoice #{_order.OrderID}").SemiBold().FontSize(15);
                     //if (!_order.PO_Number.IsNullOrEmpty())
                     //{
                     //    column.Item().Text($"PO: {_order.PO_Number}").Style(subTitleStyle);
@@ -272,28 +280,9 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
                     return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
                 }
             });
-            column.Item().AlignRight().PaddingBottom(5).BorderTop(.5f).Text($"Invoice Total: {_order.InvoiceTotal:C}").Bold();
+            column.Item().AlignRight().PaddingBottom(5).Text($"Invoice Total: {_order.InvoiceTotal:C}").Bold();
 
-            column.Item().ExtendVertical().AlignBottom().Table(totalsTable => 
-            {
-
-                totalsTable.ColumnsDefinition(column =>
-                {
-                    column.RelativeColumn(2);
-                    column.RelativeColumn(2);
-                    column.RelativeColumn(2);
-                });
-
-                var categorizedItems = _order.ShippingItems.Where(i => _categoriesToToal.Contains(i.Product.Category)).GroupBy(i => i.Product.CategoryID);
-                foreach (var group in categorizedItems) 
-                {
-                    totalsTable.Cell().Element(TotalCellStyle).Text($"{group.First().Product.Category.CategoryName}: {group.Sum(i => i.QuanRcvd)}");
-                }
-                static IContainer TotalCellStyle(IContainer container)
-                {
-                    return container.BorderTop(1).BorderColor(Colors.Black).PaddingVertical(2);
-                }
-            });
+            
         });
     }
 
@@ -305,13 +294,36 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
             {
                 column.Item().AlignRight().Text($"Memo Total:{_order.Memo_Totl:C}");
             }
+
+            column.Item().AlignCenter().Table(totalsTable =>
+            {
+                var categorizedItems = _order.ShippingItems.Where(i => _categoriesToToal.Contains(i.Product.Category)).GroupBy(i => i.Product.Category).OrderBy(i => i.Key.DisplayIndex);
+
+                totalsTable.ColumnsDefinition(column =>
+                {
+                    for (var i = 0; i < maxTotalsColumns && i < categorizedItems.Count(); i++)
+                    {
+                        column.RelativeColumn(2);
+                    }
+                });
+
+
+                foreach (var group in categorizedItems)
+                {
+                    totalsTable.Cell().Element(TotalCellStyle).AlignCenter().Text($"{group.Key.CategoryName}: {group.Sum(i => i.QuanRcvd)}").Style(categoryTotalsStyle);
+                }
+                static IContainer TotalCellStyle(IContainer container)
+                {
+                    return container.Border(.5f).BorderColor(Colors.Black);
+                }
+            });
             column.Item().AlignBottom().AlignRight().Row(footer =>
             {
-                footer.RelativeItem().AlignLeft().Text(time =>
-                {
-                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
-                });
+                //footer.RelativeItem().AlignLeft().Text(time =>
+                //{
+                //    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
+                //    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
+                //});
 
                 footer.RelativeItem().AlignRight().Text(page =>
                 {
