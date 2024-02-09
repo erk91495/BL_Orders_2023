@@ -12,10 +12,17 @@ public class ReportsPageViewModel : ObservableRecipient
         return App.GetNewDatabase().Orders.Get(orderID).FirstOrDefault();
     }
 
-    internal IEnumerable<Order> GetOrdersByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
+    internal async Task<Order> GetOrderAsync(int id)
     {
-        return App.GetNewDatabase().Orders.GetByPickupDate(startDate, endDate);
+        var orders = await App.GetNewDatabase().Orders.GetAsync(id);
+        return orders.FirstOrDefault();
     }
+
+    internal async Task<IEnumerable<Order>> GetOrdersByPickupDateAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await App.GetNewDatabase().Orders.GetByPickupDateAsync(startDate, endDate);
+    }
+
 
     internal IEnumerable<Order> GetNonFrozenOrdersByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
     {
@@ -25,6 +32,11 @@ public class ReportsPageViewModel : ObservableRecipient
     internal IEnumerable<Order> GetOrdersByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return App.GetNewDatabase().Orders.GetByPickupDateThenName(startDate, endDate);
+    }
+
+    internal async Task<IEnumerable<Order>> GetOrdersByPickupDateThenNameAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await App.GetNewDatabase().Orders.GetByPickupDateThenNameAsync(startDate, endDate);
     }
 
     internal IEnumerable<OrderTotalsItem> GetOrderTotals(DateTimeOffset startDate, DateTimeOffset endDate)
@@ -92,4 +104,6 @@ public class ReportsPageViewModel : ObservableRecipient
     {
         return App.GetNewDatabase().ShipDetails.Get(productID, serial);
     }
+
+    internal IEnumerable<ProductCategory> GetTotalsCategories() => App.GetNewDatabase().ProductCategories.GetForReports();
 }

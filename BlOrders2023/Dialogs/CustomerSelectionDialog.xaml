@@ -1,0 +1,38 @@
+<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+<!-- Licensed under the MIT License. -->
+
+<ContentDialog
+    x:Class="BlOrders2023.Dialogs.CustomerSelectionDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BlOrders2023.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:BlOrders2023.Models"
+    mc:Ignorable="d"
+    Title="Select A Customer"
+    PrimaryButtonText="Create An Order"
+    SecondaryButtonText="New Customer"
+    CloseButtonText="Cancel"
+    IsPrimaryButtonEnabled="False"
+    FlowDirection="LeftToRight">
+
+    <RelativePanel>
+        <AutoSuggestBox x:Name="CustomerSelection"
+                        ItemsSource="{x:Bind ViewModel.SuggestedCustomers, Mode=OneWay}"
+                        TextChanged="CustomerSelection_TextChanged"
+                        PlaceholderText="Select A Customer..."
+                        QuerySubmitted="CustomerSelection_QuerySubmitted"                        
+                        MinWidth="500">
+            <AutoSuggestBox.ItemTemplate>
+                <DataTemplate x:DataType="model:WholesaleCustomer">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
+                        <TextBlock Text="{x:Bind CustomerName}" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </DataTemplate>
+            </AutoSuggestBox.ItemTemplate>
+        </AutoSuggestBox>
+    </RelativePanel>
+</ContentDialog>

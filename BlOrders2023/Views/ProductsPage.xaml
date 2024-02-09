@@ -50,6 +50,11 @@
                                 <FontIcon Glyph="&#xE7B8;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Categories" Click="MenuFlyoutItem_Click_Categories">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF168;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>

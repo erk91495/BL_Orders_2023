@@ -26,9 +26,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.ObjectModel;
 using BlOrders2023.Helpers;
-using BlOrders2023.UserControls;
+using BlOrders2023.Dialogs;
 using System.Diagnostics;
-using BlOrders2023.UserControls.ViewModels;
+using BlOrders2023.Dialogs.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -197,12 +197,21 @@ public sealed partial class ProductsPage : Page
         }
     }
 
-    private void MenuFlyoutItem_Click_BoxTypes(object sender, RoutedEventArgs e)
+    private async void MenuFlyoutItem_Click_BoxTypes(object sender, RoutedEventArgs e)
     {
-        GridEditorDialog dialog = new(typeof(BoxGridEditorViewModel))
+        GridEditorDialog<Box> dialog = new()
         {
             XamlRoot = XamlRoot
         };
-        dialog.ShowAsync();
+        await dialog.ShowAsync();
+    }
+
+    private async void MenuFlyoutItem_Click_Categories(object sender, RoutedEventArgs e)
+    {
+        GridEditorDialog<ProductCategory> dialog = new()
+        {
+            XamlRoot = XamlRoot
+        };
+        await dialog.ShowAsync();
     }
 }

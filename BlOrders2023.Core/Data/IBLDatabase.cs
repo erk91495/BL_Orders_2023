@@ -19,6 +19,7 @@ public interface IBLDatabase
     public IInventoryTable Inventory { get; }
     public IAllocationTable Allocation { get; }
     public IBoxTable Boxes { get; }
+    public IProductCategoriesTable ProductCategories { get; }
     public Version dbVersion { get; }
     public DbConnection DbConnection{ get; }
     public CompanyInfo CompanyInfo { get; }

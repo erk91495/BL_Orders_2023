@@ -20,11 +20,12 @@ using System.Media;
 using Microsoft.EntityFrameworkCore;
 using BlOrders2023.Reporting;
 using System.Drawing.Printing;
-using BlOrders2023.UserControls;
+using BlOrders2023.Dialogs;
 using CommunityToolkit.WinUI;
 using System.Diagnostics;
 using Castle.Core.Resource;
 using BlOrders2023.Core.Services;
+using CommunityToolkit.WinUI.UI.Controls;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -404,11 +405,25 @@ public sealed partial class OrderDetailsPage : Page
                 //OrderedItems.MoveCurrentCell(rowColumnIndex);
             }
         }
-        if(e.Key == Windows.System.VirtualKey.Tab)
+        else if(e.Key == Windows.System.VirtualKey.Tab)
         {
             //OrderedItems.ClearSelections(false);    
             //DispatcherQueue.TryEnqueue(() => { ProductEntryBox.Focus(FocusState.Programmatic); });
             //var res = ProductEntryBox.Focus(FocusState.Programmatic);
+        }
+        else if (e.Key == Windows.System.VirtualKey.Up || e.Key == Windows.System.VirtualKey.Down ||
+
+            e.Key == Windows.System.VirtualKey.PageUp || e.Key == Windows.System.VirtualKey.PageDown)
+        {
+
+            if (OrderedItems.SelectionController.CurrentCellManager.CurrentRowColumnIndex.ColumnIndex !=0 &&
+                OrderedItems.SelectionController.CurrentCellManager.CurrentCell.IsEditing)
+            {
+
+                OrderedItems.SelectionController.CurrentCellManager.EndEdit();
+
+            }
+
         }
     }
 
@@ -636,13 +651,14 @@ public sealed partial class OrderDetailsPage : Page
 
         if (printInvoice)
         {
-            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order);
+            var toTotal = ViewModel.GetTotalsCategories();
+            var filePath = await reportGenerator.GenerateWholesaleInvoice(ViewModel.Order, toTotal);
 
 
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
 
-            filePath = reportGenerator.GenerateShippingList(ViewModel.Order);
+            filePath = await reportGenerator.GenerateShippingList(ViewModel.Order);
             Windows.System.LauncherOptions options = new()
             {
                 ContentType = "application/pdf"
@@ -682,7 +698,7 @@ public sealed partial class OrderDetailsPage : Page
                     return;
                 }
             }
-            var filePath = reportGenerator.GeneratePickList(ViewModel.Order);
+            var filePath = await reportGenerator.GeneratePickList(ViewModel.Order);
 
             //Windows.System.LauncherOptions options = new()
             //{
@@ -750,7 +766,7 @@ public sealed partial class OrderDetailsPage : Page
         {
             Palletizer palletizer = new(new(), ViewModel.Order);
             var pallets = await palletizer.PalletizeAsync();
-            var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+            var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
 
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;

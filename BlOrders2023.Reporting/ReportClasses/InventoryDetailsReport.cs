@@ -129,14 +129,14 @@ public class InventoryDetailsReport : IReport
                     totalNeeded += quantityNeeded;
 
 
-                    //header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
-                    //header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
-                    //header.Cell().Element(CellStyle).Text("Starting Inventory").Style(tableHeaderStyle);
-                    //header.Cell().Element(CellStyle).Text("Ordered").Style(tableHeaderStyle);
-                    //header.Cell().Element(CellStyle).Text("Ordered (Not Allocated)").Style(tableHeaderStyle);
-                    //header.Cell().Element(CellStyle).Text("Allocated").Style(tableHeaderStyle);
-                    //header.Cell().Element(CellStyle).Text("Received").Style(tableHeaderStyle);
-                    //header.Cell().Element(CellStyle).Text("Available Inventory").Style(tableHeaderStyle);
+                    //header.Cell().Element(CategoryCellStyle).Text("Product ID").Style(tableHeaderStyle);
+                    //header.Cell().Element(CategoryCellStyle).Text("Product Name").Style(tableHeaderStyle);
+                    //header.Cell().Element(CategoryCellStyle).Text("Starting Inventory").Style(tableHeaderStyle);
+                    //header.Cell().Element(CategoryCellStyle).Text("Ordered").Style(tableHeaderStyle);
+                    //header.Cell().Element(CategoryCellStyle).Text("Ordered (Not Allocated)").Style(tableHeaderStyle);
+                    //header.Cell().Element(CategoryCellStyle).Text("Allocated").Style(tableHeaderStyle);
+                    //header.Cell().Element(CategoryCellStyle).Text("Received").Style(tableHeaderStyle);
+                    //header.Cell().Element(CategoryCellStyle).Text("Available Inventory").Style(tableHeaderStyle);
 
                     table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                     table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
@@ -154,15 +154,15 @@ public class InventoryDetailsReport : IReport
 
                 }
 
-                //header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
-                //header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
-                //header.Cell().Element(CellStyle).Text("Current Inventory").Style(tableHeaderStyle);
-                //header.Cell().Element(CellStyle).Text("Ordered").Style(tableHeaderStyle);
-                //header.Cell().Element(CellStyle).Text("Allocated").Style(tableHeaderStyle);
-                //header.Cell().Element(CellStyle).Text("Received (Allocated)").Style(tableHeaderStyle);
-                //header.Cell().Element(CellStyle).Text("Received (Not Allocated)").Style(tableHeaderStyle);
-                //header.Cell().Element(CellStyle).Text("On Hand").Style(tableHeaderStyle);
-                //header.Cell().Element(CellStyle).Text("Available Inventory").Style(tableHeaderStyle);
+                //header.Cell().Element(CategoryCellStyle).Text("Product ID").Style(tableHeaderStyle);
+                //header.Cell().Element(CategoryCellStyle).Text("Product Name").Style(tableHeaderStyle);
+                //header.Cell().Element(CategoryCellStyle).Text("Current Inventory").Style(tableHeaderStyle);
+                //header.Cell().Element(CategoryCellStyle).Text("Ordered").Style(tableHeaderStyle);
+                //header.Cell().Element(CategoryCellStyle).Text("Allocated").Style(tableHeaderStyle);
+                //header.Cell().Element(CategoryCellStyle).Text("Received (Allocated)").Style(tableHeaderStyle);
+                //header.Cell().Element(CategoryCellStyle).Text("Received (Not Allocated)").Style(tableHeaderStyle);
+                //header.Cell().Element(CategoryCellStyle).Text("On Hand").Style(tableHeaderStyle);
+                //header.Cell().Element(CategoryCellStyle).Text("Available Inventory").Style(tableHeaderStyle);
 
                 table.Cell().Element(FooterCellStyle).Text($"Totals:").Style(tableHeaderStyle);
                 table.Cell().Element(FooterCellStyle);

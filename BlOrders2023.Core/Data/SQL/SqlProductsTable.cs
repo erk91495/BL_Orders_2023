@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace BlOrders2023.Core.Data.SQL;
 
@@ -28,28 +29,35 @@ internal class SqlProductsTable : IProductsTable
 
     public IEnumerable<Product> Get(int? productID = null, bool tracking = true)
     {
+        IEnumerable<Product> result;
         if (tracking)
         {
             if (productID == null)
             {
-                return _db.Products.Where(p => !p.Inactive).ToList();
+                result = _db.Products.Where(p => !p.Inactive).ToList();
             }
             else
             {
-                return _db.Products.Where(product => !product.Inactive && product.ProductID == productID).ToList();
+                result = _db.Products.Where(product => !product.Inactive && product.ProductID == productID).ToList();
             }
         }
         else
         {
             if (productID == null)
             {
-                return _db.Products.Where(p => !p.Inactive).AsNoTrackingWithIdentityResolution().ToList();
+                result = _db.Products.Where(p => !p.Inactive).AsNoTrackingWithIdentityResolution().ToList();
             }
             else
             {
-                return _db.Products.Where(product => !product.Inactive && product.ProductID == productID).AsNoTrackingWithIdentityResolution().ToList();
+                result = _db.Products.Where(product => !product.Inactive && product.ProductID == productID).AsNoTrackingWithIdentityResolution().ToList();
             }
         }
+
+        foreach (var item in result)
+        {
+            _db.Entry(item).Reference(p => p.Category).Load();
+        }
+        return result;
     }
 
     public async Task<IEnumerable<Product>> GetAsync(int? ProductID = null, bool tracking = true)

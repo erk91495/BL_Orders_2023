@@ -1,6 +1,6 @@
 ﻿using BlOrders2023.Helpers;
 using BlOrders2023.Models;
-using BlOrders2023.UserControls;
+using BlOrders2023.Dialogs;
 using BlOrders2023.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;

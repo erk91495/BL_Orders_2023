@@ -122,6 +122,9 @@
 	<None Update="nlog.config">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="UserControls\SpinnerOverlay.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="UserControls\Dialogs\AuditDataInputDialog.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -192,10 +195,11 @@
     <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
     <None Remove="UserControls\BillOfLadingDataInputDialog.xaml" />
     <None Remove="UserControls\CustomerOrderSelectionDialog.xaml" />
-    <None Remove="UserControls\Dialogs\AuditDataInputDialog.xaml" />
+    <None Remove="Dialogs\AuditDataInputDialog.xaml" />
     <None Remove="UserControls\IssueSubmitterInputDialog.xaml" />
     <None Remove="UserControls\PaymentDataInputControl.xaml" />
     <None Remove="UserControls\ProductDataInputDialog.xaml" />
+    <None Remove="UserControls\SpinnerOverlay.xaml" />
     <None Remove="UserControls\SqlConnectionSettingsPanel.xaml" />
     <None Remove="ViewModels\GridEditorDialog.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
@@ -205,6 +209,7 @@
   
   <ItemGroup>
     <Folder Include="Themes\" />
+    <Folder Include="UserControls\ViewModels\" />
   </ItemGroup>
   
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

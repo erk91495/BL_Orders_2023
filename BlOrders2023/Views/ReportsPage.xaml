@@ -11,8 +11,12 @@
     xmlns:uc="using:BlOrders2023.UserControls"
     mc:Ignorable="d">
 
-    <StackPanel>
-        <ItemsRepeater ItemsSource="{x:Bind ReportsList}">
-        </ItemsRepeater>
-    </StackPanel>
+    <Grid>
+        <uc:SpinnerOverlay x:Name="spinner" IsVisible="False"/>
+        <StackPanel>
+            <ItemsRepeater ItemsSource="{x:Bind ReportsList}">
+            </ItemsRepeater>
+        
+        </StackPanel>
+    </Grid>
 </Page>

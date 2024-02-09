@@ -107,7 +107,7 @@ public class ShippingItemAuditReport :IReport
 
                 //table.Header(header =>
                 //{
-                //    static IContainer CellStyle(IContainer container)
+                //    static IContainer CategoryCellStyle(IContainer container)
                 //    {
                 //        return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
                 //    }
@@ -176,16 +176,16 @@ public class ShippingItemAuditReport :IReport
 
         //        table.Header(header =>
         //        {
-        //            header.Cell().Element(CellStyle).Text("ID").Style(tableHeaderStyle);
-        //            header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
-        //            header.Cell().Element(CellStyle).Text("Scanline").Style(tableHeaderStyle);
-        //            header.Cell().Element(CellStyle).Text("Packed On").Style(tableHeaderStyle);
-        //            header.Cell().Element(CellStyle).Text("Sent To").Style(tableHeaderStyle);
-        //            header.Cell().Element(CellStyle).Text("Order ID").Style(tableHeaderStyle);
-        //            header.Cell().Element(CellStyle).Text("Scan Date").Style(tableHeaderStyle);
+        //            header.Cell().Element(CategoryCellStyle).Text("ID").Style(tableHeaderStyle);
+        //            header.Cell().Element(CategoryCellStyle).Text("Product Name").Style(tableHeaderStyle);
+        //            header.Cell().Element(CategoryCellStyle).Text("Scanline").Style(tableHeaderStyle);
+        //            header.Cell().Element(CategoryCellStyle).Text("Packed On").Style(tableHeaderStyle);
+        //            header.Cell().Element(CategoryCellStyle).Text("Sent To").Style(tableHeaderStyle);
+        //            header.Cell().Element(CategoryCellStyle).Text("Order ID").Style(tableHeaderStyle);
+        //            header.Cell().Element(CategoryCellStyle).Text("Scan Date").Style(tableHeaderStyle);
 
 
-        //            static IContainer CellStyle(IContainer container)
+        //            static IContainer CategoryCellStyle(IContainer container)
         //            {
         //                return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
         //            }

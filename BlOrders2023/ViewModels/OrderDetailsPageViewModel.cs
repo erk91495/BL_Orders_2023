@@ -653,6 +653,8 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
             }
             Order.Allocated = false;
     }
+
+    internal IEnumerable<ProductCategory> GetTotalsCategories() => _db.ProductCategories.GetForReports();
     #endregion Validators
     #endregion Methods
 }

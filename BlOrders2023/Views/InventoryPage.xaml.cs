@@ -156,7 +156,7 @@ public sealed partial class InventoryPage : Page
         {
             await ViewModel.SaveAllAsync();
             var generator = new ReportGenerator(App.CompanyInfo);
-            var path = generator.GenerateCurrentInventoryReport(ViewModel.Inventory);
+            var path = await generator.GenerateCurrentInventoryReport(ViewModel.Inventory);
             PDFPrinterService printerService = new(path);
             _ = printerService.PrintPdfAsync();
             ContentDialog contentDialog = new()

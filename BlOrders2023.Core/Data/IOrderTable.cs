@@ -9,9 +9,10 @@ public interface IOrderTable
     Task<IEnumerable<Order>> GetAsync(IEnumerable<int> ids, bool tracking = true);
     IEnumerable<Order> Get(int orderID);
     IEnumerable<Order> GetFrozenOrdersByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
-    IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
+    Task<IEnumerable<Order>> GetByPickupDateAsync(DateTimeOffset startDate, DateTimeOffset endDate);
     IEnumerable<Order> GetNonFrozenByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate);
     IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate);
+    Task<IEnumerable<Order>> GetByPickupDateThenNameAsync(DateTimeOffset startDate, DateTimeOffset endDate);
     Task<IEnumerable<Order>> GetByCustomerIDAndPickupDateAsync(IEnumerable<int> CustomerIDs, DateTimeOffset startDate, DateTimeOffset endDate);
     IEnumerable<Order> GetUnpaidInvoices(WholesaleCustomer customer);
     IEnumerable<Order> GetUnpaidInvoicedInvoices(WholesaleCustomer customer);
