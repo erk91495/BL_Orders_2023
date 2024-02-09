@@ -167,15 +167,15 @@ internal class SqlOrderTable : IOrderTable
         }
     }
 
-    public IEnumerable<Order> GetByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
+    public async Task<IEnumerable<Order>> GetByPickupDateAsync(DateTimeOffset startDate, DateTimeOffset endDate)
     {
-        return _db.Orders
+        return await _db.Orders
             .Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate)
             .OrderBy(o => o.PickupDate.Date)
             .ThenByDescending(o => o.Shipping)
             .ThenBy(o => o.PickupTime.TimeOfDay)
             .ThenBy(o => o.Customer.CustomerName)
-            .ToArray();
+            .ToListAsync();
     }
 
     public IEnumerable<Order> GetNonFrozenByPickupDate(DateTimeOffset startDate, DateTimeOffset endDate)
@@ -233,6 +233,15 @@ internal class SqlOrderTable : IOrderTable
             .ToList();
     }
 
+    public async Task<IEnumerable<Order>> GetByPickupDateThenNameAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await _db.Orders
+                .Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate)
+                .OrderBy(o => o.PickupDate.Date)
+                .ThenBy(o => o.Customer.CustomerName)
+                .ThenBy(o => o.PickupTime.TimeOfDay)
+                .ToListAsync();
+    }
     public Order Reload(Order order)
     {
         _db.ChangeTracker.Clear();

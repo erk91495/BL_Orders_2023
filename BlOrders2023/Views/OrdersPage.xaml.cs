@@ -405,7 +405,7 @@ public sealed partial class OrdersPage : Page
         if (printInvoice)
         {
             var toTotal = ViewModel.GetTotalsCategories();
-            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder,toTotal);
+            var filePath = await reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder,toTotal);
 
             
             if (autoprint)
@@ -433,7 +433,7 @@ public sealed partial class OrdersPage : Page
 
     private async Task PrintOrderAsync(bool autoprint = true)
     {
-        var filePath = reportGenerator.GeneratePickList(ViewModel.SelectedOrder);
+        var filePath = await reportGenerator.GeneratePickList(ViewModel.SelectedOrder);
 
         if(autoprint)
         {
@@ -459,7 +459,7 @@ public sealed partial class OrdersPage : Page
 
     private async Task PrintShippingList(bool autoprint = true)
     {
-        var filePath = reportGenerator.GenerateShippingList(ViewModel.SelectedOrder);
+        var filePath = await reportGenerator.GenerateShippingList(ViewModel.SelectedOrder);
 
 
         if (autoprint)
@@ -524,7 +524,7 @@ public sealed partial class OrdersPage : Page
         {
             IPalletizer palletizer = new Palletizer(new(), ViewModel.SelectedOrder);
             var pallets = await palletizer.PalletizeAsync();
-            var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.SelectedOrder, pallets);
+            var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.SelectedOrder, pallets);
 
             if(autoprint)
             {

@@ -387,12 +387,12 @@ public sealed partial class FillOrdersPage : Page
         if (printInvoice)
         {
             var toTotal = ViewModel.GetTotalsCategories();
-            var filePath = reportGenerator.GenerateWholesaleInvoice(ViewModel.Order, toTotal);
+            var filePath = await reportGenerator.GenerateWholesaleInvoice(ViewModel.Order, toTotal);
 
             var printer = new PDFPrinterService(filePath);
             await printer.PrintPdfAsync(printSettings);
 
-            filePath = reportGenerator.GenerateShippingList(ViewModel.Order);
+            filePath = await reportGenerator.GenerateShippingList(ViewModel.Order);
             Windows.System.LauncherOptions options = new()
             {
                 ContentType = "application/pdf"
@@ -427,7 +427,7 @@ public sealed partial class FillOrdersPage : Page
                     return;
                 }
             }
-            var filePath = reportGenerator.GeneratePickList(ViewModel.Order);
+            var filePath = await reportGenerator.GeneratePickList(ViewModel.Order);
 
             //Windows.System.LauncherOptions options = new()
             //{
@@ -497,7 +497,7 @@ public sealed partial class FillOrdersPage : Page
             {
                 IPalletizer palletizer = new Palletizer(new(), ViewModel.Order);
                 var pallets = await palletizer.PalletizeAsync();
-                var filePath = reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+                var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
 
                 PrinterSettings printSettings = new();
                 printSettings.Copies = 1;

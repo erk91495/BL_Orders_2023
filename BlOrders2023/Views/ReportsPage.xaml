@@ -12,7 +12,7 @@
     mc:Ignorable="d">
 
     <Grid>
-        <uc:SpinnerOverlay x:Name="spinner" IsVisible="True"/>
+        <uc:SpinnerOverlay x:Name="spinner" IsVisible="False"/>
         <StackPanel>
             <ItemsRepeater ItemsSource="{x:Bind ReportsList}">
             </ItemsRepeater>
