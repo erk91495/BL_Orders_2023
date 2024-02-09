@@ -46,7 +46,7 @@ public class ReportGenerator
     public string GenerateWholesaleInvoice(Order order, IEnumerable<ProductCategory> categoriesToTotal)
     {
         var report =  new WholesaleInvoice(CompanyInfo, order, categoriesToTotal);
-        var filePath = TempPath + Path.DirectorySeparatorChar + order.OrderID + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        var filePath = $"{TempPath}{Path.DirectorySeparatorChar}_{order.OrderID}_{order.Customer.CustomerName}_{DateTime.Now.ToFileTime()}.pdf";
         report.GeneratePdf(filePath);
         return filePath;
     }
@@ -200,5 +200,23 @@ public class ReportGenerator
         var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ShippingItemAuditReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
         report.GeneratePdf(filePath);
         return filePath;
+    }
+
+    public string GenerateProductCategoryTotalsReport(IEnumerable<OrderItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new ProductCategoryTotalsReport(CompanyInfo, items, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryTotalsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        report.GeneratePdf(filePath);
+        return filePath;
+    }
+
+    public async Task<string> GenerateProductCategoryDetailsReport(IEnumerable<OrderItem> items, IEnumerable<Product> products, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await Task.Run(() => {
+            var report = new ProductCategoryDetailsReport(CompanyInfo, items, products, startDate, endDate);
+            var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryDetailsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+            report.GeneratePdf(filePath);
+            return filePath;
+        });
     }
 }

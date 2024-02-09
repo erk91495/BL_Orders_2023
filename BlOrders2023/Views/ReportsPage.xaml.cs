@@ -29,6 +29,7 @@ using QuestPDF.Fluent;
 using Syncfusion.UI.Xaml.Data;
 using Windows.System;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using System.ComponentModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -42,6 +43,8 @@ public sealed partial class ReportsPage : Page
     #region Properties
     public ReportsPageViewModel ViewModel { get; }
     public ObservableCollection<ReportControl> ReportsList { get; set; }
+
+    public bool IsSpinnerVisible { get; set; }
     #endregion Properties
 
     #region Fields
@@ -564,6 +567,67 @@ public sealed partial class ReportsPage : Page
                 }
 
             }
+            else if(control.ReportType == typeof(ProductCategoryTotalsReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    var values = ViewModel.GetOrdersByPickupDate(startDate, endDate);
+                    var orderItems = values.SelectMany(o => o.Items);
+                    if(orderItems.IsNullOrEmpty())
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "Error",
+                            Content = $"No records found for the given date range",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
+                    }
+                    else
+                    {
+                        reportPath = reportGenerator.GenerateProductCategoryTotalsReport(orderItems, startDate, endDate);
+                    }
+                    
+                }
+            }
+            else if (control.ReportType == typeof(ProductCategoryDetailsReport))
+            {
+                //var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (true)
+                {
+                    //DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    //DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    var startDate = DateTimeOffset.Now.AddDays(-100);
+                    var endDate = DateTimeOffset.Now;
+                    var values = ViewModel.GetOrdersByPickupDate(startDate, endDate);
+                    var orderItems = values.SelectMany(o => o.Items);
+                    if (orderItems.IsNullOrEmpty())
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "Error",
+                            Content = $"No records found for the given date range",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
+                    }
+                    else
+                    {
+                        var products  = ViewModel.GetProducts();
+                        spinner.IsVisible = true;
+                        reportPath = await reportGenerator.GenerateProductCategoryDetailsReport(orderItems,products, startDate, endDate);
+                        spinner.IsVisible = false;
+                    }
+
+                }
+            }
             else
             {
                 ContentDialog d = new()
@@ -579,6 +643,9 @@ public sealed partial class ReportsPage : Page
 
             if (reportPath != string.Empty)
             {
+
+
+
                 LauncherOptions options = new()
                 {
                     ContentType = "application/pdf"

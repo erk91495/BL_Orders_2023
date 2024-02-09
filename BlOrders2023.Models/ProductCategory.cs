@@ -46,5 +46,24 @@ public class ProductCategory : ObservableValidator
         get => products;
         set => SetProperty(ref products, value);
     }
+
+
     #endregion Properties
+    #region Methods
+    public override bool Equals(object? obj)
+    {
+        if(obj is ProductCategory category)
+        {
+            return category.CategoryID == this.CategoryID;
+        }
+        return false;
+    }
+    public static bool operator ==(ProductCategory? obj1, ProductCategory? obj2)
+    {
+        if(obj1 is null && obj2 is null) return true;
+        if(obj1 is not null && obj2 is not null) return obj1.CategoryID == obj2.CategoryID;
+        return false;
+    }
+    public static bool operator !=(ProductCategory? obj1, ProductCategory? obj2) => !(obj1 == obj2);
+    #endregion Methods
 }

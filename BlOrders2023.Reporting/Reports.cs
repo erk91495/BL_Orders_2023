@@ -29,5 +29,7 @@ public static class Reports
         typeof(OutOfStateSalesReport),
         typeof(BillOfLadingReport),
         typeof(ShippingItemAuditReport),
+        typeof(ProductCategoryTotalsReport),
+        typeof(ProductCategoryDetailsReport),
     }; 
 }
