@@ -13,13 +13,13 @@ using Microsoft.UI.Xaml;
 namespace BlOrders2023.Dialogs.ViewModels;
 internal class IssueSubmitterDialogViewModel : ObservableValidator
 {
-    private string? _title;
-    private string? _submitter;
-    private string? _description;
+    private string _title;
+    private string _submitter;
+    private string _description;
 
     [Required]
     [MinLength(1)]
-    public string? Title
+    public string Title
     {
         get => _title;
         set
@@ -31,7 +31,7 @@ internal class IssueSubmitterDialogViewModel : ObservableValidator
 
     [Required]
     [MinLength(1)]
-    public string? Submitter
+    public string Submitter
     {
         get => _submitter;
         set
@@ -43,7 +43,7 @@ internal class IssueSubmitterDialogViewModel : ObservableValidator
 
     [Required]
     [MinLength(1)]
-    public string? Description
+    public string Description
     {
         get => _description; 
         set 

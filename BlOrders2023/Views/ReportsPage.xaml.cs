@@ -612,34 +612,50 @@ public sealed partial class ReportsPage : Page
             }
             else if (control.ReportType == typeof(ProductCategoryDetailsReport))
             {
-                //var dateTuple = await ShowDateRangeSelectionAsync();
+                var dateTuple = await ShowDateRangeSelectionAsync();
 
-                if (true)
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
                 {
-                    //DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
-                    //DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
-                    var startDate = DateTimeOffset.Now.AddDays(-100);
-                    var endDate = DateTimeOffset.Now;
-                    spinner.IsVisible = true;
-                    var values = await ViewModel.GetOrdersByPickupDateAsync(startDate, endDate);
-                    var orderItems = values.SelectMany(o => o.Items);
-                    if (orderItems.IsNullOrEmpty())
+                    var categories  = ViewModel.GetTotalsCategories();
+                    var categorySelect = new MultiSelectListBox(categories.Cast<object>().ToObservableCollection());
+                    ContentDialog diag = new()
                     {
-                        ContentDialog d = new()
-                        {
-                            XamlRoot = XamlRoot,
-                            Title = "Error",
-                            Content = $"No records found for the given date range",
-                            PrimaryButtonText = "ok",
-                        };
-                        await d.ShowAsync();
-                    }
-                    else
+                        Title = "Select Categories",
+                        XamlRoot = XamlRoot,
+                        Content = categorySelect,
+                        PrimaryButtonText = "Next",
+                        CloseButtonText = "Cancel",
+                    };
+                    if(await diag.ShowAsync() == ContentDialogResult.Primary)
                     {
-                        var products  = ViewModel.GetProducts();
-                        reportPath = await reportGenerator.GenerateProductCategoryDetailsReport(orderItems,products, startDate, endDate);
 
+                        var categoriesToLookup = categories.Where(i => categorySelect.SelectedItems.Contains(i.CategoryName)).ToList();
+                        DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                        DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                        //var startDate = DateTimeOffset.Now.AddDays(-100);
+                        //var endDate = DateTimeOffset.Now;
+                        spinner.IsVisible = true;
+                        var values = await ViewModel.GetOrdersByPickupDateAsync(startDate, endDate);
+                        var orderItems = values.SelectMany(o => o.Items.Where(i => categoriesToLookup.Contains(i.Product.Category)));
+                        if (orderItems.IsNullOrEmpty())
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"No records found for the given date range",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
+                        else
+                        {
+                            var products = ViewModel.GetProducts();
+                            reportPath = await reportGenerator.GenerateProductCategoryDetailsReport(orderItems, products, startDate, endDate);
+
+                        }
                     }
+
 
                 }
             }
@@ -658,9 +674,6 @@ public sealed partial class ReportsPage : Page
 
             if (reportPath != string.Empty)
             {
-
-
-
                 LauncherOptions options = new()
                 {
                     ContentType = "application/pdf"
