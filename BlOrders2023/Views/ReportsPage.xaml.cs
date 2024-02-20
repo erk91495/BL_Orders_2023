@@ -523,6 +523,7 @@ public sealed partial class ReportsPage : Page
             }
             else if(control.ReportType == typeof(ShippingItemAuditReport))
             {
+                spinner.IsVisible = true;
                 var dialog = new AuditDataInputDialog(){ XamlRoot = XamlRoot };
                 var res = await dialog.ShowAsync();
                 if(res == ContentDialogResult.Primary)
@@ -533,9 +534,9 @@ public sealed partial class ReportsPage : Page
                     {
                         item = ViewModel.GetShippingItem(dialog.Scanline);
                     }
-                    else if (dialog.InputType == InputTypes.Serial)
+                    else if (dialog.InputType == InputTypes.Serial && dialog.ProductID != null)
                     {
-                        item = ViewModel.GetShippingItem(dialog.ProductID, dialog.Serial);
+                        item = ViewModel.GetShippingItem((int)dialog.ProductID, dialog.Serial);
                     }
                     if(item != null)
                     {
@@ -548,12 +549,11 @@ public sealed partial class ReportsPage : Page
                             startDate = new DateTime(sDate.Year, sDate.Month, sDate.Day, 0, 0, 0, 0, DateTimeKind.Local);
                             endDate = new DateTime(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, DateTimeKind.Local);
                         }
-                        spinner.IsVisible = true;
                         var items = ViewModel.GetShippingItems(item,fieldsToMatch.Contains("ProductID"),fieldsToMatch.Contains("Serial"),
                             fieldsToMatch.Contains("PackDate"),fieldsToMatch.Contains("Scanline"),startDate,endDate);
                         if(!items.IsNullOrEmpty())
                         {
-                            reportPath = await reportGenerator.GenerateShippingItemAuditReport(items);
+                            reportPath = await reportGenerator.GenerateShippingItemAuditReport(items, item, fieldsToMatch, startDate, endDate);
                         }
                         else
                         {

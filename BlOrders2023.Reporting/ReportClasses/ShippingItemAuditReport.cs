@@ -10,6 +10,7 @@ using QuestPDF.Infrastructure;
 using QuestPDF.Fluent;
 using System.Reflection;
 using System.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Audit Trail Report")]
@@ -27,15 +28,21 @@ public class ShippingItemAuditReport :IReport
     private readonly CompanyInfo _companyInfo;
     private readonly IEnumerable<ShippingItem> _shippingItems;
     private readonly DateTime _reportDate = DateTime.Now;
-    private readonly DateTimeOffset _startDate;
-    private readonly DateTimeOffset _endDate;
+    private readonly DateTime? _startDate = null;
+    private readonly DateTime? _endDate = null;
+    private readonly ShippingItem _itemToMatch;
+    private readonly IList<string> _fieldsToMatch;
     #endregion Fields
 
     #region Constructors
-    public ShippingItemAuditReport(CompanyInfo companyInfo, IEnumerable<ShippingItem> items)
+    public ShippingItemAuditReport(CompanyInfo companyInfo, IEnumerable<ShippingItem> items, ShippingItem item, IList<string> fieldsToMatch, DateTime? startDate, DateTime? endDate)
     {
         _companyInfo = companyInfo;
         _shippingItems = items;
+        _itemToMatch = item;
+        _fieldsToMatch = fieldsToMatch;
+        _startDate = startDate;
+        _endDate = endDate;
     }
     #endregion Constructors
 
@@ -72,15 +79,32 @@ public class ShippingItemAuditReport :IReport
 
                 //Logo
                 var res = Assembly.GetExecutingAssembly().GetManifestResourceStream("BlOrders2023.Reporting.Assets.Images.BLLogo.bmp");
-                row.RelativeItem(1).AlignLeft().AlignMiddle().Height(50).Image(res).FitHeight();
+                row.RelativeItem(2).AlignLeft().AlignMiddle().Height(50).Image(res).FitHeight();
 
                 row.RelativeItem(3).AlignCenter().Column(col =>
                 {
                     col.Item().AlignCenter().Text($"{_companyInfo.ShortCompanyName} Audit Trail Report").Style(titleStyle);
                 });
 
-                row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
+                row.RelativeItem(5).AlignMiddle().AlignRight().Column(column =>
                 {
+                    column.Item().Text($"Match: {_itemToMatch.ProductID} : {_itemToMatch.Scanline}");
+                    if(!_fieldsToMatch.IsNullOrEmpty())
+                    {
+                        var fieldsToMatchString ="on fields: ";
+                        foreach (var item in _fieldsToMatch)
+                        {
+                            fieldsToMatchString += item;
+                            fieldsToMatchString += " ";
+                        }
+                        column.Item().Text(fieldsToMatchString);
+
+                    }
+                    if(_startDate != null && _endDate != null)
+                    {
+                        column.Item().Text($"From: {_startDate.Value.ToString("M/d/yy")}").Style(subTitleStyle);
+                        column.Item().Text($"To: {_endDate.Value.ToString("M/d/yy")}").Style(subTitleStyle);
+                    }
                 });
 
             });

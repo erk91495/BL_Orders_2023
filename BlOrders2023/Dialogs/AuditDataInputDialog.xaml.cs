@@ -56,6 +56,10 @@ public sealed partial class AuditDataInputDialog : ContentDialog, INotifyPropert
         get => _productID;
         set
         {
+            if(value == int.MinValue)
+            {
+                value = 0;
+            }
             _productID = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(CanSubmit));
@@ -127,6 +131,7 @@ public sealed partial class AuditDataInputDialog : ContentDialog, INotifyPropert
         {
             _dateRange = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(CanSubmit));
         }
     }
 
@@ -155,7 +160,7 @@ public sealed partial class AuditDataInputDialog : ContentDialog, INotifyPropert
     {
         var dateRangeOk = ckbDateRange.IsChecked == true ? DateRange != null && DateRange.StartDate != null && DateRange.EndDate != null : true;
         var scanlineOk = InputType == InputTypes.Scanline ? !Scanline.IsNullOrEmpty() : true;
-        var serialOk = InputType == InputTypes.Serial ? ProductID > 0 : true;
+        var serialOk = InputType == InputTypes.Serial ? (ProductID != null &&  ProductID > 0) : true;
         var someMatchChecked = (ckbProductID.IsChecked ?? false) 
             || (ckbSerial.IsChecked ?? false) 
             || (ckbPackDate.IsChecked ?? false)
