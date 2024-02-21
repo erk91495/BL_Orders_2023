@@ -4,13 +4,13 @@ GO
 UPDATE [dbo].[tblProducts]
    SET [BoxID] = 1
       ,[PalletHeight] = 8
- WHERE [ProductID] IN (619,621,623,625,627,620,624,626,719,721,723,725,727)
+ WHERE [ProductID] IN (619,621,623,625,627,719,721,723,725,727)
 GO
 
 UPDATE [dbo].[tblProducts]
    SET [BoxID] = 2
       ,[PalletHeight] = 9
- WHERE [ProductID] IN (610,613,615,617,612,616,710,713,715,717)
+ WHERE [ProductID] IN (610,613,615,617,710,713,715,717)
 GO
 
 UPDATE [dbo].[tblProducts]
@@ -100,4 +100,16 @@ UPDATE [dbo].[tblProducts]
    SET [BoxID] = 15
       ,[PalletHeight] = 10
  WHERE [ProductID] IN (381,382)
+GO
+
+UPDATE [dbo].[tblProducts]
+   SET [BoxID] = 16
+      ,[PalletHeight] = 8
+ WHERE [ProductID] IN (620,624,626)
+GO
+
+UPDATE [dbo].[tblProducts]
+   SET [BoxID] = 17
+      ,[PalletHeight] = 9
+ WHERE [ProductID] IN (612,616)
 GO
