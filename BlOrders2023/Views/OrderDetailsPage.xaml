@@ -427,19 +427,47 @@
         </StackPanel>
         <Grid x:Name="NavigationButtonGrid" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.LeftOf="InvoiceTotalStack">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <AppBarButton x:Name="PreviousOrderButton" 
-                          Icon="Back" 
+                          Icon="Back"
                           Grid.Column="0" 
-                          HorizontalAlignment="Left" 
+                          HorizontalAlignment="Left"
                           IsEnabled="{x:Bind ViewModel.HasPreviousOrder, Mode=OneWay}" 
                           Click="OrderNavigation_Click"
                           IsTabStop="False"/>
+            <ListView  VerticalAlignment="Top"
+                       SelectionMode="None"
+                       Grid.Column="1"
+                       VerticalContentAlignment="Center"
+                       ItemsSource="{x:Bind ViewModel.CategoryTotals, Mode=OneWay}"
+                       ScrollViewer.VerticalScrollMode="Disabled"
+                       ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                       ScrollViewer.HorizontalScrollMode="Enabled" 
+                       ScrollViewer.HorizontalScrollBarVisibility="Visible" 
+                       ScrollViewer.IsHorizontalRailEnabled="True">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>
+                                <Run Text="{Binding Key, Mode=OneWay}"/>
+                                <Run Text=" : "/>
+                                <Run Text="{Binding Value, Mode=OneWay}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
             <AppBarButton x:Name="NextOrderButton" 
                           Icon="Forward" 
-                          Grid.Column="1" 
+                          Grid.Column="2" 
                           HorizontalAlignment="Right" 
                           IsEnabled="{x:Bind ViewModel.HasNextOrder, Mode=OneWay}"
                           Click="OrderNavigation_Click"
