@@ -65,5 +65,7 @@ public class ProductCategory : ObservableValidator
         return false;
     }
     public static bool operator !=(ProductCategory? obj1, ProductCategory? obj2) => !(obj1 == obj2);
+
+    public override string ToString() => CategoryName;
     #endregion Methods
 }

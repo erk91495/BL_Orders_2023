@@ -7,10 +7,12 @@ using CommunityToolkit.WinUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 namespace BlOrders2023.ViewModels;
 
 public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
@@ -274,6 +276,8 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     public bool CanPrintOrder => _order.CanPrintOrder;
     public bool AllItemsScanned => _order.AllItemsReceived;
     public bool IsNewOrder {get; set;} = true;
+    //Gets totals for product categories that have ShowOnReports set to true
+    public Dictionary<string,float> CategoryTotals => Items.Where(i => GetTotalsCategories().Contains(i.Product.Category)).GroupBy(i => i.Product.Category).Select(cl => new KeyValuePair<string,float>(cl.Key != null ? cl.Key.CategoryName : string.Empty, cl.Sum(i => i.Quantity))).ToDictionary();
     #endregion Properties
 
     #region Fields
@@ -332,12 +336,14 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         }
         HasChanges = true;
         OnPropertyChanged(nameof(Items));
+        OnPropertyChanged(nameof(CategoryTotals));
     }
 
     private void OrderItemOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         HasChanges = true;
         OnPropertyChanged(nameof(Items));
+        OnPropertyChanged(nameof(CategoryTotals));
     }
 
     public void OnNavigatedTo(object parameter)
@@ -409,6 +415,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         OnPropertyChanged(nameof(Memo_Totl));
         OnPropertyChanged(nameof(HasNextOrder));
         OnPropertyChanged(nameof(HasPreviousOrder));
+        OnPropertyChanged(nameof(CategoryTotals));
     }
 
     public int? GetNextOrderID()

@@ -15,6 +15,7 @@
 
     <ContentDialog.Resources>
         <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+        <converters:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
     </ContentDialog.Resources>
 
     <StackPanel Orientation="Vertical">
@@ -31,7 +32,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="ProductIDBox" Header="Product ID" Text="{x:Bind ProductID, Mode=TwoWay}" Grid.Column="0"/>
+            <NumberBox x:Name="ProductIDBox" Header="Product ID" Value="{x:Bind ProductID, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}" Grid.Column="0"/>
             <TextBox x:Name="SerialBox" Header="Serial" Text="{x:Bind Serial, Mode=TwoWay}" Grid.Column="1"/>
         </Grid>
         <Rectangle Margin="0,16,0,16" HorizontalAlignment="Stretch" Height="1" Fill="{ThemeResource TextFillColorPrimary}" />

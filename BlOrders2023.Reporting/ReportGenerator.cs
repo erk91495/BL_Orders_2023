@@ -198,9 +198,9 @@ public class ReportGenerator
         return filePath;
     }
 
-    public async Task<string> GenerateShippingItemAuditReport(IEnumerable<ShippingItem> items)
+    public async Task<string> GenerateShippingItemAuditReport(IEnumerable<ShippingItem> items, ShippingItem item, IList<string> fieldsToMatch, DateTime? startDate, DateTime? endDate)
     {
-        var report = new ShippingItemAuditReport(CompanyInfo, items);
+        var report = new ShippingItemAuditReport(CompanyInfo, items, item, fieldsToMatch, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ShippingItemAuditReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
         await GernerateReportAsync(report, filePath);
         return filePath;

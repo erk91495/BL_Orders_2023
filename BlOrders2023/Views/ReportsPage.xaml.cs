@@ -523,6 +523,7 @@ public sealed partial class ReportsPage : Page
             }
             else if(control.ReportType == typeof(ShippingItemAuditReport))
             {
+                spinner.IsVisible = true;
                 var dialog = new AuditDataInputDialog(){ XamlRoot = XamlRoot };
                 var res = await dialog.ShowAsync();
                 if(res == ContentDialogResult.Primary)
@@ -533,9 +534,9 @@ public sealed partial class ReportsPage : Page
                     {
                         item = ViewModel.GetShippingItem(dialog.Scanline);
                     }
-                    else if (dialog.InputType == InputTypes.Serial)
+                    else if (dialog.InputType == InputTypes.Serial && dialog.ProductID != null)
                     {
-                        item = ViewModel.GetShippingItem(dialog.ProductID, dialog.Serial);
+                        item = ViewModel.GetShippingItem((int)dialog.ProductID, dialog.Serial);
                     }
                     if(item != null)
                     {
@@ -548,12 +549,11 @@ public sealed partial class ReportsPage : Page
                             startDate = new DateTime(sDate.Year, sDate.Month, sDate.Day, 0, 0, 0, 0, DateTimeKind.Local);
                             endDate = new DateTime(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, DateTimeKind.Local);
                         }
-                        spinner.IsVisible = true;
                         var items = ViewModel.GetShippingItems(item,fieldsToMatch.Contains("ProductID"),fieldsToMatch.Contains("Serial"),
                             fieldsToMatch.Contains("PackDate"),fieldsToMatch.Contains("Scanline"),startDate,endDate);
                         if(!items.IsNullOrEmpty())
                         {
-                            reportPath = await reportGenerator.GenerateShippingItemAuditReport(items);
+                            reportPath = await reportGenerator.GenerateShippingItemAuditReport(items, item, fieldsToMatch, startDate, endDate);
                         }
                         else
                         {
@@ -612,34 +612,50 @@ public sealed partial class ReportsPage : Page
             }
             else if (control.ReportType == typeof(ProductCategoryDetailsReport))
             {
-                //var dateTuple = await ShowDateRangeSelectionAsync();
+                var dateTuple = await ShowDateRangeSelectionAsync();
 
-                if (true)
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
                 {
-                    //DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
-                    //DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
-                    var startDate = DateTimeOffset.Now.AddDays(-100);
-                    var endDate = DateTimeOffset.Now;
-                    spinner.IsVisible = true;
-                    var values = await ViewModel.GetOrdersByPickupDateAsync(startDate, endDate);
-                    var orderItems = values.SelectMany(o => o.Items);
-                    if (orderItems.IsNullOrEmpty())
+                    var categories  = ViewModel.GetTotalsCategories();
+                    var categorySelect = new MultiSelectListBox(categories.Cast<object>().ToObservableCollection());
+                    ContentDialog diag = new()
                     {
-                        ContentDialog d = new()
-                        {
-                            XamlRoot = XamlRoot,
-                            Title = "Error",
-                            Content = $"No records found for the given date range",
-                            PrimaryButtonText = "ok",
-                        };
-                        await d.ShowAsync();
-                    }
-                    else
+                        Title = "Select Categories",
+                        XamlRoot = XamlRoot,
+                        Content = categorySelect,
+                        PrimaryButtonText = "Next",
+                        CloseButtonText = "Cancel",
+                    };
+                    if(await diag.ShowAsync() == ContentDialogResult.Primary)
                     {
-                        var products  = ViewModel.GetProducts();
-                        reportPath = await reportGenerator.GenerateProductCategoryDetailsReport(orderItems,products, startDate, endDate);
 
+                        var categoriesToLookup = categories.Where(i => categorySelect.SelectedItems.Contains(i.CategoryName)).ToList();
+                        DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                        DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                        //var startDate = DateTimeOffset.Now.AddDays(-100);
+                        //var endDate = DateTimeOffset.Now;
+                        spinner.IsVisible = true;
+                        var values = await ViewModel.GetOrdersByPickupDateAsync(startDate, endDate);
+                        var orderItems = values.SelectMany(o => o.Items.Where(i => categoriesToLookup.Contains(i.Product.Category)));
+                        if (orderItems.IsNullOrEmpty())
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"No records found for the given date range",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
+                        else
+                        {
+                            var products = ViewModel.GetProducts();
+                            reportPath = await reportGenerator.GenerateProductCategoryDetailsReport(orderItems, products, startDate, endDate);
+
+                        }
                     }
+
 
                 }
             }
@@ -658,9 +674,6 @@ public sealed partial class ReportsPage : Page
 
             if (reportPath != string.Empty)
             {
-
-
-
                 LauncherOptions options = new()
                 {
                     ContentType = "application/pdf"
