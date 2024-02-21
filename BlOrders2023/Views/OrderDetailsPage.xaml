@@ -339,7 +339,8 @@
                        CellTapped="OrderedItems_CellTapped"
                        IsTabStop="False"
                        IsReadOnly="{x:Bind ViewModel.CanAddItems, Mode=OneWay}"
-                       TableSummaryCellStyle="{StaticResource TableSummaryStyle}">
+                       TableSummaryCellStyle="{StaticResource TableSummaryStyle}"
+                       LiveDataUpdateMode="AllowSummaryUpdate">
             <sf:SfDataGrid.Resources>
                 <SolidColorBrush x:Key="SyncfusionDataGridRowBackgroundPointerOver" Color="{StaticResource SystemAccentColor}"/>
             </sf:SfDataGrid.Resources>
