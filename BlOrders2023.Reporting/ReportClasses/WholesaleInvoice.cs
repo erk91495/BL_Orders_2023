@@ -294,29 +294,31 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
             {
                 column.Item().AlignRight().Text($"Memo Total:{_order.Memo_Totl:C}");
             }
-
-            column.Item().AlignCenter().Table(totalsTable =>
-            {
-                var categorizedItems = _order.ShippingItems.Where(i => _categoriesToToal.Contains(i.Product.Category)).GroupBy(i => i.Product.Category).OrderBy(i => i.Key.DisplayIndex);
-
-                totalsTable.ColumnsDefinition(column =>
+            var categorizedItems = _order.ShippingItems.Where(i => _categoriesToToal.Contains(i.Product.Category)).GroupBy(i => i.Product.Category).OrderBy(i => i.Key.DisplayIndex);
+            if (!categorizedItems.IsNullOrEmpty()){
+                column.Item().AlignCenter().Table(totalsTable =>
                 {
-                    for (var i = 0; i < maxTotalsColumns && i < categorizedItems.Count(); i++)
+                    var categorizedItems = _order.ShippingItems.Where(i => _categoriesToToal.Contains(i.Product.Category)).GroupBy(i => i.Product.Category).OrderBy(i => i.Key.DisplayIndex);
+
+                    totalsTable.ColumnsDefinition(column =>
                     {
-                        column.RelativeColumn(2);
+                        for (var i = 0; i < maxTotalsColumns && i < categorizedItems.Count(); i++)
+                        {
+                            column.RelativeColumn(2);
+                        }
+                    });
+
+
+                    foreach (var group in categorizedItems)
+                    {
+                        totalsTable.Cell().Element(TotalCellStyle).AlignCenter().Text($"{group.Key.CategoryName}: {group.Sum(i => i.QuanRcvd)}").Style(categoryTotalsStyle);
+                    }
+                    static IContainer TotalCellStyle(IContainer container)
+                    {
+                        return container.Border(.5f).BorderColor(Colors.Black);
                     }
                 });
-
-
-                foreach (var group in categorizedItems)
-                {
-                    totalsTable.Cell().Element(TotalCellStyle).AlignCenter().Text($"{group.Key.CategoryName}: {group.Sum(i => i.QuanRcvd)}").Style(categoryTotalsStyle);
-                }
-                static IContainer TotalCellStyle(IContainer container)
-                {
-                    return container.Border(.5f).BorderColor(Colors.Black);
-                }
-            });
+            }
             column.Item().AlignBottom().AlignRight().Row(footer =>
             {
                 //footer.RelativeItem().AlignLeft().Text(time =>

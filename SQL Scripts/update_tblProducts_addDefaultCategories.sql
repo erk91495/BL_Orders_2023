@@ -1,4 +1,4 @@
-USE BL_Enterprise_North
+USE BL_Enterprise
 
 UPDATE [dbo].[tblProducts]
    SET CategoryID = 1

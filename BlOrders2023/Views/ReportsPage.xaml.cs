@@ -616,7 +616,7 @@ public sealed partial class ReportsPage : Page
 
                 if (dateTuple.Item1 != null && dateTuple.Item2 != null)
                 {
-                    var categories  = ViewModel.GetTotalsCategories();
+                    var categories  = ViewModel.GetProductCategories();
                     var categorySelect = new MultiSelectListBox(categories.Cast<object>().ToObservableCollection());
                     ContentDialog diag = new()
                     {
