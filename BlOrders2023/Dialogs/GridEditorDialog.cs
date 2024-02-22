@@ -34,7 +34,6 @@ public sealed partial class GridEditorDialog<T> : ContentDialog
     {
         ViewModel = App.GetService<IGridEditorViewModel<T>>();
         this.InitializeComponent();
-        DataGrid.CurrentCellValueChanged += DataGrid_CurrentCellValueChanged;
         DataGrid.Loaded += DataGrid_Loaded;
         ViewModel.MapColumns(DataGrid);
         if (ViewModel.CanAddItems)
@@ -44,10 +43,6 @@ public sealed partial class GridEditorDialog<T> : ContentDialog
         
     }
 
-    private void DataGrid_CurrentCellValueChanged(object? sender, CurrentCellValueChangedEventArgs e) 
-    {
-        Debugger.Break();
-    }
     private void DataGrid_Loaded(object sender, RoutedEventArgs e)
     {
         DataGrid.ColumnSizer.ResetAutoCalculationforAllColumns();

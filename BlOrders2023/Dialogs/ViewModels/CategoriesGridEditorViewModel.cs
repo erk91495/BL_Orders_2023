@@ -9,9 +9,12 @@ using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
+using Microsoft.Identity.Client;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Syncfusion.UI.Xaml.DataGrid;
+using Syncfusion.UI.Xaml.DataGrid.Renderers;
 
 namespace BlOrders2023.Dialogs.ViewModels;
 public class CategoriesGridEditorViewModel : ObservableValidator, IGridEditorViewModel<ProductCategory>
@@ -116,6 +119,9 @@ public class CategoriesGridEditorViewModel : ObservableValidator, IGridEditorVie
     public void MapColumns(SfDataGrid datagrid)
     {
         datagrid.CurrentCellValueChanged += Datagrid_CurrentCellValueChanged;
+        //Bug DF Ticket 553474 makes me override this
+        datagrid.CellRenderers.Remove("CheckBox");
+        datagrid.CellRenderers.Add("CheckBox", new GridCellCheckBoxRendererExt());
         datagrid.Columns.Clear();
         //datagrid.Columns.Add(new GridTextColumn() { HeaderText = "ID", MappingName = "ID", AllowEditing = false });
         datagrid.Columns.Add(new GridTextColumn() { HeaderText = "Category Name", MappingName = "CategoryName", ColumnWidthMode = Syncfusion.UI.Xaml.Grids.ColumnWidthMode.SizeToCells });
@@ -131,8 +137,24 @@ public class CategoriesGridEditorViewModel : ObservableValidator, IGridEditorVie
             {
                 touchedItems.Add(category.CategoryID);
             }
+            if (!category.HasErrors)
+            {
+                CanSave = true;
+            }
+            else
+            {
+                CanSave = false;
+            }
         }
+        
     }
     #endregion Methods
 
+}
+public class GridCellCheckBoxRendererExt : GridCellCheckBoxRenderer
+{
+    protected override void OnEditElementUnloaded(object sender, RoutedEventArgs e)
+    {
+
+    }
 }

@@ -32,6 +32,10 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
             if (_items != null)
             {
                 _items.CollectionChanged -= LineItems_Changed;
+                foreach (var item in _items)
+                {
+                    item.PropertyChanged -= OrderItemOnPropertyChanged;
+                }
             }
 
 
