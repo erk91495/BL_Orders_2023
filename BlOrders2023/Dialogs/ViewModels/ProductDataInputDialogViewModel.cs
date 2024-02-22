@@ -45,6 +45,8 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         OnPropertyChanged(nameof(BoxID));
         OnPropertyChanged(nameof(Box));
         OnPropertyChanged(nameof(PalletHeight));
+        OnPropertyChanged(nameof(CategoryID));
+        OnPropertyChanged(nameof(Category));
     }
 
     [Required]
@@ -219,7 +221,6 @@ public class ProductDataInputDialogViewModel: ObservableValidator
                 BoxID = value.ID;
                 OnPropertyChanged();
             }
-
         }
     }
 
@@ -235,7 +236,33 @@ public class ProductDataInputDialogViewModel: ObservableValidator
         }
     }
 
+    public int? CategoryID
+    {
+        get => _product.CategoryID;
+        set
+        {
+            _product.CategoryID = value;
+            ValidateProperty(_product.CategoryID, nameof(CategoryID));
+            OnPropertyChanged();
+        }
+    }
+
+    public ProductCategory? Category
+    {
+        get => _product.Category;
+        set
+        {
+            if (value != _product.Category)
+            {
+                _product.Category = value;
+                CategoryID = value.CategoryID;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public ObservableCollection<Box> Boxes = new();
+    public ObservableCollection<ProductCategory> ProductCategories = new();
 
     #endregion Properties
 
@@ -244,6 +271,7 @@ public class ProductDataInputDialogViewModel: ObservableValidator
     {
         ErrorsChanged += HasErrorsChanged;
         _ = GetBoxesAsync();
+        _ = GetProductCategoriesAsync();
     }
     #endregion Constructors
 
@@ -261,6 +289,21 @@ public class ProductDataInputDialogViewModel: ObservableValidator
             }
             OnPropertyChanged(nameof(Boxes));
             OnPropertyChanged(nameof(Box));
+        });
+    }
+
+    public async Task GetProductCategoriesAsync()
+    {
+        var db = App.GetNewDatabase();
+        var categories = await Task.Run(() => db.ProductCategories.GetAsync());
+        await dispatcherQueue.EnqueueAsync(() =>
+        {
+            foreach (var category in categories)
+            {
+                ProductCategories.Add(category);
+            }
+            OnPropertyChanged(nameof(ProductCategories));
+            OnPropertyChanged(nameof(Category));
         });
     }
 

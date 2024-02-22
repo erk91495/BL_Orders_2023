@@ -137,20 +137,31 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Grid.Row="7" Grid.Column="0">
+                <ComboBox Header="Product Category" 
+                          SelectedItem="{x:Bind ViewModel.Category, Mode=TwoWay}"
+                          Width="200" 
+                          HorizontalAlignment="Left"  
+                          ItemsSource="{x:Bind ViewModel.ProductCategories, Mode=OneWay}"/>
+                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Category'), Mode=OneWay}" 
+                                               Visibility="{x:Bind ViewModel.VisibleIfError('Category'), Mode=OneWay}"
+                               Style="{StaticResource ValidatorTextBlockStyle}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Grid.Row="8" Grid.Column="0">
                 <CheckBox Content="Fixed Price" IsChecked="{x:Bind ViewModel.FixedPrice, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('FixedPrice'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('FixedPrice'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
             </StackPanel>
 
-            <StackPanel Orientation="Vertical" Grid.Row="7" Grid.Column="1">
+            <StackPanel Orientation="Vertical" Grid.Row="8" Grid.Column="1">
                 <CheckBox Content="Invoice Charge" IsChecked="{x:Bind ViewModel.IsCredit, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('IsCredit'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('IsCredit'), Mode=OneWay}"
                                Style="{StaticResource ValidatorTextBlockStyle}"/>
             </StackPanel>
 
-            <StackPanel Orientation="Vertical" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center">
+            <StackPanel Orientation="Vertical" Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center">
                 <CheckBox Content="Inactive" IsChecked="{x:Bind ViewModel.Inactive, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
                 <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Inactive'), Mode=OneWay}" 
                                                Visibility="{x:Bind ViewModel.VisibleIfError('Inactive'), Mode=OneWay}"
