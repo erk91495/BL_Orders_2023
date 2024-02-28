@@ -170,7 +170,10 @@ public class BillOfLadingReport : IReport
 
             mainCol.Item().PaddingTop(12).Row(poRow =>
             {
-                poRow.RelativeItem().Text($"Appointment Time: {_appointmentTime}").Style(subTitleStyle);
+                if(_appointmentTime.HasValue)
+                {
+                    poRow.RelativeItem().Text($"Appointment Time: {_appointmentTime.Value.ToString("MM/dd/yy h:m tt)}")}").Style(subTitleStyle);
+                } 
             });
 
             mainCol.Item().PaddingTop(2).Row(poRow => 
