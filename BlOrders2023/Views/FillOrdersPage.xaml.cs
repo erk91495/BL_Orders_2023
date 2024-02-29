@@ -495,7 +495,7 @@ public sealed partial class FillOrdersPage : Page
 
             if (print)
             {
-                IPalletizer palletizer = new Palletizer(new(), ViewModel.Order);
+                IPalletizer palletizer = new BoxPalletizer(new(){SingleItemPerPallet = ViewModel.Customer.SingleProdPerPallet ?? false}, ViewModel.Order);
                 var pallets = await palletizer.PalletizeAsync();
                 var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
 

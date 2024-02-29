@@ -30,6 +30,7 @@ using Syncfusion.UI.Xaml.Data;
 using Windows.System;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.ComponentModel;
+using BlOrders2023.Core.Contracts.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -431,7 +432,7 @@ public sealed partial class ReportsPage : Page
 
                             if(print) 
                             {
-                                Palletizer palletizer = new Palletizer(new PalletizerConfig(), order);
+                                IPalletizer palletizer = new BoxPalletizer(new PalletizerConfig() { SingleItemPerPallet = order.Customer.SingleProdPerPallet ?? false }, order);
                                 IEnumerable<Pallet> pallets = await palletizer.PalletizeAsync();
                                 reportPath = await reportGenerator.GeneratePalletLoadingReport(order, pallets);
                             }

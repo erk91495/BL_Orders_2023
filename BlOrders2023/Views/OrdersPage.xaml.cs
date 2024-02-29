@@ -522,7 +522,7 @@ public sealed partial class OrdersPage : Page
 
         if (print)
         {
-            IPalletizer palletizer = new Palletizer(new(), ViewModel.SelectedOrder);
+            IPalletizer palletizer = new BoxPalletizer(new() { SingleItemPerPallet = ViewModel.SelectedOrder.Customer.SingleProdPerPallet ?? false }, ViewModel.SelectedOrder);
             var pallets = await palletizer.PalletizeAsync();
             var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.SelectedOrder, pallets);
 

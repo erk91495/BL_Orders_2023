@@ -764,7 +764,7 @@ public sealed partial class OrderDetailsPage : Page
 
         if (print)
         {
-            Palletizer palletizer = new(new(), ViewModel.Order);
+            BoxPalletizer palletizer = new(new() { SingleItemPerPallet = ViewModel.Customer.SingleProdPerPallet ?? false }, ViewModel.Order);
             var pallets = await palletizer.PalletizeAsync();
             var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
 

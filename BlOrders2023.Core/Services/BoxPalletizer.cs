@@ -4,7 +4,7 @@ using BlOrders2023.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Core.Services;
-public class BoxPalletizer : IPalletizer
+public class BoxPalletizer : PalletizerBase
 {
     #region Fields
     private readonly Order _currentOrder;
@@ -13,6 +13,7 @@ public class BoxPalletizer : IPalletizer
     #endregion Fields
 
     #region Properties
+    public override Order CurrentOrder => _currentOrder;
     #endregion Properties
 
     #region Constructors
@@ -24,12 +25,27 @@ public class BoxPalletizer : IPalletizer
     #endregion Constructors
 
     #region Methods
-    public async Task<IEnumerable<Pallet>> PalletizeAsync()
+    public async override Task<IEnumerable<Pallet>> PalletizeAsync()
     {
         return await Task.Run(GeneratePallets);
     }
 
     public IEnumerable<Pallet> GeneratePallets()
+    {
+        if (_config.SingleItemPerPallet)
+        {
+            return GenerateSingleProductPallets();
+        }
+        else
+        {
+            return GenreateMixedPallets();
+        }
+
+
+    
+    }
+
+    private IEnumerable<Pallet> GenreateMixedPallets()
     {
         Dictionary<Product, int> remainder = new();
 
@@ -64,24 +80,25 @@ public class BoxPalletizer : IPalletizer
                         groupRemainder.Add(item.Product, quanNeeded % maxPerPallet);
                     }
                 }
-                CombineLargestWithSmallest(ref groupRemainder, true);
-                foreach(var item in groupRemainder)
+                CombineLargestWithSmallest(ref groupRemainder, false);
+                foreach (var item in groupRemainder)
                 {
                     remainder.Add(item.Key, item.Value);
                 }
             }
         }
-        CombineLargestWithSmallest(ref remainder, false);
+        //We no longer want to add pallets togeter if they are differnt boxes
+        //CombineLargestWithSmallest(ref remainder, false);
 
         foreach (var item in remainder)
         {
             Pallet p = new(_currentOrder.OrderID);
+            p.Items.Add(item.Key,item.Value);
             _pallets.Add(p);
         }
-
-       return _pallets;
+        NumberPallets(_pallets);
+        return _pallets;
     }
-
     private void CombineLargestWithSmallest(ref Dictionary<Product,int> remainder, bool fullPalletsOnly)
     {
         //need at least 2 to combine
@@ -99,16 +116,20 @@ public class BoxPalletizer : IPalletizer
                 if(SmallestPair.Value < boxesNeeded)
                 {
                     currentPallet.Items.Add(SmallestPair.Key, SmallestPair.Value);
+                    boxesNeeded -= SmallestPair.Value;
                     remainder.Remove(SmallestPair.Key);
                     keys.Remove(SmallestPair.Key);
                     SmallestPair = remainder.FirstOrDefault(p => p.Key == keys.Last());
                 }
                 else if(SmallestPair.Value > boxesNeeded)
-                {
+                {//TODO NEED CHECKS BEFORE CHANGING LARGEST AND SMALLEST PAIR
                     currentPallet.Items.Add(SmallestPair.Key, boxesNeeded);
                     remainder[SmallestPair.Key] = SmallestPair.Value - boxesNeeded;
-                    SmallestPair = remainder.FirstOrDefault(p => p.Key == keys.Last());
                     _pallets.Add(currentPallet);
+                    remainder.Remove(LargestPair.Key);
+                    keys.Remove(LargestPair.Key);
+                    LargestPair = remainder.FirstOrDefault(p => p.Key == keys.First());
+                    boxesNeeded = GetMaxBoxesPerPallet(LargestPair.Key) - LargestPair.Value;
                     currentPallet = new(_currentOrder.OrderID);
                 }
                 else
@@ -120,6 +141,7 @@ public class BoxPalletizer : IPalletizer
                     keys.Remove(LargestPair.Key);
                     SmallestPair = remainder.FirstOrDefault(p => p.Key == keys.Last());
                     LargestPair = remainder.FirstOrDefault(p => p.Key == keys.First());
+                    boxesNeeded = GetMaxBoxesPerPallet(LargestPair.Key);
                     _pallets.Add(currentPallet);
                     currentPallet= new(_currentOrder.OrderID);
                 }
@@ -141,7 +163,7 @@ public class BoxPalletizer : IPalletizer
         }
     }
 
-    private int GetMaxBoxesPerPallet(Product product)
+    protected override int GetMaxBoxesPerPallet(Product product)
     {
         //Cant multiply null values and having 0 boxes per pallet is bad
         if (product.PalletHeight.GetValueOrDefault(0) != 0 && product.Box != null)
