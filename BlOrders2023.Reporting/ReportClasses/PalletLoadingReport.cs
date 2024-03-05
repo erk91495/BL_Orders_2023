@@ -110,7 +110,7 @@ public class PalletLoadingReport :IReport
                     header.Cell().Text("Quantity");
                 });
 
-                foreach (var product in _pallet.Items.Keys)
+                foreach (var product in _pallet.Items.Keys.OrderBy(k => k.ProductID))
                 {
                     table.Cell().Element(CellStyle).Text($"{product.ProductName}").Style(tableTextStyle);
                     table.Cell().BorderRight(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).AlignCenter().Text($"{product.ProductID}").Style(largeTableTextStyle);

@@ -120,6 +120,7 @@ public class BoxPalletizer : PalletizerBase
                 }
                 else if (SmallestPair.Value.Value > boxesNeeded)
                 {
+                    //TODO: Maybe we should let the last items stay on seperate pallets since we cant combine.
                     currentPallet.Items.Add(SmallestPair.Value.Key, boxesNeeded);
                     SmallestPair = new(SmallestPair.Value.Key, SmallestPair.Value.Value - boxesNeeded);
                     _pallets.Add(currentPallet);
