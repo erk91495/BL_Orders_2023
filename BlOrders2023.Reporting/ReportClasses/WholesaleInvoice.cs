@@ -194,7 +194,15 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
                 row.RelativeItem().Border(1).Column(orderDateCol =>
                 {
                     orderDateCol.Item().Background(Colors.Grey.Lighten3).AlignCenter().Text("Terms").Style(tableHeaderStyle);
-                    orderDateCol.Item().AlignCenter().Text($"Net 10 Days").Style(tableTextStyle);
+                    if(_order.Customer.COD == true)
+                    {
+                        orderDateCol.Item().AlignCenter().Text($"COD").Style(tableTextStyle);
+                    }
+                    else
+                    {
+                        orderDateCol.Item().AlignCenter().Text($"Net 10 Days").Style(tableTextStyle);
+                    }
+                    
                 });
 
 
