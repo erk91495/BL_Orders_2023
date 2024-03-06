@@ -295,6 +295,8 @@
         </RelativePanel>
 
         <AutoSuggestBox x:Name="ProductEntryBox"
+                        Style="{StaticResource AutoSuggestBoxStylePopupUp}"
+                        Canvas.ZIndex="50"
                         RelativePanel.Below="UserInputRanel"
                         ItemsSource="{x:Bind ViewModel.SuggestedProducts, Mode=OneWay}"
                         MinWidth="500"
@@ -304,7 +306,8 @@
                         QuerySubmitted="ProductEntryBox_QuerySubmitted"
                         TabIndex="5"
                         GotFocus="ProductEntryBox_GotFocus"
-                        LostFocus="ProductEntryBox_LostFocus"                        
+                        LostFocus="ProductEntryBox_LostFocus" 
+                        MaxSuggestionListHeight="150"
                         IsEnabled="{x:Bind ViewModel.CanAddItems, Mode=OneWay}">
             <AutoSuggestBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Product">
