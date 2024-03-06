@@ -1,5 +1,6 @@
 ﻿using BlOrders2023.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -79,15 +80,22 @@ namespace BlOrders2023.Reporting.ReportClasses
                         row.RelativeItem().Text($"Outstanding Balance Report for:");
                         row.RelativeItem().Text($"As of: {_reportDate.ToString():d}");
                     });
-                    column.Item().PaddingLeft(3).Text($"{_orders.First().Customer.CustomerName}").Style(subTitleStyle);
-                    column.Item().Row(row =>
+                    if(!_orders.IsNullOrEmpty())
                     {
-                        row.RelativeItem().PaddingLeft(3).Column(column =>
+                        column.Item().PaddingLeft(3).Text($"{_orders.First().Customer.CustomerName}").Style(subTitleStyle);
+                        column.Item().Row(row =>
                         {
-                            column.Item().Text($"{_orders.First().Customer.Address}").Style(normalTextStyle);
-                            column.Item().Text($"{_orders.First().Customer.CityStateZip()}").Style(normalTextStyle);
+                            row.RelativeItem().PaddingLeft(3).Column(column =>
+                            {
+                                column.Item().Text($"{_orders.First().Customer.Address}").Style(normalTextStyle);
+                                column.Item().Text($"{_orders.First().Customer.CityStateZip()}").Style(normalTextStyle);
+                            });
                         });
-                    });
+                    }
+                    else
+                    {
+                        column.Item().Text($"No unpaid invoices").Style(normalTextStyle);
+                    }
                 });
             });
         }
