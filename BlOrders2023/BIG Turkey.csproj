@@ -92,18 +92,18 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240227000" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
     <PackageReference Include="NLog.WindowsEventLog" Version="5.2.8" />
-    <PackageReference Include="Octokit" Version="9.1.2" />
-    <PackageReference Include="QuestPDF" Version="2023.12.4" />
-    <PackageReference Include="Syncfusion.EJ2.PdfViewer.AspNet.Mvc5" Version="24.2.4" />
-    <PackageReference Include="Syncfusion.Grid.WinUI" Version="24.2.4" />
-    <PackageReference Include="Syncfusion.Licensing" Version="24.2.4" />
-    <PackageReference Include="WinUIEx" Version="2.3.3" />
+    <PackageReference Include="Octokit" Version="10.0.0" />
+    <PackageReference Include="QuestPDF" Version="2023.12.6" />
+    <PackageReference Include="Syncfusion.EJ2.PdfViewer.AspNet.Mvc5" Version="24.2.9" />
+    <PackageReference Include="Syncfusion.Grid.WinUI" Version="24.2.9" />
+    <PackageReference Include="Syncfusion.Licensing" Version="24.2.9" />
+    <PackageReference Include="WinUIEx" Version="2.3.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -159,7 +159,7 @@
 	<Page Update="Views\InventoryPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
-	<Page Update="Styles\AllocationDataGridStyle.xaml">
+	<Page Update="Styles\CustomGenericStyles.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
 	<Page Update="UserControls\AllocatedItemsGridControl.xaml">
@@ -191,7 +191,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <None Remove="Styles\AllocationDataGridStyle.xaml" />
+    <None Remove="Styles\CustomGenericStyles.xaml" />
     <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
     <None Remove="UserControls\BillOfLadingDataInputDialog.xaml" />
     <None Remove="UserControls\CustomerOrderSelectionDialog.xaml" />
