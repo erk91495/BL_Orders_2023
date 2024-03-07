@@ -61,6 +61,8 @@ public class WholesaleCustomer
     [Required]
     public bool COD { get; set;}
     public virtual List<Order> Orders { get; set; } = new();
+
+    public virtual WholesaleCustomerNote? Note { get; set; } 
     #endregion Properties
 
     #region Fields
