@@ -307,6 +307,45 @@ public class CustomerDataInputControlViewModel : ObservableValidator
         }
     }
 
+    public string? CustomerNoteText
+    {
+        get
+        {
+            if(_customer.Note == null || _customer.Note.MsgText.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return _customer.Note.MsgText;
+            }
+        }
+        set
+        {
+            if(value == string.Empty)
+            {
+                value = null;
+            }
+
+            if (_customer.Note != null)
+            {
+                _customer.Note.MsgText = value;
+            }
+            // only create a new entry if the value isnt null
+            else if(value == null)
+            {
+                var note = new WholesaleCustomerNote()
+                {
+                    CustId = _customer.CustID,
+                    MsgText = value,
+                };
+                _customer.Note = note;
+            }
+            
+            
+        }
+    }
+
     public bool CheckIfUnique { get; set; }
     public ObservableCollection<CustomerClass> Classes { get; } = new();
 

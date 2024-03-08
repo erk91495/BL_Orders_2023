@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -109,7 +110,20 @@ internal class SqlWholesaleCustomerTable : IWholesaleCustomerTable
 
     public WholesaleCustomer Upsert(WholesaleCustomer customer, bool overwrite = false)
     {
+        if(customer.Note != null)
+        {
+            if (_db.CustomerNotes.AsNoTracking().Where(n => n.CustId == customer.Note.CustId) == null)
+            {
+                _db.Add(customer.Note);
+            }
+            //else
+            //{
+            //    _db.Update(customer.Note);
+            //}
+        }
+
         _db.Update(customer);
+
         //TODO: may be a cleaner way of doing this but it works for now
         if (overwrite)
         {
@@ -118,6 +132,8 @@ internal class SqlWholesaleCustomerTable : IWholesaleCustomerTable
                 entry.OriginalValues.SetValues(entry.GetDatabaseValues());
             }
         }
+
+        
         var res = _db.SaveChanges();
         return customer;
     }
