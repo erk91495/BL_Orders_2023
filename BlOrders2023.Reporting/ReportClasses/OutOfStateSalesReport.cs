@@ -113,7 +113,7 @@ public class OutOfStateSalesReport : IReport
                     foreach (var order in group)
                     {
                         table.Cell().Element(CellStyle).Text($"{order.OrderID}").Style(tableTextStyle);
-                        table.Cell().Element(CellStyle).Text($"{order.Customer.CustomerName}").Style(tableTextStyle);
+                        table.Cell().Element(CellStyle).Text($"{order.Customer.BillingCustomerName}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{order.Customer.BillingAddress}{order.Customer.BillingCityStateZip()}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{order.PickupDate.ToShortDateString()}").Style(tableTextStyle);
                         table.Cell().Element(CellStyle).Text($"{order.InvoiceTotal:N2}").Style(tableTextStyle);

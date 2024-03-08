@@ -1,10 +1,11 @@
-﻿using BlOrders2023.Core.Contracts.Services;
+﻿using System.Diagnostics;
+using BlOrders2023.Core.Contracts.Services;
 using BlOrders2023.Core.Helpers;
 using BlOrders2023.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Core.Services;
-public class BoxPalletizer : IPalletizer
+public class BoxPalletizer : PalletizerBase
 {
     #region Fields
     private readonly Order _currentOrder;
@@ -13,6 +14,7 @@ public class BoxPalletizer : IPalletizer
     #endregion Fields
 
     #region Properties
+    public override Order CurrentOrder => _currentOrder;
     #endregion Properties
 
     #region Constructors
@@ -24,12 +26,27 @@ public class BoxPalletizer : IPalletizer
     #endregion Constructors
 
     #region Methods
-    public async Task<IEnumerable<Pallet>> PalletizeAsync()
+    public async override Task<IEnumerable<Pallet>> PalletizeAsync()
     {
         return await Task.Run(GeneratePallets);
     }
 
     public IEnumerable<Pallet> GeneratePallets()
+    {
+        if (_config.SingleItemPerPallet)
+        {
+            return GenerateSingleProductPallets();
+        }
+        else
+        {
+            return GenreateMixedPallets();
+        }
+
+
+    
+    }
+
+    private IEnumerable<Pallet> GenreateMixedPallets()
     {
         Dictionary<Product, int> remainder = new();
 
@@ -64,66 +81,74 @@ public class BoxPalletizer : IPalletizer
                         groupRemainder.Add(item.Product, quanNeeded % maxPerPallet);
                     }
                 }
-                CombineLargestWithSmallest(ref groupRemainder, true);
-                foreach(var item in groupRemainder)
+                CombineLargestWithSmallest(ref groupRemainder, false);
+                foreach (var item in groupRemainder)
                 {
                     remainder.Add(item.Key, item.Value);
                 }
             }
         }
-        CombineLargestWithSmallest(ref remainder, false);
+        //We no longer want to add pallets togeter if they are differnt boxes
+        //CombineLargestWithSmallest(ref remainder, false);
 
         foreach (var item in remainder)
         {
             Pallet p = new(_currentOrder.OrderID);
+            p.Items.Add(item.Key,item.Value);
             _pallets.Add(p);
         }
-
-       return _pallets;
+        NumberPallets(_pallets);
+        return _pallets;
     }
-
     private void CombineLargestWithSmallest(ref Dictionary<Product,int> remainder, bool fullPalletsOnly)
     {
         //need at least 2 to combine
         if(remainder.Count >= 2){
-            List<Product> keys = remainder.OrderByDescending(p => p.Value).Select(p => p.Key).ToList();
-            var LargestPair = remainder.FirstOrDefault(p => p.Key == keys.First());
-            var SmallestPair = remainder.FirstOrDefault(p => p.Key == keys.Last());
-            remainder.Remove(LargestPair.Key);
-            keys.Remove(LargestPair.Key);
-            var boxesNeeded = GetMaxBoxesPerPallet(LargestPair.Key) - LargestPair.Value;
+            GetNextLargest(ref remainder, out var LargestPair);
+            GetNextSmallest(ref remainder, out var SmallestPair);
+            var MaxPerPallet = GetMaxBoxesPerPallet(LargestPair.Value.Key);
+            var boxesNeeded = MaxPerPallet - LargestPair.Value.Value;
             Pallet currentPallet = new(_currentOrder.OrderID);
-            currentPallet.Items.Add(LargestPair.Key, LargestPair.Value);
-            while(keys.Count > 0) 
+            currentPallet.Items.Add(LargestPair.Value.Key, LargestPair.Value.Value);
+            while ( SmallestPair != null)
             {
-                if(SmallestPair.Value < boxesNeeded)
+                if (SmallestPair.Value.Value < boxesNeeded)
                 {
-                    currentPallet.Items.Add(SmallestPair.Key, SmallestPair.Value);
-                    remainder.Remove(SmallestPair.Key);
-                    keys.Remove(SmallestPair.Key);
-                    SmallestPair = remainder.FirstOrDefault(p => p.Key == keys.Last());
+                    currentPallet.Items.Add(SmallestPair.Value.Key, SmallestPair.Value.Value);
+                    boxesNeeded -= SmallestPair.Value.Value;
+                    GetNextSmallest(ref remainder, out SmallestPair);
                 }
-                else if(SmallestPair.Value > boxesNeeded)
+                else if (SmallestPair.Value.Value > boxesNeeded)
                 {
-                    currentPallet.Items.Add(SmallestPair.Key, boxesNeeded);
-                    remainder[SmallestPair.Key] = SmallestPair.Value - boxesNeeded;
-                    SmallestPair = remainder.FirstOrDefault(p => p.Key == keys.Last());
+                    //TODO: Maybe we should let the last items stay on seperate pallets since we cant combine.
+                    currentPallet.Items.Add(SmallestPair.Value.Key, boxesNeeded);
+                    SmallestPair = new(SmallestPair.Value.Key, SmallestPair.Value.Value - boxesNeeded);
                     _pallets.Add(currentPallet);
                     currentPallet = new(_currentOrder.OrderID);
+                    boxesNeeded = MaxPerPallet;
+                    GetNextLargest(ref remainder, out LargestPair);
+                    if(LargestPair != null)
+                    {
+                        currentPallet.Items.Add(LargestPair.Value.Key, LargestPair.Value.Value);
+                        boxesNeeded -= LargestPair.Value.Value;
+                    }
                 }
                 else
                 {
-                    currentPallet.Items.Add(SmallestPair.Key, SmallestPair.Value);
-                    remainder.Remove(SmallestPair.Key);
-                    keys.Remove(SmallestPair.Key);
-                    remainder.Remove(LargestPair.Key);
-                    keys.Remove(LargestPair.Key);
-                    SmallestPair = remainder.FirstOrDefault(p => p.Key == keys.Last());
-                    LargestPair = remainder.FirstOrDefault(p => p.Key == keys.First());
+                    currentPallet.Items.Add(SmallestPair.Value.Key, SmallestPair.Value.Value);
+                    GetNextLargest(ref remainder, out LargestPair);
+                    GetNextSmallest(ref remainder, out SmallestPair);
                     _pallets.Add(currentPallet);
-                    currentPallet= new(_currentOrder.OrderID);
+                    currentPallet = new(_currentOrder.OrderID);
+                    boxesNeeded = MaxPerPallet;
+                    if (LargestPair != null)
+                    {
+                        currentPallet.Items.Add(LargestPair.Value.Key, LargestPair.Value.Value);
+                        boxesNeeded -= LargestPair.Value.Value;
+                    }
                 }
             }
+
             if (fullPalletsOnly)
             {
                 if(currentPallet.Items.Count > 0)
@@ -141,7 +166,7 @@ public class BoxPalletizer : IPalletizer
         }
     }
 
-    private int GetMaxBoxesPerPallet(Product product)
+    protected override int GetMaxBoxesPerPallet(Product product)
     {
         //Cant multiply null values and having 0 boxes per pallet is bad
         if (product.PalletHeight.GetValueOrDefault(0) != 0 && product.Box != null)
@@ -151,6 +176,34 @@ public class BoxPalletizer : IPalletizer
         else
         {
             return _config.MixedBoxesPerPallet;
+        }
+    }
+
+    private void GetNextSmallest(ref Dictionary<Product, int> remainder, out KeyValuePair<Product,int>? smallest)
+    {
+        if (remainder.IsNullOrEmpty())
+        {
+            smallest = null;
+        }
+        else
+        {
+            List<Product> keys = remainder.OrderByDescending(p => p.Value).Select(p => p.Key).ToList();
+            smallest = remainder.FirstOrDefault(p => p.Key == keys.Last());
+            remainder.Remove(smallest.Value.Key);
+        }
+    }
+
+    private void GetNextLargest(ref Dictionary<Product, int> remainder, out KeyValuePair<Product, int>? largest)
+    {
+        if (remainder.IsNullOrEmpty())
+        {
+            largest = null;
+        }
+        else
+        {
+            List<Product> keys = remainder.OrderByDescending(p => p.Value).Select(p => p.Key).ToList();
+            largest = remainder.FirstOrDefault(p => p.Key == keys.First());
+            remainder.Remove(largest.Value.Key);
         }
     }
     #endregion Methods

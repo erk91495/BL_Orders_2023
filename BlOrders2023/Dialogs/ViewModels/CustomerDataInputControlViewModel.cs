@@ -27,7 +27,27 @@ public class CustomerDataInputControlViewModel : ObservableValidator
         set
         {
             Customer.CustomerName = value.Trim().ToUpper();
+            if (Customer.UseSameAddress)
+            {
+                BillingCustomerName = value;
+            }
             ValidateProperty(Customer.CustomerName, nameof(CustomerName));
+            OnPropertyChanged();
+        }
+    }
+
+    [Required]
+    [MinLength(1)]
+    [MaxLength(30)]
+    [CustomValidation(typeof(CustomerDataInputControlViewModel), nameof(ValidateCustomerName))]
+    [Display(Name = "Billing Customer Name")]
+    public string BillingCustomerName
+    {
+        get => Customer.BillingCustomerName;
+        set
+        {
+            Customer.BillingCustomerName = value.Trim().ToUpper();
+            ValidateProperty(Customer.BillingCustomerName, nameof(BillingCustomerName));
             OnPropertyChanged();
         }
     }
@@ -303,6 +323,45 @@ public class CustomerDataInputControlViewModel : ObservableValidator
                 BillingState = State;
                 BillingZipCode = ZipCode;
             }
+            
+        }
+    }
+
+    public string? CustomerNoteText
+    {
+        get
+        {
+            if(_customer.Note == null || _customer.Note.MsgText.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return _customer.Note.MsgText;
+            }
+        }
+        set
+        {
+            if(value == string.Empty)
+            {
+                value = null;
+            }
+
+            if (_customer.Note != null)
+            {
+                _customer.Note.MsgText = value;
+            }
+            // only create a new entry if the value isnt null
+            else if(value == null)
+            {
+                var note = new WholesaleCustomerNote()
+                {
+                    CustId = _customer.CustID,
+                    MsgText = value,
+                };
+                _customer.Note = note;
+            }
+            
             
         }
     }

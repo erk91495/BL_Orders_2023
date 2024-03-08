@@ -29,230 +29,245 @@
         <vmconverters:EnumToStringConverter x:Key="EnumToStringConverter"/>
     </ContentDialog.Resources>
 
-    <StackPanel Orientation="Vertical" Margin="10">
+    <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
+        <StackPanel Orientation="Vertical" Margin="10">
 
-        <muxc:InfoBar
-            x:Name="FailureInfoBar"
-            Title="Error"
-            Severity="Error">
-        </muxc:InfoBar>
+            <muxc:InfoBar
+                x:Name="FailureInfoBar"
+                Title="Error"
+                Severity="Error">
+            </muxc:InfoBar>
 
 
-        <Grid x:Name="CustomerInfoGrid" ColumnSpacing="15">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+            <Grid x:Name="CustomerInfoGrid" ColumnSpacing="15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
-                <TextBlock Text="Customer Name: * " />
-                <TextBox x:Name="CustomerNameTextBox" Text="{x:Bind ViewModel.CustomerName, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('CustomerName'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('CustomerName'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0">
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Buyer: " />
-                <TextBox Grid.Row="4" Grid.Column="1" x:Name="BuyerTextBox" Text="{x:Bind ViewModel.Buyer, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Buyer'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('Buyer'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0">
-                <TextBlock Text="Phone: * " />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-
-                    <sf:SfMaskedTextBox Mask="(000) 000-0000" MaskType="Simple" ValueMaskFormat="ExcludePromptAndLiterals" 
-                                        Value="{x:Bind ViewModel.Phone,Mode=TwoWay}" Margin="0,0,10,0"/>
-                    <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
-                    <TextBox x:Name="PhoneExtTextBox" Text="{x:Bind ViewModel.PhoneExt, Mode=TwoWay}" Width="50" />
+                <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+                    <TextBlock Text="Customer Name: * " />
+                    <TextBox x:Name="CustomerNameTextBox" Text="{x:Bind ViewModel.CustomerName, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('CustomerName'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('CustomerName'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
                 </StackPanel>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Phone'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('Phone'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
 
-            <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1">
-                <TextBlock Text="Phone 2: " />
-                <StackPanel Orientation="Horizontal">
-                    <sf:SfMaskedTextBox Mask="(000) 000-0000" MaskType="Simple" ValueMaskFormat="ExcludePromptAndLiterals" 
-                                        Value="{x:Bind ViewModel.Phone_2,Mode=TwoWay, TargetNullValue={x:Null}}" Margin="0,0,10,0"/>
-                    <!--<TextBox x:Name="Phone_2TextBox" Text="{x:Bind ViewModel.Phone_2, Mode=TwoWay}" Width="175" Margin="0,0,10,0" />-->
-                    <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
-                    <TextBox x:Name="Phone2ExtTextBox" Text="{x:Bind ViewModel.Phone2Ext, Mode=TwoWay}" Width="50" />
+                <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                    <TextBlock Text="Billing Customer Name: " />
+                    <TextBox x:Name="BillingCustomerNameTextBox" Text="{x:Bind ViewModel.BillingCustomerName, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingCustomerName'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('BillingCustomerName'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
                 </StackPanel>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Phone_2'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('Phone_2'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
 
-            <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="0">
-                <TextBlock Text="Email: " />
-                <TextBox x:Name="EmailTextBox" Text="{x:Bind ViewModel.Email, Mode=TwoWay}"/>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Email'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('Email'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0">
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Buyer: " />
+                    <TextBox Grid.Row="4" Grid.Column="1" x:Name="BuyerTextBox" Text="{x:Bind ViewModel.Buyer, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Buyer'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('Buyer'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
 
-            <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="1">
-                <TextBlock Text="Fax: " />
-                <sf:SfMaskedTextBox Mask="(000) 000-0000" 
-                                    MaskType="Simple" 
-                                    ValueMaskFormat="ExcludePromptAndLiterals" 
-                                    Value="{x:Bind ViewModel.Fax,Mode=TwoWay}"/>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Fax'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('Fax'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
+                <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0">
+                    <TextBlock Text="Phone: * " />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+
+                        <sf:SfMaskedTextBox Mask="(000) 000-0000" MaskType="Simple" ValueMaskFormat="ExcludePromptAndLiterals" 
+                                            Value="{x:Bind ViewModel.Phone,Mode=TwoWay}" Margin="0,0,10,0"/>
+                        <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
+                        <TextBox x:Name="PhoneExtTextBox" Text="{x:Bind ViewModel.PhoneExt, Mode=TwoWay}" Width="50" />
+                    </StackPanel>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Phone'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('Phone'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1">
+                    <TextBlock Text="Phone 2: " />
+                    <StackPanel Orientation="Horizontal">
+                        <sf:SfMaskedTextBox Mask="(000) 000-0000" MaskType="Simple" ValueMaskFormat="ExcludePromptAndLiterals" 
+                                            Value="{x:Bind ViewModel.Phone_2,Mode=TwoWay, TargetNullValue={x:Null}}" Margin="0,0,10,0"/>
+                        <!--<TextBox x:Name="Phone_2TextBox" Text="{x:Bind ViewModel.Phone_2, Mode=TwoWay}" Width="175" Margin="0,0,10,0" />-->
+                        <TextBlock Text="ext. "  VerticalAlignment="Bottom"/>
+                        <TextBox x:Name="Phone2ExtTextBox" Text="{x:Bind ViewModel.Phone2Ext, Mode=TwoWay}" Width="50" />
+                    </StackPanel>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Phone_2'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('Phone_2'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="0">
+                    <TextBlock Text="Email: " />
+                    <TextBox x:Name="EmailTextBox" Text="{x:Bind ViewModel.Email, Mode=TwoWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Email'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('Email'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="1">
+                    <TextBlock Text="Fax: " />
+                    <sf:SfMaskedTextBox Mask="(000) 000-0000" 
+                                        MaskType="Simple" 
+                                        ValueMaskFormat="ExcludePromptAndLiterals" 
+                                        Value="{x:Bind ViewModel.Fax,Mode=TwoWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Fax'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('Fax'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <!--Shipping Address-->
+                <TextBlock Text="Shipping Address" Grid.Row="4" Grid.Column="0"/>
+                <StackPanel Orientation="Vertical" Grid.Row="5" Grid.Column="0">
+                    <TextBlock Text="Address: *" />
+                    <TextBox x:Name="AddressTextBox" 
+                             Text="{x:Bind ViewModel.Address, Mode=TwoWay}" 
+                             Width="200" 
+                             HorizontalAlignment="Left"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Address'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('Address'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="0">
+                    <TextBlock Text="City: *" />
+                    <TextBox x:Name="CityTextBox" 
+                             Text="{x:Bind ViewModel.City, Mode=TwoWay}" 
+                             Width="200"  
+                             HorizontalAlignment="Left"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('City'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('City'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="7" Grid.Column="0">
+                    <TextBlock Text="State: *" />
+                    <sf:SfComboBox x:Name="StateComboBox"
+                              SelectedValue="{x:Bind ViewModel.State, Mode=TwoWay}"
+                              Width="200">
+                    </sf:SfComboBox>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('State'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('State'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="8" Grid.Column="0">
+                    <TextBlock Text="Zip Code: *" />
+                    <TextBox x:Name="ZipCodeTextBox" 
+                             Text="{x:Bind ViewModel.ZipCode, Mode=TwoWay}" 
+                             Width="200"  
+                             HorizontalAlignment="Left"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('ZipCode'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('ZipCode'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <!--Billing Address-->
+                <TextBlock Text="Billing Address" Grid.Row="4" Grid.Column="1"/>
+                <StackPanel Orientation="Vertical" Grid.Row="5" Grid.Column="1">
+                    <TextBlock Text="Address: *" />
+                    <TextBox x:Name="BillingAddressTextBox" 
+                             Text="{x:Bind ViewModel.BillingAddress, Mode=TwoWay}" 
+                             Width="200"  
+                             HorizontalAlignment="Left"
+                             IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingAddress'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('BillingAddress'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="1">
+                    <TextBlock Text="City: *" />
+                    <TextBox x:Name="BillingCityTextBox" 
+                             Text="{x:Bind ViewModel.BillingCity, Mode=TwoWay}" 
+                             Width="200"  HorizontalAlignment="Left"
+                             IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingCity'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('BillingCity'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="7" Grid.Column="1">
+                    <TextBlock Text="State: *" />
+                    <sf:SfComboBox x:Name="BillingStateComboBox" 
+                              SelectedValue="{x:Bind ViewModel.BillingState, Mode=TwoWay}" 
+                              Width="200"
+                              IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                    </sf:SfComboBox>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingState'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('BillingState'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="8" Grid.Column="1">
+                    <TextBlock Text="Zip Code: *" />
+                    <TextBox x:Name="BillingZipCodeTextBox" 
+                             Text="{x:Bind ViewModel.BillingZipCode, Mode=TwoWay}" 
+                             Width="200"  
+                             HorizontalAlignment="Left"
+                             IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingZipCode'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('BillingZipCOde'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
+                <CheckBox Content="Billing address same as shipping" 
+                          Grid.Row="9" 
+                          Grid.Column="0" 
+                          Grid.ColumnSpan="2"
+                          IsChecked="{x:Bind ViewModel.UseSameAddress, Mode=TwoWay}"/>
+
+
+                <StackPanel Orientation="Vertical" Grid.Row="10" Grid.Column="0">
+                    <TextBlock Text="Customer Class:"/>
+                    <ComboBox x:Name="ClassCustomerBox" 
+                                  ItemsSource="{x:Bind ViewModel.Classes, Mode=OneWay}" 
+                                  SelectedItem ="{x:Bind ViewModel.CustomerClass, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('CustomerClass'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('CustomerClass'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                    <!--<Button Click="Button_Click" Content="Break"/>-->
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Row="10" Grid.Column="1">
+                    <TextBlock Text="Allocation Type: *"/>
+                    <ComboBox x:Name="AllocationTypeComboBox" 
+                              ItemsSource="{x:Bind vm:CustomerDataInputControlViewModel.AllocationTypes, Mode=OneWay}" 
+                              SelectedItem ="{x:Bind ViewModel.Customer.AllocationType, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch"/>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel x:Name="WarehouseStackPanel" 
+                        Orientation="Horizontal" 
+                        Margin="5" 
+                        RelativePanel.Below="ContactInfoGrid" 
+                        HorizontalAlignment="Center"
+                        Spacing="10">
+                <CheckBox x:Name="SingleProdPerPalletCheckBox" IsChecked="{x:Bind ViewModel.Customer.SingleProdPerPallet, Mode=TwoWay}" Content="Warehouse Pallet Loading" />
+                <CheckBox x:Name="CODCheckBox" IsChecked="{x:Bind ViewModel.Customer.COD, Mode=TwoWay}" Content="Cash On Delivery"/>
+                <CheckBox x:Name="InactiveCheckBox" IsChecked="{x:Bind ViewModel.Customer.Inactive, Mode=TwoWay}" Content="Inactive"/>
             </StackPanel>
             
-            <!--Shipping Address-->
-            <TextBlock Text="Shipping Address" Grid.Row="4" Grid.Column="0"/>
-            <StackPanel Orientation="Vertical" Grid.Row="5" Grid.Column="0">
-                <TextBlock Text="Address: *" />
-                <TextBox x:Name="AddressTextBox" 
-                         Text="{x:Bind ViewModel.Address, Mode=TwoWay}" 
-                         Width="200" 
-                         HorizontalAlignment="Left"/>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Address'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('Address'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
+            <StackPanel>
+                <TextBlock Text="Customer Memo"/>
+                <TextBox MinHeight="50" Text="{x:Bind ViewModel.CustomerNoteText, Mode=TwoWay}"/>
             </StackPanel>
-
-            <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="0">
-                <TextBlock Text="City: *" />
-                <TextBox x:Name="CityTextBox" 
-                         Text="{x:Bind ViewModel.City, Mode=TwoWay}" 
-                         Width="200"  
-                         HorizontalAlignment="Left"/>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('City'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('City'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical" Grid.Row="7" Grid.Column="0">
-                <TextBlock Text="State: *" />
-                <sf:SfComboBox x:Name="StateComboBox"
-                          SelectedValue="{x:Bind ViewModel.State, Mode=TwoWay}"
-                          Width="200">
-                </sf:SfComboBox>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('State'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('State'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical" Grid.Row="8" Grid.Column="0">
-                <TextBlock Text="Zip Code: *" />
-                <TextBox x:Name="ZipCodeTextBox" 
-                         Text="{x:Bind ViewModel.ZipCode, Mode=TwoWay}" 
-                         Width="200"  
-                         HorizontalAlignment="Left"/>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('ZipCode'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('ZipCode'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
-
-            <!--Billing Address-->
-            <TextBlock Text="Billing Address" Grid.Row="4" Grid.Column="1"/>
-            <StackPanel Orientation="Vertical" Grid.Row="5" Grid.Column="1">
-                <TextBlock Text="Address: *" />
-                <TextBox x:Name="BillingAddressTextBox" 
-                         Text="{x:Bind ViewModel.BillingAddress, Mode=TwoWay}" 
-                         Width="200"  
-                         HorizontalAlignment="Left"
-                         IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingAddress'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('BillingAddress'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical" Grid.Row="6" Grid.Column="1">
-                <TextBlock Text="City: *" />
-                <TextBox x:Name="BillingCityTextBox" 
-                         Text="{x:Bind ViewModel.BillingCity, Mode=TwoWay}" 
-                         Width="200"  HorizontalAlignment="Left"
-                         IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingCity'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('BillingCity'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical" Grid.Row="7" Grid.Column="1">
-                <TextBlock Text="State: *" />
-                <sf:SfComboBox x:Name="BillingStateComboBox" 
-                          SelectedValue="{x:Bind ViewModel.BillingState, Mode=TwoWay}" 
-                          Width="200"
-                          IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                </sf:SfComboBox>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingState'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('BillingState'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical" Grid.Row="8" Grid.Column="1">
-                <TextBlock Text="Zip Code: *" />
-                <TextBox x:Name="BillingZipCodeTextBox" 
-                         Text="{x:Bind ViewModel.BillingZipCode, Mode=TwoWay}" 
-                         Width="200"  
-                         HorizontalAlignment="Left"
-                         IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingZipCode'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('BillingZipCOde'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-            </StackPanel>
-
-            <CheckBox Content="Billing address same as shipping" 
-                      Grid.Row="9" 
-                      Grid.Column="0" 
-                      Grid.ColumnSpan="2"
-                      IsChecked="{x:Bind ViewModel.UseSameAddress, Mode=TwoWay}"/>
-        
-        
-            <StackPanel Orientation="Vertical" Grid.Row="10" Grid.Column="0">
-                    <TextBlock Text="Customer Class:"/>
-                <ComboBox x:Name="ClassCustomerBox" 
-                              ItemsSource="{x:Bind ViewModel.Classes, Mode=OneWay}" 
-                              SelectedItem ="{x:Bind ViewModel.CustomerClass, Mode=TwoWay}"
-                              HorizontalAlignment="Stretch"/>
-                <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('CustomerClass'), Mode=OneWay}" 
-                               Visibility="{x:Bind ViewModel.VisibleIfError('CustomerClass'), Mode=OneWay}" 
-                               Style="{StaticResource ValidatorTextBlockStyle}"/>
-                <!--<Button Click="Button_Click" Content="Break"/>-->
-            </StackPanel>
-            <StackPanel Orientation="Vertical" Grid.Row="10" Grid.Column="1">
-                <TextBlock Text="Allocation Type: *"/>
-                <ComboBox x:Name="AllocationTypeComboBox" 
-                          ItemsSource="{x:Bind vm:CustomerDataInputControlViewModel.AllocationTypes, Mode=OneWay}" 
-                          SelectedItem ="{x:Bind ViewModel.Customer.AllocationType, Mode=TwoWay}"
-                          HorizontalAlignment="Stretch"/>
-            </StackPanel>
-        </Grid>
-
-        <StackPanel x:Name="WarehouseStackPanel" 
-                    Orientation="Horizontal" 
-                    Margin="5" 
-                    RelativePanel.Below="ContactInfoGrid" 
-                    HorizontalAlignment="Center"
-                    Spacing="10">
-            <CheckBox x:Name="SingleProdPerPalletCheckBox" IsChecked="{x:Bind ViewModel.Customer.SingleProdPerPallet, Mode=TwoWay}" Content="Warehouse Pallet Loading" />
-            <CheckBox x:Name="CODCheckBox" IsChecked="{x:Bind ViewModel.Customer.COD, Mode=TwoWay}" Content="Cash On Delivery"/>
-            <CheckBox x:Name="InactiveCheckBox" IsChecked="{x:Bind ViewModel.Customer.Inactive, Mode=TwoWay}" Content="Inactive"/>
+            <TextBlock Text="* denotes a required field" HorizontalAlignment="Right"/>
         </StackPanel>
-        <TextBlock Text="* denotes a required field" HorizontalAlignment="Right"/>
-    </StackPanel>
+    </ScrollViewer>
 
 </ContentDialog>

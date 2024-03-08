@@ -17,10 +17,11 @@ using Nito.Collections;
 using ServiceStack;
 
 namespace BlOrders2023.Core.Services;
-public class Palletizer : IPalletizer
+public class Palletizer : PalletizerBase
 {
     #region Properties
     public PalletizerConfig Config { get; set; }
+    public override Order CurrentOrder => _currentOrder;
     #endregion Properties
 
     #region Fields
@@ -37,7 +38,7 @@ public class Palletizer : IPalletizer
     #endregion Constructors
 
     #region Methods
-    public async Task<IEnumerable<Pallet>> PalletizeAsync()
+    public async override Task<IEnumerable<Pallet>> PalletizeAsync()
     {
         IEnumerable<Pallet> result;
         if(_currentOrder.Customer.SingleProdPerPallet == false)
@@ -476,62 +477,9 @@ public class Palletizer : IPalletizer
     {
         return await Task.Run(GenerateSingleProductPallets);
     }
-    private IEnumerable<Pallet> GenerateSingleProductPallets()
-    {
-        List<Pallet> pallets = new List<Pallet>();
-        foreach(var item in _currentOrder.Items)
-        {
-            var remainingQuantity = (int)item.Quantity;
-            if (_currentOrder.Allocated == true && item.Allocated == true)
-            {
-                remainingQuantity = (int)item.QuanAllocated;
-            }
-            var maxPerPallet = GetMaxBoxesPerPallet(item.Product);
-            
-            while (remainingQuantity > 0)
-            {
-                if(remainingQuantity > maxPerPallet)
-                {
-                    remainingQuantity -= maxPerPallet;
-                    Pallet pallet = new(_currentOrder.OrderID);
-                    pallet.Items.Add(item.Product,maxPerPallet);
-                    pallets.Add(pallet);
-                }
-                else
-                {
-                    //Make a Pallet For the remainder
-                    Pallet pallet = new(_currentOrder.OrderID);
-                    pallet.Items.Add(item.Product, remainingQuantity);
-                    pallets.Add(pallet);
-                    remainingQuantity = 0;
-                }
-            }
-        }
-        NumberPallets(pallets);
-        return pallets;
-    }
 
-    private void NumberPallets(IEnumerable<Pallet> pallets)
+    protected override int GetMaxBoxesPerPallet(Product product)
     {
-        var palletNumber = 1;
-        foreach (Pallet pallet in pallets)
-        {
-            pallet.PalletIndex = palletNumber++;
-            pallet.TotalPallets = pallets.Count();
-        }
-    }
-
-    private int GetMaxBoxesPerPallet(Product product)
-    {
-        if(product.Box != null && product.PalletHeight != null)
-        {
-            return product.Box.Ti_Hi * (int)product.PalletHeight;
-        }
-        else
-        {
-            return 50;
-        }
-
         var boxType = GetBoxType(product);
         switch(boxType)
         {

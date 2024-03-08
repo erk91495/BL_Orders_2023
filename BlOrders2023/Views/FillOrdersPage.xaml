@@ -333,7 +333,6 @@
                               ItemTemplate="{StaticResource ShippingItemsViewTemplate}"
                               >
                     </ListView>-->
-
                     <sf:SfDataGrid x:Name="OrderedItems"
                                    ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                                    SourceType="models:ShippingItem"
@@ -343,13 +342,16 @@
                                    AutoGenerateColumns="False"
                                    RelativePanel.AlignLeftWithPanel="True"
                                    RelativePanel.AlignRightWithPanel="True"
+                                   RelativePanel.Above="SelectionCount"
                                    SelectionUnit="Row"
                                    SelectionMode="Extended"
+                                   SelectionChanged="OrderedItems_SelectionChanged"
                                    EditorSelectionBehavior="MoveLast"
                                    AllowDeleting="True"
                                    RecordDeleted="OrderedItems_RecordDeleted"
                                    ColumnWidthMode="AutoWithLastColumnFill"
                                    CurrentCellEndEdit="OrderedItems_CurrentCellEndEdit"
+                                   CurrentCellValueChanged="OrderedItems_CurrentCellValueChanged"
                                    CopyGridCellContent="OrderedItems_CopyGridCellContent">
                         <sf:SfDataGrid.Resources>
                             <SolidColorBrush x:Key="SyncfusionDataGridRowBackgroundPointerOver" Color="{StaticResource SystemAccentColor}"/>
@@ -369,59 +371,7 @@
                             <sf:GridTextColumn HeaderText="Serial" MappingName="PackageSerialNumber"/>
                         </sf:SfDataGrid.Columns>
                     </sf:SfDataGrid>
-                    
-                    <!--<controls:DataGrid
-                        ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
-                        AutoGenerateColumns="False"
-                        RelativePanel.AlignLeftWithPanel="True"
-                        RelativePanel.AlignRightWithPanel="True"
-                        RelativePanel.Below="Scanline"
-                        >
-
-                        <controls:DataGrid.Columns>
-                            <controls:DataGridTemplateColumn Header="Product ID" Width="Auto">
-                                <controls:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate x:DataType="models:ShippingItem">
-                                        <TextBlock Text="{x:Bind ProductID}"/>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellTemplate>
-                            </controls:DataGridTemplateColumn>
-
-                            <controls:DataGridTemplateColumn Header="Product Name" Width="*">
-                                <controls:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate x:DataType="models:ShippingItem">
-                                        <TextBlock Text="{x:Bind Product.ProductName}"/>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellTemplate>
-                            </controls:DataGridTemplateColumn>
-
-                            <controls:DataGridTemplateColumn Header="Pick Weight" Width="Auto">
-                                <controls:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate x:DataType="models:ShippingItem">
-                                        <TextBlock Text="{x:Bind PickWeight, Converter={StaticResource WeightFormatConverter}}"/>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellTemplate>
-                            </controls:DataGridTemplateColumn>
-
-                            <controls:DataGridTemplateColumn Header="Serial Number" Width="Auto">
-                                <controls:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate x:DataType="models:ShippingItem">
-                                        <TextBlock Text="{x:Bind PackageSerialNumber}"/>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellTemplate>
-                            </controls:DataGridTemplateColumn>
-
-                            <controls:DataGridTemplateColumn Header="Quantity Received" Width="Auto">
-                                <controls:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate x:DataType="models:ShippingItem">
-                                        <TextBlock Text="{x:Bind QuanRcvd}"/>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellTemplate>
-                            </controls:DataGridTemplateColumn>
-                            
-                        </controls:DataGrid.Columns>
-                    </controls:DataGrid>-->
-                    
+                    <TextBlock x:Name="SelectionCount" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
                 </RelativePanel>
             </SplitView.Content>
         </SplitView>

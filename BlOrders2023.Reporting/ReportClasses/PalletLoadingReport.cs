@@ -76,7 +76,7 @@ public class PalletLoadingReport :IReport
             headerCol.Item().AlignRight().Column(dateCol =>
             {
                 dateCol.Item().AlignRight().Text($"{_order.Shipping}: {_order.PickupDate.ToShortDateString()}").Style(giantTextSize);
-                dateCol.Item().AlignRight().ShowIf(_order.Shipping == Models.Enums.ShippingType.Pickup).Text($"{_order.Shipping} Time: {_order.PickupTime.ToShortTimeString()}").Style(giantTextSize);
+                dateCol.Item().AlignRight().ShowIf(_order.PickupTime.TimeOfDay != new TimeSpan(0,0,0)).Text($"{_order.Shipping} Time: {_order.PickupTime.ToShortTimeString()}").Style(giantTextSize);
             });
             headerCol.Item().LineHorizontal(0.5f);
             headerCol.Item().PaddingBottom(10).Row(row =>
@@ -110,7 +110,7 @@ public class PalletLoadingReport :IReport
                     header.Cell().Text("Quantity");
                 });
 
-                foreach (var product in _pallet.Items.Keys)
+                foreach (var product in _pallet.Items.Keys.OrderBy(k => k.ProductID))
                 {
                     table.Cell().Element(CellStyle).Text($"{product.ProductName}").Style(tableTextStyle);
                     table.Cell().BorderRight(1).BorderColor(Colors.Grey.Lighten2).Element(CellStyle).AlignCenter().Text($"{product.ProductID}").Style(largeTableTextStyle);

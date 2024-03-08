@@ -28,6 +28,7 @@ public sealed partial class FillOrdersPage : Page
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private readonly ReportGenerator reportGenerator;
+    private int SelectedCount => OrderedItems.SelectedItems.Count;
     #endregion Fields
     public FillOrdersPageViewModel ViewModel
     {
@@ -495,7 +496,7 @@ public sealed partial class FillOrdersPage : Page
 
             if (print)
             {
-                IPalletizer palletizer = new Palletizer(new(), ViewModel.Order);
+                IPalletizer palletizer = new BoxPalletizer(new(){SingleItemPerPallet = ViewModel.Customer.SingleProdPerPallet ?? false}, ViewModel.Order);
                 var pallets = await palletizer.PalletizeAsync();
                 var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
 
@@ -580,6 +581,30 @@ public sealed partial class FillOrdersPage : Page
         await TrySaveOrderAsync();
         OrderedVsReceivedGrid.View.Refresh();
 
+    }
+
+    private void OrderedItems_CurrentCellValueChanged(object sender, CurrentCellValueChangedEventArgs e)
+    {
+        //if(e.Column.MappingName == "QuanRcvd")
+        //{
+            
+        //    if(e.Record is ShippingItem item && sender is SfDataGrid grid)
+        //    {
+        //        if(item.QuanRcvd < 1000 || item.QuanRcvd > 1)
+        //        {
+        //            Debugger.Break();
+        //            item.QuanRcvd = 1;
+        //        }
+        //    }
+        //}
+    }
+
+    private void OrderedItems_SelectionChanged(object sender, Syncfusion.UI.Xaml.Grids.GridSelectionChangedEventArgs e)
+    {
+        if(sender is SfDataGrid dg)
+        {
+            SelectionCount.Text = $"Selected {dg.SelectedItems.Count} Items";
+        }
     }
 }
 

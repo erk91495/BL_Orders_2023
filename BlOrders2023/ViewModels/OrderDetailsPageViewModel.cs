@@ -370,6 +370,18 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
                 {
                     Memo = "Cash on Delivery";
                 }
+                if(_order.Customer.Note != null && !_order.Customer.Note.MsgText.IsNullOrEmpty())
+                {
+                    if(Memo.IsNullOrEmpty())
+                    {
+                        Memo = _order.Customer.Note.MsgText;
+                    }
+                    else
+                    {
+                        Memo += _order.Customer.Note.MsgText;
+                    }
+                    
+                }
             }
             Items = new ObservableCollection<OrderItem>(_order.Items);
             _currentOrderIndex = _order.Customer.Orders.OrderBy(o => o.OrderID).ToList().IndexOf(_order);

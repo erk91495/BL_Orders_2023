@@ -54,6 +54,7 @@ public class ShippingItem : ObservableObject
         get => productID; 
         set => SetProperty(ref productID, value);
     }
+    [Range(1,1000)]
     public int? QuanRcvd
     {
         get => quanRcvd; 

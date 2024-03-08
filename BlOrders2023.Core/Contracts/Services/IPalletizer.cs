@@ -9,5 +9,5 @@ using BlOrders2023.Models;
 namespace BlOrders2023.Core.Contracts.Services;
 public interface IPalletizer
 {
-   public Task<IEnumerable<Pallet>> PalletizeAsync();
+    public Task<IEnumerable<Pallet>> PalletizeAsync();
 }

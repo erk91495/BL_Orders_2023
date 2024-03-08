@@ -26,6 +26,11 @@ using System.Diagnostics;
 using Castle.Core.Resource;
 using BlOrders2023.Core.Services;
 using CommunityToolkit.WinUI.UI.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using sf = Syncfusion.UI.Xaml.Core;
+using Windows.UI.ViewManagement;
+using System.Drawing;
+using Microsoft.UI.Xaml.Media;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -67,7 +72,13 @@ public sealed partial class OrderDetailsPage : Page
         PickupTime.MinTime = new DateTime(1800, 1, 1, 0, 0, 0, 0);
         OrderedItems.PreviewKeyDown += OrderedItems_PreviewKeyDown;
         DataContext = this;
+        ProductEntryBox.Loaded += ProductEntryBox_Loaded;
         Unloaded += OrderDetailsPage_Unloaded;
+    }
+
+    private void ProductEntryBox_Loaded(object sender, RoutedEventArgs e)
+    {
+
     }
     #endregion Constructors
     #region Methods
@@ -327,13 +338,14 @@ public sealed partial class OrderDetailsPage : Page
         if (RadioPickUp.IsChecked == true)
         {
             ViewModel.Shipping = ShippingType.Pickup;
-            PickupTimeStack.Visibility = Visibility.Visible;
+            ViewModel.PickupTime = new(ViewModel.PickupTime.Year, ViewModel.PickupTime.Month, ViewModel.PickupTime.Day, 0, 0, 0, 0);
+            //PickupTimeStack.Visibility = Visibility.Visible;
         }
         else
         {
             ViewModel.Shipping = ShippingType.Delivery;
             ViewModel.PickupTime = new(ViewModel.PickupTime.Year, ViewModel.PickupTime.Month, ViewModel.PickupTime.Day, 0, 0, 0, 0);
-            PickupTimeStack.Visibility = Visibility.Collapsed;
+            //PickupTimeStack.Visibility = Visibility.Collapsed;
         }
     }
 
@@ -764,7 +776,7 @@ public sealed partial class OrderDetailsPage : Page
 
         if (print)
         {
-            Palletizer palletizer = new(new(), ViewModel.Order);
+            BoxPalletizer palletizer = new(new() { SingleItemPerPallet = ViewModel.Customer.SingleProdPerPallet ?? false }, ViewModel.Order);
             var pallets = await palletizer.PalletizeAsync();
             var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
 

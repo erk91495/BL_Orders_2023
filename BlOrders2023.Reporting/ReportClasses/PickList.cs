@@ -176,7 +176,7 @@ public class PickList : IReport
 
                         table.Cell().Element(CellStyle).Text($"{_order.OrderDate:d}");
                         table.Cell().Element(CellStyle).Text($"{_order.PickupDate:d}");
-                        table.Cell().Element(CellStyle).ShowIf(_order.Shipping == Models.Enums.ShippingType.Pickup).Text($"{_order.PickupTime:t}");
+                        table.Cell().Element(CellStyle).ShowIf(_order.PickupTime.TimeOfDay != new TimeSpan(0, 0, 0)).Text($"{_order.PickupTime:t}");
                         table.Cell().Element(CellStyle).Text($"{_order.TakenBy}");
                         table.Cell().Element(CellStyle).Text($"{_order.Shipping}");
                         var frozen = (_order.Frozen ?? false) ? "Frozen" : "Fresh";

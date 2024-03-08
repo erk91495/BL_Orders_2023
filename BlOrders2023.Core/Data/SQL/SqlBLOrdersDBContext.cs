@@ -62,4 +62,5 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<CompanyInfo> CompanyInfo { get; set; }
     public DbSet<Box> Boxes { get; set; }
     public DbSet<ProductCategory> ProductCategories { get; set; }
+    public DbSet<WholesaleCustomerNote> CustomerNotes { get; set; }
 }

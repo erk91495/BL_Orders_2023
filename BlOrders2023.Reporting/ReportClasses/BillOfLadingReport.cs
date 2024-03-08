@@ -145,7 +145,7 @@ public class BillOfLadingReport : IReport
                 row.RelativeItem(10).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                 {
                     column.Item().Background(Grey.Lighten3).Border(1).PaddingLeft(3).Text("Bill To:");
-                    column.Item().PaddingLeft(3).Text($"{_customer.CustomerName}").Style(subTitleStyle);
+                    column.Item().PaddingLeft(3).Text($"{_customer.BillingCustomerName}").Style(subTitleStyle);
                     column.Item().Row(row =>
                     {
                         row.RelativeItem().PaddingLeft(3).Column(column =>
@@ -170,7 +170,10 @@ public class BillOfLadingReport : IReport
 
             mainCol.Item().PaddingTop(12).Row(poRow =>
             {
-                poRow.RelativeItem().Text($"Appointment Time: {_appointmentTime}").Style(subTitleStyle);
+                if(_appointmentTime.HasValue)
+                {
+                    poRow.RelativeItem().Text($"Appointment Time: {_appointmentTime.Value.ToString("MM/dd/yy h:m tt)}")}").Style(subTitleStyle);
+                } 
             });
 
             mainCol.Item().PaddingTop(2).Row(poRow => 
