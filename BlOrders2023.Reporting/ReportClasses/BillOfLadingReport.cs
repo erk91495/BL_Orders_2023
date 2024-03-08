@@ -145,7 +145,7 @@ public class BillOfLadingReport : IReport
                 row.RelativeItem(10).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                 {
                     column.Item().Background(Grey.Lighten3).Border(1).PaddingLeft(3).Text("Bill To:");
-                    column.Item().PaddingLeft(3).Text($"{_customer.CustomerName}").Style(subTitleStyle);
+                    column.Item().PaddingLeft(3).Text($"{_customer.BillingCustomerName}").Style(subTitleStyle);
                     column.Item().Row(row =>
                     {
                         row.RelativeItem().PaddingLeft(3).Column(column =>

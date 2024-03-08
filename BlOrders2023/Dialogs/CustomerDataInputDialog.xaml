@@ -66,6 +66,14 @@
                                    Style="{StaticResource ValidatorTextBlockStyle}"/>
                 </StackPanel>
 
+                <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                    <TextBlock Text="Billing Customer Name: " />
+                    <TextBox x:Name="BillingCustomerNameTextBox" Text="{x:Bind ViewModel.BillingCustomerName, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" IsEnabled="{x:Bind ViewModel.UseSameAddress, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"/>
+                    <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('BillingCustomerName'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('BillingCustomerName'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+                </StackPanel>
+
                 <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0">
                     <TextBlock Grid.Row="4" Grid.Column="0" Text="Buyer: " />
                     <TextBox Grid.Row="4" Grid.Column="1" x:Name="BuyerTextBox" Text="{x:Bind ViewModel.Buyer, Mode=TwoWay}" Width="200" HorizontalAlignment="Left" />

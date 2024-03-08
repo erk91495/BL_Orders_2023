@@ -115,7 +115,7 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
                 row.RelativeItem(9).Border(1).ExtendHorizontal().AlignCenter().Column(column =>
                 {
                     column.Item().Background(Colors.Grey.Lighten3).Border(1).PaddingLeft(3).Text("Bill To:");
-                    column.Item().PaddingLeft(3).Text($"{_order.Customer.CustomerName}").Style(subTitleStyle);
+                    column.Item().PaddingLeft(3).Text($"{_order.Customer.BillingCustomerName}").Style(subTitleStyle);
                     column.Item().Row(row =>
                     {
                         row.RelativeItem().PaddingLeft(3).Column(column =>

@@ -22,6 +22,7 @@ public class WholesaleCustomer
     public string? City { get; set; }
     public string? State { get; set; }
     public string? ZipCode { get; set; }
+    public string BillingCustomerName { get; set; } = "";
     public string? BillingAddress { get; set; }
     public string? BillingCity { get; set; }
     public string? BillingState { get; set; }

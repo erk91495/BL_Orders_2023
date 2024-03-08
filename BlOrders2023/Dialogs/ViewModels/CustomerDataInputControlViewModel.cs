@@ -27,7 +27,27 @@ public class CustomerDataInputControlViewModel : ObservableValidator
         set
         {
             Customer.CustomerName = value.Trim().ToUpper();
+            if (Customer.UseSameAddress)
+            {
+                BillingCustomerName = value;
+            }
             ValidateProperty(Customer.CustomerName, nameof(CustomerName));
+            OnPropertyChanged();
+        }
+    }
+
+    [Required]
+    [MinLength(1)]
+    [MaxLength(30)]
+    [CustomValidation(typeof(CustomerDataInputControlViewModel), nameof(ValidateCustomerName))]
+    [Display(Name = "Billing Customer Name")]
+    public string BillingCustomerName
+    {
+        get => Customer.BillingCustomerName;
+        set
+        {
+            Customer.BillingCustomerName = value.Trim().ToUpper();
+            ValidateProperty(Customer.BillingCustomerName, nameof(BillingCustomerName));
             OnPropertyChanged();
         }
     }
