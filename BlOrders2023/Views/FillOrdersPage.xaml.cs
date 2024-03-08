@@ -581,6 +581,22 @@ public sealed partial class FillOrdersPage : Page
         OrderedVsReceivedGrid.View.Refresh();
 
     }
+
+    private void OrderedItems_CurrentCellValueChanged(object sender, CurrentCellValueChangedEventArgs e)
+    {
+        //if(e.Column.MappingName == "QuanRcvd")
+        //{
+            
+        //    if(e.Record is ShippingItem item && sender is SfDataGrid grid)
+        //    {
+        //        if(item.QuanRcvd < 1000 || item.QuanRcvd > 1)
+        //        {
+        //            Debugger.Break();
+        //            item.QuanRcvd = 1;
+        //        }
+        //    }
+        //}
+    }
 }
 
 internal class FillOrdersGridSelectionController : GridSelectionController

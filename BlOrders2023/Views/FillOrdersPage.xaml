@@ -350,6 +350,7 @@
                                    RecordDeleted="OrderedItems_RecordDeleted"
                                    ColumnWidthMode="AutoWithLastColumnFill"
                                    CurrentCellEndEdit="OrderedItems_CurrentCellEndEdit"
+                                   CurrentCellValueChanged="OrderedItems_CurrentCellValueChanged"
                                    CopyGridCellContent="OrderedItems_CopyGridCellContent">
                         <sf:SfDataGrid.Resources>
                             <SolidColorBrush x:Key="SyncfusionDataGridRowBackgroundPointerOver" Color="{StaticResource SystemAccentColor}"/>
