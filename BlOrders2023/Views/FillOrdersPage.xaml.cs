@@ -28,6 +28,7 @@ public sealed partial class FillOrdersPage : Page
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private readonly ReportGenerator reportGenerator;
+    private int SelectedCount => OrderedItems.SelectedItems.Count;
     #endregion Fields
     public FillOrdersPageViewModel ViewModel
     {
@@ -596,6 +597,14 @@ public sealed partial class FillOrdersPage : Page
         //        }
         //    }
         //}
+    }
+
+    private void OrderedItems_SelectionChanged(object sender, Syncfusion.UI.Xaml.Grids.GridSelectionChangedEventArgs e)
+    {
+        if(sender is SfDataGrid dg)
+        {
+            SelectionCount.Text = $"Selected {dg.SelectedItems.Count} Items";
+        }
     }
 }
 
