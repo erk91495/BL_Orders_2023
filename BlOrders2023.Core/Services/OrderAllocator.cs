@@ -18,7 +18,7 @@ public class OrderAllocator : IAllocatorService
 {
     #region Properties
     public IEnumerable<Order> Orders => _orders;
-    public IEnumerable<InventoryItem> Inventory => _inventory;
+    public IEnumerable<InventoryAdjustmentItem> Inventory => _inventory;
 
     public DateTime AllocationTime => _allocationTime;
     #endregion Properties
@@ -27,7 +27,7 @@ public class OrderAllocator : IAllocatorService
     private readonly IBLDatabase _db;
     private readonly Dictionary<int, float> ordered = new();
     private IList<Order> _orders;
-    private IEnumerable<InventoryItem> _inventory;
+    private IEnumerable<InventoryAdjustmentItem> _inventory;
     private ReadOnlyDictionary<int, int> _startingInventory;
     private readonly Dictionary<int, int> _remainingInventory = new();
     private DateTime _allocationTime = DateTime.Now;
@@ -49,7 +49,7 @@ public class OrderAllocator : IAllocatorService
         _config = config;
         //Task<IEnumerable<Order>> ordersTask = _db.Orders.GetAsync();
         ////ordersTask.Start();
-        //Task<IEnumerable<InventoryItem>> inventoryTask = _db.Inventory.GetAsync();
+        //Task<IEnumerable<InventoryAdjustmentItem>> inventoryTask = _db.InventoryAdjustments.GetAsync();
         ////inventoryTask.Start();
         //Task<IEnumerable<AllocationGroup>> allocationGroupsTask = _db.Allocation.GetAllocationGroupsAsync();
         ////allocationGroupsTask.Start();
@@ -62,7 +62,7 @@ public class OrderAllocator : IAllocatorService
 
         var temporder = await _db.Orders.GetAsync(_config.IDs);
         _orders = temporder.ToList();
-        _inventory = await _db.Inventory.GetInventoryAsync();
+        _inventory = await _db.Inventory.GetInventoryAdjutmentsAsync();
         _allocationGroups = await _db.Allocation.GetAllocationGroupsAsync();
 
         
@@ -118,14 +118,15 @@ public class OrderAllocator : IAllocatorService
         await _db.Orders.UpsertAsync(Orders);
         foreach(var item in _inventory) 
         {
-            await _db.Inventory.UpsertAsync(item);
+            await _db.Inventory.UpsertAdjustmentAsync(item);
         }
     }
     private void UpdateRemainingInventory()
     {
         foreach(var key in _remainingInventory.Keys)
         {
-            _inventory.Where(p => p.ProductID == key).FirstOrDefault().QuantityOnHand = (short)_remainingInventory[key];
+            throw new InvalidOperationException();
+            //_inventory.Where(p => p.ProductID == key).FirstOrDefault().QuantityOnHand = (short)_remainingInventory[key];
         }
     }
 
@@ -232,7 +233,8 @@ public class OrderAllocator : IAllocatorService
     {
         foreach(var item in _inventory)
         {
-            _remainingInventory.Add(item.ProductID, item.QuantityOnHand);
+            throw new InvalidOperationException();
+            //_remainingInventory.Add(item.ProductID, item.QuantityOnHand);
         }
         _startingInventory = new(_remainingInventory);
     }
@@ -410,7 +412,7 @@ public class OrderAllocator : IAllocatorService
 
     private void PrintAllocatedOrders()
     {
-        Debug.WriteLine($"Remaining Inventory:");
+        Debug.WriteLine($"Remaining InventoryAdjustments:");
         foreach (var id in _remainingInventory.Keys)
         {
             Debug.WriteLine($"{id} : {_remainingInventory[id]}");

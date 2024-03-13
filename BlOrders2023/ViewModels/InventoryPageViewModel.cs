@@ -14,7 +14,7 @@ namespace BlOrders2023.ViewModels;
 public class InventoryPageViewModel : ObservableRecipient
 {
     #region Properties
-    public ObservableCollection<InventoryItem> Inventory
+    public ObservableCollection<InventoryTotalItem> Inventory
     {
         get => _inventory; 
         set => SetProperty(ref _inventory, value);
@@ -36,7 +36,7 @@ public class InventoryPageViewModel : ObservableRecipient
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private bool _isLoading;
-    private ObservableCollection<InventoryItem> _inventory;
+    private ObservableCollection<InventoryTotalItem> _inventory = new();
     private IBLDatabase _db;
     #endregion Fields
 
@@ -62,7 +62,7 @@ public class InventoryPageViewModel : ObservableRecipient
 
             var table = _db.Inventory;
 
-            var inventory = await Task.Run(() => table.GetInventoryAsync());
+            var inventory = await Task.Run(() => table.GetInventoryTotalItemsAsync());
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 Inventory = new(inventory);
@@ -79,21 +79,20 @@ public class InventoryPageViewModel : ObservableRecipient
             });
 
             var table = _db.Inventory;
-            var inventory = await Task.Run(() => table.GetInventoryAsync());
+            var inventory = await Task.Run(() => table.GetInventoryTotalItemsAsync());
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 Inventory = new(inventory);
-                ClearAdjustmentQuantity();
                 IsLoading = false;
                 OnPropertyChanged(nameof(Inventory));
             });
         }
     }
 
-    internal async void SaveItem(InventoryItem p)
+    internal async void SaveItem(InventoryAdjustmentItem p)
     {
-        await _db.Inventory.UpsertAsync(p);
+        await _db.Inventory.UpsertAdjustmentAsync(p);
     }
 
     internal async Task DeleteItem(Product p)
@@ -105,7 +104,7 @@ public class InventoryPageViewModel : ObservableRecipient
     {
         foreach (var item in Inventory)
         {
-            item.QuantityOnHand += item.AdjustmentQuantity;
+            item.ManualAdjustments += item.LastAdjustment;
         }
     }
 
@@ -113,14 +112,17 @@ public class InventoryPageViewModel : ObservableRecipient
     {
         foreach (var item in Inventory)
         {
-            item.AdjustmentQuantity = 0;
+            item.LastAdjustment = 0;
         }
     }
 
     internal async Task SaveAllAsync()
     {
-        CalculateAdjustments();
-        await _db.Inventory.UpsertAsync(_inventory);
+        ///CalculateAdjustments();
+        foreach(var item in Inventory)
+        {
+            await _db.Inventory.AdjustInventoryAsync(item);
+        }
     }
     #endregion Methods
 

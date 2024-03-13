@@ -13,7 +13,7 @@ namespace BlOrders2023.Reporting.ReportClasses;
 public  class CurrentInventoryReport : IReport
 {
     private readonly CompanyInfo _companyInfo;
-    private readonly IEnumerable<InventoryItem> _items;
+    private readonly IEnumerable<InventoryTotalItem> _items;
     private readonly DateTime _reportDate = DateTime.Now;
 
     public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
@@ -23,7 +23,7 @@ public  class CurrentInventoryReport : IReport
     public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
     public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
-    public CurrentInventoryReport(CompanyInfo companyInfo, IEnumerable<InventoryItem> items)
+    public CurrentInventoryReport(CompanyInfo companyInfo, IEnumerable<InventoryTotalItem> items)
     {
         _companyInfo = companyInfo;
         _items = items;
@@ -73,6 +73,8 @@ public  class CurrentInventoryReport : IReport
                     column.RelativeColumn(6);
                     column.RelativeColumn(2);
                     column.RelativeColumn(2);
+                    column.RelativeColumn(2);
+                    column.RelativeColumn(2);
 
                 });
 
@@ -81,8 +83,10 @@ public  class CurrentInventoryReport : IReport
                     header.Cell().Element(CellStyle).Text("Product ID").Style(tableHeaderStyle);
 
                     header.Cell().Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).Text("Quantity On Hand").Style(tableHeaderStyle);
-                    header.Cell().Element(CellStyle).Text("Adjustment Quantity").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Quantity").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Manual Adjustment").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Total Invetory").Style(tableHeaderStyle);
+                    header.Cell().Element(CellStyle).Text("Last Adjustment").Style(tableHeaderStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -93,9 +97,11 @@ public  class CurrentInventoryReport : IReport
                 foreach (var item in _items.OrderBy(i => i.SortIndex))
                 {
                     table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item.QuantityOnHand}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item.AdjustmentQuantity}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.Product.ProductName}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.Quantity}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.ManualAdjustments}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.Total}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.LastAdjustment}").Style(tableTextStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -106,8 +112,10 @@ public  class CurrentInventoryReport : IReport
 
                 table.Cell().Element(FooterCellStyle).Text($"").Style(tableTextStyle);
                 table.Cell().Element(FooterCellStyle).Text($"Totals:").Style(tableTextStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.QuantityOnHand)}").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.AdjustmentQuantity)}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.Quantity)}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.ManualAdjustments)}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.Total)}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle);
                 static IContainer FooterCellStyle(IContainer container)
                 {
                     return container.PaddingVertical(2);

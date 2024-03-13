@@ -48,7 +48,7 @@ public class SqlBLOrdersDBContext : DbContext
         modelBuilder.Entity<Order>().ToTable(tb => tb.HasTrigger("tgrOrdersLastUpdateDate"));
     }
 
-    public DbSet<InventoryItem> Inventory { get; set; }
+    public DbSet<InventoryAdjustmentItem> InventoryAdjustments { get; set; }
     public DbSet<WholesaleCustomer> Customers { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
@@ -63,4 +63,7 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<Box> Boxes { get; set; }
     public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<WholesaleCustomerNote> CustomerNotes { get; set; }
+    public DbSet<LiveInventoryItem> ScannerInventoryItems { get; set; }
+    public DbSet<LotCode> LotCodes { get; set; }
+    public DbSet<InventoryTotalItem> InventoryTotalItems { get; set; }
 }

@@ -454,7 +454,7 @@ public sealed partial class ReportsPage : Page
             else if( control.ReportType == typeof(CurrentInventoryReport))
             {
                 spinner.IsVisible = true;
-                var currentInventory = ViewModel.GetInventory();
+                var currentInventory = ViewModel.GetInventoryTotals();
                 reportPath = await reportGenerator.GenerateCurrentInventoryReport(currentInventory);
             }
             else if(control.ReportType == typeof(InventoryDetailsReport))

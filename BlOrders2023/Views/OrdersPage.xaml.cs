@@ -97,7 +97,7 @@ public sealed partial class OrdersPage : Page
     private async void EmailButton_Click(object _sender, RoutedEventArgs e)
     {
         if (ViewModel.SelectedOrder != null)
-            await Helpers.Helpers.SendEmailAsync(ViewModel.SelectedOrder.Customer.Email ?? String.Empty);
+            await Helpers.Helpers.SendEmailAsync(ViewModel.SelectedOrder.Customer.Email ?? string.Empty);
     }
 
     #region Pane Buttons

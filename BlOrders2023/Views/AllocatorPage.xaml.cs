@@ -333,17 +333,18 @@ public sealed partial class AllocatorPage : Page
                 if (e.RowData is OrderItem item)
                 {
                     var inventoryItem = ViewModel.CurrentInventory.Where(i => i.ProductID == item.ProductID).FirstOrDefault();
-                    if (inventoryItem != null && inventoryItem.QuantityOnHand >= newVal - oldVal) 
-                    {
-                        e.IsValid = true;
-                        ViewModel.UpdateInventory(inventoryItem, (newVal - oldVal) * -1);
-                        _unsavedChanges = true;
-                    }
-                    else
-                    {
-                        e.IsValid = false;
-                        e.ErrorMessage = "Insufficent inventory";
-                    }
+                    throw new InvalidOperationException();
+                    //if (inventoryItem != null && inventoryItem.QuantityOnHand >= newVal - oldVal) 
+                    //{
+                    //    e.IsValid = true;
+                    //    ViewModel.UpdateInventory(inventoryItem, (newVal - oldVal) * -1);
+                    //    _unsavedChanges = true;
+                    //}
+                    //else
+                    //{
+                    //    e.IsValid = false;
+                    //    e.ErrorMessage = "Insufficent inventory";
+                    //}
                 }
             }
             else

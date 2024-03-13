@@ -31,7 +31,7 @@
 
         <sf:SfDataGrid x:Name="InventoryGrid"
                        ItemsSource="{x:Bind ViewModel.Inventory, Mode=TwoWay}"
-                       SourceType="models:InventoryItem"
+                       SourceType="models:InventoryTotalItem"
                        RelativePanel.Below="progressBar"
                        GridLinesVisibility="Both"
                        IsReadOnly="False"
@@ -49,10 +49,12 @@
                        CurrentCellValidated="InventoryGrid_CurrentCellValidated">
 
             <sf:SfDataGrid.Columns>
-                <sf:GridNumericColumn MappingName="ProductID" IsReadOnly="False"/>
-                <sf:GridTextColumn MappingName="ProductName" AllowEditing="False"/>
-                <sf:GridNumericColumn MappingName="QuantityOnHand" AllowEditing="False" TextAlignment="Center"/>
-                <sf:GridTextColumn MappingName="AdjustmentQuantity" AllowEditing="True" TextAlignment="Center" ColumnWidthMode="Auto"/>
+                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" AllowEditing="False"/>
+                <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" AllowEditing="False"/>
+                <sf:GridNumericColumn MappingName="Quantity" AllowEditing="False" TextAlignment="Center"/>
+                <sf:GridNumericColumn HeaderText="Manual Adjustments" MappingName="ManualAdjustments" AllowEditing="False" TextAlignment="Center" ColumnWidthMode="Auto"/>
+                <sf:GridUnboundColumn MappingName="Total" Expression="Total+(int)LastAdjustment" AllowEditing="False"/>
+                <sf:GridTextColumn HeaderText="Last Adjustment" MappingName="LastAdjustment" AllowEditing="True" TextAlignment="Center"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
         <StackPanel x:Name="ButtonStack" 

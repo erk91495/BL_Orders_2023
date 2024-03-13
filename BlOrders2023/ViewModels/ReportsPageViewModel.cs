@@ -72,9 +72,9 @@ public class ReportsPageViewModel : ObservableRecipient
         return App.GetNewDatabase().Orders.GetFrozenOrdersByPickupDate(startDate.Date, endDate.Date);
     }
 
-    internal IEnumerable<InventoryItem> GetInventory()
+    internal IEnumerable<InventoryAdjustmentItem> GetInventory()
     {
-        return App.GetNewDatabase().Inventory.GetInventory();
+        return App.GetNewDatabase().Inventory.GetInventoryAdjustments();
     }
 
     internal IEnumerable<Order> GetOutOfStateOrders(DateTimeOffset startDate, DateTimeOffset endDate)
@@ -107,4 +107,5 @@ public class ReportsPageViewModel : ObservableRecipient
 
     internal IEnumerable<ProductCategory> GetProductCategories() => App.GetNewDatabase().ProductCategories.Get();
     internal IEnumerable<ProductCategory> GetTotalsCategories() => App.GetNewDatabase().ProductCategories.GetForReports();
+    internal IEnumerable<InventoryTotalItem> GetInventoryTotals() => App.GetNewDatabase().Inventory.GetInventoryTotalItems();
 }

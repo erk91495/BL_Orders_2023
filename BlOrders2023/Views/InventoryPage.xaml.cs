@@ -82,7 +82,7 @@ public sealed partial class InventoryPage : Page
 
     private void InventoryGrid_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
     {
-        if (e.RowData is InventoryItem item)
+        if (e.RowData is InventoryTotalItem item)
         {
 
             if (e.NewValue != null && e.OldValue != e.NewValue)
@@ -90,9 +90,9 @@ public sealed partial class InventoryPage : Page
                 _Modified = true;
                 switch (e.Column.MappingName)
                 {
-                    case "AdjustmentQuantity":
+                    case "LastAdjustment":
                         {
-                            if(! int.TryParse(e.NewValue.ToString(), out _))
+                            if (!int.TryParse(e.NewValue.ToString(), out _))
                             {
                                 e.ErrorMessage = "Adjustment Quantity Must Be A Whole Number";
                                 e.IsValid = false;
@@ -110,12 +110,11 @@ public sealed partial class InventoryPage : Page
 
     private void InventoryGrid_CurrentCellValidated(object sender, CurrentCellValidatedEventArgs e)
     {
-        if (e.RowData is InventoryItem p)
+        if (e.RowData is InventoryTotalItem p)
         {
             Collection<ValidationResult> result = new();
             ValidationContext context = new(p);
             Validator.TryValidateObject(p, context, result, true);
-
         }
     }
 
@@ -162,11 +161,12 @@ public sealed partial class InventoryPage : Page
             ContentDialog contentDialog = new()
             {
                 XamlRoot = XamlRoot,
-                Content = "Inventory Saved",
+                Content = "Inventory Adjustments Saved",
                 PrimaryButtonText = "Ok",
                 DefaultButton = ContentDialogButton.Primary,
             };
             await contentDialog.ShowAsync();
+            await ViewModel.QueryInventory();
             ViewModel.ClearAdjustmentQuantity();
             await ViewModel.SaveAllAsync();
             _Modified = false;
@@ -185,4 +185,12 @@ public sealed partial class InventoryPage : Page
         }
     }
 
+    private void InventoryGrid_QueryUnboundColumnValue(object sender, GridUnboundColumnEventsArgs e)
+    {
+        if (e.UnBoundAction == UnboundActions.QueryData)
+            if(e.Record is InventoryTotalItem totalItem)
+            {
+                e.Value = totalItem.Total + totalItem.LastAdjustment;
+            }
+    }
 }

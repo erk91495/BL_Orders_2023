@@ -11,7 +11,7 @@ public interface IAllocatorService
 {
     public DateTime AllocationTime { get; }
     public IEnumerable<Order> Orders { get; }
-    public IEnumerable<InventoryItem> Inventory { get; }
+    public IEnumerable<InventoryAdjustmentItem> Inventory { get; }
     public Task<bool> AllocateAsync(IAllocatorConfig config);
     public Task<IEnumerable<int>> GetOrdersIDToAllocateAsync(DateTimeOffset item1, DateTimeOffset item2, AllocatorMode mode);
     public Task<string> GenerateAllocationSummary();
