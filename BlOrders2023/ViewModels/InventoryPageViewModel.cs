@@ -124,6 +124,11 @@ public class InventoryPageViewModel : ObservableRecipient
             await _db.Inventory.AdjustInventoryAsync(item);
         }
     }
+
+    internal async Task SaveAsync(InventoryTotalItem item)
+    {
+        await _db.Inventory.AdjustInventoryAsync(item);
+    }
     #endregion Methods
 
 }

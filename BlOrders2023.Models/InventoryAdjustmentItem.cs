@@ -14,9 +14,9 @@ namespace BlOrders2023.Models;
 public class InventoryAdjustmentItem: ObservableObject
 {
     private int _productID;
-    private int _adjustmentQuantity;
+    private int _manualAdjustment;
     private int _lastAdjustment;
-    private short _sortIndex;
+    private short? _sortIndex;
 
     [Key]
     [Required]
@@ -29,8 +29,8 @@ public class InventoryAdjustmentItem: ObservableObject
     [Required]
     public int ManualAdjustments
     {
-        get => _adjustmentQuantity; 
-        set => SetProperty(ref _adjustmentQuantity, value);
+        get => _manualAdjustment; 
+        set => SetProperty(ref _manualAdjustment, value);
     }
 
     public int LastAdjustment
@@ -38,7 +38,7 @@ public class InventoryAdjustmentItem: ObservableObject
         get => _lastAdjustment;
         set => SetProperty(ref _lastAdjustment, value);
     }
-    public short SortIndex
+    public short? SortIndex
     {
         get => _sortIndex; 
         set => SetProperty(ref _sortIndex, value);

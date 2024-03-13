@@ -16,6 +16,7 @@ using BlOrders2023.Services;
 using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
 using CommunityToolkit.WinUI.UI.Controls;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -38,8 +39,10 @@ namespace BlOrders2023.Views;
 /// </summary>
 public sealed partial class InventoryPage : Page
 {
-    private bool _Modified = false;
+    
     private bool _CanLeave = false;
+    private HashSet<int> _modifiedItems = new HashSet<int>();
+    private bool _Modified => !_modifiedItems.IsNullOrEmpty();
     public InventoryPageViewModel ViewModel { get; }
 
     public InventoryPage()
@@ -87,7 +90,7 @@ public sealed partial class InventoryPage : Page
 
             if (e.NewValue != null && e.OldValue != e.NewValue)
             {
-                _Modified = true;
+                _modifiedItems.Add(item.ProductID);
                 switch (e.Column.MappingName)
                 {
                     case "LastAdjustment":
@@ -153,7 +156,10 @@ public sealed partial class InventoryPage : Page
     {
         if (_Modified)
         {
-            await ViewModel.SaveAllAsync();
+            foreach(var id in _modifiedItems)
+            {
+                await ViewModel.SaveAsync(ViewModel.Inventory.Where(i => i.ProductID == id).First());  
+            }
             var generator = new ReportGenerator(App.CompanyInfo);
             var path = await generator.GenerateCurrentInventoryReport(ViewModel.Inventory);
             PDFPrinterService printerService = new(path);
@@ -168,12 +174,14 @@ public sealed partial class InventoryPage : Page
             await contentDialog.ShowAsync();
             await ViewModel.QueryInventory();
             ViewModel.ClearAdjustmentQuantity();
-            await ViewModel.SaveAllAsync();
-            _Modified = false;
+            foreach (var id in _modifiedItems)
+            {
+                await ViewModel.SaveAsync(ViewModel.Inventory.Where(i => i.ProductID == id).First());
+            }
+            _modifiedItems.Clear();
         }
         else
         {
-            await ViewModel.SaveAllAsync();
             ContentDialog contentDialog = new()
             {
                 XamlRoot = XamlRoot,

@@ -35,22 +35,22 @@ internal class SqlInventoryTable : IInventoryTable
     {
         if(ids != null)
         {
-            return _db.InventoryAdjustments.Where( i => ids.Contains(i.ProductID)).OrderBy(i => i.SortIndex).AsTracking().ToList();
+            return _db.InventoryAdjustments.Where( i => ids.Contains(i.ProductID)).AsNoTracking().OrderBy(i => i.SortIndex).ToList();
         }
         else
         {
-            return _db.InventoryAdjustments.OrderBy(i => i.SortIndex).AsTracking().ToList();
+            return _db.InventoryAdjustments.OrderBy(i => i.SortIndex).AsNoTracking().ToList();
         }
     }
     public async Task<IEnumerable<InventoryAdjustmentItem>> GetInventoryAdjutmentsAsync(IEnumerable<int> ids = null)
     {
         if (ids != null)
         {
-            return await _db.InventoryAdjustments.Where(i => ids.Contains(i.ProductID)).OrderBy(i => i.SortIndex).AsTracking().ToListAsync();
+            return await _db.InventoryAdjustments.Where(i => ids.Contains(i.ProductID)).AsNoTracking().OrderBy(i => i.SortIndex).ToListAsync();
         }
         else
         {
-            return await _db.InventoryAdjustments.OrderBy(i => i.SortIndex).AsTracking().ToListAsync();
+            return await _db.InventoryAdjustments.OrderBy(i => i.SortIndex).AsNoTracking().ToListAsync();
         }
     }
 
@@ -95,7 +95,7 @@ internal class SqlInventoryTable : IInventoryTable
     {
         if (ids != null)
         {
-            return await Task.Run(() => _db.InventoryTotalItems.FromSql($"[dbo].[usp_GetInventoryTotals]").Where(i => ids.Contains(i.ProductID)).AsNoTracking().ToList());
+            return await Task.Run(() => _db.InventoryTotalItems.FromSql($"[dbo].[usp_GetInventoryTotals]").AsNoTracking().Where(i => ids.Contains(i.ProductID)).ToList());
         }
         else
         {
@@ -144,6 +144,17 @@ internal class SqlInventoryTable : IInventoryTable
     public async Task AdjustInventoryAsync(InventoryTotalItem item)
     {
         var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {item.ProductID}, {item.LastAdjustment}");
+        if(res == 0)
+        {
+            _db.InventoryAdjustments.Add(new InventoryAdjustmentItem()
+            {
+                    ProductID = item.ProductID,
+                    ManualAdjustments = item.LastAdjustment,
+                    LastAdjustment = item.LastAdjustment,
+                    SortIndex = null,
+            });
+            await _db.SaveChangesAsync();
+        }
     }
     #endregion Methods
 }
