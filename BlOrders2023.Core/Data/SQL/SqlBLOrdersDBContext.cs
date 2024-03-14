@@ -63,7 +63,7 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<Box> Boxes { get; set; }
     public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<WholesaleCustomerNote> CustomerNotes { get; set; }
-    public DbSet<LiveInventoryItem> ScannerInventoryItems { get; set; }
+    public DbSet<LiveInventoryItem> LiveInventoryItems { get; set; }
     public DbSet<LotCode> LotCodes { get; set; }
     public DbSet<InventoryTotalItem> InventoryTotalItems { get; set; }
 }

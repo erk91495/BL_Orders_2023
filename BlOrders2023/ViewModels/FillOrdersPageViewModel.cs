@@ -12,6 +12,7 @@ using Newtonsoft.Json.Bson;
 using ServiceStack.DataAnnotations;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Windows.UI.Text;
 
 namespace BlOrders2023.ViewModels;
@@ -199,6 +200,18 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
                     throw new DuplicateBarcodeException("Duplicate Scanline", item.Scanline);
                 } 
             }
+            var res  = await FindLiveInventoryItemAsync(item);
+            if(res != null)
+            {
+                //TODO:
+                //Move Item to ship details table AKA remove from Live inventory table
+                item.ProductionLot = res.Lot.ToString();
+
+            }
+            else
+            {
+                await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID,-1);
+            }
             Items.Add(item);
             _order?.ShippingItems.Add(item);
             IncremantOrderedItem(item);
@@ -316,6 +329,12 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         }
     }
 
+    internal IEnumerable<ProductCategory> GetTotalsCategories() => App.GetNewDatabase().ProductCategories.GetForReports();
+
+    internal async Task<LiveInventoryItem?> FindLiveInventoryItemAsync(ShippingItem item)
+    {
+        return await _orderDB.Inventory.FindLiveInventoryItem(item);
+    }
     #region Validators
     public string GetErrorMessage(string name)
     {
@@ -371,7 +390,6 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         ValidateAllProperties();
     }
 
-    internal IEnumerable<ProductCategory> GetTotalsCategories() => App.GetNewDatabase().ProductCategories.GetForReports();
     #endregion Validators
     #endregion Methods
 

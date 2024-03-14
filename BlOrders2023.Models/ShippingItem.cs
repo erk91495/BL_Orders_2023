@@ -25,6 +25,7 @@ public class ShippingItem : ObservableObject
     private string? packageSerialNumber;
     private DateTime? scanDate;
     private DateTime? packDate;
+    private string? _productionLot;
     private Product product = null!;
     private IBarcode? barcode;
     #endregion Fields
@@ -98,6 +99,12 @@ public class ShippingItem : ObservableObject
         get => product; 
         set => SetProperty(ref product, value);
     }
+    public string? ProductionLot
+    {
+        get => _productionLot;
+        set => SetProperty(ref _productionLot, value);
+    }
+
     [NotMapped]
     public IBarcode? Barcode
     {

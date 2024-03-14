@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -58,11 +59,11 @@ internal class SqlInventoryTable : IInventoryTable
     {
         if( ids != null)
         {
-            return _db.ScannerInventoryItems.Where(i => ids.Contains(i.ProductID)).ToList();
+            return _db.LiveInventoryItems.Where(i => ids.Contains(i.ProductID)).ToList();
         }
         else
         {
-            return _db.ScannerInventoryItems.ToList();
+            return _db.LiveInventoryItems.ToList();
         }
     }
 
@@ -70,11 +71,11 @@ internal class SqlInventoryTable : IInventoryTable
     {
         if (ids != null)
         {
-            return await _db.ScannerInventoryItems.Where(i => ids.Contains(i.ProductID)).ToListAsync();
+            return await _db.LiveInventoryItems.Where(i => ids.Contains(i.ProductID)).ToListAsync();
         }
         else
         {
-            return await _db.ScannerInventoryItems.ToListAsync();
+            return await _db.LiveInventoryItems.ToListAsync();
         }
     }
     
@@ -106,12 +107,12 @@ internal class SqlInventoryTable : IInventoryTable
 
     public bool InsertScannerInventoryItem(LiveInventoryItem item)
     {
-        _db.ScannerInventoryItems.Add(item);
+        _db.LiveInventoryItems.Add(item);
         return _db.SaveChanges() == 1;
     }
     public async Task<bool> InsertScannerInventoryItemAsync(LiveInventoryItem item)
     {
-        await _db.ScannerInventoryItems.AddAsync(item);
+        await _db.LiveInventoryItems.AddAsync(item);
         return await _db.SaveChangesAsync() == 1;
     }
 
@@ -132,12 +133,12 @@ internal class SqlInventoryTable : IInventoryTable
 
     public bool DeleteScannerInventoryItem(LiveInventoryItem item)
     {
-        _db.ScannerInventoryItems.Remove(item);
+        _db.LiveInventoryItems.Remove(item);
         return _db.SaveChanges() == 1;
     }
     public async Task<bool> DeleteScannerInventoryItemAsync(LiveInventoryItem item)
     {
-        _db.ScannerInventoryItems.Remove(item);
+        _db.LiveInventoryItems.Remove(item);
         return await _db.SaveChangesAsync() == 1;
     }
 
@@ -155,6 +156,28 @@ internal class SqlInventoryTable : IInventoryTable
             });
             await _db.SaveChangesAsync();
         }
+    }
+
+    public async Task AdjustInventoryAsync(int ProductID, int LastAdjustment)
+    {
+        var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {ProductID}, {LastAdjustment}");
+        if (res == 0)
+        {
+            _db.InventoryAdjustments.Add(new InventoryAdjustmentItem()
+            {
+                ProductID = ProductID,
+                ManualAdjustments = LastAdjustment,
+                LastAdjustment = LastAdjustment,
+                SortIndex = null,
+            });
+            await _db.SaveChangesAsync();
+        }
+    }
+
+    public async Task<LiveInventoryItem?> FindLiveInventoryItem(ShippingItem shippingItem)
+    {
+        var res = await Task.Run(() => _db.LiveInventoryItems.FromSql($"[dbo].[usp_InLiveInventory] {shippingItem.ProductID}, {shippingItem.PackDate}, {shippingItem.PackageSerialNumber}"));
+        return res.FirstOrDefault();
     }
     #endregion Methods
 }
