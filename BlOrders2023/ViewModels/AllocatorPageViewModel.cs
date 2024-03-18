@@ -25,7 +25,7 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
 
     #region Fields
     private ObservableCollection<Order> allocatedOrders;
-    private ObservableCollection<InventoryAdjustmentItem> _currentInventory;
+    private ObservableCollection<InventoryTotalItem> _currentInventory;
     #endregion Fields
 
     #region Properties
@@ -37,7 +37,7 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
         set => SetProperty(ref allocatedOrders, value);
     }
 
-    public ObservableCollection<InventoryAdjustmentItem> CurrentInventory
+    public ObservableCollection<InventoryTotalItem> CurrentInventory
     {
         get => _currentInventory;
         set => SetProperty(ref _currentInventory, value);
@@ -56,7 +56,7 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
     }
     #endregion Properties
 
-        #region Constructors
+    #region Constructors
     public AllocatorPageViewModel()
     {
         AllocatorConfig = new OrderAllocatorConfiguration();
@@ -78,13 +78,12 @@ public class AllocatorPageViewModel : ObservableRecipient, INavigationAware
         CurrentInventory = new(AllocatorService.Inventory);
     }
 
-    internal void UpdateInventory(InventoryAdjustmentItem inventoryItem, int value)
+    internal void UpdateInventory(InventoryTotalItem inventoryItem, int value)
     {
         var index = CurrentInventory.IndexOf(inventoryItem);
         if (index >= 0)
         {   
-            throw new InvalidOperationException();
-            //CurrentInventory[index].QuantityOnHand += (short)value;
+            CurrentInventory[index].Total += (short)value;
         }
     }
 

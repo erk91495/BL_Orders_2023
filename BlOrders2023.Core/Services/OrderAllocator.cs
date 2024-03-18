@@ -18,7 +18,7 @@ public class OrderAllocator : IAllocatorService
 {
     #region Properties
     public IEnumerable<Order> Orders => _orders;
-    public IEnumerable<InventoryAdjustmentItem> Inventory => _inventory;
+    public IEnumerable<InventoryTotalItem> Inventory => _inventory;
 
     public DateTime AllocationTime => _allocationTime;
     #endregion Properties
@@ -27,7 +27,7 @@ public class OrderAllocator : IAllocatorService
     private readonly IBLDatabase _db;
     private readonly Dictionary<int, float> ordered = new();
     private IList<Order> _orders;
-    private IEnumerable<InventoryAdjustmentItem> _inventory;
+    private IEnumerable<InventoryTotalItem> _inventory;
     private ReadOnlyDictionary<int, int> _startingInventory;
     private readonly Dictionary<int, int> _remainingInventory = new();
     private DateTime _allocationTime = DateTime.Now;
@@ -62,7 +62,7 @@ public class OrderAllocator : IAllocatorService
 
         var temporder = await _db.Orders.GetAsync(_config.IDs);
         _orders = temporder.ToList();
-        _inventory = await _db.Inventory.GetInventoryAdjutmentsAsync();
+        _inventory = await _db.Inventory.GetInventoryTotalItemsAsync();
         _allocationGroups = await _db.Allocation.GetAllocationGroupsAsync();
 
         
@@ -116,10 +116,11 @@ public class OrderAllocator : IAllocatorService
     public async Task SaveAllocationAsync()
     {
         await _db.Orders.UpsertAsync(Orders);
-        foreach(var item in _inventory) 
-        {
-            await _db.Inventory.UpsertAdjustmentAsync(item);
-        }
+        //TODO VALIDATE BUT WE DONT NEED TO ADJUST INVETORY ANYMORE JUST HANDE HOW WE CALC IT 
+        //foreach(var item in _inventory) 
+        //{
+        //    await _db.Inventory.UpsertAdjustmentAsync(item);
+        //}
     }
     private void UpdateRemainingInventory()
     {
