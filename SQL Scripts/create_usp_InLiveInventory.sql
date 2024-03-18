@@ -30,14 +30,7 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT [ID]
-      ,[LotCode]
-      ,[ProductID]
-      ,[PackDate]
-      ,[NetWeight]
-      ,[SerialNumber]
-      ,[Scanline]
-      ,[ScanDate]
+	SELECT *
   FROM [dbo].[tbl_LiveInventory]
   WHERE ProductID = @ProductID AND PackDate = @PackDate AND SerialNumber LIKE @SerialNumber
 

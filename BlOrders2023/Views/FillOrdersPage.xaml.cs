@@ -153,6 +153,7 @@ public sealed partial class FillOrdersPage : Page
                 OrderedItems.ColumnSizer.Refresh(); 
             }
             OrderedVsReceivedGrid.View.Refresh();
+            
             if (ViewModel.Order?.OrderStatus <= OrderStatus.Ordered)
             {
                 ViewModel.OrderStatus = OrderStatus.Filling;
@@ -160,9 +161,10 @@ public sealed partial class FillOrdersPage : Page
             if (ViewModel.Order.AllItemsReceived)
             {
                 ViewModel.OrderStatus = OrderStatus.Filled;
+                
             }
-            OrderedItems.ScrollInView(new (ViewModel.Items.Count(),0));
             await TrySaveOrderAsync();
+            OrderedItems.ScrollInView(new (ViewModel.Items.Count(),0));  
         }
         catch (DuplicateBarcodeException e)
         {

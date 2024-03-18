@@ -21,7 +21,7 @@ public class LiveInventoryItem : ObservableObject
     public string? SerialNumber { get; set; }
     public string Scanline { get; set; }
     public DateTime? ScanDate { get; set; }
-
+    public bool RemovedFromInventory { get; set; }
     [ForeignKey(nameof(LotCode))]
     public virtual LotCode Lot { get; set; }
     [ForeignKey(nameof(ProductID))]

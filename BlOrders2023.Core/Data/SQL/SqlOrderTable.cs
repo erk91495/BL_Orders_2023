@@ -334,7 +334,6 @@ internal class SqlOrderTable : IOrderTable
         {
             _db.Update(order);
         }
-
         return await _db.SaveChangesAsync();
     }
 

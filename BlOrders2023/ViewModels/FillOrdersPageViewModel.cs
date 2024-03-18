@@ -203,9 +203,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
             var res  = await FindLiveInventoryItemAsync(item);
             if(res != null)
             {
-                //TODO:
-                //Move Item to ship details table AKA remove from Live inventory table
-                item.ProductionLot = res.Lot.ToString();
+                item.LiveInventoryID = res.ID;
+                res.RemovedFromInventory = true;
 
             }
             else
@@ -227,6 +226,16 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
 
     internal async Task DeleteShippingItemAsync(ShippingItem item)
     {
+        if(item.LiveInventoryID != null)
+        {
+            item.LiveInventoryItem.RemovedFromInventory = false;
+            item.LiveInventoryItem = null;
+            item.LiveInventoryID = null;
+        }
+        else
+        {
+            await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID, 1);
+        }
         Items.Remove(item);
         await Task.Run(() => 
         {

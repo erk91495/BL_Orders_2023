@@ -105,12 +105,12 @@ internal class SqlInventoryTable : IInventoryTable
         
     }
 
-    public bool InsertScannerInventoryItem(LiveInventoryItem item)
+    public bool InsertLiveInventoryItem(LiveInventoryItem item)
     {
         _db.LiveInventoryItems.Add(item);
         return _db.SaveChanges() == 1;
     }
-    public async Task<bool> InsertScannerInventoryItemAsync(LiveInventoryItem item)
+    public async Task<bool> InsertLiveInventoryItemAsync(LiveInventoryItem item)
     {
         await _db.LiveInventoryItems.AddAsync(item);
         return await _db.SaveChangesAsync() == 1;
@@ -131,12 +131,12 @@ internal class SqlInventoryTable : IInventoryTable
         await _db.SaveChangesAsync();
     }
 
-    public bool DeleteScannerInventoryItem(LiveInventoryItem item)
+    public bool DeleteLiveInventoryItem(LiveInventoryItem item)
     {
         _db.LiveInventoryItems.Remove(item);
         return _db.SaveChanges() == 1;
     }
-    public async Task<bool> DeleteScannerInventoryItemAsync(LiveInventoryItem item)
+    public async Task<bool> DeleteLiveInventoryItemAsync(LiveInventoryItem item)
     {
         _db.LiveInventoryItems.Remove(item);
         return await _db.SaveChangesAsync() == 1;
@@ -176,7 +176,7 @@ internal class SqlInventoryTable : IInventoryTable
 
     public async Task<LiveInventoryItem?> FindLiveInventoryItem(ShippingItem shippingItem)
     {
-        var res = await Task.Run(() => _db.LiveInventoryItems.FromSql($"[dbo].[usp_InLiveInventory] {shippingItem.ProductID}, {shippingItem.PackDate}, {shippingItem.PackageSerialNumber}"));
+        var res = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_InLiveInventory] {shippingItem.ProductID}, {shippingItem.PackDate}, {shippingItem.PackageSerialNumber}").ToListAsync();
         return res.FirstOrDefault();
     }
     #endregion Methods
