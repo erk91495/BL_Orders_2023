@@ -585,27 +585,24 @@ public sealed partial class FillOrdersPage : Page
 
     }
 
-    private void OrderedItems_CurrentCellValueChanged(object sender, CurrentCellValueChangedEventArgs e)
-    {
-        //if(e.Column.MappingName == "QuanRcvd")
-        //{
-            
-        //    if(e.Record is ShippingItem item && sender is SfDataGrid grid)
-        //    {
-        //        if(item.QuanRcvd < 1000 || item.QuanRcvd > 1)
-        //        {
-        //            Debugger.Break();
-        //            item.QuanRcvd = 1;
-        //        }
-        //    }
-        //}
-    }
-
     private void OrderedItems_SelectionChanged(object sender, Syncfusion.UI.Xaml.Grids.GridSelectionChangedEventArgs e)
     {
         if(sender is SfDataGrid dg)
         {
             SelectionCount.Text = $"Selected {dg.SelectedItems.Count} Items";
+        }
+    }
+
+    private void OrderedItems_CurrentCellValidating(object sender, CurrentCellValidatingEventArgs e)
+    {
+        if (e.Column.MappingName == "QuanRcvd")
+        {
+            if((double)e.NewValue > 1000)
+            {
+                e.NewValue = e.OldValue;
+                SystemSounds.Exclamation.Play();
+                _ = ShowLockedoutDialog("Error", $"Quantity entered exceeds 1000.\r\rDid you accidentally scan in the quantity field?");
+            }
         }
     }
 }
