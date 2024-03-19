@@ -27,10 +27,10 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT COALESCE(s.ProductID, a.ProductID) AS ProductID, s.Quantity, ISNULL(a.ManualAdjustments,0) AS ManualAdjustments, (s.Quantity + ISNULL(a.ManualAdjustments,0)) AS Total, ISNULL(a.LastAdjustment, 0) AS LastAdjustment, ISNULL(a.SortIndex, 32767) AS SortIndex
+	SELECT COALESCE(s.ProductID, a.ProductID) AS ProductID, ISNULL(s.Quantity, 0) AS Quantity, ISNULL(a.ManualAdjustments,0) AS ManualAdjustments, (ISNULL(s.Quantity,0) + ISNULL(a.ManualAdjustments, 0)) AS Total, ISNULL(a.LastAdjustment, 0) AS LastAdjustment, ISNULL(a.SortIndex, 32767) AS SortIndex
 FROM 
-	(SELECT ProductID, COUNT(ID) AS Quantity FROM tbl_LiveInventory GROUP BY ProductID) AS s 
-LEFT JOIN tbl_InventoryAdjustments a ON s.ProductID = a.ProductID
+	(SELECT ProductID, COUNT(ID) AS Quantity FROM tbl_LiveInventory WHERE RemovedFromInventory = 0 GROUP BY ProductID) AS s 
+FULL OUTER JOIN tbl_InventoryAdjustments a ON s.ProductID = a.ProductID
 ORDER BY SortIndex, ProductID
 END
 GO

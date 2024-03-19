@@ -28,6 +28,7 @@ public class OrderAllocator : IAllocatorService
     private readonly Dictionary<int, float> ordered = new();
     private IList<Order> _orders;
     private IEnumerable<InventoryTotalItem> _inventory;
+    private Dictionary<int,int> _totalNotAllocated;
     private ReadOnlyDictionary<int, int> _startingInventory;
     private readonly Dictionary<int, int> _remainingInventory = new();
     private DateTime _allocationTime = DateTime.Now;
@@ -59,7 +60,7 @@ public class OrderAllocator : IAllocatorService
         //_inventory = await inventoryTask;
         //_allocationGroups = await allocationGroupsTask;
 
-
+        _totalNotAllocated = await _db.Allocation.GetAllocatedNotReceivedTotals();
         var temporder = await _db.Orders.GetAsync(_config.IDs);
         _orders = temporder.ToList();
         _inventory = await _db.Inventory.GetInventoryTotalItemsAsync();
@@ -126,8 +127,7 @@ public class OrderAllocator : IAllocatorService
     {
         foreach(var key in _remainingInventory.Keys)
         {
-            throw new InvalidOperationException();
-            //_inventory.Where(p => p.ProductID == key).FirstOrDefault().QuantityOnHand = (short)_remainingInventory[key];
+            _inventory.Where(p => p.ProductID == key).FirstOrDefault().Total = (short)_remainingInventory[key];
         }
     }
 
@@ -234,8 +234,8 @@ public class OrderAllocator : IAllocatorService
     {
         foreach(var item in _inventory)
         {
-            throw new InvalidOperationException();
-            //_remainingInventory.Add(item.ProductID, item.QuantityOnHand);
+            var total = item.Total - ( _totalNotAllocated.ContainsKey(item.ProductID) ? _totalNotAllocated[item.ProductID] : 0);
+            _remainingInventory.Add(item.ProductID, total);
         }
         _startingInventory = new(_remainingInventory);
     }

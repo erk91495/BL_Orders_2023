@@ -341,6 +341,5 @@ internal class SqlOrderTable : IOrderTable
     {
         return _db.Orders.Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate && o.Customer.State != States.OH.ToString()).ToList();
     }
-
     #endregion Methods
 }

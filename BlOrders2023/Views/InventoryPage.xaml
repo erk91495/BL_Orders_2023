@@ -51,7 +51,7 @@
             <sf:SfDataGrid.Columns>
                 <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" AllowEditing="False"/>
                 <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" AllowEditing="False"/>
-                <sf:GridNumericColumn MappingName="Before Adjustments" AllowEditing="False" TextAlignment="Center"/>
+                <sf:GridNumericColumn HeaderText="Before Adjustments" MappingName="Quantity" AllowEditing="False" TextAlignment="Center"/>
                 <sf:GridNumericColumn HeaderText="Manual Adjustments" MappingName="ManualAdjustments" AllowEditing="False" TextAlignment="Center" ColumnWidthMode="Auto"/>
                 <sf:GridUnboundColumn MappingName="Total" Expression="Total+(int)LastAdjustment" AllowEditing="False"/>
                 <sf:GridTextColumn HeaderText="Adjustment" MappingName="LastAdjustment" AllowEditing="True" TextAlignment="Center"/>
