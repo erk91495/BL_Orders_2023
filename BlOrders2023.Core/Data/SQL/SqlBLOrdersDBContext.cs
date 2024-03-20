@@ -66,4 +66,5 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<LiveInventoryItem> LiveInventoryItems { get; set; }
     public DbSet<LotCode> LotCodes { get; set; }
     public DbSet<InventoryTotalItem> InventoryTotalItems { get; set; }
+    public DbSet<InventoryAuditItem> InventoryAuditItems { get; set; }
 }

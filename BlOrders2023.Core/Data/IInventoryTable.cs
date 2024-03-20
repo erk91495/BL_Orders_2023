@@ -28,5 +28,5 @@ public interface IInventoryTable
     public Task<LiveInventoryItem?> FindLiveInventoryItem(ShippingItem shippingItem);
     public Task<Dictionary<int, int>> GetAllocatedNotReceivedTotalsAsync();
     public Dictionary<int, int> GetAllocatedNotReceivedTotals();
-
+    public Task<IEnumerable<InventoryAuditItem>> GetInventoryAuditLogAsync();
 }

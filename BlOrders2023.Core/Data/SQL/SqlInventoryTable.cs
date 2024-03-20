@@ -236,5 +236,10 @@ internal class SqlInventoryTable : IInventoryTable
         return result;
 
     }
+
+    public async Task<IEnumerable<InventoryAuditItem>> GetInventoryAuditLogAsync()
+    {
+        return await _db.InventoryAuditItems.ToListAsync();
+    }
     #endregion Methods
 }
