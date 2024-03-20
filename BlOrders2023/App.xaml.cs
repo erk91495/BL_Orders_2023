@@ -142,6 +142,8 @@ public partial class App : Application
             services.AddTransient<IGridEditorViewModel<Box>,BoxGridEditorViewModel>();
             services.AddTransient<IssueSubmitterDialogViewModel>();
             services.AddTransient<IGridEditorViewModel<ProductCategory>,CategoriesGridEditorViewModel>();
+            services.AddTransient<InventoryAdjustmentsPage>();
+            services.AddTransient<InventoryAdjustmentsPageViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

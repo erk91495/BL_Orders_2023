@@ -17,6 +17,28 @@
         <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
     </Page.Resources>
     <RelativePanel>
+
+
+        <CommandBar
+                x:Name="CommandBar"
+                HorizontalAlignment="Stretch"
+                Background="Transparent"
+                DefaultLabelPosition="Right"
+                RelativePanel.AlignTopWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True">
+            <AppBarButton Icon="More">
+                <AppBarButton.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Text="Adjust Inventory" Click="AdjustInventoryFlyout_Click" >
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE9D5;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+
         <muxc:ProgressBar
                   x:Name="progressBar"
                   HorizontalAlignment="Stretch"
@@ -31,38 +53,20 @@
 
         <sf:SfDataGrid x:Name="InventoryGrid"
                        ItemsSource="{x:Bind ViewModel.Inventory, Mode=TwoWay}"
-                       SourceType="models:InventoryTotalItem"
                        RelativePanel.Below="progressBar"
                        GridLinesVisibility="Both"
-                       IsReadOnly="False"
-                       AutoGenerateColumns="False"
+                       IsReadOnly="True"
+                       AutoGenerateColumns="True"
                        RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.Above="ButtonStack"
                        SelectionUnit="Row"
                        EditTrigger="OnTap"
                        EditorSelectionBehavior="SelectAll"
                        ColumnWidthMode="AutoWithLastColumnFill"
-                       AllowEditing="True"
-                       AllowDeleting="False"
-                       DataValidationMode="InView"
-                       CurrentCellValidating="InventoryGrid_CurrentCellValidating"
-                       CurrentCellValidated="InventoryGrid_CurrentCellValidated">
+                       AllowEditing="False">
 
             <sf:SfDataGrid.Columns>
-                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" AllowEditing="False"/>
-                <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" AllowEditing="False"/>
-                <sf:GridNumericColumn HeaderText="Before Adjustments" MappingName="Quantity" AllowEditing="False" TextAlignment="Center"/>
-                <sf:GridNumericColumn HeaderText="Manual Adjustments" MappingName="ManualAdjustments" AllowEditing="False" TextAlignment="Center" ColumnWidthMode="Auto"/>
-                <sf:GridUnboundColumn MappingName="Total" Expression="Total+(int)LastAdjustment" AllowEditing="False"/>
-                <sf:GridTextColumn HeaderText="Adjustment" MappingName="LastAdjustment" AllowEditing="True" TextAlignment="Center"/>
+
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
-        <StackPanel x:Name="ButtonStack" 
-                Orientation="Horizontal" 
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignBottomWithPanel="True">
-            <Button x:Name="btn_Cancel" Content="Cancel" Click="btn_Cancel_Click"/>
-            <Button x:Name="btn_Save" Content="Save" Click="btn_Save_Click"/>
-        </StackPanel>
     </RelativePanel>
 </Page>

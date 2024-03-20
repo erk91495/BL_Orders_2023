@@ -79,7 +79,31 @@ internal class SqlInventoryTable : IInventoryTable
             return await _db.LiveInventoryItems.ToListAsync();
         }
     }
-    
+
+    public IEnumerable<LiveInventoryItem> GetUnshippedInventoryItems(IEnumerable<int> ids = null)
+    {
+        if (ids != null)
+        {
+            return _db.LiveInventoryItems.Where(i => !i.RemovedFromInventory && ids.Contains(i.ProductID)).ToList();
+        }
+        else
+        {
+            return _db.LiveInventoryItems.Where(i => !i.RemovedFromInventory).ToList();
+        }
+    }
+
+    public async Task<IEnumerable<LiveInventoryItem>> GetUnshippedInventoryItemsAsync(IEnumerable<int> ids = null)
+    {
+        if (ids != null)
+        {
+            return await _db.LiveInventoryItems.Where(i => !i.RemovedFromInventory && ids.Contains(i.ProductID)).ToListAsync();
+        }
+        else
+        {
+            return await _db.LiveInventoryItems.Where(i => !i.RemovedFromInventory).ToListAsync();
+        }
+    }
+
     public IEnumerable<InventoryTotalItem> GetInventoryTotalItems(IEnumerable<int> ids = null) 
     {
         if(ids != null)

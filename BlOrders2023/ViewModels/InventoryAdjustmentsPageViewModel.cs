@@ -4,19 +4,19 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BlOrders2023.Contracts.ViewModels;
 using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
 
 namespace BlOrders2023.ViewModels;
-public class InventoryPageViewModel : ObservableRecipient
+public class InventoryAdjustmentsPageViewModel : ViewModelBase
 {
     #region Properties
-    public ObservableCollection<LiveInventoryItem> Inventory
+    public ObservableCollection<InventoryTotalItem> Inventory
     {
-        get => _inventory; 
+        get => _inventory;
         set => SetProperty(ref _inventory, value);
     }
     /// <summary>
@@ -36,12 +36,12 @@ public class InventoryPageViewModel : ObservableRecipient
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private bool _isLoading;
-    private ObservableCollection<LiveInventoryItem> _inventory = new();
+    private ObservableCollection<InventoryTotalItem> _inventory = new();
     private IBLDatabase _db;
     #endregion Fields
 
     #region Constructors
-    public InventoryPageViewModel()
+    public InventoryAdjustmentsPageViewModel()
     {
         _db = App.GetNewDatabase();
         _inventory = new();
@@ -62,7 +62,7 @@ public class InventoryPageViewModel : ObservableRecipient
 
             var table = _db.Inventory;
 
-            var inventory = await Task.Run(() => table.GetUnshippedInventoryItemsAsync());
+            var inventory = await Task.Run(() => table.GetInventoryTotalItemsAsync());
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 Inventory = new(inventory);
@@ -79,7 +79,7 @@ public class InventoryPageViewModel : ObservableRecipient
             });
 
             var table = _db.Inventory;
-            var inventory = await Task.Run(() => table.GetUnshippedInventoryItemsAsync());
+            var inventory = await Task.Run(() => table.GetInventoryTotalItemsAsync());
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
@@ -97,7 +97,37 @@ public class InventoryPageViewModel : ObservableRecipient
 
     internal async Task DeleteItem(Product p)
     {
-        
+
+    }
+
+    private void CalculateAdjustments()
+    {
+        foreach (var item in Inventory)
+        {
+            item.ManualAdjustments += item.LastAdjustment;
+        }
+    }
+
+    internal void ClearAdjustmentQuantity()
+    {
+        foreach (var item in Inventory)
+        {
+            item.LastAdjustment = 0;
+        }
+    }
+
+    internal async Task SaveAllAsync()
+    {
+        ///CalculateAdjustments();
+        foreach (var item in Inventory)
+        {
+            await _db.Inventory.AdjustInventoryAsync(item);
+        }
+    }
+
+    internal async Task SaveAsync(InventoryTotalItem item)
+    {
+        await _db.Inventory.AdjustInventoryAsync(item);
     }
     #endregion Methods
 
