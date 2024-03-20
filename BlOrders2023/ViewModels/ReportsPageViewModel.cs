@@ -108,4 +108,5 @@ public class ReportsPageViewModel : ObservableRecipient
     internal IEnumerable<ProductCategory> GetProductCategories() => App.GetNewDatabase().ProductCategories.Get();
     internal IEnumerable<ProductCategory> GetTotalsCategories() => App.GetNewDatabase().ProductCategories.GetForReports();
     internal IEnumerable<InventoryTotalItem> GetInventoryTotals() => App.GetNewDatabase().Inventory.GetInventoryTotalItems();
+    internal Dictionary<int, int> GetAllocatedNotReceivedTotals() => App.GetNewDatabase().Inventory.GetAllocatedNotReceivedTotals();
 }

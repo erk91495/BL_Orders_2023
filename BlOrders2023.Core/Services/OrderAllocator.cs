@@ -60,7 +60,7 @@ public class OrderAllocator : IAllocatorService
         //_inventory = await inventoryTask;
         //_allocationGroups = await allocationGroupsTask;
 
-        _totalNotAllocated = await _db.Allocation.GetAllocatedNotReceivedTotals();
+        _totalNotAllocated = await _db.Inventory.GetAllocatedNotReceivedTotalsAsync();
         var temporder = await _db.Orders.GetAsync(_config.IDs);
         _orders = temporder.ToList();
         _inventory = await _db.Inventory.GetInventoryTotalItemsAsync();

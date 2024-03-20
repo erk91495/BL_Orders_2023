@@ -24,4 +24,7 @@ public interface IInventoryTable
     public bool DeleteLiveInventoryItem(LiveInventoryItem item);
     public Task<bool> DeleteLiveInventoryItemAsync(LiveInventoryItem item);
     public Task<LiveInventoryItem?> FindLiveInventoryItem(ShippingItem shippingItem);
+    public Task<Dictionary<int, int>> GetAllocatedNotReceivedTotalsAsync();
+    public Dictionary<int, int> GetAllocatedNotReceivedTotals();
+
 }

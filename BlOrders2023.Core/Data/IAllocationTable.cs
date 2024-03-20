@@ -12,5 +12,4 @@ public interface IAllocationTable
     public Task<IEnumerable<int>> GetAllocatableOrderIDsAsync(DateTimeOffset item1, DateTimeOffset item2, AllocatorMode mode);
     IEnumerable<AllocationGroup> GetAllocationGroups();
     public Task<IEnumerable<AllocationGroup>> GetAllocationGroupsAsync();
-    public Task<Dictionary<int, int>> GetAllocatedNotReceivedTotals();
 }

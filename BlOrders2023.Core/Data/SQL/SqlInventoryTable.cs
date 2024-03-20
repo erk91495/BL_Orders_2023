@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BlOrders2023.Models;
+using BlOrders2023.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlOrders2023.Core.Data.SQL;
@@ -178,6 +179,38 @@ internal class SqlInventoryTable : IInventoryTable
     {
         var res = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_InLiveInventory] {shippingItem.ProductID}, {shippingItem.PackDate}, {shippingItem.PackageSerialNumber}").ToListAsync();
         return res.FirstOrDefault();
+    }
+
+    public async Task<Dictionary<int, int>> GetAllocatedNotReceivedTotalsAsync()
+    {
+        var result = new Dictionary<int, int>();
+        var items = await _db.Orders
+                        .Where(o => o.OrderStatus < OrderStatus.Filled && o.Allocated == true)
+                        .SelectMany(o => o.Items)
+                        .GroupBy(i => i.ProductID)
+            .ToListAsync();
+        foreach (var group in items)
+        {
+            result.Add(group.Key, group.Sum(o => o.QuanAllocated - o.QuantityReceived > 0 ? o.QuanAllocated - o.QuantityReceived : 0));
+        }
+        return result;
+    
+    }
+
+    public Dictionary<int, int> GetAllocatedNotReceivedTotals()
+    {
+        var result = new Dictionary<int, int>();
+        var items = _db.Orders
+                        .Where(o => o.OrderStatus < OrderStatus.Filled && o.Allocated == true)
+                        .SelectMany(o => o.Items)
+                        .GroupBy(i => i.ProductID)
+            .ToList();
+        foreach (var group in items)
+        {
+            result.Add(group.Key, group.Sum(o => o.QuanAllocated - o.QuantityReceived > 0 ? o.QuanAllocated - o.QuantityReceived : 0));
+        }
+        return result;
+
     }
     #endregion Methods
 }
