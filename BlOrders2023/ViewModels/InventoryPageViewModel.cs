@@ -112,6 +112,11 @@ public class InventoryPageViewModel : ObservableRecipient
             throw new DuplicateBarcodeException();
         }
     }
+
+    internal async Task ZeroLiveInventoryAsync()
+    {
+        await _db.Inventory.ZeroLiveInventoryAsync();
+    }
     #endregion Methods
 
 }

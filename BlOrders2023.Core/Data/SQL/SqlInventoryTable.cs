@@ -247,5 +247,10 @@ internal class SqlInventoryTable : IInventoryTable
         var item = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_DuplicateInventoryScanlineCheck] {scanline}").ToListAsync();
         return item.FirstOrDefault() != null;
     }
+
+    public async Task ZeroLiveInventoryAsync()
+    {
+        await _db.Database.ExecuteSqlAsync($"[dbo].[usp_ZeroLiveInventory]");
+    }
     #endregion Methods
 }

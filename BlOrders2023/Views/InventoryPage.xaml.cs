@@ -44,6 +44,23 @@ public sealed partial class InventoryPage : Page
         Scanline.IsEnabled = true;
     }
 
+    private async void ZeroInventoryFlyout_Click(object sender, RoutedEventArgs e)
+    {
+        ContentDialog contentDialog = new ContentDialog()
+        {
+            XamlRoot = XamlRoot, 
+            Title = "Warning",
+            Content = "This will remove ALL items from inventory and zero all adjustments. Are you sure you want to continue?",
+            PrimaryButtonText = "Continue",
+            CloseButtonText = "Cancel",
+        };
+        var res = await contentDialog.ShowAsync();
+        if(res == ContentDialogResult.Primary)
+        {
+            await ViewModel.ZeroLiveInventoryAsync();
+        }
+    }
+    
     private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
     {
         if (sender is TextBox box)
@@ -103,7 +120,6 @@ public sealed partial class InventoryPage : Page
             }
         }
     }
-
     private async Task ShowLockedoutDialog(string title, string content)
     {
         ContentDialog d = new()

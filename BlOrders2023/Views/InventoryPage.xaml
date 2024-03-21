@@ -40,8 +40,8 @@
                                 <FontIcon Glyph="&#xF0E4;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Icon="Add" Text="Enable Scanning" Click="EnableScanningFlyout_Click" >
-                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Icon="Add" Text="Enable Scanning" Click="EnableScanningFlyout_Click" />
+                        <MenuFlyoutItem Icon="Delete" Text="Zero Out Inventory" Click="ZeroInventoryFlyout_Click" />
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
