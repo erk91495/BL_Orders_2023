@@ -47,7 +47,7 @@
                                        IsReadOnly="True">
                         <sf:SfDataGrid.Columns>
                             <sf:GridTextColumn MappingName="ProductID" HeaderText="ID" IsReadOnly="True"/>
-                            <sf:GridTextColumn MappingName="QuantityOnHand" HeaderText="On Hand" IsReadOnly="True"/>
+                            <sf:GridUnboundColumn MappingName="Unbound" Expression="Total" HeaderText="Total" IsReadOnly="True"/>
                         </sf:SfDataGrid.Columns>
 
                     </sf:SfDataGrid>

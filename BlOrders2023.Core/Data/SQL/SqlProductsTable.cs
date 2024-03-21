@@ -182,7 +182,7 @@ internal class SqlProductsTable : IProductsTable
 
     public async Task<bool> IdExists(int productID)
     {
-        var result = await _db.Products.FromSql<Product>($"[dbo].[usp_ProductIDExists] {productID}").AsNoTrackingWithIdentityResolution().ToListAsync();
+        var result = await _db.Products.FromSql($"[dbo].[usp_ProductIDExists] {productID}").AsNoTrackingWithIdentityResolution().ToListAsync();
         if (result.IsNullOrEmpty()){
             return false;
         }

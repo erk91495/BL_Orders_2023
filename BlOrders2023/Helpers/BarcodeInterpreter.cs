@@ -60,6 +60,60 @@ public static class BarcodeInterpreter
         }
     }
 
+    /// <summary>
+    /// Populates the properties of the given shipping item with the data from the given barcode
+    /// </summary>
+    /// <param name="barcode">The barcode of the product to be converted</param>
+    /// <param name="item">The item to parse the barcode into</param>
+    /// <returns>true if the barcode was succesfully parsed</returns>
+    /// <exception cref="ProductNotFoundException">If the parsed barcodes product is not in the database</exception>
+    public static void ParseBarcode(ref LiveInventoryItem item)
+    {
+        var isValidBarcodeType = true;
+        IBarcode? barcode = null;
+
+        if (item.Scanline == null)
+        {
+            throw new InvalidBarcodeExcption("Scanline was null");
+        }
+
+        try
+        {
+            barcode = new GTIN14Barcode(item.Scanline);
+        }
+        catch (InvalidBarcodeExcption)
+        {
+            //not a GS1 barcode try again
+            try
+            {
+                barcode = new GS1_128Barcode(item.Scanline);
+            }
+            catch (InvalidBarcodeExcption)
+            {
+                //not a GS1 barcode try again
+                try
+                {
+                    barcode = new Code128Barcode(item.Scanline);
+                }
+                catch (InvalidBarcodeExcption)
+                {
+                    isValidBarcodeType = false;
+                }
+            }
+        }
+
+        if (!isValidBarcodeType || barcode == null)
+        {
+            throw new UnknownBarcodeFormatException("The _scanline given did not match a given barcode format");
+        }
+        else
+        {
+            barcode.PopuplateProperties(ref item);
+            //item.Barcode = barcode;
+        }
+    }
+
+
     public static bool UpdateBarcode(ref ShippingItem shippingItem)
     {
         var isValidBarcodeType = true;

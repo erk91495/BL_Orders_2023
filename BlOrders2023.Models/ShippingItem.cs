@@ -27,6 +27,7 @@ public class ShippingItem : ObservableObject
     private DateTime? packDate;
     private Product product = null!;
     private IBarcode? barcode;
+    private int? liveInventoryID;
     #endregion Fields
 
     #region Properties
@@ -98,6 +99,15 @@ public class ShippingItem : ObservableObject
         get => product; 
         set => SetProperty(ref product, value);
     }
+    public int? LiveInventoryID
+    {
+        get => liveInventoryID;
+        set => SetProperty( ref liveInventoryID, value);
+    }
+
+    [ForeignKey(nameof(LiveInventoryID))]
+    public virtual LiveInventoryItem? LiveInventoryItem { get; set; }
+
     [NotMapped]
     public IBarcode? Barcode
     {
@@ -119,7 +129,8 @@ public class ShippingItem : ObservableObject
                Scanline == item.Scanline &&
                PackageSerialNumber == item.PackageSerialNumber &&
                ScanDate == item.ScanDate &&
-               PackDate == item.PackDate;
+               PackDate == item.PackDate &&
+               LiveInventoryID == item.LiveInventoryID;
                
     }
 
@@ -136,6 +147,7 @@ public class ShippingItem : ObservableObject
         hash.Add(PackageSerialNumber);
         hash.Add(ScanDate);
         hash.Add(PackDate);
+        hash.Add(LiveInventoryID);
         return hash.ToHashCode();
     }
     #endregion Methods

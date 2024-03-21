@@ -5,8 +5,6 @@ using System.Text.RegularExpressions;
 using BlOrders2023.Models.Helpers;
 namespace BlOrders2023.Models;
 
-
-
 public class GS1_128Barcode : IBarcode
 {
     public const char FNC1 = (char)0x1D; //Group Seperator char
@@ -63,6 +61,24 @@ public class GS1_128Barcode : IBarcode
         foreach(var ai in _AIValues.Keys) 
         {
             if(!PopulateProperty(ai, _AIValues[ai], ref item))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Populates the given ShippingItem's Properties from the original scanline values 
+    /// DOES NOT UPDATE ShippingItemm.Scanline
+    /// </summary>
+    /// <param name="item">The _shipping item to update</param>
+    /// <returns>true if all AI's were successfully coonverted to properties</returns>
+    public override bool PopuplateProperties(ref LiveInventoryItem item)
+    {
+        foreach (var ai in _AIValues.Keys)
+        {
+            if (!PopulateProperty(ai, _AIValues[ai], ref item))
             {
                 return false;
             }
@@ -287,6 +303,77 @@ public class GS1_128Barcode : IBarcode
                 var multiplier = (float)Math.Pow(10, power);
                 netWt /= multiplier;
                 item.PickWeight = netWt;
+                success = true;
+            }
+        }
+        return success;
+    }
+
+    /// <summary>
+    /// Populates a ShippingItem property with the given ai and data
+    /// </summary>
+    /// <param name="ai">The AI to populate</param>
+    /// <param name="data">The data for the given AI</param>
+    /// <param name="item">The ShippingItem to populate</param>
+    /// <returns>True if the population was successful</returns>
+    private bool PopulateProperty(string ai, string data, ref LiveInventoryItem item)
+    {
+        var success = false;
+        //Is the Ai Supported
+        if (IsSupportedAI(ai))
+        {
+            //Serial Shipping Container Code (SSCC)
+            if (ai.Equals("00"))
+            {
+                throw new NotImplementedException();
+            }
+            //Global Trade Item Number(GTIN)
+            else if (ai.Equals("01"))
+            {
+                // Product code is 5 digits
+                var prodCode = int.Parse(data[8..^1]);
+                item.ProductID = prodCode;
+                success = true;
+            }
+            //Global Trade Item Number (GTIN) of contained trade _items
+            else if (ai.Equals("02"))
+            {
+                throw new NotImplementedException();
+            }
+            //Batch or lot number
+            else if (ai.Equals("10"))
+            {
+                item.LotCode = data;
+                success = true;
+            }
+            //ProductionDate data (YYMMDD)
+            else if (ai.Equals("11"))
+            {
+                item.PackDate = DateTime.ParseExact(data, "yyMMdd", null);
+                success = true;
+            }
+            //Packaging data (YYMMDD)
+            else if (ai.Equals("13"))
+            {
+                item.PackDate = DateTime.ParseExact(data, "yyMMdd", null);
+                success = true;
+            }
+            //Serial Number
+            else if (ai.Equals("21"))
+            {
+                //TODO: GS1 Supports non numeric characters
+                item.SerialNumber = data;
+                success = true;
+            }
+            //Net Weight in lbs. 
+            else if (ai.StartsWith("320"))
+            {
+                var netWt = float.Parse(data);
+                //The fourth digit of this AI indicates the number of decimal places (see GS1 General Specifications for details).
+                double power = float.Parse(ai.Substring(ai.Length - 2));
+                var multiplier = (float)Math.Pow(10, power);
+                netWt /= multiplier;
+                item.NetWeight = netWt;
                 success = true;
             }
         }
