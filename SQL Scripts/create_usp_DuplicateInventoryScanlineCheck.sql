@@ -1,3 +1,4 @@
+use BL_Enterprise
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -14,16 +15,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
+-- Author:		<Eric Landes>
+-- Create date: <11/01/2023>
+-- Description:	<Checks the LiveInventory Table for a scanline matching @param scanline>
 -- =============================================
-CREATE PROCEDURE usp_InLiveInventory
+CREATE PROCEDURE [dbo].[usp_DuplicateInventoryScanlineCheck]
 	-- Add the parameters for the stored procedure here
-	@ProductID int,
-	@PackDate DATETIME, 
-	@SerialNumber NVARCHAR(20),
-	@Scanline NVARCHAR(70)
+	@scanline nvarchar(70) 
+
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -31,9 +30,6 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT *
-  FROM [dbo].[tbl_LiveInventory]
-  WHERE (ProductID = @ProductID AND PackDate = @PackDate AND SerialNumber LIKE @SerialNumber) OR Scanline = @Scanline
-
+	SELECT * From tbl_LiveInventory WHERE @scanline = Scanline
 END
 GO

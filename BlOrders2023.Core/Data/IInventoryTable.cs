@@ -29,4 +29,5 @@ public interface IInventoryTable
     public Task<Dictionary<int, int>> GetAllocatedNotReceivedTotalsAsync();
     public Dictionary<int, int> GetAllocatedNotReceivedTotals();
     public Task<IEnumerable<InventoryAuditItem>> GetInventoryAuditLogAsync();
+    public Task<bool> DuplicateInventoryCheck(string scanline);
 }

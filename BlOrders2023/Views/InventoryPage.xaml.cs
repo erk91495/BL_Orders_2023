@@ -1,35 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Drawing.Printing;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Windows.Forms;
+using System.Diagnostics;
+using System.Media;
 using BlOrders2023.Contracts.Services;
+using BlOrders2023.Exceptions;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
-using BlOrders2023.Reporting;
-using BlOrders2023.Services;
-using BlOrders2023.UserControls;
 using BlOrders2023.ViewModels;
-using CommunityToolkit.WinUI.UI.Controls;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Syncfusion.UI.Xaml.DataGrid;
-using Syncfusion.UI.Xaml.Grids.ScrollAxis;
-using Syncfusion.XPS;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -59,5 +37,90 @@ public sealed partial class InventoryPage : Page
     {
         var s = App.GetService<INavigationService>();
         s.NavigateTo(typeof(InventoryAuditLogPageViewModel).FullName!, null);
+    }
+
+    private void EnableScanningFlyout_Click(object sender, RoutedEventArgs e)
+    {
+        Scanline.IsEnabled = true;
+    }
+
+    private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
+    {
+        if (sender is TextBox box)
+        {
+            var scanlineText = box.Text;
+            if (scanlineText.Contains('\r'))
+            {
+                var scanline = scanlineText.Split('\r').First().Trim();
+                box.Text = box.Text[(scanline.Length + 1)..];
+
+                    LiveInventoryItem item = new()
+                    {
+                        ScanDate = DateTime.Now,
+                        Scanline = scanline,                        
+                    };
+                    try
+                    {
+                        //interpreter has no concept of dbcontext and cannot track items
+                        BarcodeInterpreter.ParseBarcode(ref item);
+                    }
+                    catch (ProductNotFoundException e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        var prodCode = e.Data["ProductID"];
+                        App.LogWarningMessage($"Product ID: {prodCode} was not found in the database\r\n");
+                        await ShowLockedoutDialog("Product Not Found",
+                            $"Product ID: {prodCode} was not found in the database\r\n");
+                    }
+                    catch (InvalidBarcodeExcption e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        var ai = e.Data["AI"];
+                        var s = e.Data["Scanline"];
+                        var location = e.Data["Location"];
+                        App.LogWarningMessage($"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+                        await ShowLockedoutDialog(e.Message,
+                            $"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+                    }
+                    catch (UnknownBarcodeFormatException e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        App.LogWarningMessage($"{e.Message}");
+                        await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
+                    }
+
+                try
+                {
+                    await ViewModel.AddInventoryItemAsync(item);
+                }
+                catch (DuplicateBarcodeException e) 
+                {
+                    var s = e.Data["Scanline"];
+                    await ShowLockedoutDialog("Duplicate Scanline", $"Duplicate Scanline {s}\r\n");
+                }
+                
+
+            }
+        }
+    }
+
+    private async Task ShowLockedoutDialog(string title, string content)
+    {
+        ContentDialog d = new()
+        {
+            XamlRoot = XamlRoot,
+            Title = title,
+            Content = content,
+            SecondaryButtonText = "Continue",
+            DefaultButton = ContentDialogButton.None,
+        };
+        d.PreviewKeyDown += LockOutKeyPresses;
+        SystemSounds.Exclamation.Play();
+        await d.ShowAsync();
+    }
+
+    private void LockOutKeyPresses(object sender, KeyRoutedEventArgs e)
+    {
+        e.Handled = true;
     }
 }

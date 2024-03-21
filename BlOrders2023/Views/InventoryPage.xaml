@@ -9,6 +9,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:vm="using:BlOrders2023.ViewModels.Converters"
+    xmlns:controls="using:BlOrders2023.UserControls"
     xmlns:models="using:BlOrders2023.Models" 
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -39,6 +40,8 @@
                                 <FontIcon Glyph="&#xF0E4;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem Icon="Add" Text="Enable Scanning" Click="EnableScanningFlyout_Click" >
+                        </MenuFlyoutItem>
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
@@ -56,6 +59,17 @@
                   RelativePanel.AlignLeftWithPanel="True"
                   RelativePanel.Below="CommandBar"/>
 
+        <controls:BarcodeInputTextBox x:Name="Scanline"
+                                      PlaceholderText="Scan to add a product..."
+                                      RelativePanel.AlignTopWith="CommandBar"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      Margin="10,10,0,0"
+                                      MinWidth="300"
+                                      AcceptsReturn="True"
+                                      TextWrapping="NoWrap"
+                                      TextChanged="Scanline_TextChanged"
+                                      IsEnabled="False"/>
+        
         <sf:SfDataGrid x:Name="InventoryGrid"
                        ItemsSource="{x:Bind ViewModel.Inventory, Mode=TwoWay}"
                        RelativePanel.Below="progressBar"
@@ -75,7 +89,7 @@
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="ID" MappingName="ID"/>
                 <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID"/>
-                <sf:GridDateColumn HeaderText="Pack Date" MappingName="PackDate"/>
+                <sf:GridDateColumn HeaderText="Pack Date" MappingName="PackDate" AllowNull="True" PlaceholderText=""/>
                 <sf:GridTextColumn HeaderText="Lot Code" MappingName="LotCode"/>
                 <sf:GridNumericColumn HeaderText="Net Weight" MappingName="NetWeight" DisplayNumberFormat="N2"/>
                 <sf:GridTextColumn HeaderText="Serial Number" MappingName="SerialNumber"/>

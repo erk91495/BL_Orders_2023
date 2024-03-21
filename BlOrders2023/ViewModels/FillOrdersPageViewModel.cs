@@ -215,7 +215,6 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
             _order?.ShippingItems.Add(item);
             IncremantOrderedItem(item);
             OnPropertyChanged(nameof(TotalReceived));
-            //await SaveOrderAsync();
         }
         finally
         {
@@ -228,7 +227,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
     {
         if(item.LiveInventoryID != null)
         {
-            item.LiveInventoryItem.RemovedFromInventory = false;
+            item.LiveInventoryItem!.RemovedFromInventory = false;
             item.LiveInventoryItem = null;
             item.LiveInventoryID = null;
         }

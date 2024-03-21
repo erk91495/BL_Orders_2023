@@ -45,4 +45,17 @@ public class GTIN14Barcode : IBarcode
         }
         return true;
     }
+
+    public override bool PopuplateProperties(ref LiveInventoryItem item)
+    {
+        try
+        {
+            item.ProductID = int.Parse(_scanline[8..^1]);
+        }
+        catch (Exception e)
+        {
+            throw new InvalidBarcodeExcption(e.Message);
+        }
+        return true;
+    }
 }

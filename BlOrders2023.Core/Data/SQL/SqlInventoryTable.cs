@@ -201,7 +201,7 @@ internal class SqlInventoryTable : IInventoryTable
 
     public async Task<LiveInventoryItem?> FindLiveInventoryItem(ShippingItem shippingItem)
     {
-        var res = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_InLiveInventory] {shippingItem.ProductID}, {shippingItem.PackDate}, {shippingItem.PackageSerialNumber}").ToListAsync();
+        var res = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_InLiveInventory] {shippingItem.ProductID}, {shippingItem.PackDate}, {shippingItem.PackageSerialNumber}, {shippingItem.Scanline}").ToListAsync();
         return res.FirstOrDefault();
     }
 
@@ -240,6 +240,12 @@ internal class SqlInventoryTable : IInventoryTable
     public async Task<IEnumerable<InventoryAuditItem>> GetInventoryAuditLogAsync()
     {
         return await _db.InventoryAuditItems.ToListAsync();
+    }
+
+    public async Task<bool> DuplicateInventoryCheck(string scanline)
+    {
+        var item = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_DuplicateInventoryScanlineCheck] {scanline}").ToListAsync();
+        return item.FirstOrDefault() != null;
     }
     #endregion Methods
 }

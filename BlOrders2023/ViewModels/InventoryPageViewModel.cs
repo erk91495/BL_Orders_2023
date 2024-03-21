@@ -9,6 +9,7 @@ using BlOrders2023.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
+using BlOrders2023.Exceptions;
 
 namespace BlOrders2023.ViewModels;
 public class InventoryPageViewModel : ObservableRecipient
@@ -90,14 +91,26 @@ public class InventoryPageViewModel : ObservableRecipient
         }
     }
 
-    internal async void SaveItem(InventoryAdjustmentItem p)
+    internal async void SaveItem(LiveInventoryItem p)
     {
-        await _db.Inventory.UpsertAdjustmentAsync(p);
+        await _db.Inventory.InsertLiveInventoryItemAsync(p);
     }
 
     internal async Task DeleteItem(Product p)
     {
         
+    }
+   
+    internal async Task AddInventoryItemAsync(LiveInventoryItem item)
+    {
+        if(!await _db.Inventory.DuplicateInventoryCheck(item.Scanline))
+        {
+            await _db.Inventory.InsertLiveInventoryItemAsync(item);
+        }
+        else
+        {
+            throw new DuplicateBarcodeException();
+        }
     }
     #endregion Methods
 

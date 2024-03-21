@@ -235,7 +235,6 @@ public sealed partial class FillOrdersPage : Page
         d.PreviewKeyDown += LockOutKeyPresses;
         SystemSounds.Exclamation.Play();
         await d.ShowAsync();
-
     }
 
     private void LockOutKeyPresses(object sender, KeyRoutedEventArgs e)
