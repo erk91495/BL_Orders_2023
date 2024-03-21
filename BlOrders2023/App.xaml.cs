@@ -144,6 +144,8 @@ public partial class App : Application
             services.AddTransient<IGridEditorViewModel<ProductCategory>,CategoriesGridEditorViewModel>();
             services.AddTransient<InventoryAdjustmentsPage>();
             services.AddTransient<InventoryAdjustmentsPageViewModel>();
+            services.AddTransient<InventoryAuditLogPage>();
+            services.AddTransient<InventoryAuditLogPageViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

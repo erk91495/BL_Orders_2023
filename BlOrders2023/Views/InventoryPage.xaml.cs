@@ -54,4 +54,10 @@ public sealed partial class InventoryPage : Page
         var s = App.GetService<INavigationService>();
         s.NavigateTo(typeof(InventoryAdjustmentsPageViewModel).FullName!, null);
     }
+
+    private void InventoryAuditFlyout_Click(object sender, RoutedEventArgs e)
+    {
+        var s = App.GetService<INavigationService>();
+        s.NavigateTo(typeof(InventoryAuditLogPageViewModel).FullName!, null);
+    }
 }

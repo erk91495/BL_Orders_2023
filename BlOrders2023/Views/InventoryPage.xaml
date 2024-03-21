@@ -34,7 +34,12 @@
                                     <FontIcon Glyph="&#xE9D5;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                        </MenuFlyout>
+                        <MenuFlyoutItem Text="Audit Log" Click="InventoryAuditFlyout_Click" >
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF0E4;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
         </CommandBar>
@@ -49,15 +54,18 @@
                   Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.AlignLeftWithPanel="True"
-                  RelativePanel.AlignTopWithPanel="True"/>
+                  RelativePanel.Below="CommandBar"/>
 
         <sf:SfDataGrid x:Name="InventoryGrid"
                        ItemsSource="{x:Bind ViewModel.Inventory, Mode=TwoWay}"
                        RelativePanel.Below="progressBar"
+                       RelativePanel.AlignRightWithPanel="True"
+                       RelativePanel.AlignLeftWithPanel="True"
                        GridLinesVisibility="Both"
                        IsReadOnly="True"
-                       AutoGenerateColumns="True"
-                       RelativePanel.AlignLeftWithPanel="True"
+                       AllowSorting="True"
+                       AllowFiltering="True"
+                       AutoGenerateColumns="False"
                        SelectionUnit="Row"
                        EditTrigger="OnTap"
                        EditorSelectionBehavior="SelectAll"
@@ -65,7 +73,14 @@
                        AllowEditing="False">
 
             <sf:SfDataGrid.Columns>
-
+                <sf:GridTextColumn HeaderText="ID" MappingName="ID"/>
+                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID"/>
+                <sf:GridDateColumn HeaderText="Pack Date" MappingName="PackDate"/>
+                <sf:GridTextColumn HeaderText="Lot Code" MappingName="LotCode"/>
+                <sf:GridNumericColumn HeaderText="Net Weight" MappingName="NetWeight" DisplayNumberFormat="N2"/>
+                <sf:GridTextColumn HeaderText="Serial Number" MappingName="SerialNumber"/>
+                <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline"/>
+                <sf:GridDateColumn HeaderText="Scan Date" MappingName="ScanDate"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
     </RelativePanel>
