@@ -334,7 +334,6 @@ internal class SqlOrderTable : IOrderTable
         {
             _db.Update(order);
         }
-
         return await _db.SaveChangesAsync();
     }
 
@@ -342,6 +341,5 @@ internal class SqlOrderTable : IOrderTable
     {
         return _db.Orders.Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate && o.Customer.State != States.OH.ToString()).ToList();
     }
-
     #endregion Methods
 }

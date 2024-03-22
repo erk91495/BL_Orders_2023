@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlOrders2023.Core.Data.SQL;

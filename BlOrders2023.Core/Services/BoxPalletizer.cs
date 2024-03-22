@@ -39,14 +39,14 @@ public class BoxPalletizer : PalletizerBase
         }
         else
         {
-            return GenreateMixedPallets();
+            return GenerateMixedPallets();
         }
 
 
     
     }
 
-    private IEnumerable<Pallet> GenreateMixedPallets()
+    private IEnumerable<Pallet> GenerateMixedPallets()
     {
         Dictionary<Product, int> remainder = new();
 

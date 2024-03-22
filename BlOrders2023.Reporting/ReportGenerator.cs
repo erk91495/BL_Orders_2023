@@ -166,7 +166,7 @@ public class ReportGenerator
         return filePath;
     }
 
-    public async Task<string> GenerateCurrentInventoryReport(IEnumerable<InventoryItem> inventory)
+    public async Task<string> GenerateCurrentInventoryReport(IEnumerable<InventoryTotalItem> inventory)
     {
         var report = new CurrentInventoryReport(CompanyInfo, inventory);
         var filePath = TempPath + Path.DirectorySeparatorChar + $"CurrentInventory" + "_" + DateTime.Now.ToFileTime() + ".pdf";
@@ -174,9 +174,9 @@ public class ReportGenerator
         return filePath;
     }
 
-    public async Task<string> GenerateInventoryDetailsReport(IEnumerable<InventoryItem> inventory, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    public async Task<string> GenerateInventoryDetailsReport(IEnumerable<InventoryTotalItem> inventory, IEnumerable<Order> orders, Dictionary<int,int> allocatedNotReceived,DateTimeOffset startDate, DateTimeOffset endDate)
     {
-        var report = new InventoryDetailsReport(CompanyInfo, inventory, orders, startDate, endDate);
+        var report = new InventoryDetailsReport(CompanyInfo, inventory, orders, allocatedNotReceived, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + $"InventoryDetails" + "_" + DateTime.Now.ToFileTime() + ".pdf";
         await GernerateReportAsync(report, filePath);
         return filePath;

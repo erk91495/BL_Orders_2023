@@ -9,6 +9,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:vm="using:BlOrders2023.ViewModels.Converters"
+    xmlns:controls="using:BlOrders2023.UserControls"
     xmlns:models="using:BlOrders2023.Models" 
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -17,6 +18,35 @@
         <vm:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
     </Page.Resources>
     <RelativePanel>
+
+
+        <CommandBar
+                x:Name="CommandBar"
+                HorizontalAlignment="Stretch"
+                Background="Transparent"
+                DefaultLabelPosition="Right"
+                RelativePanel.AlignTopWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True">
+            <AppBarButton Icon="More">
+                <AppBarButton.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Text="Adjust Inventory" Click="AdjustInventoryFlyout_Click" >
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE9D5;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Audit Log" Click="InventoryAuditFlyout_Click" >
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF0E4;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Icon="Add" Text="Enable Scanning" Click="EnableScanningFlyout_Click" />
+                        <MenuFlyoutItem Icon="Delete" Text="Zero Out Inventory" Click="ZeroInventoryFlyout_Click" />
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+
         <muxc:ProgressBar
                   x:Name="progressBar"
                   HorizontalAlignment="Stretch"
@@ -27,40 +57,45 @@
                   Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.AlignLeftWithPanel="True"
-                  RelativePanel.AlignTopWithPanel="True"/>
+                  RelativePanel.Below="CommandBar"/>
 
+        <controls:BarcodeInputTextBox x:Name="Scanline"
+                                      PlaceholderText="Scan to add a product..."
+                                      RelativePanel.AlignTopWith="CommandBar"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      Margin="10,10,0,0"
+                                      MinWidth="300"
+                                      AcceptsReturn="True"
+                                      TextWrapping="NoWrap"
+                                      TextChanged="Scanline_TextChanged"
+                                      IsEnabled="False"/>
+        
         <sf:SfDataGrid x:Name="InventoryGrid"
                        ItemsSource="{x:Bind ViewModel.Inventory, Mode=TwoWay}"
-                       SourceType="models:InventoryItem"
                        RelativePanel.Below="progressBar"
-                       GridLinesVisibility="Both"
-                       IsReadOnly="False"
-                       AutoGenerateColumns="False"
+                       RelativePanel.AlignRightWithPanel="True"
                        RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.Above="ButtonStack"
+                       GridLinesVisibility="Both"
+                       IsReadOnly="True"
+                       AllowSorting="True"
+                       AllowFiltering="True"
+                       AutoGenerateColumns="False"
                        SelectionUnit="Row"
                        EditTrigger="OnTap"
                        EditorSelectionBehavior="SelectAll"
                        ColumnWidthMode="AutoWithLastColumnFill"
-                       AllowEditing="True"
-                       AllowDeleting="False"
-                       DataValidationMode="InView"
-                       CurrentCellValidating="InventoryGrid_CurrentCellValidating"
-                       CurrentCellValidated="InventoryGrid_CurrentCellValidated">
+                       AllowEditing="False">
 
             <sf:SfDataGrid.Columns>
-                <sf:GridNumericColumn MappingName="ProductID" IsReadOnly="False"/>
-                <sf:GridTextColumn MappingName="ProductName" AllowEditing="False"/>
-                <sf:GridNumericColumn MappingName="QuantityOnHand" AllowEditing="False" TextAlignment="Center"/>
-                <sf:GridTextColumn MappingName="AdjustmentQuantity" AllowEditing="True" TextAlignment="Center" ColumnWidthMode="Auto"/>
+                <sf:GridTextColumn HeaderText="ID" MappingName="ID"/>
+                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID"/>
+                <sf:GridDateColumn HeaderText="Pack Date" MappingName="PackDate" AllowNull="True" PlaceholderText=""/>
+                <sf:GridTextColumn HeaderText="Lot Code" MappingName="LotCode"/>
+                <sf:GridNumericColumn HeaderText="Net Weight" MappingName="NetWeight" DisplayNumberFormat="N2"/>
+                <sf:GridTextColumn HeaderText="Serial Number" MappingName="SerialNumber"/>
+                <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline"/>
+                <sf:GridDateColumn HeaderText="Scan Date" MappingName="ScanDate"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
-        <StackPanel x:Name="ButtonStack" 
-                Orientation="Horizontal" 
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignBottomWithPanel="True">
-            <Button x:Name="btn_Cancel" Content="Cancel" Click="btn_Cancel_Click"/>
-            <Button x:Name="btn_Save" Content="Save" Click="btn_Save_Click"/>
-        </StackPanel>
     </RelativePanel>
 </Page>

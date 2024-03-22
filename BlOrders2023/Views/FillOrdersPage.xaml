@@ -8,6 +8,7 @@
     xmlns:vm="using:BlOrders2023.ViewModels"
     xmlns:converters="using:BlOrders2023.ViewModels.Converters"
     xmlns:uiConverters="using:CommunityToolkit.WinUI.Converters"
+    xmlns:controls="using:BlOrders2023.UserControls"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:helpers="using:BlOrders2023.Helpers"
     mc:Ignorable="d">
@@ -299,7 +300,7 @@
 
                     </StackPanel>
 
-                    <TextBox x:Name="Scanline"
+                    <controls:BarcodeInputTextBox x:Name="Scanline"
                              PlaceholderText="Scan to add a product..."
                              RelativePanel.Below="CustomerInfo"
                              RelativePanel.AlignLeftWith="CustomerInfo"
@@ -326,13 +327,7 @@
                               Unchecked="RemoveItemCheckBox_Checked"
                               />
 
-                    <!--<ListView ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
-                              RelativePanel.Below="OrderedItems"
-                              RelativePanel.AlignLeftWithPanel="True"
-                              RelativePanel.AlignRightWithPanel="True"
-                              ItemTemplate="{StaticResource ShippingItemsViewTemplate}"
-                              >
-                    </ListView>-->
+
                     <sf:SfDataGrid x:Name="OrderedItems"
                                    ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}"
                                    SourceType="models:ShippingItem"
@@ -351,7 +346,7 @@
                                    RecordDeleted="OrderedItems_RecordDeleted"
                                    ColumnWidthMode="AutoWithLastColumnFill"
                                    CurrentCellEndEdit="OrderedItems_CurrentCellEndEdit"
-                                   CurrentCellValueChanged="OrderedItems_CurrentCellValueChanged"
+                                   CurrentCellValidating="OrderedItems_CurrentCellValidating"
                                    CopyGridCellContent="OrderedItems_CopyGridCellContent">
                         <sf:SfDataGrid.Resources>
                             <SolidColorBrush x:Key="SyncfusionDataGridRowBackgroundPointerOver" Color="{StaticResource SystemAccentColor}"/>

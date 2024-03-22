@@ -127,7 +127,7 @@ public sealed partial class AllocatorPage : Page
             //-1  will be the value if TEST mode type is selected during debug, but TEST is not compiled into Release Builds
             if (((int)ViewModel.AllocatorConfig.AllocatorMode) == -1)
             {
-                ViewModel.AllocatorConfig.IDs = new() { 67662, 67663, 68664 };
+                ViewModel.AllocatorConfig.IDs = new() { 69957, 69958 };
                 await StartAllocationAsync();
             }
 
@@ -333,7 +333,7 @@ public sealed partial class AllocatorPage : Page
                 if (e.RowData is OrderItem item)
                 {
                     var inventoryItem = ViewModel.CurrentInventory.Where(i => i.ProductID == item.ProductID).FirstOrDefault();
-                    if (inventoryItem != null && inventoryItem.QuantityOnHand >= newVal - oldVal) 
+                    if (inventoryItem != null && inventoryItem.Total >= newVal - oldVal)
                     {
                         e.IsValid = true;
                         ViewModel.UpdateInventory(inventoryItem, (newVal - oldVal) * -1);

@@ -454,7 +454,7 @@ public sealed partial class ReportsPage : Page
             else if( control.ReportType == typeof(CurrentInventoryReport))
             {
                 spinner.IsVisible = true;
-                var currentInventory = ViewModel.GetInventory();
+                var currentInventory = ViewModel.GetInventoryTotals();
                 reportPath = await reportGenerator.GenerateCurrentInventoryReport(currentInventory);
             }
             else if(control.ReportType == typeof(InventoryDetailsReport))
@@ -467,8 +467,9 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     spinner.IsVisible = true;
                     var orders = ViewModel.GetNonFrozenOrdersByPickupDate(startDate, endDate);
-                    var currentInventory = ViewModel.GetInventory();
-                    reportPath = await reportGenerator.GenerateInventoryDetailsReport(currentInventory, orders, startDate, endDate);
+                    var currentInventory = ViewModel.GetInventoryTotals();
+                    var notFilled = ViewModel.GetAllocatedNotReceivedTotals();
+                    reportPath = await reportGenerator.GenerateInventoryDetailsReport(currentInventory, orders, notFilled, startDate, endDate);
                 }
 
             }
