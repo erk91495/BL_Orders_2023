@@ -1,0 +1,1 @@
+ALTER TABLE [dbo].[tbl_LiveInventory] ALTER COLUMN Lotcode NVARCHAR(50) NULL

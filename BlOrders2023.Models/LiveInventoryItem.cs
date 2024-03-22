@@ -14,7 +14,7 @@ public class LiveInventoryItem : ObservableObject
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int ID { get; set; }
-    public string LotCode { get; set; }
+    public string? LotCode { get; set; }
     public int ProductID { get; set; }
     public DateTime? PackDate { get; set; }
     public float? NetWeight { get; set; }
@@ -23,7 +23,7 @@ public class LiveInventoryItem : ObservableObject
     public DateTime? ScanDate { get; set; }
     public bool RemovedFromInventory { get; set; }
     [ForeignKey(nameof(LotCode))]
-    public virtual LotCode Lot { get; set; }
+    public virtual LotCode? Lot { get; set; }
     [ForeignKey(nameof(ProductID))]
     public virtual Product Product { get; set; }
 }

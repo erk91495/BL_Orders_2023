@@ -106,6 +106,7 @@ public class InventoryPageViewModel : ObservableRecipient
         if(!await _db.Inventory.DuplicateInventoryCheck(item.Scanline))
         {
             await _db.Inventory.InsertLiveInventoryItemAsync(item);
+            Inventory.Add(item);
         }
         else
         {
