@@ -245,7 +245,7 @@ public partial class App : Application
         {
             var db = App.GetNewDatabase();
             var DBVersion = db.dbVersion;
-            var SupportedDBVersion = new Version(1, 1, 1);
+            var SupportedDBVersion = new Version(2, 0, 0);
             if (!SupportedDBVersion.Equals(DBVersion))
             {
                 var version = Package.Current.Id.Version;
