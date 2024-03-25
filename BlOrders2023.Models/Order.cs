@@ -220,7 +220,7 @@ public class Order : ObservableObject, IConvertible
     //Todo should this be a helper class?
     public bool CanFillOrder => (OrderStatus == OrderStatus.Ordered || OrderStatus == OrderStatus.Filling || OrderStatus == OrderStatus.Filled);
     public bool CanEditOrder => OrderStatus == OrderStatus.Ordered;
-    public bool CanPrintInvoice =>  OrderStatus >= OrderStatus.Filling;
+    public bool CanPrintInvoice =>  OrderStatus >= OrderStatus.Filling && (!_shippingItems.IsNullOrEmpty() || !_items.Where(i => i.Product.IsCredit).IsNullOrEmpty());
     public bool CanPrintOrder => OrderStatus == OrderStatus.Ordered;
     public bool AllItemsReceived
     {
