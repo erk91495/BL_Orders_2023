@@ -228,4 +228,7 @@
   <data name="Settings_DatabaseSettings.Text" xml:space="preserve">
     <value>Database Settings</value>
   </data>
+  <data name="Shell_InventoryPage.Content" xml:space="preserve">
+    <value>Inventory</value>
+  </data>
 </root>
