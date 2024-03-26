@@ -136,6 +136,8 @@ public partial class App : Application
             services.AddTransient<AllocatorPageViewModel>();
             services.AddTransient<InventoryPage>();
             services.AddTransient<InventoryPageViewModel>();
+            services.AddTransient<LiveInventoryPage>();
+            services.AddTransient<LiveInventoryPageViewModel>();
             services.AddTransient<PaymentsPage>();
             services.AddTransient<PaymentsPageViewModel>();
             services.AddTransient<ProductDataInputDialogViewModel>();

@@ -24,6 +24,7 @@ public class PageService : IPageService
         Configure<PaymentsPageViewModel, PaymentsPage>();
         Configure<SettingsViewModel, SettingsPage>();
         Configure<InventoryPageViewModel, InventoryPage>();
+        Configure<LiveInventoryPageViewModel, LiveInventoryPage>();
         Configure<InventoryAdjustmentsPageViewModel, InventoryAdjustmentsPage>();
         Configure<InventoryAuditLogPageViewModel, InventoryAuditLogPage>();
     }

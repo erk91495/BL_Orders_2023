@@ -30,11 +30,17 @@
             <AppBarButton Icon="More">
                 <AppBarButton.Flyout>
                     <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Text="Adjust Inventory" Click="AdjustInventoryFlyout_Click" >
+                        <MenuFlyoutItem Text="Reload" Icon="Refresh" Click="ReloadInventoryFlyout_Click"/>
+                        <MenuFlyoutItem Text="Adjust Inventory" Click="AdjustInventoryFlyout_Click" >
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE9D5;"/>
                                 </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Live Inventory" Click="LiveInventoryFlyout_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xEADF;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                         <MenuFlyoutItem Text="Audit Log" Click="InventoryAuditFlyout_Click" >
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xF0E4;"/>
@@ -42,7 +48,7 @@
                         </MenuFlyoutItem>
                         <MenuFlyoutItem Icon="Add" Text="Enable Scanning" Click="EnableScanningFlyout_Click" />
                         <MenuFlyoutItem Icon="Delete" Text="Zero Out Inventory" Click="ZeroInventoryFlyout_Click" />
-                    </MenuFlyout>
+                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
         </CommandBar>
@@ -72,7 +78,7 @@
         
         <sf:SfDataGrid x:Name="InventoryGrid"
                        ItemsSource="{x:Bind ViewModel.Inventory, Mode=TwoWay}"
-                       SourceType="models:LiveInventoryItem"
+                       SourceType="models:InventoryTotalItem"
                        RelativePanel.Below="progressBar"
                        RelativePanel.AlignRightWithPanel="True"
                        RelativePanel.AlignLeftWithPanel="True"
@@ -84,18 +90,22 @@
                        SelectionUnit="Row"
                        EditTrigger="OnTap"
                        EditorSelectionBehavior="SelectAll"
-                       ColumnWidthMode="AutoWithLastColumnFill"
-                       AllowEditing="False">
+                       ColumnWidthMode="Star"
+                       AllowEditing="False"
+                       AllowGrouping="True"
+                       ShowGroupDropArea="True">
 
+            <!--<sf:SfDataGrid.GroupColumnDescriptions>
+                <sf:GroupColumnDescription ColumnName="Product.Category.CategoryName"/>
+            </sf:SfDataGrid.GroupColumnDescriptions>-->
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn HeaderText="ID" MappingName="ID"/>
-                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID"/>
-                <sf:GridDateColumn HeaderText="Pack Date" MappingName="PackDate" AllowNull="True" PlaceholderText=""/>
-                <sf:GridTextColumn HeaderText="Lot Code" MappingName="LotCode"/>
-                <sf:GridNumericColumn HeaderText="Net Weight" MappingName="NetWeight" DisplayNumberFormat="N2"/>
-                <sf:GridTextColumn HeaderText="Serial Number" MappingName="SerialNumber"/>
-                <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline"/>
-                <sf:GridDateColumn HeaderText="Scan Date" MappingName="ScanDate"/>
+                <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID" TextAlignment="Center"/>
+                <sf:GridTextColumn HeaderText="Product Name" MappingName="Product.ProductName" TextAlignment="Center" ColumnWidthMode="AutoLastColumnFill"/>
+                <sf:GridTextColumn HeaderText="Category" MappingName="Product.Category.CategoryName" TextAlignment="Center"/>
+                <sf:GridNumericColumn HeaderText="Scanned Inventory" MappingName="Quantity" DisplayNumberFormat="N0" TextAlignment="Center"/>
+                <sf:GridNumericColumn HeaderText="Manual Adjustments" MappingName="ManualAdjustments" DisplayNumberFormat="N0" TextAlignment="Center" />
+                <sf:GridNumericColumn HeaderText="Total" MappingName="Total" DisplayNumberFormat="N0" TextAlignment="Center"/>
+                <sf:GridNumericColumn HeaderText="SortIndex" MappingName="SortIndex" DisplayNumberFormat="N0" TextAlignment="Center"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
     </RelativePanel>

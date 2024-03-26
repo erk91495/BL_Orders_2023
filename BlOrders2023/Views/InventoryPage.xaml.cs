@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Formats.Asn1;
 using System.Media;
 using BlOrders2023.Contracts.Services;
 using BlOrders2023.Exceptions;
@@ -39,6 +40,12 @@ public sealed partial class InventoryPage : Page
         s.NavigateTo(typeof(InventoryAuditLogPageViewModel).FullName!, null);
     }
 
+    private void LiveInventoryFlyout_Click(object sender, RoutedEventArgs e)
+    {
+        var s = App.GetService<INavigationService>();
+        s.NavigateTo(typeof(LiveInventoryPageViewModel).FullName!, null);
+    }
+
     private void EnableScanningFlyout_Click(object sender, RoutedEventArgs e)
     {
         Scanline.IsEnabled = true;
@@ -60,7 +67,12 @@ public sealed partial class InventoryPage : Page
             await ViewModel.ZeroLiveInventoryAsync();
         }
     }
-    
+    private async void ReloadInventoryFlyout_Click(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.QueryInventory();
+    }
+
+
     private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
     {
         if (sender is TextBox box)

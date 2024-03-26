@@ -12,10 +12,10 @@ using Microsoft.UI.Dispatching;
 using BlOrders2023.Exceptions;
 
 namespace BlOrders2023.ViewModels;
-public class InventoryPageViewModel : ObservableRecipient
+public class LiveInventoryPageViewModel : ObservableRecipient
 {
     #region Properties
-    public ObservableCollection<InventoryTotalItem> Inventory
+    public ObservableCollection<LiveInventoryItem> Inventory
     {
         get => _inventory; 
         set => SetProperty(ref _inventory, value);
@@ -37,12 +37,12 @@ public class InventoryPageViewModel : ObservableRecipient
     #region Fields
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private bool _isLoading;
-    private ObservableCollection<InventoryTotalItem> _inventory = new();
+    private ObservableCollection<LiveInventoryItem> _inventory = new();
     private IBLDatabase _db;
     #endregion Fields
 
     #region Constructors
-    public InventoryPageViewModel()
+    public LiveInventoryPageViewModel()
     {
         _db = App.GetNewDatabase();
         _inventory = new();
@@ -63,7 +63,7 @@ public class InventoryPageViewModel : ObservableRecipient
 
             var table = _db.Inventory;
 
-            var inventory = await Task.Run(() => table.GetInventoryTotalItems());
+            var inventory = await Task.Run(() => table.GetUnshippedInventoryItemsAsync());
             await dispatcherQueue.EnqueueAsync(() =>
             {
                 Inventory = new(inventory);
@@ -80,7 +80,7 @@ public class InventoryPageViewModel : ObservableRecipient
             });
 
             var table = _db.Inventory;
-            var inventory = await Task.Run(() => table.GetInventoryTotalItems());
+            var inventory = await Task.Run(() => table.GetUnshippedInventoryItemsAsync());
 
             await dispatcherQueue.EnqueueAsync(() =>
             {
@@ -89,24 +89,6 @@ public class InventoryPageViewModel : ObservableRecipient
                 OnPropertyChanged(nameof(Inventory));
             });
         }
-
-    }
-
-    internal async Task AddInventoryItemAsync(LiveInventoryItem item)
-    {
-        if (!await _db.Inventory.DuplicateInventoryCheck(item.Scanline))
-        {
-            await _db.Inventory.InsertLiveInventoryItemAsync(item);
-        }
-        else
-        {
-            throw new DuplicateBarcodeException();
-        }
-    }
-
-        internal async Task ZeroLiveInventoryAsync()
-    {
-        await _db.Inventory.ZeroLiveInventoryAsync();
     }
     #endregion Methods
 

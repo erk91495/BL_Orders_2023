@@ -162,7 +162,7 @@
 	  <Pack>True</Pack>
 	  <PackagePath>\</PackagePath>
 	</None>
-	<Page Update="Views\InventoryPage.xaml">
+	<Page Update="Views\LiveInventoryPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
 	<Page Update="Styles\CustomGenericStyles.xaml">
@@ -211,7 +211,7 @@
     <None Remove="Views\AllocatorPage.xaml" />
     <None Remove="Views\InventoryAdjustmentsPage.xaml" />
     <None Remove="Views\InventoryAuditLogPage.xaml" />
-    <None Remove="Views\InventoryPage.xaml" />
+    <None Remove="Views\LiveInventoryPage.xaml" />
     <None Remove="Views\PaymentsPage.xaml" />
   </ItemGroup>
   

@@ -112,7 +112,8 @@ internal class SqlInventoryTable : IInventoryTable
         }
         else
         {
-            return _db.InventoryTotalItems.FromSql($"[dbo].[usp_GetInventoryTotals]").ToList();
+            var res = _db.InventoryTotalItems.FromSql($"[dbo].[usp_GetInventoryTotals]").AsNoTracking().ToList();
+            return res;
         }
         
     }
