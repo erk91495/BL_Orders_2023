@@ -94,9 +94,15 @@ public class InventoryPageViewModel : ObservableRecipient
 
     internal async Task AddInventoryItemAsync(LiveInventoryItem item)
     {
-        if (!await _db.Inventory.DuplicateInventoryCheck(item.Scanline))
+        var foundItem = await _db.Inventory.DuplicateInventoryCheck(item.Scanline);
+        if (foundItem == null)
         {
             await _db.Inventory.InsertLiveInventoryItemAsync(item);
+        }
+        else if(foundItem.RemovedFromInventory == true)
+        {
+            item.RemovedFromInventory = false;
+            await _db.Inventory.UpsertLiveInventoryItemAsync(item);
         }
         else
         {
@@ -104,7 +110,7 @@ public class InventoryPageViewModel : ObservableRecipient
         }
     }
 
-        internal async Task ZeroLiveInventoryAsync()
+    internal async Task ZeroLiveInventoryAsync()
     {
         await _db.Inventory.ZeroLiveInventoryAsync();
     }

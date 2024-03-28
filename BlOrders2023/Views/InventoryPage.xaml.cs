@@ -46,9 +46,19 @@ public sealed partial class InventoryPage : Page
         s.NavigateTo(typeof(LiveInventoryPageViewModel).FullName!, null);
     }
 
-    private void EnableScanningFlyout_Click(object sender, RoutedEventArgs e)
+    private void ReconcileInventoryFlyout_Click(object sender, RoutedEventArgs e)
     {
-        Scanline.IsEnabled = true;
+        var s = App.GetService<INavigationService>();
+        s.NavigateTo(typeof(InventoryReconciliationPageViewModel).FullName!, null);
+    }
+
+    private void AddItemsFlyout_Click(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+    private void RemoveItemsFlyout_Click(object sender, RoutedEventArgs e)
+    {
+       throw new NotImplementedException();
     }
 
     private async void ZeroInventoryFlyout_Click(object sender, RoutedEventArgs e)

@@ -106,3 +106,10 @@ public enum BoxType
     BreastBox,
     NonGMOBreastBox,
 }
+
+public enum InventoryReconciliationAction
+{
+    None,
+    Added,
+    Removed,
+}

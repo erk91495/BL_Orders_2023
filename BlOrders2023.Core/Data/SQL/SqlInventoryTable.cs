@@ -168,6 +168,18 @@ internal class SqlInventoryTable : IInventoryTable
         return await _db.SaveChangesAsync() == 1;
     }
 
+    public void UpsertLiveInventoryItem(LiveInventoryItem item)
+    {
+        _db.LiveInventoryItems.Update(item);
+        _db.SaveChanges();
+    }
+
+    public async Task UpsertLiveInventoryItemAsync(LiveInventoryItem item)
+    {
+        _db.LiveInventoryItems.Update(item);
+        await _db.SaveChangesAsync();
+    }
+
     public async Task AdjustInventoryAsync(InventoryTotalItem item)
     {
         var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {item.ProductID}, {item.LastAdjustment}");
@@ -243,10 +255,10 @@ internal class SqlInventoryTable : IInventoryTable
         return await _db.InventoryAuditItems.ToListAsync();
     }
 
-    public async Task<bool> DuplicateInventoryCheck(string scanline)
+    public async Task<LiveInventoryItem?> DuplicateInventoryCheck(string scanline)
     {
         var item = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_DuplicateInventoryScanlineCheck] {scanline}").ToListAsync();
-        return item.FirstOrDefault() != null;
+        return item.FirstOrDefault(defaultValue:null);
     }
 
     public async Task ZeroLiveInventoryAsync()

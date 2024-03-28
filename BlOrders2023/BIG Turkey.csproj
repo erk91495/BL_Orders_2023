@@ -122,6 +122,9 @@
 	<None Update="nlog.config">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="Views\InventoryReconciliationPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="Views\InventoryAuditLogPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -211,6 +214,7 @@
     <None Remove="Views\AllocatorPage.xaml" />
     <None Remove="Views\InventoryAdjustmentsPage.xaml" />
     <None Remove="Views\InventoryAuditLogPage.xaml" />
+    <None Remove="Views\InventoryReconciliationPage.xaml" />
     <None Remove="Views\LiveInventoryPage.xaml" />
     <None Remove="Views\PaymentsPage.xaml" />
   </ItemGroup>

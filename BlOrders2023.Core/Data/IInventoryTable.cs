@@ -25,10 +25,12 @@ public interface IInventoryTable
     public Task<bool> InsertLiveInventoryItemAsync(LiveInventoryItem item);
     public bool DeleteLiveInventoryItem(LiveInventoryItem item);
     public Task<bool> DeleteLiveInventoryItemAsync(LiveInventoryItem item);
+    public void UpsertLiveInventoryItem(LiveInventoryItem item);
+    public Task UpsertLiveInventoryItemAsync(LiveInventoryItem item);
     public Task<LiveInventoryItem?> FindLiveInventoryItem(ShippingItem shippingItem);
     public Task<Dictionary<int, int>> GetAllocatedNotReceivedTotalsAsync();
     public Dictionary<int, int> GetAllocatedNotReceivedTotals();
     public Task<IEnumerable<InventoryAuditItem>> GetInventoryAuditLogAsync();
-    public Task<bool> DuplicateInventoryCheck(string scanline);
+    public Task<LiveInventoryItem?> DuplicateInventoryCheck(string scanline);
     public Task ZeroLiveInventoryAsync();
 }
