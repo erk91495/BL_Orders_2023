@@ -33,4 +33,9 @@ public interface IInventoryTable
     public Task<IEnumerable<InventoryAuditItem>> GetInventoryAuditLogAsync();
     public Task<LiveInventoryItem?> DuplicateInventoryCheck(string scanline);
     public Task ZeroLiveInventoryAsync();
+    public IEnumerable<LiveInventoryRemovalLogItem> GetLiveInventoryRemovalLogItems();
+    public Task<IEnumerable<LiveInventoryRemovalLogItem>> GetLiveInventoryRemovalLogItemsAsync();
+    public IEnumerable<LiveInventoryRemovalReason> GetLiveInventoryRemovalReasons();
+    public Task<IEnumerable<LiveInventoryRemovalReason>> GetLiveInventoryRemovalReasonsAsync();
+    public Task InsertLiveInventoryRemovalLogItemAsync(LiveInventoryRemovalLogItem removalEntry);
 }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BlOrders2023.Contracts.ViewModels;
 using BlOrders2023.Core.Data;
+using BlOrders2023.Exceptions;
 using BlOrders2023.Models;
 using Windows.Graphics.Printing.PrintSupport;
 
@@ -82,6 +83,15 @@ public class InventoryReconciliationPageViewModel : ViewModelBase
                 item.LiveInventoryItem.RemovedFromInventory = true; 
             }
             await _db.Inventory.UpsertLiveInventoryItemAsync(item.LiveInventoryItem);
+        }
+    }
+
+    internal void VerifyProduct(LiveInventoryItem item)
+    {
+        var product = _db.Products.GetByALU(item.Scanline) ?? _db.Products.Get(item.ProductID).FirstOrDefault();
+        if (product == null)
+        {
+            throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
         }
     }
     #endregion Properties

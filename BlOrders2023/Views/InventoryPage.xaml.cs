@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Formats.Asn1;
 using System.Media;
 using BlOrders2023.Contracts.Services;
+using BlOrders2023.Dialogs;
 using BlOrders2023.Exceptions;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
@@ -54,11 +55,52 @@ public sealed partial class InventoryPage : Page
 
     private void AddItemsFlyout_Click(object sender, RoutedEventArgs e)
     {
-        throw new NotImplementedException();
+        var s = App.GetService<INavigationService>();
+        s.NavigateTo(typeof(AddLiveInventoryPageViewModel).FullName!, null);
     }
-    private void RemoveItemsFlyout_Click(object sender, RoutedEventArgs e)
+    private async void RemoveItemsFlyout_Click(object sender, RoutedEventArgs args)
     {
-       throw new NotImplementedException();
+        var reasons = await ViewModel.GetRemovalResons();
+        var dialog = new LiveInventoryRemovalDialog()
+        {
+            XamlRoot = XamlRoot,
+            RemovalReasons = reasons
+        };
+        var result = await dialog.ShowAsync();
+        if(result == ContentDialogResult.Primary)
+        {
+            var scanline = dialog.Scanline;
+            var reason = dialog.SelectedReason;
+
+            try
+            {
+                var item = new LiveInventoryItem() {Scanline = scanline};
+                BarcodeInterpreter.ParseBarcode(ref item);
+                await ViewModel.TryRemoveItem(item, reason);
+            }
+            catch (ProductNotFoundException e)
+            {
+                Debug.WriteLine(e.ToString());
+                await ShowLockedoutDialog("Not Found",
+                    $"{e.Message}");
+            }
+            catch (InvalidBarcodeExcption e)
+            {
+                Debug.WriteLine(e.ToString());
+                var ai = e.Data["AI"];
+                var s = e.Data["Scanline"];
+                var location = e.Data["Location"];
+                App.LogWarningMessage($"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+                await ShowLockedoutDialog(e.Message,
+                    $"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+            }
+            catch (UnknownBarcodeFormatException e)
+            {
+                Debug.WriteLine(e.ToString());
+                App.LogWarningMessage($"{e.Message}");
+                await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
+            }
+        }
     }
 
     private async void ZeroInventoryFlyout_Click(object sender, RoutedEventArgs e)
@@ -102,6 +144,7 @@ public sealed partial class InventoryPage : Page
                     {
                         //interpreter has no concept of dbcontext and cannot track items
                         BarcodeInterpreter.ParseBarcode(ref item);
+                        ViewModel.VerifyProduct(item);
                     }
                     catch (ProductNotFoundException e)
                     {

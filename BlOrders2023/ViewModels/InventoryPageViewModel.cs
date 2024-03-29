@@ -114,6 +114,37 @@ public class InventoryPageViewModel : ObservableRecipient
     {
         await _db.Inventory.ZeroLiveInventoryAsync();
     }
+
+    internal void VerifyProduct(LiveInventoryItem item)
+    {
+        var product = _db.Products.GetByALU(item.Scanline) ?? _db.Products.Get(item.ProductID).FirstOrDefault();
+        if (product == null)
+        {
+            throw new ProductNotFoundException(string.Format("Product {0} Not Found", item.ProductID), item.ProductID);
+        }
+    }
+
+    internal async Task<IEnumerable<LiveInventoryRemovalReason>> GetRemovalResons() => await _db.Inventory.GetLiveInventoryRemovalReasonsAsync();
+    internal async Task TryRemoveItem(LiveInventoryItem item, LiveInventoryRemovalReason reason)
+    {
+        var foundItem = await _db.Inventory.DuplicateInventoryCheck(item.Scanline);
+        if(foundItem != null && !foundItem.RemovedFromInventory)
+        {
+            foundItem.RemovedFromInventory = true;
+            await _db.Inventory.UpsertLiveInventoryItemAsync(foundItem);
+            var removalEntry = new LiveInventoryRemovalLogItem()
+            {
+                RemovalReasonID = reason.ID,
+                LiveInventoryID = foundItem.ID,
+                Scanline = foundItem.Scanline,
+            };
+            await _db.Inventory.InsertLiveInventoryRemovalLogItemAsync(removalEntry);
+        }
+        else
+        {
+            throw new ProductNotFoundException($"The scanline {item.Scanline} was not found in inventory");
+        }
+    }
     #endregion Methods
 
 }

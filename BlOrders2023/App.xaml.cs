@@ -150,6 +150,8 @@ public partial class App : Application
             services.AddTransient<InventoryAuditLogPageViewModel>();
             services.AddTransient<InventoryReconciliationPage>();
             services.AddTransient<InventoryReconciliationPageViewModel>();
+            services.AddTransient<AddLiveInventoryPage>();
+            services.AddTransient<AddLiveInventoryPageViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

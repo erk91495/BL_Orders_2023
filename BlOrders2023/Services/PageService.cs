@@ -28,6 +28,7 @@ public class PageService : IPageService
         Configure<InventoryAdjustmentsPageViewModel, InventoryAdjustmentsPage>();
         Configure<InventoryAuditLogPageViewModel, InventoryAuditLogPage>();
         Configure<InventoryReconciliationPageViewModel, InventoryReconciliationPage>();
+        Configure<AddLiveInventoryPageViewModel,AddLiveInventoryPage>();
     }
 
     public Type GetPageType(string key)

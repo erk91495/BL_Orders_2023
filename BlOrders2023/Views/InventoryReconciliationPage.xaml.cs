@@ -56,6 +56,7 @@ public sealed partial class InventoryReconciliationPage : Page
                 {
                     //interpreter has no concept of dbcontext and cannot track items
                     BarcodeInterpreter.ParseBarcode(ref item);
+                    ViewModel.VerifyProduct(item);
                 }
                 catch (ProductNotFoundException e)
                 {
