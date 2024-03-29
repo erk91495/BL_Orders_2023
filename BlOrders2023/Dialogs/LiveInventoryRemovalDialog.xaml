@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="BlOrders2023.Dialogs.LiveInventoryRemovalDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BlOrders2023.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:BlOrders2023.UserControls"   
+    mc:Ignorable="d"
+    PrimaryButtonText="Remove Item"
+    IsPrimaryButtonEnabled="False"
+    CloseButtonText="Cancel">
+
+    <StackPanel>
+        <uc:BarcodeInputTextBox Text="{x:Bind Scanline, Mode=TwoWay}" MinWidth="300"/>
+        <ComboBox ItemsSource="{x:Bind RemovalReasons,Mode=OneWay}" SelectedItem="{x:Bind SelectedReason, Mode=TwoWay}" DisplayMemberPath="RemovalReason" MinWidth="300"/>
+    </StackPanel>
+</ContentDialog>

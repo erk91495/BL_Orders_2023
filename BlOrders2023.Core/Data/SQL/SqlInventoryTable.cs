@@ -33,11 +33,13 @@ internal class SqlInventoryTable : IInventoryTable
     #endregion Constructors
 
     #region Methods
+
+    #region Inventory Adjustments
     public IEnumerable<InventoryAdjustmentItem> GetInventoryAdjustments(IEnumerable<int> ids = null)
     {
-        if(ids != null)
+        if (ids != null)
         {
-            return _db.InventoryAdjustments.Where( i => ids.Contains(i.ProductID)).AsNoTracking().OrderBy(i => i.SortIndex).ToList();
+            return _db.InventoryAdjustments.Where(i => ids.Contains(i.ProductID)).AsNoTracking().OrderBy(i => i.SortIndex).ToList();
         }
         else
         {
@@ -55,6 +57,59 @@ internal class SqlInventoryTable : IInventoryTable
             return await _db.InventoryAdjustments.OrderBy(i => i.SortIndex).AsNoTracking().ToListAsync();
         }
     }
+    public async Task UpsertAdjustmentAsync(InventoryAdjustmentItem item)
+    {
+        _db.Update(item);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task UpsertAdjustmentsAsync(IEnumerable<InventoryAdjustmentItem> inventory)
+    {
+        foreach (InventoryAdjustmentItem item in inventory)
+        {
+            _db.Update(item);
+        }
+        await _db.SaveChangesAsync();
+    }
+    public async Task AdjustInventoryAsync(InventoryTotalItem item)
+    {
+        var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {item.ProductID}, {item.LastAdjustment}");
+        if (res == 0)
+        {
+            _db.InventoryAdjustments.Add(new InventoryAdjustmentItem()
+            {
+                ProductID = item.ProductID,
+                ManualAdjustments = item.LastAdjustment,
+                LastAdjustment = item.LastAdjustment,
+                SortIndex = null,
+            });
+            await _db.SaveChangesAsync();
+        }
+    }
+
+    public async Task AdjustInventoryAsync(int ProductID, int LastAdjustment)
+    {
+        var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {ProductID}, {LastAdjustment}");
+        if (res == 0)
+        {
+            _db.InventoryAdjustments.Add(new InventoryAdjustmentItem()
+            {
+                ProductID = ProductID,
+                ManualAdjustments = LastAdjustment,
+                LastAdjustment = LastAdjustment,
+                SortIndex = null,
+            });
+            await _db.SaveChangesAsync();
+        }
+    }
+
+    public async Task<IEnumerable<InventoryAuditItem>> GetInventoryAuditLogAsync()
+    {
+        return await _db.InventoryAuditItems.ToListAsync();
+    }
+    #endregion Inventory Adjustments
+
+    #region Live Inventory Items
 
     public IEnumerable<LiveInventoryItem> GetInventoryItems(IEnumerable<int> ids = null)
     {
@@ -104,6 +159,89 @@ internal class SqlInventoryTable : IInventoryTable
         }
     }
 
+    public bool InsertLiveInventoryItem(LiveInventoryItem item)
+    {
+        _db.LiveInventoryItems.Add(item);
+        return _db.SaveChanges() == 1;
+    }
+
+    public async Task<bool> InsertLiveInventoryItemAsync(LiveInventoryItem item)
+    {
+        await _db.LiveInventoryItems.AddAsync(item);
+        return await _db.SaveChangesAsync() == 1;
+    }
+
+    public bool DeleteLiveInventoryItem(LiveInventoryItem item)
+    {
+        _db.LiveInventoryItems.Remove(item);
+        return _db.SaveChanges() == 1;
+    }
+
+    public async Task<bool> DeleteLiveInventoryItemAsync(LiveInventoryItem item)
+    {
+        _db.LiveInventoryItems.Remove(item);
+        return await _db.SaveChangesAsync() == 1;
+    }
+
+    public void UpsertLiveInventoryItem(LiveInventoryItem item)
+    {
+        _db.LiveInventoryItems.Update(item);
+        _db.SaveChanges();
+    }
+
+    public async Task UpsertLiveInventoryItemAsync(LiveInventoryItem item)
+    {
+        _db.LiveInventoryItems.Update(item);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task<LiveInventoryItem?> DuplicateInventoryCheck(string scanline)
+    {
+        var item = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_DuplicateInventoryScanlineCheck] {scanline}").ToListAsync();
+        return item.FirstOrDefault(defaultValue: null);
+    }
+
+    public async Task<LiveInventoryItem?> FindLiveInventoryItem(ShippingItem shippingItem)
+    {
+        var res = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_InLiveInventory] {shippingItem.ProductID}, {shippingItem.PackDate}, {shippingItem.PackageSerialNumber}, {shippingItem.Scanline}").ToListAsync();
+        return res.FirstOrDefault();
+    }
+
+    public async Task ZeroLiveInventoryAsync()
+    {
+        await _db.Database.ExecuteSqlAsync($"[dbo].[usp_ZeroLiveInventory]");
+    }
+    #endregion Live Inventory Items
+
+    #region Live Invetory Logging
+    public async Task<IEnumerable<LiveInventoryRemovalReason>> GetLiveInventoryRemovalReasonsAsync()
+    {
+        return await _db.LiveInventoryRemovalReasons.AsNoTrackingWithIdentityResolution().ToListAsync();
+    }
+
+    public IEnumerable<LiveInventoryRemovalReason> GetLiveInventoryRemovalReasons()
+    {
+        return _db.LiveInventoryRemovalReasons.AsNoTrackingWithIdentityResolution().ToList();
+    }
+
+    public async Task<IEnumerable<LiveInventoryRemovalLogItem>> GetLiveInventoryRemovalLogItemsAsync()
+    {
+        return await _db.LiveInventoryRemovalLogItems.ToListAsync();
+    }
+
+    public IEnumerable<LiveInventoryRemovalLogItem> GetLiveInventoryRemovalLogItems()
+    {
+        return _db.LiveInventoryRemovalLogItems.ToList();
+    }
+
+    public async Task InsertLiveInventoryRemovalLogItemAsync(LiveInventoryRemovalLogItem removalEntry)
+    {
+        await _db.LiveInventoryRemovalLogItems.AddAsync(removalEntry);
+        _db.SaveChanges();
+    }
+    #endregion Live Invetory Logging
+
+    #region Inventory Total Items
     public IEnumerable<InventoryTotalItem> GetInventoryTotalItems(IEnumerable<int> ids = null) 
     {
         if(ids != null)
@@ -112,7 +250,8 @@ internal class SqlInventoryTable : IInventoryTable
         }
         else
         {
-            return _db.InventoryTotalItems.FromSql($"[dbo].[usp_GetInventoryTotals]").ToList();
+            var res = _db.InventoryTotalItems.FromSql($"[dbo].[usp_GetInventoryTotals]").AsNoTracking().ToList();
+            return res;
         }
         
     }
@@ -129,81 +268,9 @@ internal class SqlInventoryTable : IInventoryTable
         }
         
     }
+    #endregion Inventory Total Items
 
-    public bool InsertLiveInventoryItem(LiveInventoryItem item)
-    {
-        _db.LiveInventoryItems.Add(item);
-        return _db.SaveChanges() == 1;
-    }
-    public async Task<bool> InsertLiveInventoryItemAsync(LiveInventoryItem item)
-    {
-        await _db.LiveInventoryItems.AddAsync(item);
-        return await _db.SaveChangesAsync() == 1;
-    }
 
-    public async Task UpsertAdjustmentAsync(InventoryAdjustmentItem item)
-    {
-        _db.Update(item);
-        await _db.SaveChangesAsync();
-    }
-
-    public async Task UpsertAdjustmentsAsync(IEnumerable<InventoryAdjustmentItem> inventory)
-    {
-        foreach (InventoryAdjustmentItem item in inventory)
-        {
-            _db.Update(item);
-        }
-        await _db.SaveChangesAsync();
-    }
-
-    public bool DeleteLiveInventoryItem(LiveInventoryItem item)
-    {
-        _db.LiveInventoryItems.Remove(item);
-        return _db.SaveChanges() == 1;
-    }
-    public async Task<bool> DeleteLiveInventoryItemAsync(LiveInventoryItem item)
-    {
-        _db.LiveInventoryItems.Remove(item);
-        return await _db.SaveChangesAsync() == 1;
-    }
-
-    public async Task AdjustInventoryAsync(InventoryTotalItem item)
-    {
-        var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {item.ProductID}, {item.LastAdjustment}");
-        if(res == 0)
-        {
-            _db.InventoryAdjustments.Add(new InventoryAdjustmentItem()
-            {
-                    ProductID = item.ProductID,
-                    ManualAdjustments = item.LastAdjustment,
-                    LastAdjustment = item.LastAdjustment,
-                    SortIndex = null,
-            });
-            await _db.SaveChangesAsync();
-        }
-    }
-
-    public async Task AdjustInventoryAsync(int ProductID, int LastAdjustment)
-    {
-        var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {ProductID}, {LastAdjustment}");
-        if (res == 0)
-        {
-            _db.InventoryAdjustments.Add(new InventoryAdjustmentItem()
-            {
-                ProductID = ProductID,
-                ManualAdjustments = LastAdjustment,
-                LastAdjustment = LastAdjustment,
-                SortIndex = null,
-            });
-            await _db.SaveChangesAsync();
-        }
-    }
-
-    public async Task<LiveInventoryItem?> FindLiveInventoryItem(ShippingItem shippingItem)
-    {
-        var res = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_InLiveInventory] {shippingItem.ProductID}, {shippingItem.PackDate}, {shippingItem.PackageSerialNumber}, {shippingItem.Scanline}").ToListAsync();
-        return res.FirstOrDefault();
-    }
 
     public async Task<Dictionary<int, int>> GetAllocatedNotReceivedTotalsAsync()
     {
@@ -235,22 +302,6 @@ internal class SqlInventoryTable : IInventoryTable
         }
         return result;
 
-    }
-
-    public async Task<IEnumerable<InventoryAuditItem>> GetInventoryAuditLogAsync()
-    {
-        return await _db.InventoryAuditItems.ToListAsync();
-    }
-
-    public async Task<bool> DuplicateInventoryCheck(string scanline)
-    {
-        var item = await _db.LiveInventoryItems.FromSql($"[dbo].[usp_DuplicateInventoryScanlineCheck] {scanline}").ToListAsync();
-        return item.FirstOrDefault() != null;
-    }
-
-    public async Task ZeroLiveInventoryAsync()
-    {
-        await _db.Database.ExecuteSqlAsync($"[dbo].[usp_ZeroLiveInventory]");
     }
     #endregion Methods
 }

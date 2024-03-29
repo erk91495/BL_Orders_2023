@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="BlOrders2023.Views.InventoryReconciliationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BlOrders2023.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:BlOrders2023.UserControls"
+    xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:models="using:BlOrders2023.Models"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" Grid.Row="0">
+            <muxc:ProgressBar
+                      x:Name="progressBar"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Top"
+                      Height="10"
+                      IsIndeterminate="True"
+                      Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                      Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="10" Spacing="10">
+                <controls:BarcodeInputTextBox x:Name="Scanline"
+                                          PlaceholderText="Scan to add a product..."
+                                          MinWidth="300"
+                                          AcceptsReturn="True"
+                                          TextWrapping="NoWrap"
+                                          TextChanged="Scanline_TextChanged"
+                                          IsEnabled="True"/>
+                <Button Content="Begin Reconciliation" HorizontalAlignment="Right" Click="BeginReconciliation_Click"/>
+            </StackPanel>
+
+            <sf:SfDataGrid x:Name="ScannedItemsGrid"
+                           ItemsSource="{x:Bind ViewModel.ScannedItems, Mode=TwoWay}"
+                           SourceType="models:LiveInventoryItem"
+                           GridLinesVisibility="Both"
+                           IsReadOnly="True"
+                           AllowSorting="True"
+                           AllowFiltering="True"
+                           AutoGenerateColumns="False"
+                           SelectionUnit="Row"
+                           EditTrigger="OnTap"
+                           EditorSelectionBehavior="SelectAll"
+                           ColumnWidthMode="AutoWithLastColumnFill"
+                           AllowEditing="False"
+                           AllowDeleting="True">
+
+                <sf:SfDataGrid.Columns>
+                    <sf:GridNumericColumn HeaderText="Product ID" MappingName="ProductID"/>
+                    <sf:GridDateColumn HeaderText="Pack Date" MappingName="PackDate" AllowNull="True" PlaceholderText=""/>
+                    <sf:GridTextColumn HeaderText="Lot Code" MappingName="LotCode"/>
+                    <sf:GridNumericColumn HeaderText="Net Weight" MappingName="NetWeight" DisplayNumberFormat="N2"/>
+                    <sf:GridTextColumn HeaderText="Serial Number" MappingName="SerialNumber"/>
+                    <sf:GridTextColumn HeaderText="Scanline" MappingName="Scanline" ColumnWidthMode="AutoWithLastColumnFill"/>
+                </sf:SfDataGrid.Columns>
+            </sf:SfDataGrid>
+
+
+        </StackPanel>
+        <Line X1="5" X2="1895" Grid.Row="1" Stroke="{ThemeResource MenuFlyoutSeparatorThemeBrush}" StrokeThickness="2" Margin="0,24,0,24"/>
+        <StackPanel Orientation="Vertical" Grid.Row="2" HorizontalAlignment="Stretch">
+            <sf:SfDataGrid x:Name="ReconciledItemsGrid"
+                           ItemsSource="{x:Bind ViewModel.ReconciliationItems, Mode=TwoWay}"
+                           SourceType="models:InventoryReconciliationItem"
+                           GridLinesVisibility="Both"
+                           AllowSorting="True"
+                           AllowFiltering="True"
+                           AutoGenerateColumns="False"
+                           ColumnWidthMode="AutoWithLastColumnFill"
+                           AllowDeleting="True"
+                           SelectionMode="Extended">
+
+                <sf:SfDataGrid.Columns>
+                    <sf:GridNumericColumn HeaderText="Product ID" MappingName="LiveInventoryItem.ProductID"/>
+                    <sf:GridDateColumn HeaderText="Pack Date" MappingName="LiveInventoryItem.PackDate" AllowNull="True" PlaceholderText=""/>
+                    <sf:GridTextColumn HeaderText="Lot Code" MappingName="LiveInventoryItem.LotCode"/>
+                    <sf:GridNumericColumn HeaderText="Net Weight" MappingName="LiveInventoryItem.NetWeight" DisplayNumberFormat="N2"/>
+                    <sf:GridTextColumn HeaderText="Serial Number" MappingName="LiveInventoryItem.SerialNumber"/>
+                    <sf:GridTextColumn HeaderText="Scanline" MappingName="LiveInventoryItem.Scanline" ColumnWidthMode="AutoWithLastColumnFill"/>
+                    <sf:GridTextColumn HeaderText="Action" MappingName="InventoryReconciliationAction"/>
+                    <sf:GridCheckBoxSelectorColumn MappingName="Unbound"/>
+                </sf:SfDataGrid.Columns>
+            </sf:SfDataGrid>
+            
+        </StackPanel>
+        <Button Content="Save Selection" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveButton_Click" Grid.Row="2"/>
+    </Grid>
+</Page>

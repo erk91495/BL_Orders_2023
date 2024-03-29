@@ -31,6 +31,7 @@ using Windows.System;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.ComponentModel;
 using BlOrders2023.Core.Contracts.Services;
+using Castle.Core.Resource;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -630,7 +631,6 @@ public sealed partial class ReportsPage : Page
                     };
                     if(await diag.ShowAsync() == ContentDialogResult.Primary)
                     {
-
                         var categoriesToLookup = categories.Where(i => categorySelect.SelectedItems.Contains(i.CategoryName)).ToList();
                         DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
                         DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
@@ -659,6 +659,43 @@ public sealed partial class ReportsPage : Page
                     }
 
 
+                }
+            }
+            else if(control.ReportType == typeof(WholesaleInvoiceTotalsReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+
+                    CustomerSelectionDialog custDialog = new(XamlRoot)
+                    {
+                        PrimaryButtonText = "Select Customer",
+                        SecondaryButtonText = ""
+                    };
+                    var res = await custDialog.ShowAsync();
+                    if (res == ContentDialogResult.Primary && custDialog.ViewModel != null && custDialog.ViewModel.SelectedCustomer != null)
+                    {
+                        var customer = custDialog.ViewModel.SelectedCustomer;
+                        List<int> ids = new List<int>(){ customer.CustID };
+                        var orders = await ViewModel.GetOrdersByCustomerIdAndPickupDateAsync(ids, dateTuple.Item1.Value, dateTuple.Item2.Value);
+                        if(!orders.IsNullOrEmpty())
+                        {
+                            spinner.IsVisible=true;
+                            reportPath = await reportGenerator.GenerateWholesaleInvoiceTotalsReport(customer,orders,dateTuple.Item1.Value,dateTuple.Item2.Value);
+                        }
+                        else
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "No Orders",
+                                Content = $"No orders found for the given date range.",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
+                    }
                 }
             }
             else

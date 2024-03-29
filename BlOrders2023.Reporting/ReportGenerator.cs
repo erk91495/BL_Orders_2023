@@ -222,6 +222,14 @@ public class ReportGenerator
         return filePath;
     }
 
+    public async Task<string> GenerateWholesaleInvoiceTotalsReport(WholesaleCustomer customer, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new WholesaleInvoiceTotalsReport(CompanyInfo, customer, orders, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryDetailsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        await GernerateReportAsync(report, filePath);
+        return filePath;
+    }
+
     private async Task GernerateReportAsync(IReport report, string filepath)
     {
         await Task.Run(() => report.GeneratePdf(filepath));

@@ -24,8 +24,11 @@ public class PageService : IPageService
         Configure<PaymentsPageViewModel, PaymentsPage>();
         Configure<SettingsViewModel, SettingsPage>();
         Configure<InventoryPageViewModel, InventoryPage>();
+        Configure<LiveInventoryPageViewModel, LiveInventoryPage>();
         Configure<InventoryAdjustmentsPageViewModel, InventoryAdjustmentsPage>();
         Configure<InventoryAuditLogPageViewModel, InventoryAuditLogPage>();
+        Configure<InventoryReconciliationPageViewModel, InventoryReconciliationPage>();
+        Configure<AddLiveInventoryPageViewModel,AddLiveInventoryPage>();
     }
 
     public Type GetPageType(string key)

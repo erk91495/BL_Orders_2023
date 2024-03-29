@@ -154,7 +154,11 @@ public sealed partial class InventoryAdjustmentsPage : Page
         {
             foreach (var id in _modifiedItems)
             {
-                await ViewModel.SaveAsync(ViewModel.Inventory.Where(i => i.ProductID == id).First());
+                var item = ViewModel.Inventory.Where(i => i.ProductID == id).First();
+                await ViewModel.SaveAsync(item);
+                //do all of this to make the data look pretty. it doesnt get saved b/c its from a usp and not a table
+                item.ManualAdjustments += item.LastAdjustment;
+                item.Total += item.LastAdjustment;
             }
             var generator = new ReportGenerator(App.CompanyInfo);
             var path = await generator.GenerateCurrentInventoryReport(ViewModel.Inventory);

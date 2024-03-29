@@ -136,6 +136,8 @@ public partial class App : Application
             services.AddTransient<AllocatorPageViewModel>();
             services.AddTransient<InventoryPage>();
             services.AddTransient<InventoryPageViewModel>();
+            services.AddTransient<LiveInventoryPage>();
+            services.AddTransient<LiveInventoryPageViewModel>();
             services.AddTransient<PaymentsPage>();
             services.AddTransient<PaymentsPageViewModel>();
             services.AddTransient<ProductDataInputDialogViewModel>();
@@ -146,6 +148,10 @@ public partial class App : Application
             services.AddTransient<InventoryAdjustmentsPageViewModel>();
             services.AddTransient<InventoryAuditLogPage>();
             services.AddTransient<InventoryAuditLogPageViewModel>();
+            services.AddTransient<InventoryReconciliationPage>();
+            services.AddTransient<InventoryReconciliationPageViewModel>();
+            services.AddTransient<AddLiveInventoryPage>();
+            services.AddTransient<AddLiveInventoryPageViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

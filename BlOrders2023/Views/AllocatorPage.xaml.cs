@@ -133,13 +133,60 @@ public sealed partial class AllocatorPage : Page
 
             else
             {
-                var dateTuple = await ShowDateRangeSelectionAsync();
-                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                var allocationType = new ContentDialog()
                 {
-                    var ids = await ViewModel.GetOrdersIDToAllocateAsync(dateTuple.Item1, dateTuple.Item2, ViewModel.AllocatorConfig.AllocatorMode);
+                    XamlRoot = XamlRoot,
+                    Title = "Allocation Type",
+                    Content = "Would you like to Allocate by date range or order ID?",
+                    PrimaryButtonText = "Date Range",
+                    SecondaryButtonText = "Order ID",
+                };
+                result = await allocationType.ShowAsync();
+                if(result == ContentDialogResult.Primary)
+                {
+                    var dateTuple = await ShowDateRangeSelectionAsync();
+                    if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                    {
+                        var ids = await ViewModel.GetOrdersIDToAllocateAsync(dateTuple.Item1, dateTuple.Item2, ViewModel.AllocatorConfig.AllocatorMode);
 
-                    ViewModel.AllocatorConfig.IDs = ids.ToList();
-                    await StartAllocationAsync();
+                        ViewModel.AllocatorConfig.IDs = ids.ToList();
+                        await StartAllocationAsync();
+                    }
+                    else
+                    {
+                        TryGoBack();
+                    }
+                }
+                else if (result == ContentDialogResult.Secondary)
+                {
+                    SingleValueInputDialog orderIDDialog = new SingleValueInputDialog()
+                    {
+                        Title = "Order ID",
+                        Prompt = "Please Enter An Order ID",
+                        XamlRoot = XamlRoot,
+                        PrimaryButtonText = "Submit",
+                        SecondaryButtonText = "Cancel",
+                        ValidateValue = ValidateOrderID,
+                    };
+                    result = await orderIDDialog.ShowAsync();
+                    var res = int.TryParse(orderIDDialog.Value ?? "", out var id);
+                    if (!res)
+                    {
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "User Error",
+                            Content = $"Invalid Order ID {orderIDDialog.Value}.\r\n " +
+                            $"Please enter a numeric value",
+                            PrimaryButtonText = "ok",
+                        };
+                        await d.ShowAsync();
+                    }
+                    else
+                    {
+                        ViewModel.AllocatorConfig.IDs = new List<int> {id};
+                        await StartAllocationAsync();
+                    }
                 }
                 else
                 {
@@ -364,6 +411,11 @@ public sealed partial class AllocatorPage : Page
         {
             await PrintAllocationDetails();
         }
+    }
+
+    private bool ValidateOrderID(string? value)
+    {
+        return int.TryParse(value, out _);
     }
     #endregion Methods
 }

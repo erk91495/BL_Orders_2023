@@ -92,17 +92,17 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240227000" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
     <PackageReference Include="NLog.WindowsEventLog" Version="5.2.8" />
     <PackageReference Include="Octokit" Version="10.0.0" />
     <PackageReference Include="QuestPDF" Version="2023.12.6" />
-    <PackageReference Include="Syncfusion.EJ2.PdfViewer.AspNet.Mvc5" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Grid.WinUI" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Licensing" Version="24.2.9" />
+    <PackageReference Include="Syncfusion.EJ2.PdfViewer.AspNet.Mvc5" Version="25.1.37" />
+    <PackageReference Include="Syncfusion.Grid.WinUI" Version="25.1.37" />
+    <PackageReference Include="Syncfusion.Licensing" Version="25.1.37" />
     <PackageReference Include="WinUIEx" Version="2.3.4" />
   </ItemGroup>
 
@@ -119,9 +119,18 @@
 	<None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="Dialogs\LiveInventoryRemovalDialog.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<None Update="nlog.config">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="Views\AddLiveInventoryPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
+	<Page Update="Views\InventoryReconciliationPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="Views\InventoryAuditLogPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -162,7 +171,7 @@
 	  <Pack>True</Pack>
 	  <PackagePath>\</PackagePath>
 	</None>
-	<Page Update="Views\InventoryPage.xaml">
+	<Page Update="Views\LiveInventoryPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
 	<Page Update="Styles\CustomGenericStyles.xaml">
@@ -197,6 +206,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <None Remove="Dialogs\LiveInventoryRemovalDialog.xaml" />
     <None Remove="Styles\CustomGenericStyles.xaml" />
     <None Remove="UserControls\AllocatedItemsGridControl.xaml" />
     <None Remove="UserControls\BillOfLadingDataInputDialog.xaml" />
@@ -208,10 +218,12 @@
     <None Remove="UserControls\SpinnerOverlay.xaml" />
     <None Remove="UserControls\SqlConnectionSettingsPanel.xaml" />
     <None Remove="ViewModels\GridEditorDialog.xaml" />
+    <None Remove="Views\AddLiveInventoryPage.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
     <None Remove="Views\InventoryAdjustmentsPage.xaml" />
     <None Remove="Views\InventoryAuditLogPage.xaml" />
-    <None Remove="Views\InventoryPage.xaml" />
+    <None Remove="Views\InventoryReconciliationPage.xaml" />
+    <None Remove="Views\LiveInventoryPage.xaml" />
     <None Remove="Views\PaymentsPage.xaml" />
   </ItemGroup>
   

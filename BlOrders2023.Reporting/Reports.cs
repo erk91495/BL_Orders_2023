@@ -31,5 +31,6 @@ public static class Reports
         typeof(ShippingItemAuditReport),
         typeof(ProductCategoryTotalsReport),
         typeof(ProductCategoryDetailsReport),
+        typeof(WholesaleInvoiceTotalsReport),
     }; 
 }

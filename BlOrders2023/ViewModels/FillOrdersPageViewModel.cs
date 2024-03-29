@@ -209,6 +209,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
             }
             else
             {
+                App.LogInfoMessage($"Could Not find item in Inventory {item} {item.ProductID} {item.Scanline}");
                 await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID,-1);
             }
             Items.Add(item);

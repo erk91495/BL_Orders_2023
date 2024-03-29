@@ -55,7 +55,7 @@
                     <AppBarButton.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyoutItem Icon="Shop" Text="Products" Click="MenuFlyoutProducts_Click"/>
-                            <MenuFlyoutItem Icon="Bullets" Text="Inventory" Click="MenuFlyoutInventory_Click"/>
+                            <!--<MenuFlyoutItem Icon="Bullets" Text="Inventory" Click="MenuFlyoutInventory_Click"/>-->
                             <MenuFlyoutItem Icon="Shuffle" Text="Allocation" Click="MenuFlyoutItemAllocation_Click"/>
                             <MenuFlyoutItem Icon="ContactInfo" Text="Customer Classes" Click="MenuFlyoutCustomerClasses_Click"/>
                             <MenuFlyoutItem Icon="Calculator" Text="Payments" Click="MenuFlyoutPayments_Click"/>
@@ -92,6 +92,11 @@
                 <NavigationViewItem x:Uid="Shell_WholesaleCustomers" helpers:NavigationHelper.NavigateTo="BlOrders2023.ViewModels.WholesaleCustomersViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe77B;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="Shell_InventoryPage" helpers:NavigationHelper.NavigateTo="BlOrders2023.ViewModels.InventoryPageViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FD;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
