@@ -127,6 +127,7 @@ public class ShippingItemAuditReport :IReport
                     column.RelativeColumn(12);
                     column.RelativeColumn(4);
                     column.RelativeColumn(4);
+                    column.RelativeColumn(4);
                 });
 
                 //table.Header(header =>
@@ -139,7 +140,7 @@ public class ShippingItemAuditReport :IReport
 
                 foreach (var group in groupedItems)
                 {
-                    table.Cell().ColumnSpan(7).Element(SubHeaderCellStyle).Text($"{group.Key}").Style(tableHeaderStyle);
+                    table.Cell().ColumnSpan(8).Element(SubHeaderCellStyle).Text($"{group.Key}").Style(tableHeaderStyle);
                     var groupedByID = group.ToList().GroupBy(i => i.OrderID);
                     foreach (var order in groupedByID )
                     {
@@ -148,8 +149,10 @@ public class ShippingItemAuditReport :IReport
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"ID").Style(tableTextStyle);
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Product Name").Style(tableTextStyle);
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Scanline").Style(tableTextStyle);
+                        table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Package Weight").Style(tableTextStyle);
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Pack Date").Style(tableTextStyle);
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Scan Date").Style(tableTextStyle);
+                        float totalWt = 0;
                         foreach (var item in order)
                         {
                             //Acts like a tab
@@ -157,10 +160,19 @@ public class ShippingItemAuditReport :IReport
                             table.Cell().Element(MainTableCellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                             table.Cell().Element(MainTableCellStyle).Text($"{item.Product.ProductName}").Style(tableTextStyle);
                             table.Cell().Element(MainTableCellStyle).Text($"{item.Scanline}").Style(tableTextStyle);
+                            table.Cell().Element(MainTableCellStyle).Text($"{item.PickWeight:N2}").Style(tableTextStyle);
+                            totalWt += item.PickWeight ?? 0;
                             var packDateString = item.PackDate.HasValue ? item.PackDate.Value.ToShortDateString() : string.Empty;
                             table.Cell().Element(MainTableCellStyle).Text($"{packDateString}").Style(tableTextStyle);
                             var scanDateString = item.ScanDate.HasValue ? item.ScanDate.Value.ToShortDateString() : string.Empty;
                             table.Cell().Element(MainTableCellStyle).Text($"{scanDateString}").Style(tableTextStyle);
+                        }
+                        table.Cell().ColumnSpan(5);
+                        table.Cell().Element(SubTotalCellStyle).Text($"{totalWt:N2}").Style(tableTextStyle).SemiBold();
+                        table.Cell().ColumnSpan(2);
+                        static IContainer SubTotalCellStyle(IContainer container)
+                        {
+                            return container.PaddingVertical(2);
                         }
 
                     }
