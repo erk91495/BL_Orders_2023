@@ -28,7 +28,7 @@
                       IsIndeterminate="True"
                       Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
                       Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="10" Spacing="10">
                 <controls:BarcodeInputTextBox x:Name="Scanline"
                                           PlaceholderText="Scan to add a product..."
                                           MinWidth="300"

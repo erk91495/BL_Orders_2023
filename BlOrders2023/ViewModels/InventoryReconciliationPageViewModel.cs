@@ -8,6 +8,7 @@ using BlOrders2023.Contracts.ViewModels;
 using BlOrders2023.Core.Data;
 using BlOrders2023.Exceptions;
 using BlOrders2023.Models;
+using Microsoft.IdentityModel.Tokens;
 using Windows.Graphics.Printing.PrintSupport;
 
 namespace BlOrders2023.ViewModels;
@@ -18,7 +19,7 @@ public class InventoryReconciliationPageViewModel : ViewModelBase
     private ObservableCollection<InventoryReconciliationItem> _reconciliationItems = new();
     private ObservableCollection<LiveInventoryItem> _scannedItems = new();
     private ObservableCollection<InventoryReconciliationItem> _selectedItems = new();
-    private bool _isLoading;
+    private bool _isLoading;    
     #endregion Fields
 
     #region Properties
@@ -48,7 +49,7 @@ public class InventoryReconciliationPageViewModel : ViewModelBase
         set => SetProperty(ref _selectedItems, value);
     }
 
-    internal async Task ReconcileAsync()
+    internal async Task<bool> ReconcileAsync()
     {
         ReconciliationItems.Clear();
         var productIDs = ScannedItems.Select(i => i.ProductID);
@@ -60,13 +61,21 @@ public class InventoryReconciliationPageViewModel : ViewModelBase
         {
             ReconciliationItems.Add(new () {LiveInventoryItem = item, InventoryReconciliationAction = Models.Enums.InventoryReconciliationAction.Added});
         }
-        foreach (var item in nochange)
-        {
-            ReconciliationItems.Add(new() { LiveInventoryItem = item, InventoryReconciliationAction = Models.Enums.InventoryReconciliationAction.None });
-        }
+        //foreach (var item in nochange)
+        //{
+        //    ReconciliationItems.Add(new() { LiveInventoryItem = item, InventoryReconciliationAction = Models.Enums.InventoryReconciliationAction.None });
+        //}
         foreach (var item in removed)
         {
             ReconciliationItems.Add(new() { LiveInventoryItem = item, InventoryReconciliationAction = Models.Enums.InventoryReconciliationAction.Removed });
+        }
+        if(added.IsNullOrEmpty() && removed.IsNullOrEmpty() && nochange.Any()) 
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 

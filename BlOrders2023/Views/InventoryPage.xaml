@@ -100,7 +100,7 @@
                        SelectionUnit="Row"
                        EditTrigger="OnTap"
                        EditorSelectionBehavior="SelectAll"
-                       ColumnWidthMode="Star"
+                       ColumnWidthMode="AutoWithLastColumnFill"
                        AllowEditing="False"
                        AllowGrouping="True"
                        AllowResizingColumns="True"

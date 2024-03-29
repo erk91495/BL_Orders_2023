@@ -117,7 +117,18 @@ public sealed partial class InventoryReconciliationPage : Page
 
     internal async void BeginReconciliation_Click(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ReconcileAsync();
+        var allItemsMatch = await ViewModel.ReconcileAsync();
+        if (allItemsMatch)
+        {
+            var dialog = new ContentDialog()
+            {
+                XamlRoot = XamlRoot,
+                Title = "No Changes",
+                Content = "All scanned items were found in inventory",
+                PrimaryButtonText = "ok",
+            };
+            await dialog.ShowAsync();
+        }
     }
 
     private async void SaveButton_Click(object sender, RoutedEventArgs e)
