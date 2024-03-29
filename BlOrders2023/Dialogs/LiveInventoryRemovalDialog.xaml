@@ -10,10 +10,11 @@
     mc:Ignorable="d"
     PrimaryButtonText="Remove Item"
     IsPrimaryButtonEnabled="False"
-    CloseButtonText="Cancel">
+    CloseButtonText="Cancel"
+    Title="Remove Item From Inventory">
 
     <StackPanel>
-        <uc:BarcodeInputTextBox Text="{x:Bind Scanline, Mode=TwoWay}" MinWidth="300"/>
-        <ComboBox ItemsSource="{x:Bind RemovalReasons,Mode=OneWay}" SelectedItem="{x:Bind SelectedReason, Mode=TwoWay}" DisplayMemberPath="RemovalReason" MinWidth="300"/>
+        <uc:BarcodeInputTextBox Text="{x:Bind Scanline, Mode=TwoWay}" MinWidth="300" Header="Scanline"/>
+        <ComboBox Header="Removal Reason" ItemsSource="{x:Bind RemovalReasons,Mode=OneWay}" SelectedItem="{x:Bind SelectedReason, Mode=TwoWay}" DisplayMemberPath="RemovalReason" MinWidth="300"/>
     </StackPanel>
 </ContentDialog>
