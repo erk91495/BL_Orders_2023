@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Printing;
-using Syncfusion.EJ2.PdfViewer;
+using Syncfusion.PdfToImageConverter;
 
 namespace BlOrders2023.Services;
 internal class PDFPrinterService
@@ -30,16 +30,18 @@ internal class PDFPrinterService
         CurrentPageIndex = 0;
     }
 
+
     private void On_PrintPage(object sender, PrintPageEventArgs e)
     {
-        PdfRenderer toPrint = new();
-        toPrint.Load(pdfFilePath);
+        PdfToImageConverter Converter = new();
+        FileStream inputStream = new FileStream(pdfFilePath, FileMode.Open, FileAccess.Read);
+        Converter.Load(inputStream);
         //SizeF size = new(850, 1100);
-        var bitmap = toPrint.ExportAsImage(CurrentPageIndex, 600, 600);
-        //bitmap.Save(Path.GetTempPath() + "BLOrders2023\\" + "temp.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-        e.Graphics?.DrawImage(bitmap, e.MarginBounds);
-        
-        e.HasMorePages = CurrentPageIndex < toPrint.PageCount - 1;
+        Stream outputStream = Converter.Convert(CurrentPageIndex, false, false);
+        Image image = Image.FromStream(outputStream);
+        e.Graphics?.DrawImage(image, e.MarginBounds);
+
+        e.HasMorePages = CurrentPageIndex < Converter.PageCount - 1;
         CurrentPageIndex++;
     }
 }
