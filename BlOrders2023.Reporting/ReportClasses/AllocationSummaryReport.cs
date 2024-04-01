@@ -9,28 +9,21 @@ using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Allocation Summary Report")]
-public class AllocationSummaryReport : IReport
+public class AllocationSummaryReport : ReportBase
 {
     #region Fields
-    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).FontColor(Colors.Black);
-    private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-    private readonly CompanyInfo _companyInfo;
+    private readonly new TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9);
+
     private readonly IEnumerable<Order> _orders;
     private readonly AllocatorMode _allocationMode;
-    private readonly DateTime _reportDate = DateTime.Now;
     private readonly DateTime _allocationTime = DateTime.Now;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
     #endregion Fields
 
     #region Constructors
-    public AllocationSummaryReport(CompanyInfo companyInfo, IEnumerable<Order> Orders, AllocatorMode mode, DateTime AllocationTime)
+    public AllocationSummaryReport(CompanyInfo companyInfo, IEnumerable<Order> Orders, AllocatorMode mode, DateTime AllocationTime) : base(companyInfo)
     {
-        _companyInfo = companyInfo;
         _orders = Orders;
         _allocationMode = mode;
         _allocationTime = AllocationTime;
@@ -38,7 +31,7 @@ public class AllocationSummaryReport : IReport
     #endregion Constructors
 
     #region Methods
-    public void Compose(IDocumentContainer container)
+    public override void Compose(IDocumentContainer container)
     {
         container.Page(page =>
         {
@@ -58,9 +51,7 @@ public class AllocationSummaryReport : IReport
         });
     }
 
-    public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
-
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Column(headerCol =>
         {
@@ -88,7 +79,7 @@ public class AllocationSummaryReport : IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
 
         container.Column(column => {
@@ -141,31 +132,6 @@ public class AllocationSummaryReport : IReport
 
 
         });
-    }
-
-    private void ComposeFooter(IContainer container)
-    {
-        container.AlignBottom().Column(column =>
-        {
-            column.Item().AlignBottom().AlignRight().Row(footer =>
-            {
-                footer.RelativeItem().AlignLeft().Text(time =>
-                {
-                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{_reportDate.ToString():d}").Style(smallFooterStyle);
-                });
-
-                footer.RelativeItem().AlignRight().Text(page =>
-                {
-                    page.Span("pg. ").Style(smallFooterStyle);
-                    page.CurrentPageNumber().Style(smallFooterStyle);
-                    page.Span(" of ").Style(smallFooterStyle);
-                    page.TotalPages().Style(smallFooterStyle);
-                });
-            });
-
-        });
-
     }
     #endregion Methods
 }

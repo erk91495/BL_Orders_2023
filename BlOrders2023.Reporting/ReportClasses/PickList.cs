@@ -14,47 +14,22 @@ using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Pick List")]
-public class PickList : IReport
+public class PickList : ReportBase
 {
-    private readonly CompanyInfo _companyInfo;
     private readonly Order _order;
     private readonly DateTime _ReportDate = DateTime.Now;
 
-    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).Bold().FontColor(Colors.Black);
-    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(10f);
-    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(10f).SemiBold();
-    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(8f);
+    private readonly new TextStyle tableTextStyle = TextStyle.Default.FontSize(10f);
+    private readonly new TextStyle tableHeaderStyle = TextStyle.Default.FontSize(10f).SemiBold();
+    private readonly new TextStyle smallFooterStyle = TextStyle.Default.FontSize(8f);
 
     public PickList(CompanyInfo companyInfo, Order order)
+        :base(companyInfo)
     {
-        _companyInfo = companyInfo;
         _order = order;
     }
 
-    public void Compose(IDocumentContainer container)
-    {
-        container.Page(page =>
-        {
-            page.Margin(20);
-            page.Size(PageSizes.Letter);
-
-            page.Header().Height(100).Background(Colors.Grey.Lighten1);
-            page.Header().Element(ComposeHeader);
-
-            page.Content().Background(Colors.Grey.Lighten3);
-            page.Content().Element(ComposeContent);
-
-            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-            page.Footer().Element(ComposeFooter);
-
-        });
-    }
-
-    public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
-
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Column(headerCol =>
         {
@@ -99,7 +74,7 @@ public class PickList : IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
 
         container.Column(column => {
@@ -263,7 +238,7 @@ public class PickList : IReport
         });
     }
 
-    private void ComposeFooter(IContainer container)
+    protected override void ComposeFooter(IContainer container)
     {
         container.AlignBottom().Column(column =>
         {

@@ -14,29 +14,22 @@ using static QuestPDF.Helpers.Colors;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Bill Of Lading Report")]
-public class BillOfLadingReport : IReport
+public class BillOfLadingReport : ReportBase
 {
-    private IEnumerable<Order> _orders;
-    private IEnumerable<BillOfLadingItem> _billOfLadingItems;
-    private CompanyInfo _companyInfo;
-    private WholesaleCustomer _customer;
-    private string _carrierName;
-    private string _trailerNumber;
-    private string _trailerSeal;
-    private DateTime? _appointmentTime;
+    private readonly IEnumerable<Order> _orders;
+    private readonly IEnumerable<BillOfLadingItem> _billOfLadingItems;
+    private readonly WholesaleCustomer _customer;
+    private readonly string _carrierName;
+    private readonly string _trailerNumber;
+    private readonly string _trailerSeal;
+    private readonly DateTime? _appointmentTime;
 
-    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Black);
-    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Black);
-    private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
     public BillOfLadingReport(CompanyInfo companyInfo, IEnumerable<Order> orders, 
         IEnumerable<BillOfLadingItem> items, WholesaleCustomer customer,
         string carrier, string trailerNumber, string trailerSeal, DateTime? appointmentTime)
+        : base(companyInfo)
     {
-        _companyInfo = companyInfo;
         _orders = orders;
         _billOfLadingItems = items;
         _customer = customer;
@@ -45,28 +38,8 @@ public class BillOfLadingReport : IReport
         _trailerSeal = trailerSeal;
         _appointmentTime = appointmentTime;
     }
-    public void Compose(IDocumentContainer container)
-    {
-        container.Page(page =>
-        {
-            page.Margin(20);
-            page.Size(PageSizes.Letter);
 
-            page.Margin(20);
-
-            page.Header().Height(100).Background(Grey.Lighten1);
-            page.Header().Element(ComposeHeader);
-
-            page.Content().Background(Grey.Lighten3);
-            page.Content().Element(ComposeContent);
-
-            page.Footer().Height(20).Background(Grey.Lighten1);
-            page.Footer().Element(ComposeFooter);
-
-        });
-    }
-
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Column(headerCol =>
         {
@@ -93,7 +66,7 @@ public class BillOfLadingReport : IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
         container.Column(mainCol => 
         {
@@ -293,29 +266,5 @@ public class BillOfLadingReport : IReport
                 });
             });
         });
-    }
-    private void ComposeFooter(IContainer container)
-    {
-        container.AlignBottom().Column(column =>
-        {
-            column.Item().AlignBottom().AlignRight().Row(footer =>
-            {
-                footer.RelativeItem().AlignLeft().Text(time =>
-                {
-                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
-                });
-
-                footer.RelativeItem().AlignRight().Text(page =>
-                {
-                    page.Span("pg. ").Style(smallFooterStyle);
-                    page.CurrentPageNumber().Style(smallFooterStyle);
-                    page.Span(" of ").Style(smallFooterStyle);
-                    page.TotalPages().Style(smallFooterStyle);
-                });
-            });
-
-        });
-
     }
 }

@@ -10,48 +10,21 @@ using System.Collections.Generic;
 namespace BlOrders2023.Reporting.ReportClasses;
 
 [System.ComponentModel.DisplayName("Wholesale Order Pickup Recap")]
-public class WholesaleOrderPickupRecap : IReport
+public class WholesaleOrderPickupRecap : ReportBase
 {
-    private readonly CompanyInfo _companyInfo;
-    private IEnumerable<Order> _orders;
-    private DateTimeOffset _startDate;
-    private DateTimeOffset _endDate;
-
-    public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-    public static readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-    public static readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    public static readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-    public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-    public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
+    private readonly IEnumerable<Order> _orders;
+    private readonly DateTimeOffset _startDate;
+    private readonly DateTimeOffset _endDate;
 
     public WholesaleOrderPickupRecap(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+        :base(companyInfo)
     {
-        _companyInfo = companyInfo;
         _orders = orders;
         _startDate = startDate;
         _endDate = endDate;
     }
 
-    public void Compose(IDocumentContainer container)
-    {
-        container.Page(page =>
-        {
-            page.Margin(20);
-            page.Size(PageSizes.Letter);
-
-            page.Header().Height(100).Background(Colors.Grey.Lighten1);
-            page.Header().Element(ComposeHeader);
-
-            page.Content().Background(Colors.Grey.Lighten3);
-            page.Content().Element(ComposeContent);
-
-            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-            page.Footer().Element(ComposeFooter);
-
-        });
-    }
-
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Row(row =>
         {
@@ -64,7 +37,7 @@ public class WholesaleOrderPickupRecap : IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
         container.Column(column => {
             //Items
@@ -139,30 +112,5 @@ public class WholesaleOrderPickupRecap : IReport
                 }
             });
         });
-    }
-
-    private void ComposeFooter(IContainer container)
-    {
-        container.AlignBottom().Column(column =>
-        {
-            column.Item().AlignBottom().AlignRight().Row(footer =>
-            {
-                footer.RelativeItem().AlignLeft().Text(time =>
-                {
-                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
-                });
-
-                footer.RelativeItem().AlignRight().Text(page =>
-                {
-                    page.Span("pg. ").Style(smallFooterStyle);
-                    page.CurrentPageNumber().Style(smallFooterStyle);
-                    page.Span(" of ").Style(smallFooterStyle);
-                    page.TotalPages().Style(smallFooterStyle);
-                });
-            });
-
-        });
-
     }
 }

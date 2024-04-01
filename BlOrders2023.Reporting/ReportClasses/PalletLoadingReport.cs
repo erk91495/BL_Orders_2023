@@ -8,56 +8,32 @@ using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Pallet Loading Report")]
-public class PalletLoadingReport :IReport
+public class PalletLoadingReport :ReportBase
 {
     #region Fields
     private readonly Order _order;
     private readonly Pallet _pallet;
-    private readonly CompanyInfo _companyInfo;
 
-    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).FontColor(Colors.Black);
-    private readonly TextStyle poStyle = TextStyle.Default.FontSize(28).FontColor(Colors.Black);
-    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(18).FontColor(Colors.Black);
+    private readonly new TextStyle titleStyle = TextStyle.Default.FontSize(20).FontColor(Colors.Black);
+    private readonly new TextStyle subTitleStyle = TextStyle.Default.FontSize(18).FontColor(Colors.Black);
     private readonly TextStyle giantTextSize = TextStyle.Default.FontSize(30).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(18);
-    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(15);
+    private readonly TextStyle poStyle = TextStyle.Default.FontSize(28).FontColor(Colors.Black);
+    private readonly new TextStyle normalTextStyle = TextStyle.Default.FontSize(18);
+    private readonly new TextStyle tableTextStyle = TextStyle.Default.FontSize(15);
     private readonly TextStyle largeTableTextStyle = TextStyle.Default.FontSize(20).SemiBold();
-    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(8.5f).SemiBold();
-    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(8.5f);
+    private readonly new TextStyle tableHeaderStyle = TextStyle.Default.FontSize(8.5f).SemiBold();
+    private readonly new TextStyle smallFooterStyle = TextStyle.Default.FontSize(8.5f);
     #endregion Fields
     #region Properties
     #endregion Properties
 
-    public PalletLoadingReport(CompanyInfo companyInfo, Order order, Pallet pallet)
+    public PalletLoadingReport(CompanyInfo companyInfo, Order order, Pallet pallet) : base(companyInfo)
     {
-        _companyInfo = companyInfo;
         _order = order;
         _pallet = pallet;
     }
 
-    public void Compose(IDocumentContainer container)
-    {
-        container.Page(page =>
-        {
-            page.Margin(20);
-            page.Size(PageSizes.Letter);
-
-            page.Header().Height(100).Background(Colors.Grey.Lighten1);
-            page.Header().Element(ComposeHeader);
-
-            page.Content().Background(Colors.Grey.Lighten3);
-            page.Content().Element(ComposeContent);
-
-            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-            page.Footer().Element(ComposeFooter);
-            
-
-        });
-    }
-
-    public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
-
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Column(headerCol =>
         {
@@ -90,7 +66,7 @@ public class PalletLoadingReport :IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
 
         container.Column(column => {
@@ -133,7 +109,7 @@ public class PalletLoadingReport :IReport
             
     }
 
-    private void ComposeFooter(IContainer container)
+    protected override void ComposeFooter(IContainer container)
     {
         container.AlignBottom().Column(column =>
         {

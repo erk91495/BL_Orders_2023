@@ -11,48 +11,21 @@ using System.Threading.Tasks;
 namespace BlOrders2023.Reporting.ReportClasses;
 
 [System.ComponentModel.DisplayName("Wholesale Payments")]
-public class WholesalePaymentsReport : IReport
+public class WholesalePaymentsReport : ReportBase
 {
-    private readonly CompanyInfo _companyInfo;
     private readonly IEnumerable<Payment> _payments;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
 
-    public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-    public static readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-    public static readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    public static readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-    public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-    public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-
     public WholesalePaymentsReport(CompanyInfo companyInfo, IEnumerable<Payment> payments, DateTimeOffset startDate, DateTimeOffset endDate)
+        : base(companyInfo)
     {
-        _companyInfo = companyInfo;
         _payments = payments;
         _startDate = startDate;
         _endDate = endDate;
     }
 
-    public void Compose(IDocumentContainer container)
-    {
-        container.Page(page =>
-        {
-            page.Margin(20);
-            page.Size(PageSizes.Letter);
-
-            page.Header().Height(100).Background(Colors.Grey.Lighten1);
-            page.Header().Element(ComposeHeader);
-
-            page.Content().Background(Colors.Grey.Lighten3);
-            page.Content().Element(ComposeContent);
-
-            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-            page.Footer().Element(ComposeFooter);
-
-        });
-    }
-
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Row(row =>
         {
@@ -65,7 +38,7 @@ public class WholesalePaymentsReport : IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
         container.Column(column => {
             //Items
@@ -133,30 +106,5 @@ public class WholesalePaymentsReport : IReport
 
             });
         });
-    }
-
-    private void ComposeFooter(IContainer container)
-    {
-        container.AlignBottom().Column(column =>
-        {
-            column.Item().AlignBottom().AlignRight().Row(footer =>
-            {
-                footer.RelativeItem().AlignLeft().Text(time =>
-                {
-                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
-                });
-
-                footer.RelativeItem().AlignRight().Text(page =>
-                {
-                    page.Span("pg. ").Style(smallFooterStyle);
-                    page.CurrentPageNumber().Style(smallFooterStyle);
-                    page.Span(" of ").Style(smallFooterStyle);
-                    page.TotalPages().Style(smallFooterStyle);
-                });
-            });
-
-        });
-
     }
 }

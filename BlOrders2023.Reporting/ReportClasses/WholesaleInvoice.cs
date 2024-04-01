@@ -12,22 +12,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace BlOrders2023.Reporting.ReportClasses;
 
 [System.ComponentModel.DisplayName("Wholesale Invoice")]
-public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<ProductCategory> categoriesToTotal) : IReport
+public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<ProductCategory> categoriesToTotal) : ReportBase(companyInfo)
 {
-    private readonly CompanyInfo _companyInfo = companyInfo;
     private readonly Order _order = order;
     private readonly IEnumerable<ProductCategory> _categoriesToToal = categoriesToTotal;
-
-    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
     private readonly TextStyle categoryTotalsStyle = TextStyle.Default.FontSize(9).Italic().SemiBold();
     private readonly int maxTotalsColumns = 6;
 
-    public void Compose(IDocumentContainer container)
+    public override void Compose(IDocumentContainer container)
     {
         container.Page(page =>
                 {
@@ -57,9 +49,7 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
                 });
     }
 
-    public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
-
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Column(headerCol => 
         {
@@ -100,13 +90,13 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
          });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
         
         container.Column(column => {
 
             //Bill To Ship To
-            column.Item().MinimalBox().AlignBottom().PaddingBottom(5).Row(row =>
+            column.Item().Shrink().AlignBottom().PaddingBottom(5).Row(row =>
             {
                 //Padding 
                 row.RelativeItem(1);
@@ -294,7 +284,7 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
         });
     }
 
-    private void ComposeFooter(IContainer container)
+    protected override void ComposeFooter(IContainer container)
     {
         container.AlignBottom().Column(column =>
         {
