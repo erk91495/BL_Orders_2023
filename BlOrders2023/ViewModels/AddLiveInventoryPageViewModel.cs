@@ -42,6 +42,11 @@ class AddLiveInventoryPageViewModel : ViewModelBase
 
     internal async Task SaveItems()
     {
+        foreach(var item in _scannedItems)
+        {
+            item.RemovedFromInventory = false;
+            await _db.Inventory.UpsertLiveInventoryItemAsync(item);
+        }
     }
 
     internal void VerifyProduct(LiveInventoryItem item)
