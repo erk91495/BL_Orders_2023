@@ -32,12 +32,79 @@ namespace BlOrders2023.Views
     {
         #region Fields
         private AddLiveInventoryPageViewModel ViewModel { get; }
+        private bool hasChanges = false;
+        private bool canLeave = false;
         #endregion Fields
 
         public AddLiveInventoryPage()
         {
             ViewModel = App.GetService<AddLiveInventoryPageViewModel>();
             this.InitializeComponent();
+            this.Unloaded += OrderDetailsPage_Unloaded;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            App.MainWindow.Closed += AddLiveInventoryPage_Closed;
+        }
+
+        protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if(!canLeave){
+                if (hasChanges)
+                {
+                    e.Cancel = true;
+                    ContentDialog dialog = new ContentDialog()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = "Unsaved Changes",
+                        Content = "Are you sure you want to leave? Unsaved changes will be discarded.",
+                        PrimaryButtonText = "Leave",
+                        CloseButtonText = "Cancel",
+                    };
+
+                    var res = await dialog.ShowAsync();
+                    if(res == ContentDialogResult.Primary)
+                    {
+                        e.Cancel = false;
+                        canLeave = true;
+                        Frame.Navigate(e.SourcePageType, e.Parameter);
+                    }
+                }
+            }
+        }
+
+
+        private void OrderDetailsPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            App.MainWindow.Closed -= AddLiveInventoryPage_Closed;
+        }
+
+        private async void AddLiveInventoryPage_Closed(object sender, WindowEventArgs args)
+        {
+            if (hasChanges)
+            {
+                args.Handled = true;
+                ContentDialog dialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Close Application",
+                    Content = "Are you sure you want to exit the application? Unsaved changes will be discarded.",
+                    PrimaryButtonText = "Exit",
+                    CloseButtonText = "Cancel",
+                };
+
+                var res = await dialog.ShowAsync();
+                if (res == ContentDialogResult.Primary)
+                {
+                    if (sender is MainWindow window)
+                    {
+                        App.MainWindow.Closed -= AddLiveInventoryPage_Closed;
+                        App.MainWindow.Close();
+                    }
+                }
+            }
         }
 
         private async void Scanline_TextChanged(object sender, TextChangedEventArgs args)
@@ -89,6 +156,7 @@ namespace BlOrders2023.Views
                     if (!ViewModel.ScannedItems.Where(i => i.Scanline == item.Scanline).Any())
                     {
                         ViewModel.ScannedItems.Add(item);
+                        hasChanges = true;
                     }
                     else
                     {
@@ -138,6 +206,7 @@ namespace BlOrders2023.Views
 
                 };
                 await d.ShowAsync();
+                hasChanges = false;
             }
             catch (DbUpdateConcurrencyException ex)
             {
