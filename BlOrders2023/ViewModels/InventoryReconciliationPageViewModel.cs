@@ -93,6 +93,19 @@ public class InventoryReconciliationPageViewModel : ViewModelBase
             }
             await _db.Inventory.UpsertLiveInventoryItemAsync(item.LiveInventoryItem);
         }
+
+        foreach(var id in SelectedItems.Select(i => i.LiveInventoryItem.ProductID).Distinct())
+        {
+            var adjustments = await _db.Inventory.GetInventoryAdjutmentsAsync(new List<int>() {id});
+            var adjustment = adjustments.FirstOrDefault();
+            if(adjustment != null)
+            {
+                adjustment.ManualAdjustments = 0;
+                adjustment.LastAdjustment = 0;
+                await _db.Inventory.UpsertAdjustmentAsync(adjustment);
+            }
+            
+        }
     }
 
     internal void VerifyProduct(LiveInventoryItem item)
