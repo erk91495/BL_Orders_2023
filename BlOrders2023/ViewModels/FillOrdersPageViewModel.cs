@@ -211,6 +211,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
             {
                 App.LogInfoMessage($"Could Not find item in Inventory {item} {item.ProductID} {item.Scanline}");
                 await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID,-1);
+                //We do this to keep last adjustment at 0
+                await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID, 0);
             }
             Items.Add(item);
             _order?.ShippingItems.Add(item);
@@ -235,6 +237,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         else
         {
             await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID, 1);
+            //we do this to keep last adjustment at 0
+            await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID, 0);
         }
         Items.Remove(item);
         await Task.Run(() => 
