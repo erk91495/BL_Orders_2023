@@ -712,12 +712,6 @@ public sealed partial class OrderDetailsPage : Page
             }
             var filePath = await reportGenerator.GeneratePickList(ViewModel.Order);
 
-            //Windows.System.LauncherOptions options = new()
-            //{
-            //    ContentType = "application/pdf"
-            //};
-            //_ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
-
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;
             var printer = new PDFPrinterService(filePath);
