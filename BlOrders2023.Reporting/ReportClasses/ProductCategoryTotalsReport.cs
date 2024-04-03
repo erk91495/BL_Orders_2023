@@ -16,7 +16,6 @@ public class ProductCategoryTotalsReport : ReportBase
 {
     private readonly IEnumerable<ProductCategory> _categories;
     private readonly IEnumerable<OrderItem> _items;
-    private readonly DateTime _reportDate = DateTime.Now;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
 
