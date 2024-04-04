@@ -698,6 +698,25 @@ public sealed partial class ReportsPage : Page
                     }
                 }
             }
+            else if (control.ReportType == typeof(HistoricalQuarterlySalesReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    spinner.IsVisible = true;
+                    
+                    var current = await ViewModel.GetProductTotalsAsync(startDate, endDate);
+                    var off1Year = await ViewModel.GetProductTotalsAsync(startDate.AddYears(-1), endDate.AddYears(-1));
+                    var off2Year = await ViewModel.GetProductTotalsAsync(startDate.AddYears(-2), endDate.AddYears(-2));
+
+                    var allItems = new List<IEnumerable<ProductTotalsItem>> { current, off1Year, off2Year };
+
+                    reportPath = await reportGenerator.GenerateHistoricalQuarterlySalesReport(allItems, startDate.Date, endDate.Date);
+                }
+            }
             else
             {
                 ContentDialog d = new()

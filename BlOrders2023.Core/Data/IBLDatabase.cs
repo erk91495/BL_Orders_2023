@@ -20,6 +20,7 @@ public interface IBLDatabase
     public IAllocationTable Allocation { get; }
     public IBoxTable Boxes { get; }
     public IProductCategoriesTable ProductCategories { get; }
+    public IReportsTable Reports { get; }
     public Version dbVersion { get; }
     public DbConnection DbConnection{ get; }
     public CompanyInfo CompanyInfo { get; }

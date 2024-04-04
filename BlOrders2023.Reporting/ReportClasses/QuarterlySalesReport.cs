@@ -14,7 +14,6 @@ namespace BlOrders2023.Reporting.ReportClasses;
 public class QuarterlySalesReport : ReportBase
 {
     private readonly IEnumerable<Order> _orders;
-    private readonly DateTime _reportDate = DateTime.Now;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
 

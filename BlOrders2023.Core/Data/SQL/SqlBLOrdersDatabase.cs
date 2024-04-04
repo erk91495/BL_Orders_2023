@@ -41,6 +41,8 @@ public class SqlBLOrdersDatabase : IBLDatabase
 
     public IBoxTable Boxes => new SqlBoxTable(_dbContext);
     public IProductCategoriesTable ProductCategories => new SqlProductCategoriesTable(_dbContext);
+
+    public IReportsTable Reports => new SqlReportsTable(_dbContext);
     public Version dbVersion 
     {
         get

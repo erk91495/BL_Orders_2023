@@ -32,5 +32,6 @@ public static class Reports
         typeof(ProductCategoryTotalsReport),
         typeof(ProductCategoryDetailsReport),
         typeof(WholesaleInvoiceTotalsReport),
+        typeof(HistoricalQuarterlySalesReport),
     }; 
 }

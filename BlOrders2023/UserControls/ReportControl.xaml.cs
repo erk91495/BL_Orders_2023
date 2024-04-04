@@ -48,12 +48,12 @@ public sealed partial class ReportControl : UserControl
 
     private async void Hyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
     {
-        var dialog = new ContentDialog()
-        {
-            Content = "temp",
-            XamlRoot = sender.XamlRoot,
-        };
-        await dialog.ShowAsync();
-        //ReportSelected?.Invoke(this, EventArgs.Empty);
+        //var dialog = new ContentDialog()
+        //{
+        //    Content = "temp",
+        //    XamlRoot = sender.XamlRoot,
+        //};
+        //await dialog.ShowAsync();
+        ReportSelected?.Invoke(this, EventArgs.Empty);
     }
 }

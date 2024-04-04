@@ -70,4 +70,5 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<InventoryAuditItem> InventoryAuditItems { get; set; }
     public DbSet<LiveInventoryRemovalLogItem> LiveInventoryRemovalLogItems { get; set; }
     public DbSet<LiveInventoryRemovalReason> LiveInventoryRemovalReasons { get; set; }
+    public DbSet<ProductTotalsItem> ProductTotalsItems { get; set; }
 }
