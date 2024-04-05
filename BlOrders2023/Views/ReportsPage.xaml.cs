@@ -306,7 +306,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     spinner.IsVisible = true;
-                    var values = await ViewModel.GetOrdersByPickupDateAsync(startDate, endDate);
+                    var values = await ViewModel.GetProductTotalsAsync(startDate, endDate);
                     reportPath = await reportGenerator.GenerateQuarterlySalesReport(values, startDate, endDate);
                 }
             }
@@ -715,6 +715,32 @@ public sealed partial class ReportsPage : Page
                     var allItems = new List<IEnumerable<ProductTotalsItem>> { current, off1Year, off2Year };
 
                     reportPath = await reportGenerator.GenerateHistoricalQuarterlySalesReport(allItems, startDate.Date, endDate.Date);
+                }
+            }
+            else if(control.ReportType == typeof(HistoricalProductCategoryTotalsReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    spinner.IsVisible = true;
+
+                    var values = await ViewModel.GetOrdersByPickupDateAsync(startDate, endDate);
+                    var current = values.SelectMany(o => o.Items);
+
+                    values = await ViewModel.GetOrdersByPickupDateAsync(startDate.AddYears(-1), endDate.AddYears(-1));
+                    var off1Year = values.SelectMany(o => o.Items);
+
+                    values = await ViewModel.GetOrdersByPickupDateAsync(startDate.AddYears(-2), endDate.AddYears(-2));
+                    var off2Year = values.SelectMany(o => o.Items);
+
+                    var categories = ViewModel.GetProductCategories();
+
+                    var allItems = new List<IEnumerable<OrderItem>> { current, off1Year, off2Year };
+
+                    reportPath = await reportGenerator.GenerateHistoricalProductCategoryTotalsReport(categories, allItems, startDate.Date, endDate.Date);
                 }
             }
             else

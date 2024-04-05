@@ -61,7 +61,7 @@ public class HistoricalQuarterlySalesReport : ReportBase
                 row.RelativeItem(3).AlignCenter().Column(col =>
                 {
                     col.Item().AlignCenter().Text($"{_companyInfo.ShortCompanyName} Turkeys, Inc.").Style(titleStyle);
-                    col.Item().AlignCenter().Text("Quarterly Sales Report").Style(titleStyle);
+                    col.Item().AlignCenter().Text("Historical Quarterly Sales Report").Style(titleStyle);
                 });
 
                 row.RelativeItem(1).AlignRight().Column(column =>
@@ -83,45 +83,41 @@ public class HistoricalQuarterlySalesReport : ReportBase
                 table.ColumnsDefinition(column =>
                 {
                     column.RelativeColumn(2);
-                    column.RelativeColumn(13);
+                    column.RelativeColumn(10);
 
                     column.RelativeColumn(3);
                     column.RelativeColumn(3);
-                    column.RelativeColumn(3);
 
                     column.RelativeColumn(4);
                     column.RelativeColumn(4);
-                    column.RelativeColumn(4);
+                    //column.RelativeColumn(3);
 
                     column.RelativeColumn(4);
                     column.RelativeColumn(4);
-                    column.RelativeColumn(4);
+                    //column.RelativeColumn(3);
                 });
 
                 table.Header(header =>
                 {
                     header.Cell().ColumnSpan(2).Element(CellStyle);
 
-                    header.Cell().ColumnSpan(3).Element(CellStyle).AlignCenter().Text($"{_startDate.Year - 2}").Style(tableHeaderStyle);
+                    header.Cell().ColumnSpan(2).Element(CellStyle).AlignCenter().Text($"{_startDate.Year - 2}").Style(tableHeaderStyle);
 
-                    header.Cell().ColumnSpan(3).Element(CellStyle).AlignCenter().Text($"{_startDate.Year - 1}").Style(tableHeaderStyle);
+                    header.Cell().ColumnSpan(2).Element(CellStyle).AlignCenter().Text($"{_startDate.Year - 1}").Style(tableHeaderStyle);
 
-                    header.Cell().ColumnSpan(3).Element(CellStyle).AlignCenter().Text($"{_startDate.Year}").Style(tableHeaderStyle);
+                    header.Cell().ColumnSpan(2).Element(CellStyle).AlignCenter().Text($"{_startDate.Year}").Style(tableHeaderStyle);
 
                     header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).Text("ID").Style(tableHeaderStyle);
                     header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).Text("Product Name").Style(tableHeaderStyle);
                                  
-                    header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).AlignCenter().Text($"Sold").Style(tableHeaderStyle);
+                    header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).PaddingLeft(4).Text($"Net Wt").Style(tableHeaderStyle);
                     header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).Text($"Ext Price").Style(tableHeaderStyle);
-                    header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).Text($"Net Wt").Style(tableHeaderStyle);
 
-                    header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).AlignCenter().Text($"Sold").Style(tableHeaderStyle);
+                    header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).PaddingLeft(4).Text($"Net Wt").Style(tableHeaderStyle);
                     header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).Text($"Ext Price").Style(tableHeaderStyle);
-                    header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).Text($"Net Wt").Style(tableHeaderStyle);
 
-                    header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).AlignCenter().Text($"Sold").Style(tableHeaderStyle);
+                    header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).PaddingLeft(4).Text($"Net Wt").Style(tableHeaderStyle);
                     header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).Text($"Ext Price").Style(tableHeaderStyle);
-                    header.Cell().BorderBottom(1).BorderColor(Colors.Black).Element(CellStyle).Text($"Net Wt").Style(tableHeaderStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -141,23 +137,22 @@ public class HistoricalQuarterlySalesReport : ReportBase
                     var item1Off = orderItemsOff1.ElementAt(i);
                     var item2Off = orderItemsOff2.ElementAt(i);
 
-                    float? yoyReceived;
+                    //float? yoyReceived;
                     float? yoyPrice;
                     float? yoyWeight;
                     table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                     table.Cell().BorderRight(1).BorderColor(Colors.Black).Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
 
-                    table.Cell().Element(CellStyle).AlignCenter().Text($"{item2Off.QuantityReceived}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item2Off.ExtPrice:C}").Style(tableTextStyle);
-                    table.Cell().BorderRight(1).BorderColor(Colors.Black).Element(CellStyle).Text($"{item2Off.NetWeight:N2}").Style(tableTextStyle);
-                    try
-                    {
-                        yoyReceived = (((float)item1Off.QuantityReceived / (float)item2Off.QuantityReceived) - 1f) * 100f;
-                    }
-                    catch(DivideByZeroException)
-                    {
-                        yoyReceived = null;
-                    }
+                    table.Cell().Element(CellStyle).PaddingLeft(4).Text($"{item2Off.NetWeight:N2}").Style(tableTextStyle);
+                    table.Cell().BorderRight(1).BorderColor(Colors.Black).Element(CellStyle).Text($"{item2Off.ExtPrice:C}").Style(tableTextStyle);
+                    //try
+                    //{
+                    //    yoyReceived = (((float)item1Off.QuantityReceived / (float)item2Off.QuantityReceived) - 1f) * 100f;
+                    //}
+                    //catch(DivideByZeroException)
+                    //{
+                    //    yoyReceived = null;
+                    //}
 
                     try
                     {
@@ -177,18 +172,9 @@ public class HistoricalQuarterlySalesReport : ReportBase
                         yoyWeight = null;
                     }
 
-                    table.Cell().Element(CellStyle).AlignCenter().Text($"{item1Off.QuantityReceived} ({yoyReceived:N0})").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item1Off.ExtPrice:C} ({yoyPrice:N0})").Style(tableTextStyle);
-                    table.Cell().BorderRight(1).BorderColor(Colors.Black).Element(CellStyle).Text($"{item1Off.NetWeight:N2} ({yoyWeight:N0})").Style(tableTextStyle);
 
-                    try
-                    {
-                        yoyReceived = (((float)item.QuantityReceived / (float)item1Off.QuantityReceived) - 1f) * 100f;
-                    }
-                    catch (DivideByZeroException)
-                    {
-                        yoyReceived = null;
-                    }
+                    table.Cell().Element(CellStyle).PaddingLeft(4).Text($"{item1Off.NetWeight:N2} ({yoyWeight:N0}%)").Style(tableTextStyle);
+                    table.Cell().BorderRight(1).BorderColor(Colors.Black).Element(CellStyle).Text($"{item1Off.ExtPrice:C} ({yoyPrice:N0}%)").Style(tableTextStyle);
 
                     try
                     {
@@ -208,9 +194,8 @@ public class HistoricalQuarterlySalesReport : ReportBase
                         yoyWeight = null;
                     }
 
-                    table.Cell().Element(CellStyle).AlignCenter().Text($"{item.QuantityReceived} ({yoyReceived:N0})").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item.ExtPrice:C} ({yoyPrice:N0})").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{item.NetWeight:N2} ({yoyWeight:N0})").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).PaddingLeft(4).Text($"{item.NetWeight:N2} ({yoyWeight:N0}%)").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.ExtPrice:C} ({yoyPrice:N0}%)").Style(tableTextStyle);
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -220,16 +205,13 @@ public class HistoricalQuarterlySalesReport : ReportBase
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"Total: ").Style(tableHeaderStyle);
                 
-                table.Cell().Element(FooterCellStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{orderItemsOff2.Sum(o => o.ExtPrice):C}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{orderItemsOff2.Sum(o => o.NetWeight):N2}").Style(tableHeaderStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{orderItemsOff2.Sum(o => o.ExtPrice):C}").Style(tableHeaderStyle);
 
-                table.Cell().Element(FooterCellStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{orderItemsOff1.Sum(o => o.ExtPrice):C}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{orderItemsOff1.Sum(o => o.NetWeight):N2}").Style(tableHeaderStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{orderItemsOff1.Sum(o => o.ExtPrice):C}").Style(tableHeaderStyle);
 
-                table.Cell().Element(FooterCellStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{orderItems.Sum(o => o.ExtPrice):C}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{orderItems.Sum(o => o.NetWeight):N2}").Style(tableHeaderStyle);
                 table.Cell().Element(FooterCellStyle).Text($"{orderItems.Sum(o => o.ExtPrice):C}").Style(tableHeaderStyle);
 
                 static IContainer FooterCellStyle(IContainer container)

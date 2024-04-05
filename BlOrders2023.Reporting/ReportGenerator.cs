@@ -111,9 +111,9 @@ public class ReportGenerator
 
     }
 
-    public async Task<string> GenerateQuarterlySalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate) 
+    public async Task<string> GenerateQuarterlySalesReport(IEnumerable<ProductTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate) 
     {
-        var report = new QuarterlySalesReport(CompanyInfo, orders, startDate, endDate);
+        var report = new QuarterlySalesReport(CompanyInfo, items, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + "QuarterlySalesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
         await GenerateReportAsync(report, filePath);
         return filePath;
@@ -233,6 +233,14 @@ public class ReportGenerator
     public async Task<string> GenerateHistoricalQuarterlySalesReport(IEnumerable<IEnumerable<ProductTotalsItem>> totals, DateTime startDate, DateTime endDate)
     {
         var report = new HistoricalQuarterlySalesReport(CompanyInfo, totals, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryDetailsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        await GenerateReportAsync(report, filePath);
+        return filePath;
+    }
+
+    public async Task<string> GenerateHistoricalProductCategoryTotalsReport(IEnumerable<ProductCategory> categories, IEnumerable<IEnumerable<OrderItem>>items, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new HistoricalProductCategoryTotalsReport(CompanyInfo, categories, items, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryDetailsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
         await GenerateReportAsync(report, filePath);
         return filePath;

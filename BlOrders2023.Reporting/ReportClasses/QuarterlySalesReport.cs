@@ -13,14 +13,14 @@ namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Quarterly Sales Report")]
 public class QuarterlySalesReport : ReportBase
 {
-    private readonly IEnumerable<Order> _orders;
+    private readonly IEnumerable<ProductTotalsItem> _items;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
 
-    public QuarterlySalesReport(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    public QuarterlySalesReport(CompanyInfo companyInfo, IEnumerable<ProductTotalsItem> orders, DateTimeOffset startDate, DateTimeOffset endDate)
         :base(companyInfo)
     {
-        _orders = orders;
+        _items = orders;
         _startDate  = startDate;
         _endDate = endDate; 
     }
@@ -82,16 +82,13 @@ public class QuarterlySalesReport : ReportBase
                     }
                 });
 
-                var orderItems = _orders.SelectMany(o => o.Items);
-                var productsIDs = orderItems.Select(i => i.ProductID).Distinct().OrderBy(i => i);
-                foreach (var id in productsIDs)
+                foreach (var item in _items)
                 {
-                    var matchingItems = orderItems.Where(item => item.ProductID == id);
-                    table.Cell().Element(CellStyle).Text($"{id}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{matchingItems.First().Product.ProductName}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.QuantityReceived)}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.GetTotalPrice):C}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.PickWeight):N2}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.QuantityReceived}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.ExtPrice:C}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.NetWeight:N2}").Style(tableTextStyle);
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
@@ -101,8 +98,8 @@ public class QuarterlySalesReport : ReportBase
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"Total: ").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.InvoiceTotal):C}").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{orderItems.Sum(o => o.PickWeight):N2}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.ExtPrice):C}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(o => o.NetWeight):N2}").Style(tableHeaderStyle);
 
                 static IContainer FooterCellStyle(IContainer container)
                 {
