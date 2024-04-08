@@ -32,6 +32,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.ComponentModel;
 using BlOrders2023.Core.Contracts.Services;
 using Castle.Core.Resource;
+using Syncfusion.UI.Xaml.Editors;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -743,6 +744,28 @@ public sealed partial class ReportsPage : Page
                     reportPath = await reportGenerator.GenerateHistoricalProductCategoryTotalsReport(categories, allItems, startDate.Date, endDate.Date);
                 }
             }
+            else if(control.ReportType == typeof(YieldStudyReport))
+            {
+                var datePicker = new SfDatePicker()
+                {
+                    PlaceholderText = "Production Date..."
+                };
+                var dialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = datePicker,
+                    PrimaryButtonText = "ok"
+                };
+                var res = await dialog.ShowAsync();
+                if(res == ContentDialogResult.Primary && datePicker.SelectedDate != null)
+                {
+                    var date = datePicker.SelectedDate.Value;
+                    date = new(date.Year, date.Month, date.Day,0,0,0,TimeSpan.FromHours(-4));
+                    var items = await ViewModel.GetLiveInventoryItems(date);
+
+                    reportPath = await reportGenerator.GenerateYieldStudyReport(items, date.DateTime);
+                }
+            }
             else
             {
                 ContentDialog d = new()
@@ -801,7 +824,7 @@ public sealed partial class ReportsPage : Page
                 ContentDialog d = new()
                 {
                     XamlRoot = XamlRoot,
-                    Title = "Error",
+                    Title = "Date",
                     Content = $"Please select a date range",
                     PrimaryButtonText = "ok",
                 };

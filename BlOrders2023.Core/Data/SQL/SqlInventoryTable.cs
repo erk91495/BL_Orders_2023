@@ -123,6 +123,11 @@ internal class SqlInventoryTable : IInventoryTable
         }
     }
 
+    public async Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await _db.LiveInventoryItems.Where(i => i.PackDate >= startDate.Date && i.PackDate <= endDate.Date).ToListAsync();
+    }
+
     public async Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsAsync(IEnumerable<int> ids = null)
     {
         if (ids != null)

@@ -110,4 +110,8 @@ public class ReportsPageViewModel : ObservableRecipient
     internal IEnumerable<InventoryTotalItem> GetInventoryTotals() => App.GetNewDatabase().Inventory.GetInventoryTotalItems();
     internal Dictionary<int, int> GetAllocatedNotReceivedTotals() => App.GetNewDatabase().Inventory.GetAllocatedNotReceivedTotals();
     internal async Task<IEnumerable<ProductTotalsItem>> GetProductTotalsAsync(DateTimeOffset startDate, DateTimeOffset endDate) => await App.GetNewDatabase().Reports.GetProductSalesTotalsAsync(startDate, endDate);
+    internal async Task<IEnumerable<LiveInventoryItem>> GetLiveInventoryItems(DateTimeOffset date)
+    {
+        return await App.GetNewDatabase().Inventory.GetInventoryItemsAsync(date,date);
+    }
 }

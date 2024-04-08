@@ -225,7 +225,7 @@ public class ReportGenerator
     public async Task<string> GenerateWholesaleInvoiceTotalsReport(WholesaleCustomer customer, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         var report = new WholesaleInvoiceTotalsReport(CompanyInfo, customer, orders, startDate, endDate);
-        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryDetailsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(WholesaleInvoiceTotalsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
         await GenerateReportAsync(report, filePath);
         return filePath;
     }
@@ -233,7 +233,7 @@ public class ReportGenerator
     public async Task<string> GenerateHistoricalQuarterlySalesReport(IEnumerable<IEnumerable<ProductTotalsItem>> totals, DateTime startDate, DateTime endDate)
     {
         var report = new HistoricalQuarterlySalesReport(CompanyInfo, totals, startDate, endDate);
-        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryDetailsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(HistoricalQuarterlySalesReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
         await GenerateReportAsync(report, filePath);
         return filePath;
     }
@@ -241,7 +241,15 @@ public class ReportGenerator
     public async Task<string> GenerateHistoricalProductCategoryTotalsReport(IEnumerable<ProductCategory> categories, IEnumerable<IEnumerable<OrderItem>>items, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         var report = new HistoricalProductCategoryTotalsReport(CompanyInfo, categories, items, startDate, endDate);
-        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryDetailsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(HistoricalProductCategoryTotalsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        await GenerateReportAsync(report, filePath);
+        return filePath;
+    }
+
+    public async Task<string> GenerateYieldStudyReport(IEnumerable<LiveInventoryItem> items, DateTime productionDate)
+    {
+        var report = new YieldStudyReport(CompanyInfo, items, productionDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(YieldStudyReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
         await GenerateReportAsync(report, filePath);
         return filePath;
     }

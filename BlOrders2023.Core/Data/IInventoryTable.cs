@@ -10,6 +10,7 @@ namespace BlOrders2023.Core.Data;
 public interface IInventoryTable
 {
     public IEnumerable<LiveInventoryItem> GetInventoryItems(IEnumerable<int> ids = null);
+    public Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsAsync(DateTimeOffset startDate, DateTimeOffset endDate);
     public Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsAsync(IEnumerable<int> ids = null);
     public IEnumerable<LiveInventoryItem> GetUnshippedInventoryItems(IEnumerable<int> ids = null);
     public Task<IEnumerable<LiveInventoryItem>> GetUnshippedInventoryItemsAsync(IEnumerable<int> ids = null);
