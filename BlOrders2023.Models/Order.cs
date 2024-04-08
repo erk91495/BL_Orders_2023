@@ -42,6 +42,7 @@ public class Order : ObservableObject, IConvertible
     private bool _palletTicketPrinted = false;
     private string? _lastEditor;
     private DateTime? _lastEditTime;
+    private DateTime _fillByDate;
     #endregion Fields
 
     #region Properties
@@ -243,10 +244,13 @@ public class Order : ObservableObject, IConvertible
         get => _palletTicketPrinted;
         set => SetProperty(ref _palletTicketPrinted, value);
     }
-    #endregion Properties
 
-    #region Fields
-    #endregion Fields
+    public DateTime FillByDate
+    {
+        get => _fillByDate;
+        set => SetProperty(ref _fillByDate, value);
+    }
+    #endregion Properties
 
     #region Constructors
     public Order()
@@ -260,6 +264,7 @@ public class Order : ObservableObject, IConvertible
         //Set the date for today so that sql will accept the time
         _pickupDate = DateTime.Today;
         _pickupTime = DateTime.Today.AddHours(12);
+        _fillByDate = DateTime.Today;
         OrderStatus = OrderStatus.Ordered;
         Items = new();
         Payments = new();
@@ -402,7 +407,6 @@ public class Order : ObservableObject, IConvertible
     }
 
     public decimal BalanceDue => Math.Round(InvoiceTotal - TotalPayments, 2);
-
 
     private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {

@@ -53,6 +53,7 @@ public sealed partial class OrderDetailsPage : Page
     #region Fields
     private bool _deleteOrder;
     private bool _canLeave = false;
+    bool PickupDateFillByLinked = true;
     private readonly ReportGenerator reportGenerator;
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     #endregion Fields
@@ -121,6 +122,8 @@ public sealed partial class OrderDetailsPage : Page
             {
                 var res = ProductEntryBox.Focus(FocusState.Programmatic);
             });
+
+            PickupDateFillByLinked = ViewModel.PickupDate.Date == ViewModel.FillByDate.Date;
         }
         else
         {
@@ -830,6 +833,29 @@ public sealed partial class OrderDetailsPage : Page
         if(e.NewDate == null)
         {
             e.Cancel = true;
+        }
+        else
+        {
+            if(PickupDateFillByLinked)
+            {
+                TimeSpan? date = e.NewDate - e.OldDate;
+                if (date.HasValue)
+                {
+                    ViewModel.FillByDate = ViewModel.FillByDate.Add(date.Value);
+                }
+            }
+        }
+    }
+
+    private void FillByDate_SelectedDateChanging(object sender, Syncfusion.UI.Xaml.Editors.DateChangingEventArgs e)
+    {
+        if (e.NewDate == null)
+        {
+            e.Cancel = true;
+        }
+        else
+        {
+            PickupDateFillByLinked = false; 
         }
     }
 

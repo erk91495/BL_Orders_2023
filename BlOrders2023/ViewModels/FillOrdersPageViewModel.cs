@@ -111,7 +111,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         FillableOrders.Clear();
         FillableOrdersMasterList.Clear();
         foreach (var order in orders.Where( e => e.OrderStatus == Models.Enums.OrderStatus.Ordered ||
-                                            e.OrderStatus ==  Models.Enums.OrderStatus.Filling || e.OrderStatus == Models.Enums.OrderStatus.Filled).OrderBy(o => o.PickupDate).ToList())
+                                            e.OrderStatus ==  Models.Enums.OrderStatus.Filling || e.OrderStatus == Models.Enums.OrderStatus.Filled).OrderBy(o => o.FillByDate.Date).ToList())
         {
             FillableOrders.Add(order);
             FillableOrdersMasterList.Add(order);
@@ -162,7 +162,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         else
         {
              orders = FillableOrdersMasterList.Where(o => o.OrderID.ToString().Contains(text) || 
-                                                        o.Customer.CustomerName.Contains(text, StringComparison.CurrentCultureIgnoreCase)).OrderBy(o => o.PickupDate).ToList();
+                                                        o.Customer.CustomerName.Contains(text, StringComparison.CurrentCultureIgnoreCase)).OrderBy(o => o.FillByDate.Date).ToList();
         }
         if (!orders.IsNullOrEmpty())
         {

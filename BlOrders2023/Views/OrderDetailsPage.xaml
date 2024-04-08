@@ -158,6 +158,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -225,6 +226,23 @@
                                               AllowNull="False"
                                               SelectedTime="{x:Bind ViewModel.PickupTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
                                               TabIndex="4"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="0"
+                            Grid.Column="3">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Fill By Date:"/>
+                        <calendar:SfCalendarDatePicker x:Name="FillByDate"
+                                       AllowNull="False"
+                                       SelectedDate="{x:Bind ViewModel.FillByDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
+                                       SelectedDateChanging="FillByDate_SelectedDateChanging"
+                                       DropDownPlacement="Bottom"
+                                       TabIndex="3"/>
+                        <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('FillByDate'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('FillByDate'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
                     </StackPanel>
                 </StackPanel>
 

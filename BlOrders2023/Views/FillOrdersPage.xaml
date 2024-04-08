@@ -162,7 +162,7 @@
                                     <TextBlock Text="{x:Bind Customer.CustomerName}" 
                                                Grid.Column="1" 
                                                HorizontalAlignment="Left"/>
-                                    <TextBlock Text="{x:Bind PickupDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}" 
+                                    <TextBlock Text="{x:Bind FillByDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}" 
                                                Grid.Column="2" 
                                                HorizontalAlignment="Left"/>
                                     <TextBlock Text="{x:Bind OrderStatus, Mode=OneWay}" 
@@ -219,6 +219,10 @@
                             <TextBlock Text="{x:Bind ViewModel.Order.PickupTime, Converter={StaticResource TimeFormatConverter}, Mode=OneWay}"
                                        Visibility="{x:Bind ViewModel.Order.Shipping, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pickup, Mode=OneWay}"/>
                         </StackPanel>
+                        <TextBlock>
+                            <Run Text="Fill By:"/>
+                            <Run Text="{x:Bind ViewModel.Order.FillByDate, Converter={StaticResource DateFormatConverter}, Mode=OneWay}"/>
+                        </TextBlock>
                     </StackPanel>
 
                     <StackPanel x:Name="MemoStack" 
