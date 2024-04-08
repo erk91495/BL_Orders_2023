@@ -80,8 +80,6 @@ public class YieldStudyReport : ReportBase
                 var groupedItems = _inventoryItems.GroupBy(p => p.Product);
                 foreach (var group in groupedItems)
                 {
-
-
                     //var totalWeight = 0f;
                     //var totalCases = 0;
                     table.Cell().Element(CellStyle).Text($"{group.Key.ProductID}").Style(tableTextStyle);
