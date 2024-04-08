@@ -27,6 +27,18 @@
     <UserSecretsId>0e7a6925-90c6-4180-874d-deb90af7fe01</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Themes\**" />
+    <Compile Remove="UserControls\ViewModels\**" />
+    <EmbeddedResource Remove="Themes\**" />
+    <EmbeddedResource Remove="UserControls\ViewModels\**" />
+    <EntityDeploy Remove="Themes\**" />
+    <EntityDeploy Remove="UserControls\ViewModels\**" />
+    <None Remove="Themes\**" />
+    <None Remove="UserControls\ViewModels\**" />
+    <Page Remove="Themes\**" />
+    <Page Remove="UserControls\ViewModels\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Remove="Assets\BadgeLogo.scale-100.png" />
     <Content Remove="Assets\BadgeLogo.scale-125.png" />
     <Content Remove="Assets\BadgeLogo.scale-150.png" />
@@ -229,10 +241,13 @@
     <None Remove="Views\PaymentsPage.xaml" />
   </ItemGroup>
   
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+  
   <ItemGroup>
-    <Folder Include="Themes\" />
-    <Folder Include="UserControls\ViewModels\" />
+    <PRIResource Remove="Themes\**" />
   </ItemGroup>
   
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+  <ItemGroup>
+    <PRIResource Remove="UserControls\ViewModels\**" />
+  </ItemGroup>
 </Project>

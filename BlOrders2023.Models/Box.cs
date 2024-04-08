@@ -19,7 +19,10 @@ public class Box : ObservableObject
     private double _boxLength;
     private double _boxWidth;
     private double _boxHeight;
+    private double? _boxTare;
+    #endregion Fields
 
+    #region Property
     [Range(1, int.MaxValue)]
     public int ID
     {
@@ -52,9 +55,11 @@ public class Box : ObservableObject
         get => _boxHeight;
         set => SetProperty(ref _boxHeight, value);
     }
-    #endregion Fields
-
-    #region Properties
+    public double? BoxTare
+    {
+        get => _boxTare;
+        set => SetProperty(ref _boxTare, value);
+    }
     #endregion Properties
 
     #region Constructors
