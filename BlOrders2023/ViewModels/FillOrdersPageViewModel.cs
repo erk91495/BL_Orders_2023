@@ -39,7 +39,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         }
     }
 
-    [MaxLength(255)]
+    [MaxLength(512)]
     public string? Memo
     {
         get => _order?.Memo;

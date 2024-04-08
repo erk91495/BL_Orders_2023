@@ -1,0 +1,1 @@
+ALTER TABLE [dbo].[tblOrdersWholsale] ALTER COLUMN MEMO nvarchar(512)

@@ -218,7 +218,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         }
     }
 
-    [MaxLength(255)]
+    [MaxLength(512)]
     public string? Memo
     {
         get => _order.Memo;
