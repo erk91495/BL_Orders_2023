@@ -239,7 +239,7 @@
                                        SelectedDate="{x:Bind ViewModel.FillByDate, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"
                                        SelectedDateChanging="FillByDate_SelectedDateChanging"
                                        DropDownPlacement="Bottom"
-                                       TabIndex="3"/>
+                                       TabIndex="8"/>
                         <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('FillByDate'), Mode=OneWay}" 
                                    Visibility="{x:Bind ViewModel.VisibleIfError('FillByDate'), Mode=OneWay}" 
                                    Style="{StaticResource ValidatorTextBlockStyle}"/>
