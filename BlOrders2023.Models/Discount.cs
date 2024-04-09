@@ -50,9 +50,9 @@ public class Discount : ObservableObject
         get => _endDate;
         set => SetProperty(ref _endDate, value);
     }
-
+    public virtual IEnumerable<DiscountProductMap> DiscountProductMaps { get; set; }
     public virtual IEnumerable<Product> Products { get; set; }
-    public virtual IEnumerable<WholesaleCustomer> Customer { get; set; }
+    public virtual IEnumerable<WholesaleCustomer> Customers { get; set; }
     #endregion Properties
 
 }

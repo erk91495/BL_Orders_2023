@@ -47,6 +47,13 @@ public class SqlBLOrdersDBContext : DbContext
             );
         modelBuilder.Entity<Order>().ToTable(tb => tb.HasTrigger("tgrOrdersLastUpdateDate"));
         modelBuilder.Entity<InventoryAdjustmentItem>().ToTable(tb => tb.HasTrigger("tgrUpdateInventoryAdjustments"));
+        modelBuilder.Entity<Discount>()
+            .Property(e => e.Type)
+            .HasConversion(
+                v => (int)v,
+                v => (DiscountTypes)v);
+        modelBuilder.Entity<Discount>().HasMany(e => e.Products).WithMany(p => p.Discounts).UsingEntity<DiscountProductMap>();
+        modelBuilder.Entity<Discount>().HasMany(e => e.Customers).WithMany(p => p.Discounts).UsingEntity<DiscountCustomerMap>();
     }
 
     public DbSet<InventoryAdjustmentItem> InventoryAdjustments { get; set; }
@@ -71,4 +78,5 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<LiveInventoryRemovalLogItem> LiveInventoryRemovalLogItems { get; set; }
     public DbSet<LiveInventoryRemovalReason> LiveInventoryRemovalReasons { get; set; }
     public DbSet<ProductTotalsItem> ProductTotalsItems { get; set; }
+    public DbSet<Discount> Discounts { get; set; }
 }

@@ -21,6 +21,7 @@ public interface IBLDatabase
     public IBoxTable Boxes { get; }
     public IProductCategoriesTable ProductCategories { get; }
     public IReportsTable Reports { get; }
+    public IDiscountTable Discounts { get; }
     public Version dbVersion { get; }
     public DbConnection DbConnection{ get; }
     public CompanyInfo CompanyInfo { get; }
