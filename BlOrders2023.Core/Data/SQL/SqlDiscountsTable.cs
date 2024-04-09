@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,9 +24,9 @@ internal class SqlDiscountsTable : IDiscountTable
     #endregion Constructors
 
     #region Products
-    public Task<Discount> GetDiscountsAsync() => throw new NotImplementedException();
-    public Task<Discount> GetDiscountsAsync(Product product) => throw new NotImplementedException();
-    public Task<Discount> GetDiscountsAsync(WholesaleCustomer customer) => throw new NotImplementedException();
-    public Task<Discount> GetDiscountsAsync(Product product, WholesaleCustomer customer) => throw new NotImplementedException();
+    public async Task<IEnumerable<Discount>> GetDiscountsAsync() => await _db.Discounts.ToListAsync();
+    public async Task<IEnumerable<Discount>> GetDiscountsAsync(Product product) => await _db.Discounts.Where(d => d.Products.Contains(product)).ToListAsync();
+    public async Task<IEnumerable<Discount>> GetDiscountsAsync(WholesaleCustomer customer) => await _db.Discounts.Where(d => d.Customers.Contains(customer)).ToListAsync();
+    public async Task<IEnumerable<Discount>> GetDiscountsAsync(Product product, WholesaleCustomer customer) => await _db.Discounts.Where(d => d.Customers.Contains(customer) && d.Products.Contains(product)).ToListAsync();
     #endregion Products
 }

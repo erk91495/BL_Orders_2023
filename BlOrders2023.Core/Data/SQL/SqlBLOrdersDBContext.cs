@@ -53,7 +53,7 @@ public class SqlBLOrdersDBContext : DbContext
                 v => (int)v,
                 v => (DiscountTypes)v);
         modelBuilder.Entity<Discount>().HasMany(e => e.Products).WithMany(p => p.Discounts).UsingEntity<DiscountProductMap>();
-        modelBuilder.Entity<Discount>().HasMany(e => e.Customers).WithMany(p => p.Discounts).UsingEntity<DiscountCustomerMap>();
+        modelBuilder.Entity<Discount>().HasMany(e => e.Customers).WithMany(c => c.Discounts).UsingEntity<DiscountCustomerMap>();
     }
 
     public DbSet<InventoryAdjustmentItem> InventoryAdjustments { get; set; }

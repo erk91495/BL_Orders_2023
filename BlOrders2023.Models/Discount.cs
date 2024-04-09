@@ -52,6 +52,7 @@ public class Discount : ObservableObject
     }
     public virtual IEnumerable<DiscountProductMap> DiscountProductMaps { get; set; }
     public virtual IEnumerable<Product> Products { get; set; }
+    public virtual IEnumerable<DiscountCustomerMap> DiscountCustomerMaps { get; set; }
     public virtual IEnumerable<WholesaleCustomer> Customers { get; set; }
     #endregion Properties
 
