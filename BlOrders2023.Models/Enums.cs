@@ -113,3 +113,10 @@ public enum InventoryReconciliationAction
     Added,
     Removed,
 }
+
+public enum DiscountTypes
+{
+    SetPrice,
+    PercentOff,
+    DollarsOff,
+}
