@@ -133,6 +133,9 @@
 	<None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<Page Update="Views\DiscountManagerPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</Page>
 	<Page Update="Dialogs\LiveInventoryRemovalDialog.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</Page>
@@ -234,6 +237,7 @@
     <None Remove="ViewModels\GridEditorDialog.xaml" />
     <None Remove="Views\AddLiveInventoryPage.xaml" />
     <None Remove="Views\AllocatorPage.xaml" />
+    <None Remove="Views\DiscountManagerPage.xaml" />
     <None Remove="Views\InventoryAdjustmentsPage.xaml" />
     <None Remove="Views\InventoryAuditLogPage.xaml" />
     <None Remove="Views\InventoryReconciliationPage.xaml" />

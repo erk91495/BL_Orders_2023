@@ -16,18 +16,35 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <RelativePanel Grid.Row="0">
-            <TextBox x:Name="CustomerSearch"
-                     PlaceholderText="Search..."
-                     MinWidth="300"
-                     TextChanged="CustomerSearch_TextChanged"
-                     RelativePanel.LeftOf="btn_NewCustomer"
-                     Margin="0,0,10,0"/>
-            <Button x:Name="btn_NewCustomer"
-                    Content="New Customer"
-                    RelativePanel.AlignRightWithPanel="True"
-                    Click="btn_NewCustomer_Click"/>
-        </RelativePanel>
+        <CommandBar Grid.Row="0" VerticalContentAlignment="Center">
+            <AppBarElementContainer VerticalContentAlignment="Center">
+                <TextBox x:Name="CustomerSearch"
+                         PlaceholderText="Search..."
+                         MinWidth="300"
+                         TextChanged="CustomerSearch_TextChanged"
+                         RelativePanel.LeftOf="btn_NewCustomer"/>
+            </AppBarElementContainer>
+            <AppBarElementContainer VerticalContentAlignment="Center">
+                <Button x:Name="btn_NewCustomer"
+                        Content="New Customer"
+                        RelativePanel.AlignRightWithPanel="True"
+                        Click="btn_NewCustomer_Click"
+                        Margin="10,0,10,0"/>
+            </AppBarElementContainer>
+            <AppBarButton x:Name="btn_More" 
+                          VerticalAlignment="Center" 
+                          VerticalContentAlignment="Center" 
+                          LabelPosition="Collapsed"
+                          Icon="More">
+                <AppBarButton.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem Text="Discount Manager"/>
+                        <MenuFlyoutItem Icon="More" Text="Test"/>
+                    </MenuFlyout> 
+                </AppBarButton.Flyout>
+            </AppBarButton>
+
+        </CommandBar>
 
         <muxc:ProgressBar
                     x:Name="progressBar"
