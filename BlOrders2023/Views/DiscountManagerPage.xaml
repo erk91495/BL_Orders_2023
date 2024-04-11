@@ -8,28 +8,76 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:models="using:BlOrders2023.Models"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <MenuFlyout x:Key="DataGridContextMenu">
+            <MenuFlyoutItem
+                Click="MenuFlyoutItem_Click"
+                Icon="Edit"
+                Text="Edit"/>
+        </MenuFlyout>
+    </Page.Resources>
+
     <RelativePanel>
 
-        <muxc:ProgressBar
-                    x:Name="progressBar"
+        <CommandBar x:Name="CommandBar"
                     HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top"
-                    Height="10"
-                    IsIndeterminate="True"
-                    Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
-                    Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                    RelativePanel.AlignRightWithPanel="True"
-                    RelativePanel.AlignLeftWithPanel="True"
-                    RelativePanel.Below="OrdersGrid"/>
+                    Background="Transparent"
+                    DefaultLabelPosition="Right"
+                    RelativePanel.AlignRightWithPanel="True">
+            <AppBarButton Icon="Add" Label="Add Discount" Click="AppBarButton_Click"/>
+        </CommandBar>
+
+        <muxc:ProgressBar
+             x:Name="progressBar"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Top"
+             Height="10"
+             IsIndeterminate="True"
+             Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+             Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+             RelativePanel.AlignRightWithPanel="True"
+             RelativePanel.AlignLeftWithPanel="True"
+             RelativePanel.Below="CommandBar"/>
 
         <sf:SfDataGrid x:Name="DiscountsGrid"
+                       IsReadOnly="True"
                        RelativePanel.Below="progressBar"
+                       RelativePanel.AlignRightWithPanel="True"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignBottomWithPanel="True"
+                       SourceType="models:Discount"
                        ItemsSource="{x:Bind ViewModel.Discounts, Mode=OneWay}"
-                       AutoGenerateColumns="True">
-            
+                       SelectedItem="{x:Bind ViewModel.SelectedDiscount, Mode=TwoWay}"
+                       AutoGenerateColumns="False"
+                       ContextFlyout="{StaticResource DataGridContextMenu}"
+                       ColumnWidthMode="Star"
+                       AllowSorting="True"
+                       AllowGrouping="True"
+                       AllowFiltering="True">
+            <sf:SfDataGrid.Columns>
+                <sf:GridTextColumn MappingName="Description"/>
+                <sf:GridTextColumn MappingName="Type"/>
+                <sf:GridTextColumn MappingName="Modifier"/>
+                <sf:GridTextColumn MappingName="StartDate"/>
+                <sf:GridTextColumn MappingName="EndDate"/>
+            </sf:SfDataGrid.Columns>
+            <!--<sf:SfDataGrid.DetailsViewDefinition>
+                <sf:GridViewDefinition RelationalColumn="Products">
+                    <sf:GridViewDefinition.DataGrid>
+                        <sf:SfDataGrid AutoGenerateColumns="False">
+                            <sf:SfDataGrid.Columns>
+                                <sf:GridTextColumn MappingName="ProductID"/>
+                                <sf:GridTextColumn MappingName="ProductName"/>
+                            </sf:SfDataGrid.Columns>
+                        </sf:SfDataGrid>
+                    </sf:GridViewDefinition.DataGrid>
+                </sf:GridViewDefinition>
+            </sf:SfDataGrid.DetailsViewDefinition>-->
+
         </sf:SfDataGrid>
     </RelativePanel>
 </Page>

@@ -38,8 +38,11 @@
                           Icon="More">
                 <AppBarButton.Flyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Text="Discount Manager"/>
-                        <MenuFlyoutItem Icon="More" Text="Test"/>
+                        <MenuFlyoutItem Text="Discount Manager" Click="MenuFlyoutDiscountManager_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="Segoe UI Bold" Glyph="&#x0024;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                     </MenuFlyout> 
                 </AppBarButton.Flyout>
             </AppBarButton>

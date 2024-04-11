@@ -16,7 +16,8 @@ public static class PriceHelpers
         var discounts = product.Discounts.Where(d => d.Customers.Contains(customer) || d.Customers.IsNullOrEmpty());
         if (!discounts.IsNullOrEmpty())
         {
-            return ProcessDiscount(discounts.First(), customerPrice);
+
+            return ProcessDiscount(discounts, customerPrice);
         }
         else
         {
@@ -37,18 +38,22 @@ public static class PriceHelpers
         }
     }
 
-    private static decimal ProcessDiscount(Discount discount, decimal price)
+    private static decimal ProcessDiscount(IEnumerable<Discount> discounts, decimal price)
     {
-        switch (discount.Type)
+        //Apply Largest set price first and then apply percent discounts
+        var workingPrice = price;
+        var percentTotal = (decimal)discounts.Where(d => d.Type == Enums.DiscountTypes.PercentOff).Sum(d => d.Modifier);
+        var setPrice = discounts.Where(d => d.Type == Enums.DiscountTypes.SetPrice).OrderByDescending(d => d.Modifier).FirstOrDefault();
+
+        if (setPrice != null)
         {
-            case Enums.DiscountTypes.SetPrice:
-                return (decimal)discount.Modifier;
-            case Enums.DiscountTypes.PercentOff:
-                return price * ((decimal)discount.Modifier / 100m);
-            case Enums.DiscountTypes.DollarsOff:
-                return price - (decimal)discount.Modifier > 0 ? price - (decimal)discount.Modifier : 0;
-            default:
-                return price;
+            workingPrice = (decimal)setPrice.Modifier;
         }
+
+        if(percentTotal > 0)
+        {
+            workingPrice =  workingPrice * (1 - (percentTotal / 100m));
+        }
+        return workingPrice;
     }
 }

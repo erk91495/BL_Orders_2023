@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ public class Discount : ObservableObject
     #region Fields
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     private Guid _id;
+    private string _description;
     private DiscountTypes _type;
     private double _modifier;
     private DateTime? _startDate;
@@ -25,6 +27,12 @@ public class Discount : ObservableObject
     {
         get => _id;
         set => SetProperty(ref _id, value);
+    }
+
+    public string Description
+    {
+        get => _description;
+        set => SetProperty(ref _description, value);
     }
 
     public DiscountTypes Type
@@ -51,9 +59,9 @@ public class Discount : ObservableObject
         set => SetProperty(ref _endDate, value);
     }
     public virtual IEnumerable<DiscountProductMap> DiscountProductMaps { get; set; }
-    public virtual IEnumerable<Product> Products { get; set; }
+    public virtual ObservableCollection<Product> Products { get; set; } = new();
     public virtual IEnumerable<DiscountCustomerMap> DiscountCustomerMaps { get; set; }
-    public virtual IEnumerable<WholesaleCustomer> Customers { get; set; }
+    public virtual ObservableCollection<WholesaleCustomer> Customers { get; set; } = new();
     #endregion Properties
 
 }

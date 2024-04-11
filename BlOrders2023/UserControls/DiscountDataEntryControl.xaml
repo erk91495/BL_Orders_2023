@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="BlOrders2023.UserControls.DiscountDataEntryControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BlOrders2023.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cal="using:Syncfusion.UI.Xaml.Calendar"
+    xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
+    xmlns:models="using:BlOrders2023.Models"
+    mc:Ignorable="d">
+    <StackPanel Spacing="3">
+        <TextBox Text="{x:Bind Discount.Description, Mode=TwoWay}" Header="Description"/>
+        <ComboBox Header="DiscountType" ItemsSource="{x:Bind DiscountTypes, Mode=OneWay}" SelectedItem="{x:Bind Discount.Type, Mode=TwoWay}"/>
+        <editors:SfNumberBox Header="Modifier" Value="{x:Bind Discount.Modifier, Mode=TwoWay}" CustomFormat="N4" AllowNull="False" ShowClearButton="False"/>
+        <cal:SfCalendarDateRangePicker x:Name="DateRangePicker"
+                                       Header="Effective Date"
+                                       PlaceholderText="Select a date range" 
+                                       SelectedRange="{x:Bind DateRange, Mode=TwoWay}"
+                                       VerticalAlignment="Center"
+                                       DropDownPlacement="Right"/>
+        <editors:SfComboBox x:Name="ProductsCombo"
+                            Header="Products" 
+                            SelectionMode="Multiple" 
+                            MultiSelectionDisplayMode="Token" 
+                            ItemsSource="{x:Bind Products}"
+                            HorizontalAlignment="Stretch"/>
+        <editors:SfComboBox x:Name="CustomersCombo"
+                            Header="Customers" 
+                            SelectionMode="Multiple" 
+                            MultiSelectionDisplayMode="Token" 
+                            ItemsSource="{x:Bind Customers}"
+                            HorizontalAlignment="Stretch"/>
+    </StackPanel>
+</ContentDialog>

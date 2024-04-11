@@ -118,5 +118,5 @@ public enum DiscountTypes
 {
     SetPrice,
     PercentOff,
-    DollarsOff,
+    //DollarsOff,
 }

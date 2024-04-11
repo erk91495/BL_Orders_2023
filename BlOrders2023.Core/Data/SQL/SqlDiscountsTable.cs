@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using BlOrders2023.Models;
 
 namespace BlOrders2023.Core.Data.SQL;
@@ -28,5 +23,10 @@ internal class SqlDiscountsTable : IDiscountTable
     public async Task<IEnumerable<Discount>> GetDiscountsAsync(Product product) => await _db.Discounts.Where(d => d.Products.Contains(product)).ToListAsync();
     public async Task<IEnumerable<Discount>> GetDiscountsAsync(WholesaleCustomer customer) => await _db.Discounts.Where(d => d.Customers.Contains(customer)).ToListAsync();
     public async Task<IEnumerable<Discount>> GetDiscountsAsync(Product product, WholesaleCustomer customer) => await _db.Discounts.Where(d => d.Customers.Contains(customer) && d.Products.Contains(product)).ToListAsync();
+    public async Task<bool> UpsertAsync(Discount discount)
+    {
+        _db.Update(discount);
+        return await _db.SaveChangesAsync() == 1;
+    }
     #endregion Products
 }

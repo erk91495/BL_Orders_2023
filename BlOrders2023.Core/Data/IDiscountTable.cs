@@ -12,5 +12,5 @@ public interface IDiscountTable
     public Task<IEnumerable<Discount>> GetDiscountsAsync(Product product);
     public Task<IEnumerable<Discount>> GetDiscountsAsync(WholesaleCustomer customer);
     public Task<IEnumerable<Discount>> GetDiscountsAsync(Product product, WholesaleCustomer customer);
-
+    public Task<bool> UpsertAsync(Discount discount);
 }

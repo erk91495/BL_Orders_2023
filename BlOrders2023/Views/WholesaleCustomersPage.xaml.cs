@@ -5,6 +5,7 @@ using BlOrders2023.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using BlOrders2023.Contracts.Services;
 
 namespace BlOrders2023.Views;
 
@@ -145,5 +146,11 @@ public sealed partial class WholesaleCustomersPage : Page
     private void CustomersGrid_CopyingRowClipboardContent(object sender, CommunityToolkit.WinUI.UI.Controls.DataGridRowClipboardEventArgs e)
     {
             DatagridCellCopy.CopyGridCellContent(sender, e);
+    }
+
+    private void MenuFlyoutDiscountManager_Click(object sender, RoutedEventArgs e)
+    {
+        var nav = App.GetService<INavigationService>();
+        nav.NavigateTo(typeof(DiscountManagerPageViewModel).FullName!);
     }
 }

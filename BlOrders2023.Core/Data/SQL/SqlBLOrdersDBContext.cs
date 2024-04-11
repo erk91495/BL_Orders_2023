@@ -79,4 +79,6 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<LiveInventoryRemovalReason> LiveInventoryRemovalReasons { get; set; }
     public DbSet<ProductTotalsItem> ProductTotalsItems { get; set; }
     public DbSet<Discount> Discounts { get; set; }
+    public DbSet<DiscountCustomerMap> DiscountCustomerMap { get; set; }
+    public DbSet<DiscountProductMap> DiscountProductMap { get; set; }
 }
