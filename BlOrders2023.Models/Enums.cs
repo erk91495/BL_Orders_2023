@@ -122,3 +122,10 @@ public enum DiscountTypes
     PercentOff,
     //DollarsOff,    
 }
+
+public enum ReportFunctions
+{
+    Display,
+    Print,
+    Email
+}

@@ -13,10 +13,10 @@ public static class Helpers
         await Launcher.LaunchUriAsync(new Uri(String.Format("mailto:{0}", email)));
     }
 
-    public static string SendEmailAsync(string to, string subject, string attachemntPath)
+    public static string SendEmailAsync(string to, string subject, string body, string attachemntPath)
     {
         var TempPath = Path.GetTempPath() + "BLOrders2023";
-        var emlPath = TempPath + Path.PathSeparator + to + DateTime.UtcNow.ToFileTimeUtc() +".eml";
+        var emlPath = TempPath + Path.PathSeparator + DateTime.UtcNow.ToFileTimeUtc() +".eml";
         // Create a new MIME message
         var message = new MimeMessage();
 
@@ -24,6 +24,7 @@ public static class Helpers
         message.To.Add(new MailboxAddress(to,to));
         message.Subject = subject;
         var builder = new BodyBuilder();
+        builder.TextBody = body;
         // We may also want to attach a calendar event for Monica's party...
         builder.Attachments.Add(attachemntPath);
         message.Body = builder.ToMessageBody();
