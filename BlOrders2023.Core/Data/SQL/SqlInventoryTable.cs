@@ -196,7 +196,20 @@ internal class SqlInventoryTable : IInventoryTable
 
     public async Task UpsertLiveInventoryItemAsync(LiveInventoryItem item)
     {
-        _db.LiveInventoryItems.Update(item);
+        var found = _db.LiveInventoryItems.Where(i => i.Scanline == item.Scanline).FirstOrDefault();
+        if(found != null)
+        {
+            found.Lot = item.Lot;
+            found.NetWeight = item.NetWeight;
+            found.RemovedFromInventory = item.RemovedFromInventory;
+            found.ScanDate = item.ScanDate;
+            found.SerialNumber = item.SerialNumber;
+            _db.LiveInventoryItems.Update(found);
+        }
+        else
+        {
+            _db.LiveInventoryItems.Update(item);
+        }
         await _db.SaveChangesAsync();
     }
 

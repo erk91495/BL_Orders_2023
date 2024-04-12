@@ -55,6 +55,7 @@
                        AllowSorting="True"
                        AllowFiltering="True"
                        AutoGenerateColumns="False"
+                       AllowDeleting="True"
                        SelectionUnit="Row"
                        EditTrigger="OnTap"
                        EditorSelectionBehavior="SelectAll"
