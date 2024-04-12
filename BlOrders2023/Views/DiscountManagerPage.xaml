@@ -9,6 +9,7 @@
     xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:models="using:BlOrders2023.Models"
+    xmlns:converters ="using:BlOrders2023.ViewModels.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -19,6 +20,7 @@
                 Icon="Edit"
                 Text="Edit"/>
         </MenuFlyout>
+        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
     </Page.Resources>
 
     <RelativePanel>
@@ -60,7 +62,7 @@
                        AllowFiltering="True">
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn MappingName="Description"/>
-                <sf:GridTextColumn MappingName="Type"/>
+                <sf:GridTextColumn MappingName="Type" UseBindingValue="True" DisplayBinding="{Binding Path=Type, Converter={StaticResource EnumDescriptionConverter}}"/>
                 <sf:GridTextColumn MappingName="Modifier"/>
                 <sf:GridTextColumn MappingName="StartDate"/>
                 <sf:GridTextColumn MappingName="EndDate"/>

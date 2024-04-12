@@ -116,7 +116,9 @@ public enum InventoryReconciliationAction
 
 public enum DiscountTypes
 {
+    [Description("Set Price")]
     SetPrice,
+    [Description("Percent Off")]
     PercentOff,
-    //DollarsOff,
+    //DollarsOff,    
 }

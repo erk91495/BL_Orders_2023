@@ -38,31 +38,27 @@ public sealed partial class DiscountManagerPage : Page
 
     private async void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new DiscountDataEntryControl(ViewModel.Products,ViewModel.Customers, ViewModel.SelectedDiscount)
+        var dialog = new DiscountDataEntryDialog(ViewModel.Products,ViewModel.Customers, ViewModel.SelectedDiscount)
         {
             XamlRoot = XamlRoot,
-            //Content = new DiscountDataEntryControl(ViewModel.SelectedDiscount),
-            PrimaryButtonText = "Save",
-            SecondaryButtonText = "Cancel",
         };
         var res = await dialog.ShowAsync();
         if(res == ContentDialogResult.Primary)
         {
-            var index = ViewModel.Discounts.IndexOf(ViewModel.SelectedDiscount);
-            ViewModel.Discounts[index] = dialog.Discount;
-            await TrySaveDiscountAsync(dialog.Discount);
+            if(ViewModel.SelectedDiscount != null)
+            {
+                await TrySaveDiscountAsync(ViewModel.SelectedDiscount);
+            }
         }
     }
 
     private async void AppBarButton_Click(object sender, RoutedEventArgs e)
     {
         var discount = new Discount();
-        var dialog = new DiscountDataEntryControl(ViewModel.Products, ViewModel.Customers, discount)
+        var dialog = new DiscountDataEntryDialog(ViewModel.Products, ViewModel.Customers, discount)
         {
             XamlRoot = XamlRoot,
             //Content = new DiscountDataEntryControl(ViewModel.SelectedDiscount),
-            PrimaryButtonText = "Save",
-            SecondaryButtonText = "Cancel",
         };
         var res = await dialog.ShowAsync();
         if (res == ContentDialogResult.Primary)
