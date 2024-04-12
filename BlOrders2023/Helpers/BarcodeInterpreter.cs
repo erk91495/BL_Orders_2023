@@ -51,7 +51,7 @@ public static class BarcodeInterpreter
 
         if (!isValidBarcodeType || barcode == null)
         {
-            throw new UnknownBarcodeFormatException("The _scanline given did not match a given barcode format");
+            throw new UnknownBarcodeFormatException("The scanline given did not match a given barcode format");
         }
         else
         {
@@ -104,7 +104,7 @@ public static class BarcodeInterpreter
 
         if (!isValidBarcodeType || barcode == null)
         {
-            throw new UnknownBarcodeFormatException("The _scanline given did not match a given barcode format");
+            throw new UnknownBarcodeFormatException("The scanline given did not match a given barcode format");
         }
         else
         {
@@ -172,7 +172,7 @@ public static class BarcodeInterpreter
     }
 
     /// <summary>
-    /// Creates a _scanline for the given ShippingItem. Overwrites the _scanline property. The ShippingItem's
+    /// Creates a _scanline for the given ShippingItem. Overwrites the scanline property. The ShippingItem's
     /// properties must be set
     /// </summary>
     /// <param name="item">The given Shipping Item to create a barcodes from</param>
