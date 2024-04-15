@@ -27,6 +27,12 @@ public class DiscountDataEntryDialogViewModel : ObservableValidator
         _discount = new();
         _description = string.Empty;
         ErrorsChanged += HasErrorsChanged;
+        PropertyChanged += DiscountDataEntryDialogViewModel_PropertyChanged;
+    }
+
+    private void DiscountDataEntryDialogViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        CanSave = HasErrors;
     }
 
     private double modifier;
@@ -130,6 +136,18 @@ public class DiscountDataEntryDialogViewModel : ObservableValidator
         }
 
     }
+
+    public bool Inactive
+    {
+        get => _discount.Inactive;
+        set
+        {
+            _discount.Inactive = value;
+            ValidateProperty(value, nameof(Inactive));
+        }
+    }
+
+    public bool CanSave { get; set; } = false;
     #endregion Properties
 
     #region Methods

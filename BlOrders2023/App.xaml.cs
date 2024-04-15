@@ -216,8 +216,8 @@ public partial class App : Application
         {
             if (App.GetService<INavigationService>() is NavigationService nav)
             {
-                nav.NavigateTo(typeof(SettingsViewModel).FullName!);
                 e.Handled = true;
+                nav.NavigateTo(typeof(SettingsViewModel).FullName!);
             }
         }
 

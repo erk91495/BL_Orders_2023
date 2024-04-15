@@ -6,6 +6,7 @@ using Syncfusion.UI.Xaml.Calendar;
 using System.ComponentModel;
 using System.Collections;
 using BlOrders2023.Dialogs.ViewModels;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,6 +18,8 @@ public sealed partial class DiscountDataEntryDialog : ContentDialog
     #region Fields
     private IEnumerable<DiscountTypes> DiscountTypes => Enum.GetValues(typeof(DiscountTypes)).Cast<DiscountTypes>();
     DiscountDataEntryDialogViewModel ViewModel { get; }
+    public ObservableCollection<Product> Products;
+    public ObservableCollection<WholesaleCustomer> Customers;
     #endregion Fields
 
     #region Properties
@@ -27,10 +30,9 @@ public sealed partial class DiscountDataEntryDialog : ContentDialog
     {
         ViewModel = App.GetService<DiscountDataEntryDialogViewModel>();
         ViewModel.Discount = discount ?? new();
-        ViewModel.Products = (System.Collections.ObjectModel.ObservableCollection<Product>)products;
-        ViewModel.Customers = (System.Collections.ObjectModel.ObservableCollection<WholesaleCustomer>)customers;
+        Products = (System.Collections.ObjectModel.ObservableCollection<Product>)products;
+        Customers = (System.Collections.ObjectModel.ObservableCollection<WholesaleCustomer>)customers;
         this.InitializeComponent();
-        IsPrimaryButtonEnabled = false;
         ViewModel.ErrorsChanged += ViewModel_ErrorsChanged;
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         ProductsCombo.Loaded += ProductsCombo_Loaded;

@@ -40,9 +40,12 @@ public static class PriceHelpers
 
     private static decimal ProcessDiscount(IEnumerable<Discount> discounts, decimal price)
     {
+        var activeDiscouns = discounts.Where(d => (d.Inactive == false) &&
+                                                  ((d.StartDate == null && d.EndDate == null) || 
+                                                  (DateTime.Today.Date >= d.StartDate.Value.Date  && DateTime.Today.Date <= d.EndDate.Value.Date)));
         //Apply Largest set price first and then apply percent discounts
         var workingPrice = price;
-        var percentTotal = (decimal)discounts.Where(d => d.Type == Enums.DiscountTypes.PercentOff).Sum(d => d.Modifier);
+        var percentTotal = (decimal)activeDiscouns.Where(d => d.Type == Enums.DiscountTypes.PercentOff).Sum(d => d.Modifier);
         var setPrice = discounts.Where(d => d.Type == Enums.DiscountTypes.SetPrice).OrderByDescending(d => d.Modifier).FirstOrDefault();
 
         if (setPrice != null)
@@ -52,7 +55,7 @@ public static class PriceHelpers
 
         if(percentTotal > 0)
         {
-            workingPrice =  workingPrice * (1 - (percentTotal / 100m));
+            workingPrice *= (1 - (percentTotal / 100m));
         }
         return workingPrice;
     }

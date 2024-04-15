@@ -44,7 +44,7 @@ public sealed partial class OrdersPage : Page
     #endregion Properties
 
     #region Fields
-    private readonly ReportGenerator reportGenerator;
+    private ReportGenerator reportGenerator;
     #endregion Fields
 
     #region Constructors
@@ -54,7 +54,6 @@ public sealed partial class OrdersPage : Page
     public OrdersPage()
     {
         ViewModel = App.GetService<OrdersPageViewModel>();
-        reportGenerator = new(App.CompanyInfo);
         InitializeComponent();
         Loaded += OrdersPage_Loaded;
     }
@@ -62,6 +61,7 @@ public sealed partial class OrdersPage : Page
     private void OrdersPage_Loaded(object sender, RoutedEventArgs e)
     {
         DispatcherQueue.EnqueueAsync( () => SearchBox.Focus(FocusState.Programmatic));
+        reportGenerator = new(App.CompanyInfo);
     }
     #endregion Constructors
 

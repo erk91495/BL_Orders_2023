@@ -58,14 +58,15 @@
                             Header="Products" 
                             SelectionMode="Multiple"
                             MultiSelectionDisplayMode="Token" 
-                            ItemsSource="{x:Bind ViewModel.Products}"
+                            ItemsSource="{x:Bind Products, Mode=OneWay}"
                             HorizontalAlignment="Stretch"/>
         
         <editors:SfComboBox x:Name="CustomersCombo"
                             Header="Customers" 
                             SelectionMode="Multiple" 
                             MultiSelectionDisplayMode="Token" 
-                            ItemsSource="{x:Bind ViewModel.Customers}"
+                            ItemsSource="{x:Bind Customers, Mode=OneWay}"
                             HorizontalAlignment="Stretch"/>
+        <CheckBox x:Name="InactiveCheckBox" Content="Inactive" IsChecked="{x:Bind ViewModel.Inactive, Mode=TwoWay}"/>
     </StackPanel>
 </ContentDialog>

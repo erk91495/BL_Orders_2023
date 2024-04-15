@@ -21,6 +21,7 @@ public class Discount : ObservableObject
     private double _modifier;
     private DateTime? _startDate;
     private DateTime? _endDate;
+    private bool _inactive = false;
     #endregion Field
 
     #region Properties
@@ -59,6 +60,11 @@ public class Discount : ObservableObject
     {
         get => _endDate;
         set => SetProperty(ref _endDate, value);
+    }
+
+    public bool Inactive
+    {
+        get => _inactive; set => _inactive = value;
     }
     public virtual IEnumerable<DiscountProductMap> DiscountProductMaps { get; set; }
     public virtual ObservableCollection<Product> Products { get; set; } = new();
