@@ -13,7 +13,7 @@ public static class Helpers
         await Launcher.LaunchUriAsync(new Uri(String.Format("mailto:{0}", email)));
     }
 
-    public static string SendEmailAsync(string to, string subject, string body, string attachemntPath)
+    public static string SendEmailAsync(string to, string subject, string body, IEnumerable<string> attachemntPath)
     {
         var TempPath = Path.GetTempPath() + "BLOrders2023";
         var emlPath = TempPath + Path.PathSeparator + DateTime.UtcNow.ToFileTimeUtc() +".eml";
@@ -25,8 +25,12 @@ public static class Helpers
         message.Subject = subject;
         var builder = new BodyBuilder();
         builder.TextBody = body;
-        // We may also want to attach a calendar event for Monica's party...
-        builder.Attachments.Add(attachemntPath);
+        
+        foreach (var item in attachemntPath)
+        {
+            builder.Attachments.Add(item);
+        }
+        
         message.Body = builder.ToMessageBody();
         // Generate the .eml file
         

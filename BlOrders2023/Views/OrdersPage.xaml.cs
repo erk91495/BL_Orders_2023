@@ -432,6 +432,7 @@ public sealed partial class OrdersPage : Page
             }
             else if(function == ReportFunctions.Email ) 
             {
+                var shippingListPath = await reportGenerator.GenerateShippingList(ViewModel.SelectedOrder);
                 var selectedOrder = ViewModel.SelectedOrder;
                 if(!selectedOrder.Customer.Email.IsNullOrEmpty())
                 {
@@ -444,7 +445,7 @@ public sealed partial class OrdersPage : Page
                         $"Phone {App.CompanyInfo.Phone}\r\n" +
                         $"{App.CompanyInfo.Email}\r\n" +
                         $"{App.CompanyInfo.Website}";
-                    Helpers.Helpers.SendEmailAsync(selectedOrder.Customer.Email,subject,body,filePath);
+                    Helpers.Helpers.SendEmailAsync(selectedOrder.Customer.Email,subject,body,new List<string>() {filePath, shippingListPath });
                 }
             }
             
