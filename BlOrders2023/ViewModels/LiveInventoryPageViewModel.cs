@@ -38,7 +38,7 @@ public class LiveInventoryPageViewModel : ObservableRecipient
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private bool _isLoading;
     private ObservableCollection<LiveInventoryItem> _inventory = new();
-    private IBLDatabase _db;
+    private readonly IBLDatabase _db;
     #endregion Fields
 
     #region Constructors

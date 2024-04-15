@@ -113,3 +113,19 @@ public enum InventoryReconciliationAction
     Added,
     Removed,
 }
+
+public enum DiscountTypes
+{
+    [Description("Set Price")]
+    SetPrice,
+    [Description("Percent Off")]
+    PercentOff,
+    //DollarsOff,    
+}
+
+public enum ReportFunctions
+{
+    Display,
+    Print,
+    Email
+}

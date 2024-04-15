@@ -32,6 +32,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.ComponentModel;
 using BlOrders2023.Core.Contracts.Services;
 using Castle.Core.Resource;
+using Syncfusion.UI.Xaml.Editors;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -306,7 +307,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     spinner.IsVisible = true;
-                    var values = await ViewModel.GetOrdersByPickupDateAsync(startDate, endDate);
+                    var values = await ViewModel.GetProductTotalsAsync(startDate, endDate);
                     reportPath = await reportGenerator.GenerateQuarterlySalesReport(values, startDate, endDate);
                 }
             }
@@ -698,6 +699,73 @@ public sealed partial class ReportsPage : Page
                     }
                 }
             }
+            else if (control.ReportType == typeof(HistoricalQuarterlySalesReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    spinner.IsVisible = true;
+                    
+                    var current = await ViewModel.GetProductTotalsAsync(startDate, endDate);
+                    var off1Year = await ViewModel.GetProductTotalsAsync(startDate.AddYears(-1), endDate.AddYears(-1));
+                    var off2Year = await ViewModel.GetProductTotalsAsync(startDate.AddYears(-2), endDate.AddYears(-2));
+
+                    var allItems = new List<IEnumerable<ProductTotalsItem>> { current, off1Year, off2Year };
+
+                    reportPath = await reportGenerator.GenerateHistoricalQuarterlySalesReport(allItems, startDate.Date, endDate.Date);
+                }
+            }
+            else if(control.ReportType == typeof(HistoricalProductCategoryTotalsReport))
+            {
+                var dateTuple = await ShowDateRangeSelectionAsync();
+
+                if (dateTuple.Item1 != null && dateTuple.Item2 != null)
+                {
+                    DateTimeOffset startDate = (DateTimeOffset)dateTuple.Item1;
+                    DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
+                    spinner.IsVisible = true;
+
+                    var values = await ViewModel.GetOrdersByPickupDateAsync(startDate, endDate);
+                    var current = values.SelectMany(o => o.Items);
+
+                    values = await ViewModel.GetOrdersByPickupDateAsync(startDate.AddYears(-1), endDate.AddYears(-1));
+                    var off1Year = values.SelectMany(o => o.Items);
+
+                    values = await ViewModel.GetOrdersByPickupDateAsync(startDate.AddYears(-2), endDate.AddYears(-2));
+                    var off2Year = values.SelectMany(o => o.Items);
+
+                    var categories = ViewModel.GetProductCategories();
+
+                    var allItems = new List<IEnumerable<OrderItem>> { current, off1Year, off2Year };
+
+                    reportPath = await reportGenerator.GenerateHistoricalProductCategoryTotalsReport(categories, allItems, startDate.Date, endDate.Date);
+                }
+            }
+            else if(control.ReportType == typeof(YieldStudyReport))
+            {
+                var datePicker = new SfDatePicker()
+                {
+                    PlaceholderText = "Production Date..."
+                };
+                var dialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Content = datePicker,
+                    PrimaryButtonText = "ok"
+                };
+                var res = await dialog.ShowAsync();
+                if(res == ContentDialogResult.Primary && datePicker.SelectedDate != null)
+                {
+                    var date = datePicker.SelectedDate.Value;
+                    date = new(date.Year, date.Month, date.Day,0,0,0,TimeSpan.FromHours(-4));
+                    var items = await ViewModel.GetLiveInventoryItems(date);
+
+                    reportPath = await reportGenerator.GenerateYieldStudyReport(items, date.DateTime);
+                }
+            }
             else
             {
                 ContentDialog d = new()
@@ -756,7 +824,7 @@ public sealed partial class ReportsPage : Page
                 ContentDialog d = new()
                 {
                     XamlRoot = XamlRoot,
-                    Title = "Error",
+                    Title = "Date",
                     Content = $"Please select a date range",
                     PrimaryButtonText = "ok",
                 };

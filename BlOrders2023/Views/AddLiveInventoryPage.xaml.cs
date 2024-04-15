@@ -127,6 +127,18 @@ namespace BlOrders2023.Views
                         //interpreter has no concept of dbcontext and cannot track items
                         BarcodeInterpreter.ParseBarcode(ref item);
                         ViewModel.VerifyProduct(item);
+
+
+                        if (!ViewModel.ScannedItems.Where(i => i.Scanline == item.Scanline).Any())
+                        {
+                            ViewModel.ScannedItems.Add(item);
+                            hasChanges = true;
+                        }
+                        else
+                        {
+                            var s = item.Scanline;
+                            await ShowLockedoutDialog("Duplicate Scanline", $"Duplicate Scanline {s}\r\n");
+                        }
                     }
                     catch (ProductNotFoundException e)
                     {
@@ -142,9 +154,9 @@ namespace BlOrders2023.Views
                         var ai = e.Data["AI"];
                         var s = e.Data["Scanline"];
                         var location = e.Data["Location"];
-                        App.LogWarningMessage($"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+                        App.LogWarningMessage($"Could not parse Scanline {s} at {location}\r\nAI: {ai}");
                         await ShowLockedoutDialog(e.Message,
-                            $"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+                            $"Could not parse Scanline {s} at {location}\r\nAI: {ai}");
                     }
                     catch (UnknownBarcodeFormatException e)
                     {
@@ -152,20 +164,10 @@ namespace BlOrders2023.Views
                         App.LogWarningMessage($"{e.Message}");
                         await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
                     }
-
-                    if (!ViewModel.ScannedItems.Where(i => i.Scanline == item.Scanline).Any())
-                    {
-                        ViewModel.ScannedItems.Add(item);
-                        hasChanges = true;
-                    }
-                    else
-                    {
-                        var s = item.Scanline;
-                        await ShowLockedoutDialog("Duplicate Scanline", $"Duplicate Scanline {s}\r\n");
-                    }
                 }
             }
         }
+
         private async Task ShowLockedoutDialog(string title, string content)
         {
             ContentDialog d = new()

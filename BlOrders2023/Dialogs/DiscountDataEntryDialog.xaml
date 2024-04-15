@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="BlOrders2023.UserControls.DiscountDataEntryDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BlOrders2023.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cal="using:Syncfusion.UI.Xaml.Calendar"
+    xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
+    xmlns:enums="using:BlOrders2023.Models.Enums"
+    xmlns:vmconverters="using:BlOrders2023.ViewModels.Converters"
+    mc:Ignorable="d"
+    PrimaryButtonText="Save"
+    CloseButtonText="Cancel">
+    <ContentDialog.Resources>
+        <vmconverters:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
+    </ContentDialog.Resources>
+
+    <StackPanel Spacing="3">
+        <StackPanel Orientation="Vertical">
+            <TextBox Text="{x:Bind ViewModel.Description, Mode=TwoWay}" Header="Description"/>
+            <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Description'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('Description'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+        </StackPanel>
+
+        <ComboBox Header="DiscountType" 
+                  ItemsSource="{x:Bind DiscountTypes, Mode=OneWay}" 
+                  SelectedItem="{x:Bind ViewModel.Type, Mode=TwoWay}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="enums:DiscountTypes">
+                    <TextBlock Text="{x:Bind Converter={StaticResource EnumDescriptionConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <StackPanel>
+            <editors:SfNumberBox x:Name="ModifierBox" 
+                                 Header="Modifier" 
+                                 Value="{x:Bind ViewModel.Modifier, Mode=TwoWay}" 
+                                 CustomFormat="N4" 
+                                 AllowNull="False" 
+                                 ShowClearButton="False"/>
+            <TextBlock Text="{x:Bind ViewModel.GetErrorMessage('Modifier'), Mode=OneWay}" 
+                                   Visibility="{x:Bind ViewModel.VisibleIfError('Modifier'), Mode=OneWay}" 
+                                   Style="{StaticResource ValidatorTextBlockStyle}"/>
+        </StackPanel>
+
+        <cal:SfCalendarDateRangePicker x:Name="DateRangePicker"
+                                    Header="Effective Date"
+                                    PlaceholderText="Select a date range" 
+                                    SelectedRange="{x:Bind ViewModel.DateRange, Mode=TwoWay}"
+                                    VerticalAlignment="Center"
+                                    DropDownPlacement="Right"/>
+        
+        <editors:SfComboBox x:Name="ProductsCombo"
+                            Header="Products" 
+                            SelectionMode="Multiple"
+                            MultiSelectionDisplayMode="Token" 
+                            ItemsSource="{x:Bind ViewModel.Products}"
+                            HorizontalAlignment="Stretch"/>
+        
+        <editors:SfComboBox x:Name="CustomersCombo"
+                            Header="Customers" 
+                            SelectionMode="Multiple" 
+                            MultiSelectionDisplayMode="Token" 
+                            ItemsSource="{x:Bind ViewModel.Customers}"
+                            HorizontalAlignment="Stretch"/>
+    </StackPanel>
+</ContentDialog>

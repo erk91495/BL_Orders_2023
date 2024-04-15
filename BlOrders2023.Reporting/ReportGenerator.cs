@@ -48,7 +48,7 @@ public class ReportGenerator
     {
         var report =  new WholesaleInvoice(CompanyInfo, order, categoriesToTotal);
         var filePath = $"{TempPath}{Path.DirectorySeparatorChar}_{order.OrderID}_{order.Customer.CustomerName}_{DateTime.Now.ToFileTime()}.pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -56,7 +56,7 @@ public class ReportGenerator
     {
         var report = new WholesaleOrderPickupRecap(CompanyInfo, orders, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + "WholesaleOrderPickupRecap" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -64,7 +64,7 @@ public class ReportGenerator
     {
         var report = new WholesaleOrderTotals(CompanyInfo, items, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + "WholesaleOrderTotals" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
 
     }
@@ -73,7 +73,7 @@ public class ReportGenerator
     {
         var report = new WholesalePaymentsReport(CompanyInfo, payments, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + "WholesalePaymentsReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -81,7 +81,7 @@ public class ReportGenerator
     {
         var report = new UnpaidInvoicesReport(CompanyInfo, orders);
         var filePath = TempPath + Path.DirectorySeparatorChar + "UnpaidInvoicesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -89,7 +89,7 @@ public class ReportGenerator
     {
         var report = new ShippingList(CompanyInfo, order);
         var filePath = TempPath + Path.DirectorySeparatorChar + "ShippingList" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -97,7 +97,7 @@ public class ReportGenerator
     {
         var report = new AggregateInvoiceReport(CompanyInfo, orders, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + "AggregateInvoiceReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
 
     }
@@ -106,16 +106,16 @@ public class ReportGenerator
     {
         var report = new OutstandingBalancesReport(CompanyInfo, orders);
         var filePath = TempPath + Path.DirectorySeparatorChar + "OutstandingBalancesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
 
     }
 
-    public async Task<string> GenerateQuarterlySalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate) 
+    public async Task<string> GenerateQuarterlySalesReport(IEnumerable<ProductTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate) 
     {
-        var report = new QuarterlySalesReport(CompanyInfo, orders, startDate, endDate);
+        var report = new QuarterlySalesReport(CompanyInfo, items, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + "QuarterlySalesReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -123,7 +123,7 @@ public class ReportGenerator
     {
         var report = new FrozenOrdersReport(CompanyInfo, orders, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + "FrozenOrdersReport" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -131,7 +131,7 @@ public class ReportGenerator
     {
         var report = new PickList(CompanyInfo, order);
         var filePath = TempPath + Path.DirectorySeparatorChar + $"{order.OrderID}_PickList" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -154,7 +154,7 @@ public class ReportGenerator
     {
         var report = new AllocationSummaryReport(CompanyInfo, orders, mode, allocationTime);
         var filePath = TempPath + Path.DirectorySeparatorChar + $"AllocationSummary" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -162,7 +162,7 @@ public class ReportGenerator
     {
         var report = new AllocationDetailsReport(CompanyInfo, orders, allocationGroups, mode, allocationTime);
         var filePath = TempPath + Path.DirectorySeparatorChar + $"AllocationDetails" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -170,7 +170,7 @@ public class ReportGenerator
     {
         var report = new CurrentInventoryReport(CompanyInfo, inventory);
         var filePath = TempPath + Path.DirectorySeparatorChar + $"CurrentInventory" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -178,7 +178,7 @@ public class ReportGenerator
     {
         var report = new InventoryDetailsReport(CompanyInfo, inventory, orders, allocatedNotReceived, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + $"InventoryDetails" + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -186,7 +186,7 @@ public class ReportGenerator
     {
         var report = new OutOfStateSalesReport(CompanyInfo, orders, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + nameof(OutOfStateSalesReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -194,7 +194,7 @@ public class ReportGenerator
     {
         var report = new BillOfLadingReport(CompanyInfo, orders, items, customer, carrierName, trailerNumber, trailerSeal, appointmentDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + nameof(BillOfLadingReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -202,7 +202,7 @@ public class ReportGenerator
     {
         var report = new ShippingItemAuditReport(CompanyInfo, items, item, fieldsToMatch, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ShippingItemAuditReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -210,7 +210,7 @@ public class ReportGenerator
     {
         var report = new ProductCategoryTotalsReport(CompanyInfo, items, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryTotalsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
@@ -218,20 +218,46 @@ public class ReportGenerator
     {
         var report = new ProductCategoryDetailsReport(CompanyInfo, items, products, startDate, endDate);
         var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryDetailsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
     public async Task<string> GenerateWholesaleInvoiceTotalsReport(WholesaleCustomer customer, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         var report = new WholesaleInvoiceTotalsReport(CompanyInfo, customer, orders, startDate, endDate);
-        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(ProductCategoryDetailsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
-        await GernerateReportAsync(report, filePath);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(WholesaleInvoiceTotalsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        await GenerateReportAsync(report, filePath);
         return filePath;
     }
 
-    private async Task GernerateReportAsync(IReport report, string filepath)
+    public async Task<string> GenerateHistoricalQuarterlySalesReport(IEnumerable<IEnumerable<ProductTotalsItem>> totals, DateTime startDate, DateTime endDate)
+    {
+        var report = new HistoricalQuarterlySalesReport(CompanyInfo, totals, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(HistoricalQuarterlySalesReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        await GenerateReportAsync(report, filePath);
+        return filePath;
+    }
+
+    public async Task<string> GenerateHistoricalProductCategoryTotalsReport(IEnumerable<ProductCategory> categories, IEnumerable<IEnumerable<OrderItem>>items, DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        var report = new HistoricalProductCategoryTotalsReport(CompanyInfo, categories, items, startDate, endDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(HistoricalProductCategoryTotalsReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        await GenerateReportAsync(report, filePath);
+        return filePath;
+    }
+
+    public async Task<string> GenerateYieldStudyReport(IEnumerable<LiveInventoryItem> items, DateTime productionDate)
+    {
+        var report = new YieldStudyReport(CompanyInfo, items, productionDate);
+        var filePath = TempPath + Path.DirectorySeparatorChar + nameof(YieldStudyReport) + "_" + DateTime.Now.ToFileTime() + ".pdf";
+        await GenerateReportAsync(report, filePath);
+        return filePath;
+    }
+
+    private async Task GenerateReportAsync(IReport report, string filepath)
     {
         await Task.Run(() => report.GeneratePdf(filepath));
     }
+
+
 }

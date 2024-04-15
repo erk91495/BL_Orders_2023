@@ -11,49 +11,21 @@ using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Quarterly Sales Report")]
-public class QuarterlySalesReport : IReport
+public class QuarterlySalesReport : ReportBase
 {
-
-    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-    private readonly CompanyInfo _companyInfo;
-    private readonly IEnumerable<Order> _orders;
-    private readonly DateTime _reportDate = DateTime.Now;
+    private readonly IEnumerable<ProductTotalsItem> _items;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
 
-    public QuarterlySalesReport(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    public QuarterlySalesReport(CompanyInfo companyInfo, IEnumerable<ProductTotalsItem> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+        :base(companyInfo)
     {
-        _companyInfo = companyInfo;
-        _orders = orders;
+        _items = orders;
         _startDate  = startDate;
         _endDate = endDate; 
     }
 
-    public void Compose(IDocumentContainer container)
-    {
-        container.Page(page =>
-        {
-            page.Margin(20);
-            page.Size(PageSizes.Letter);
-
-            page.Header().Height(100).Background(Colors.Grey.Lighten1);
-            page.Header().Element(ComposeHeader);
-
-            page.Content().Background(Colors.Grey.Lighten3);
-            page.Content().Element(ComposeContent);
-
-            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-            page.Footer().Element(ComposeFooter);
-
-        });
-    }
-
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Column(headerCol =>
         {
@@ -80,7 +52,7 @@ public class QuarterlySalesReport : IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
         container.Column(column =>
         {
@@ -110,16 +82,13 @@ public class QuarterlySalesReport : IReport
                     }
                 });
 
-                var orderItems = _orders.SelectMany(o => o.Items);
-                var productsIDs = orderItems.Select(i => i.ProductID).Distinct().OrderBy(i => i);
-                foreach (var id in productsIDs)
+                foreach (var item in _items)
                 {
-                    var matchingItems = orderItems.Where(item => item.ProductID == id);
-                    table.Cell().Element(CellStyle).Text($"{id}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{matchingItems.First().Product.ProductName}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.QuantityReceived)}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.GetTotalPrice):C}").Style(tableTextStyle);
-                    table.Cell().Element(CellStyle).Text($"{matchingItems.Sum(i => i.PickWeight):N2}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.ProductName}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.QuantityReceived}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.ExtPrice:C}").Style(tableTextStyle);
+                    table.Cell().Element(CellStyle).Text($"{item.NetWeight:N2}").Style(tableTextStyle);
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(2);
@@ -129,8 +98,8 @@ public class QuarterlySalesReport : IReport
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle);
                 table.Cell().Element(FooterCellStyle).Text($"Total: ").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{_orders.Sum(o => o.InvoiceTotal):C}").Style(tableHeaderStyle);
-                table.Cell().Element(FooterCellStyle).Text($"{orderItems.Sum(o => o.PickWeight):N2}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(i => i.ExtPrice):C}").Style(tableHeaderStyle);
+                table.Cell().Element(FooterCellStyle).Text($"{_items.Sum(o => o.NetWeight):N2}").Style(tableHeaderStyle);
 
                 static IContainer FooterCellStyle(IContainer container)
                 {
@@ -139,30 +108,5 @@ public class QuarterlySalesReport : IReport
 
             });
         });
-    }
-
-    private void ComposeFooter(IContainer container)
-    {
-        container.AlignBottom().Column(column =>
-        {
-            column.Item().AlignBottom().AlignRight().Row(footer =>
-            {
-                footer.RelativeItem().AlignLeft().Text(time =>
-                {
-                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{_reportDate.ToString():d}").Style(smallFooterStyle);
-                });
-
-                footer.RelativeItem().AlignRight().Text(page =>
-                {
-                    page.Span("pg. ").Style(smallFooterStyle);
-                    page.CurrentPageNumber().Style(smallFooterStyle);
-                    page.Span(" of ").Style(smallFooterStyle);
-                    page.TotalPages().Style(smallFooterStyle);
-                });
-            });
-
-        });
-
     }
 }

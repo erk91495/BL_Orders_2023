@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Printing;
-using Syncfusion.PdfToImageConverter;
+using PdfiumViewer;
 
 namespace BlOrders2023.Services;
 internal class PDFPrinterService
@@ -33,15 +33,11 @@ internal class PDFPrinterService
 
     private void On_PrintPage(object sender, PrintPageEventArgs e)
     {
-        PdfToImageConverter Converter = new();
-        FileStream inputStream = new FileStream(pdfFilePath, FileMode.Open, FileAccess.Read);
-        Converter.Load(inputStream);
-        //SizeF size = new(850, 1100);
-        Stream outputStream = Converter.Convert(CurrentPageIndex, false, false);
-        Image image = Image.FromStream(outputStream);
-        e.Graphics?.DrawImage(image, e.MarginBounds);
-
-        e.HasMorePages = CurrentPageIndex < Converter.PageCount - 1;
+        using PdfDocument doc = PdfDocument.Load(pdfFilePath);
+        var image = doc.Render(CurrentPageIndex,(int)(doc.PageSizes[CurrentPageIndex].Width * 4f), (int)(doc.PageSizes[CurrentPageIndex].Height * 4f), 1200, 1200, false);
+        image.Save(pdfFilePath + "image.bmp");
+        e.Graphics?.DrawImage(image, e.PageBounds);
+        e.HasMorePages = CurrentPageIndex < doc.PageCount - 1;
         CurrentPageIndex++;
     }
 }

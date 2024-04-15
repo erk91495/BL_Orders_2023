@@ -39,7 +39,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         }
     }
 
-    [MaxLength(255)]
+    [MaxLength(512)]
     public string? Memo
     {
         get => _order?.Memo;
@@ -111,7 +111,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         FillableOrders.Clear();
         FillableOrdersMasterList.Clear();
         foreach (var order in orders.Where( e => e.OrderStatus == Models.Enums.OrderStatus.Ordered ||
-                                            e.OrderStatus ==  Models.Enums.OrderStatus.Filling || e.OrderStatus == Models.Enums.OrderStatus.Filled).OrderBy(o => o.PickupDate).ToList())
+                                            e.OrderStatus ==  Models.Enums.OrderStatus.Filling || e.OrderStatus == Models.Enums.OrderStatus.Filled).OrderBy(o => o.FillByDate.Date).ToList())
         {
             FillableOrders.Add(order);
             FillableOrdersMasterList.Add(order);
@@ -162,7 +162,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         else
         {
              orders = FillableOrdersMasterList.Where(o => o.OrderID.ToString().Contains(text) || 
-                                                        o.Customer.CustomerName.Contains(text, StringComparison.CurrentCultureIgnoreCase)).OrderBy(o => o.PickupDate).ToList();
+                                                        o.Customer.CustomerName.Contains(text, StringComparison.CurrentCultureIgnoreCase)).OrderBy(o => o.FillByDate.Date).ToList();
         }
         if (!orders.IsNullOrEmpty())
         {
@@ -179,7 +179,7 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         await _SaveSemaphore.WaitAsync();
         try
         {
-            //Mainly for canned stuff where upc is the _scanline
+            //Mainly for canned stuff where upc is the scanline
             //A USP could make this 1 query instead of 2
             var product = _orderDB.Products.GetByALU(item.Scanline) ?? _orderDB.Products.Get(item.ProductID).FirstOrDefault();
             if (product == null)
@@ -211,6 +211,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
             {
                 App.LogInfoMessage($"Could Not find item in Inventory {item} {item.ProductID} {item.Scanline}");
                 await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID,-1);
+                //We do this to keep last adjustment at 0
+                await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID, 0);
             }
             Items.Add(item);
             _order?.ShippingItems.Add(item);
@@ -235,6 +237,8 @@ public class FillOrdersPageViewModel : ObservableValidator, INavigationAware
         else
         {
             await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID, 1);
+            //we do this to keep last adjustment at 0
+            await _orderDB.Inventory.AdjustInventoryAsync(item.ProductID, 0);
         }
         Items.Remove(item);
         await Task.Run(() => 

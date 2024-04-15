@@ -11,26 +11,17 @@ using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Inventory Details Report")]
-public class InventoryDetailsReport : IReport
+public class InventoryDetailsReport : ReportBase
 {
-    private readonly CompanyInfo _copanyInfo;
     private readonly IEnumerable<InventoryTotalItem> _items;
     private readonly IEnumerable<Order> _orders;
     private readonly Dictionary<int, int> _allocatedNotReceived;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
-    private readonly DateTime _reportDate = DateTime.Now;
-
-    public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-    public static readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-    public static readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    public static readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-    public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-    public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
     public InventoryDetailsReport(CompanyInfo companyInfo, IEnumerable<InventoryTotalItem> items, IEnumerable<Order> orders, Dictionary<int,int> allocatedNotReceived, DateTimeOffset startDate, DateTimeOffset endDate)
+        :base(companyInfo)
     {
-        _copanyInfo = companyInfo;
         _items = items;
         _orders = orders;
         _allocatedNotReceived = allocatedNotReceived;
@@ -38,7 +29,7 @@ public class InventoryDetailsReport : IReport
         _endDate = endDate;
     }
 
-    public void Compose(IDocumentContainer container)
+    public override void Compose(IDocumentContainer container)
     {
         container.Page(page =>
         {
@@ -58,11 +49,11 @@ public class InventoryDetailsReport : IReport
         });
     }
 
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Row(row =>
         {
-            row.RelativeItem(2).AlignCenter().Text($"{_copanyInfo.ShortCompanyName} Inventory Details").Style(titleStyle);
+            row.RelativeItem(2).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Inventory Details").Style(titleStyle);
             row.RelativeItem(1).AlignRight().Column(column =>
             {
                 column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);
@@ -71,7 +62,7 @@ public class InventoryDetailsReport : IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
         container.Column(column => {
             //Items
@@ -162,30 +153,5 @@ public class InventoryDetailsReport : IReport
 
             });
         });
-    }
-
-    private void ComposeFooter(IContainer container)
-    {
-        container.AlignBottom().Column(column =>
-        {
-            column.Item().AlignBottom().AlignRight().Row(footer =>
-            {
-                footer.RelativeItem().AlignLeft().Text(time =>
-                {
-                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{_reportDate.ToString():d}").Style(smallFooterStyle);
-                });
-
-                footer.RelativeItem().AlignRight().Text(page =>
-                {
-                    page.Span("pg. ").Style(smallFooterStyle);
-                    page.CurrentPageNumber().Style(smallFooterStyle);
-                    page.Span(" of ").Style(smallFooterStyle);
-                    page.TotalPages().Style(smallFooterStyle);
-                });
-            });
-
-        });
-
     }
 }

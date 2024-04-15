@@ -192,14 +192,5 @@ public sealed partial class InventoryAdjustmentsPage : Page
             await contentDialog.ShowAsync();
         }
     }
-
-    private void InventoryGrid_QueryUnboundColumnValue(object sender, GridUnboundColumnEventsArgs e)
-    {
-        if (e.UnBoundAction == UnboundActions.QueryData)
-            if (e.Record is InventoryTotalItem totalItem)
-            {
-                e.Value = totalItem.Total + totalItem.LastAdjustment;
-            }
-    }
 }
 

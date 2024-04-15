@@ -23,6 +23,7 @@ using BlOrders2023.Core.Services;
 using CommunityToolkit.WinUI;
 using System.Diagnostics;
 using BlOrders2023.Core.Contracts.Services;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlOrders2023.Views;
 
@@ -113,11 +114,11 @@ public sealed partial class OrdersPage : Page
         }
         else if (ViewModel.SelectedOrder.CanPrintInvoice)
         {
-            await PrintInvoiceAsync();           
+            await PrintInvoiceAsync(ReportFunctions.Print);           
         }
         else if (ViewModel.SelectedOrder.OrderStatus >= OrderStatus.Invoiced)
         {
-            await PrintInvoiceAsync();
+            await PrintInvoiceAsync(ReportFunctions.Print);
         }
     }
 
@@ -225,7 +226,15 @@ public sealed partial class OrdersPage : Page
     /// <param name="sender">the object sending the event</param>
     /// <param name="e">event args for the click event</param>
     private async void MenuFlyoutPdfInvoice_Click(object _sender, RoutedEventArgs e) =>
-        await PrintInvoiceAsync(false);
+        await PrintInvoiceAsync(ReportFunctions.Display);
+
+    /// <summary>
+    /// Handles the click event for the pdf invoice button
+    /// </summary>
+    /// <param name="sender">the object sending the event</param>
+    /// <param name="e">event args for the click event</param>
+    private async void MenuFlyoutEmailInvoice_Click(object _sender, RoutedEventArgs e) =>
+        await PrintInvoiceAsync(ReportFunctions.Email);
 
     /// <summary>
     /// Handles the click event for the pdf shipping list button
@@ -349,7 +358,7 @@ public sealed partial class OrdersPage : Page
         }
     }
 
-    private async Task PrintInvoiceAsync(bool autoprint = true)
+    private async Task PrintInvoiceAsync(ReportFunctions function)
     {
         PrinterSettings printSettings = new();
         var printInvoice = false;
@@ -408,18 +417,36 @@ public sealed partial class OrdersPage : Page
             var filePath = await reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder,toTotal);
 
             
-            if (autoprint)
+            if (function == ReportFunctions.Print )
             {
                 var printer = new PDFPrinterService(filePath);
                 await printer.PrintPdfAsync(printSettings);
             }
-            else
+            else if(function == ReportFunctions.Display )
             {
                 LauncherOptions options = new()
                 {
                     ContentType = "application/pdf"
                 };
                 _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+            }
+            else if(function == ReportFunctions.Email ) 
+            {
+                var shippingListPath = await reportGenerator.GenerateShippingList(ViewModel.SelectedOrder);
+                var selectedOrder = ViewModel.SelectedOrder;
+                if(!selectedOrder.Customer.Email.IsNullOrEmpty())
+                {
+                    var subject = $"Invoice #{selectedOrder.OrderID} From {App.CompanyInfo.LongCompanyName}";
+                    var body = $"Hello {selectedOrder.Customer.CustomerName},\r\n\r\n" +
+                        $"Attached, please find {App.CompanyInfo.LongCompanyName} Invoice #{selectedOrder.OrderID} for {selectedOrder.Customer.CustomerName}.  Please let us know if you have any questions.\r\n\r\n" +
+                        $"Thank you,\r\n" +
+                        $"{App.CompanyInfo.ShortCompanyName}\r\n" +
+                        $"{App.CompanyInfo.StreetAddress} {App.CompanyInfo.City}, {App.CompanyInfo.State} {App.CompanyInfo.ShortZipCode}\r\n" +
+                        $"Phone {App.CompanyInfo.Phone}\r\n" +
+                        $"{App.CompanyInfo.Email}\r\n" +
+                        $"{App.CompanyInfo.Website}";
+                    Helpers.Helpers.SendEmailAsync(selectedOrder.Customer.Email,subject,body,new List<string>() {filePath, shippingListPath });
+                }
             }
             
 

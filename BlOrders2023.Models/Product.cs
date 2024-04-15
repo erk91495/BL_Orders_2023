@@ -143,6 +143,8 @@ public class Product : ObservableObject
         get => _category;
         set => SetProperty(ref _category, value);
     }
+
+    public virtual IEnumerable<Discount> Discounts { get; set; }
     #endregion Properties
     public Product()
     {

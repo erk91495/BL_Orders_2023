@@ -175,6 +175,21 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         }
     }
 
+    public DateTime FillByDate
+    {
+        get => _order.FillByDate;
+        set
+        {
+            if (value != _order.FillByDate)
+            {
+                HasChanges = true;
+                _order.FillByDate = value;
+                CheckValidation(value, nameof(FillByDate));
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public DateTime PickupTime
     {
         get => _order.PickupTime;
@@ -203,7 +218,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         }
     }
 
-    [MaxLength(255)]
+    [MaxLength(512)]
     public string? Memo
     {
         get => _order.Memo;
@@ -432,6 +447,7 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
         OnPropertyChanged(nameof(HasNextOrder));
         OnPropertyChanged(nameof(HasPreviousOrder));
         OnPropertyChanged(nameof(CategoryTotals));
+        OnPropertyChanged(nameof(FillByDate));
     }
 
     public int? GetNextOrderID()
@@ -649,6 +665,12 @@ public class OrderDetailsPageViewModel : ObservableValidator, INavigationAware
     {
         var isValid = dateTime.CompareTo(DateTime.Today) >= 0;
         return isValid ? ValidationResult.Success : new ValidationResult("Pickup Date cannot be in the past");
+    }
+
+    public static ValidationResult? ValidateFillByDate(DateTime dateTime)
+    {
+        var isValid = dateTime.CompareTo(DateTime.Today) >= 0;
+        return isValid ? ValidationResult.Success : new ValidationResult("Fill By Date cannot be in the past");
     }
 
     public void ValidateProperties()

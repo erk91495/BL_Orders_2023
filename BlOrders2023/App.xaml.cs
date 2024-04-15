@@ -152,6 +152,9 @@ public partial class App : Application
             services.AddTransient<InventoryReconciliationPageViewModel>();
             services.AddTransient<AddLiveInventoryPage>();
             services.AddTransient<AddLiveInventoryPageViewModel>();
+            services.AddTransient<DiscountManagerPage>();
+            services.AddTransient<DiscountManagerPageViewModel>();
+            services.AddTransient<DiscountDataEntryDialogViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

@@ -53,6 +53,7 @@ public sealed partial class OrderDetailsPage : Page
     #region Fields
     private bool _deleteOrder;
     private bool _canLeave = false;
+    bool PickupDateFillByLinked = true;
     private readonly ReportGenerator reportGenerator;
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     #endregion Fields
@@ -121,6 +122,8 @@ public sealed partial class OrderDetailsPage : Page
             {
                 var res = ProductEntryBox.Focus(FocusState.Programmatic);
             });
+
+            PickupDateFillByLinked = ViewModel.PickupDate.Date == ViewModel.FillByDate.Date;
         }
         else
         {
@@ -712,12 +715,6 @@ public sealed partial class OrderDetailsPage : Page
             }
             var filePath = await reportGenerator.GeneratePickList(ViewModel.Order);
 
-            //Windows.System.LauncherOptions options = new()
-            //{
-            //    ContentType = "application/pdf"
-            //};
-            //_ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
-
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;
             var printer = new PDFPrinterService(filePath);
@@ -836,6 +833,29 @@ public sealed partial class OrderDetailsPage : Page
         if(e.NewDate == null)
         {
             e.Cancel = true;
+        }
+        else
+        {
+            if(PickupDateFillByLinked)
+            {
+                TimeSpan? date = e.NewDate - e.OldDate;
+                if (date.HasValue)
+                {
+                    ViewModel.FillByDate = ViewModel.FillByDate.Add(date.Value);
+                }
+            }
+        }
+    }
+
+    private void FillByDate_SelectedDateChanging(object sender, Syncfusion.UI.Xaml.Editors.DateChangingEventArgs e)
+    {
+        if (e.NewDate == null)
+        {
+            e.Cancel = true;
+        }
+        else
+        {
+            PickupDateFillByLinked = false; 
         }
     }
 

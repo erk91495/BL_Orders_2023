@@ -72,9 +72,9 @@ public sealed partial class InventoryReconciliationPage : Page
                     var ai = e.Data["AI"];
                     var s = e.Data["Scanline"];
                     var location = e.Data["Location"];
-                    App.LogWarningMessage($"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+                    App.LogWarningMessage($"Could not parse scanline {s} at {location}\r\nAI: {ai}");
                     await ShowLockedoutDialog(e.Message,
-                        $"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+                        $"Could not parse scanline {s} at {location}\r\nAI: {ai}");
                 }
                 catch (UnknownBarcodeFormatException e)
                 {

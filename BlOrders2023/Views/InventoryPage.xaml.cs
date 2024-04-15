@@ -69,36 +69,49 @@ public sealed partial class InventoryPage : Page
         var result = await dialog.ShowAsync();
         if(result == ContentDialogResult.Primary)
         {
-            var scanline = dialog.Scanline;
             var reason = dialog.SelectedReason;
-
-            try
+            var failure = false;
+            foreach(var scanline in dialog.Scanlines)
             {
-                var item = new LiveInventoryItem() {Scanline = scanline};
-                BarcodeInterpreter.ParseBarcode(ref item);
-                await ViewModel.TryRemoveItem(item, reason);
+                try
+                {
+                    var item = new LiveInventoryItem() {Scanline = scanline};
+                    BarcodeInterpreter.ParseBarcode(ref item);
+                    await ViewModel.TryRemoveItem(item, reason);
+                }
+                catch (ProductNotFoundException e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    await ShowLockedoutDialog("Not Found",
+                        $"{e.Message}");
+                    failure = true;
+                }
+                catch (InvalidBarcodeExcption e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    var ai = e.Data["AI"];
+                    var s = e.Data["Scanline"];
+                    var location = e.Data["Location"];
+                    App.LogWarningMessage($"Could not parse scanline {s} at {location}\r\nAI: {ai}");
+                    await ShowLockedoutDialog(e.Message,
+                        $"Could not parse scanline {s} at {location}\r\nAI: {ai}");
+                    failure=true;
+                }
+                catch (UnknownBarcodeFormatException e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    App.LogWarningMessage($"{e.Message}");
+                    await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
+                    failure=true;
+                }
             }
-            catch (ProductNotFoundException e)
+            if(failure)
             {
-                Debug.WriteLine(e.ToString());
-                await ShowLockedoutDialog("Not Found",
-                    $"{e.Message}");
+                await ShowLockedoutDialog("Complete", $"Removal complete, but some errors occured. See error logs for more information.");
             }
-            catch (InvalidBarcodeExcption e)
+            else
             {
-                Debug.WriteLine(e.ToString());
-                var ai = e.Data["AI"];
-                var s = e.Data["Scanline"];
-                var location = e.Data["Location"];
-                App.LogWarningMessage($"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
-                await ShowLockedoutDialog(e.Message,
-                    $"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
-            }
-            catch (UnknownBarcodeFormatException e)
-            {
-                Debug.WriteLine(e.ToString());
-                App.LogWarningMessage($"{e.Message}");
-                await ShowLockedoutDialog("UnknownBarcodeFormatException", $"{e.Message}");
+                await ShowLockedoutDialog("Complete", $"All items removed");
             }
         }
     }
@@ -160,9 +173,9 @@ public sealed partial class InventoryPage : Page
                         var ai = e.Data["AI"];
                         var s = e.Data["Scanline"];
                         var location = e.Data["Location"];
-                        App.LogWarningMessage($"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+                        App.LogWarningMessage($"Could not parse scanline {s} at {location}\r\nAI: {ai}");
                         await ShowLockedoutDialog(e.Message,
-                            $"Could not parse _scanline {s} at {location}\r\nAI: {ai}");
+                            $"Could not parse scanline {s} at {location}\r\nAI: {ai}");
                     }
                     catch (UnknownBarcodeFormatException e)
                     {

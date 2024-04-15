@@ -6,7 +6,8 @@
     xmlns:local="using:BlOrders2023.Dialogs"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="using:BlOrders2023.UserControls"   
+    xmlns:uc="using:BlOrders2023.UserControls"
+    xmlns:sf="using:Syncfusion.UI.Xaml.DataGrid"
     mc:Ignorable="d"
     PrimaryButtonText="Remove Item"
     IsPrimaryButtonEnabled="False"
@@ -14,7 +15,8 @@
     Title="Remove Item From Inventory">
 
     <StackPanel>
-        <uc:BarcodeInputTextBox Text="{x:Bind Scanline, Mode=TwoWay}" MinWidth="300" Header="Scanline"/>
+        <uc:BarcodeInputTextBox MinWidth="300" Header="Scanline" TextChanged="BarcodeInputTextBox_TextChanged" AcceptsReturn="True"/>
+        <ListView ItemsSource="{x:Bind Scanlines, Mode=OneWay}"></ListView>
         <ComboBox Header="Removal Reason" ItemsSource="{x:Bind RemovalReasons,Mode=OneWay}" SelectedItem="{x:Bind SelectedReason, Mode=TwoWay}" DisplayMemberPath="RemovalReason" MinWidth="300"/>
     </StackPanel>
 </ContentDialog>

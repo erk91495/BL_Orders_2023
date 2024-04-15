@@ -6,48 +6,21 @@ using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Out Of State Sales")]
-public class OutOfStateSalesReport : IReport
+public class OutOfStateSalesReport : ReportBase
 {
-
-    private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-    private readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-    private readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-    private readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
-    private readonly CompanyInfo _companyInfo;
     private readonly IEnumerable<Order> _orders;
     private readonly DateTime _reportDate = DateTime.Now;
     private readonly DateTimeOffset _startDate;
     private readonly DateTimeOffset _endDate;
     public  OutOfStateSalesReport(CompanyInfo companyInfo, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+        :base(companyInfo)
     {
-        _companyInfo = companyInfo;
         _orders = orders;
         _startDate = startDate;
         _endDate = endDate;
     }
 
-    public void Compose(IDocumentContainer container)
-    {
-        container.Page(page =>
-        {
-            page.Margin(20);
-            page.Size(PageSizes.Letter);
-
-            page.Header().Height(100).Background(Colors.Grey.Lighten1);
-            page.Header().Element(ComposeHeader);
-
-            page.Content().Background(Colors.Grey.Lighten3);
-            page.Content().Element(ComposeContent);
-
-            page.Footer().Height(20).Background(Colors.Grey.Lighten1);
-            page.Footer().Element(ComposeFooter);
-
-        });
-    }
-
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Column(headerCol =>
         {
@@ -74,7 +47,7 @@ public class OutOfStateSalesReport : IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
         var groupedOrders = _orders.GroupBy(o => o.CustID);
 
@@ -147,31 +120,6 @@ public class OutOfStateSalesReport : IReport
 
             });
         });
-    }
-
-    private void ComposeFooter(IContainer container)
-    {
-        container.AlignBottom().Column(column =>
-        {
-            column.Item().AlignBottom().AlignRight().Row(footer =>
-            {
-                footer.RelativeItem().AlignLeft().Text(time =>
-                {
-                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{_reportDate.ToString():d}").Style(smallFooterStyle);
-                });
-
-                footer.RelativeItem().AlignRight().Text(page =>
-                {
-                    page.Span("pg. ").Style(smallFooterStyle);
-                    page.CurrentPageNumber().Style(smallFooterStyle);
-                    page.Span(" of ").Style(smallFooterStyle);
-                    page.TotalPages().Style(smallFooterStyle);
-                });
-            });
-
-        });
-
     }
 
 }

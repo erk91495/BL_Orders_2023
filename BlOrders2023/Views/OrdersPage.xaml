@@ -46,6 +46,14 @@
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
             <MenuFlyoutItem
+                Click="MenuFlyoutEmailInvoice_Click"
+                Text="Email Invoice"
+                IsEnabled="{x:Bind ViewModel.SelectedOrder.CanPrintInvoice, Mode=OneWay}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE715;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
                 Click="MenuFlyoutPdfShippingList_Click"
                 Text="PDF Shipping List"
                 IsEnabled="{x:Bind ViewModel.SelectedOrder.CanPrintInvoice, Mode=OneWay}">

@@ -125,6 +125,7 @@ public class BoxGridEditorViewModel : ObservableValidator, IGridEditorViewModel<
         datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Box Length", MappingName = "BoxLength"});
         datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Box Width", MappingName = "BoxWidth" });
         datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Box Height", MappingName = "BoxHeight" });
+        datagrid.Columns.Add(new GridNumericColumn() { HeaderText = "Box Tare", MappingName = "BoxTare" });
     }
     #endregion Methods
 }

@@ -20,35 +20,40 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace BlOrders2023.UserControls
+namespace BlOrders2023.UserControls;
+
+public sealed partial class ReportControl : UserControl
 {
-    public sealed partial class ReportControl : UserControl
+    public Type ReportType;
+
+    public event EventHandler? ReportSelected;
+    public ReportControl(Type report)
     {
-        public Type ReportType;
-
-        public event EventHandler? ReportSelected;
-        public ReportControl(Type report)
+        if(!typeof(IReport).IsAssignableFrom(report))
         {
-            if(!typeof(IReport).IsAssignableFrom(report))
-            {
-                throw new ArgumentException();
-            }
-            this.InitializeComponent();
-            ReportType = report;
-            var displayNameAtt = (ReportType.GetCustomAttribute(typeof(DisplayNameAttribute), true) as DisplayNameAttribute);
-            if( displayNameAtt != null )
-            {
-                ReportNameRun.Text = displayNameAtt.DisplayName;
-            }
-            else
-            {
-                ReportNameRun.Text = ReportType.Name;
-            }
+            throw new ArgumentException();
         }
-
-        private void Hyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        this.InitializeComponent();
+        ReportType = report;
+        var displayNameAtt = (ReportType.GetCustomAttribute(typeof(DisplayNameAttribute), true) as DisplayNameAttribute);
+        if( displayNameAtt != null )
         {
-            ReportSelected?.Invoke(this, EventArgs.Empty);
+            ReportNameRun.Text = displayNameAtt.DisplayName;
         }
+        else
+        {
+            ReportNameRun.Text = ReportType.Name;
+        }
+    }
+
+    private async void Hyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+    {
+        //var dialog = new ContentDialog()
+        //{
+        //    Content = "temp",
+        //    XamlRoot = sender.XamlRoot,
+        //};
+        //await dialog.ShowAsync();
+        ReportSelected?.Invoke(this, EventArgs.Empty);
     }
 }

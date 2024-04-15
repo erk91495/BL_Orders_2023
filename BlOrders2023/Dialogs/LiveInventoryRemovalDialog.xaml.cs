@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -21,19 +22,17 @@ using Windows.Foundation.Collections;
 namespace BlOrders2023.Dialogs;
 public sealed partial class LiveInventoryRemovalDialog : ContentDialog
 {
+    #region Fields
     private IEnumerable<LiveInventoryRemovalReason> _removalReasons;
-    private string scanline;
+    private ObservableCollection<string> _scanlines = new();
     private LiveInventoryRemovalReason selectedReason;
+    #endregion Fields
 
-    public LiveInventoryRemovalDialog()
-    {
-        this.InitializeComponent();
-    }
-
+    #region Properties
     public LiveInventoryRemovalReason SelectedReason
     {
-        get => selectedReason; 
-        set 
+        get => selectedReason;
+        set
         {
             selectedReason = value;
             TryEnablePrimaryButton();
@@ -44,18 +43,45 @@ public sealed partial class LiveInventoryRemovalDialog : ContentDialog
         get => _removalReasons;
         set => _removalReasons = value;
     }
-    public string Scanline
-    {
-        get => scanline; 
-        set
-        {
-            scanline = value;
-            TryEnablePrimaryButton();
-        }
-    }
 
+    public ObservableCollection<string> Scanlines
+    {
+        get => _scanlines;
+        set => _scanlines = value;
+    }
+    #endregion Properties
+
+    #region Constructors
+    public LiveInventoryRemovalDialog()
+    {
+        this.InitializeComponent();
+    }
+    #endregion Constructors
+
+    #region Methods
     private void TryEnablePrimaryButton()
     {
-        IsPrimaryButtonEnabled = !scanline.IsNullOrEmpty() && SelectedReason != null;
+        IsPrimaryButtonEnabled = !Scanlines.IsNullOrEmpty() && SelectedReason != null;
     }
+
+    private void BarcodeInputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (sender is TextBox box)
+        {
+
+            var scanlineText = box.Text;
+            if (scanlineText.Contains('\r'))
+            {
+                var scanline = scanlineText.Split('\r').First().Trim();
+                box.Text = box.Text[(scanline.Length + 1)..];
+                if (!Scanlines.Contains(scanline))
+                {
+                    Scanlines.Add(scanline);
+                    TryEnablePrimaryButton();
+                }
+            }
+        }
+
+    }
+    #endregion Methods
 }

@@ -79,7 +79,7 @@ internal class SqlWholesaleCustomerTable : IWholesaleCustomerTable
     {
         if (query.IsNullOrEmpty())
         {
-            return await _db.Customers.Where(c => c.Inactive != true)
+            return await _db.Customers.Where(c => c.Inactive != true).OrderBy(c => c.CustomerName)
                 .ToListAsync();
         }
         else
@@ -88,6 +88,7 @@ internal class SqlWholesaleCustomerTable : IWholesaleCustomerTable
                 .Where(c => c.Inactive != true && 
                             (c.CustomerName.Contains(query) || 
                             c.CustID.ToString().Contains(query)))
+                .OrderBy(c => c.CustomerName)
                 .ToListAsync();
         }
     }

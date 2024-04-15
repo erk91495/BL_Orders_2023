@@ -64,6 +64,8 @@ public class WholesaleCustomer
     public virtual List<Order> Orders { get; set; } = new();
 
     public virtual WholesaleCustomerNote? Note { get; set; } 
+
+    public virtual IEnumerable<Discount> Discounts { get; set; }
     #endregion Properties
 
     #region Fields

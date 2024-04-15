@@ -10,26 +10,17 @@ using QuestPDF.Infrastructure;
 
 namespace BlOrders2023.Reporting.ReportClasses;
 [System.ComponentModel.DisplayName("Current Inventory")]
-public  class CurrentInventoryReport : IReport
+public  class CurrentInventoryReport : ReportBase
 {
-    private readonly CompanyInfo _companyInfo;
     private readonly IEnumerable<InventoryTotalItem> _items;
-    private readonly DateTime _reportDate = DateTime.Now;
-
-    public static readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Black);
-    public static readonly TextStyle subTitleStyle = TextStyle.Default.FontSize(12).SemiBold().FontColor(Colors.Black);
-    public static readonly TextStyle normalTextStyle = TextStyle.Default.FontSize(9);
-    public static readonly TextStyle tableTextStyle = TextStyle.Default.FontSize(9);
-    public static readonly TextStyle tableHeaderStyle = TextStyle.Default.FontSize(9).SemiBold();
-    public static readonly TextStyle smallFooterStyle = TextStyle.Default.FontSize(9);
 
     public CurrentInventoryReport(CompanyInfo companyInfo, IEnumerable<InventoryTotalItem> items)
+        : base(companyInfo)
     {
-        _companyInfo = companyInfo;
         _items = items;
     }
 
-    public void Compose(IDocumentContainer container)
+    public override void Compose(IDocumentContainer container)
     {
         container.Page(page =>
         {
@@ -49,7 +40,7 @@ public  class CurrentInventoryReport : IReport
         });
     }
 
-    private void ComposeHeader(IContainer container)
+    protected override void ComposeHeader(IContainer container)
     {
         container.Row(row =>
         {
@@ -61,7 +52,7 @@ public  class CurrentInventoryReport : IReport
         });
     }
 
-    private void ComposeContent(IContainer container)
+    protected override void ComposeContent(IContainer container)
     {
         container.Column(column => {
             //Items
@@ -123,30 +114,5 @@ public  class CurrentInventoryReport : IReport
 
             });
         });
-    }
-
-    private void ComposeFooter(IContainer container)
-    {
-        container.AlignBottom().Column(column =>
-        {
-            column.Item().AlignBottom().AlignRight().Row(footer =>
-            {
-                footer.RelativeItem().AlignLeft().Text(time =>
-                {
-                    time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                    time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
-                });
-
-                footer.RelativeItem().AlignRight().Text(page =>
-                {
-                    page.Span("pg. ").Style(smallFooterStyle);
-                    page.CurrentPageNumber().Style(smallFooterStyle);
-                    page.Span(" of ").Style(smallFooterStyle);
-                    page.TotalPages().Style(smallFooterStyle);
-                });
-            });
-
-        });
-
     }
 }

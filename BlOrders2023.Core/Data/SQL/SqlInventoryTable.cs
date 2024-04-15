@@ -123,6 +123,11 @@ internal class SqlInventoryTable : IInventoryTable
         }
     }
 
+    public async Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await _db.LiveInventoryItems.Where(i => i.PackDate >= startDate.Date && i.PackDate <= endDate.Date).ToListAsync();
+    }
+
     public async Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsAsync(IEnumerable<int> ids = null)
     {
         if (ids != null)
@@ -191,7 +196,20 @@ internal class SqlInventoryTable : IInventoryTable
 
     public async Task UpsertLiveInventoryItemAsync(LiveInventoryItem item)
     {
-        _db.LiveInventoryItems.Update(item);
+        var found = _db.LiveInventoryItems.Where(i => i.Scanline == item.Scanline).FirstOrDefault();
+        if(found != null)
+        {
+            found.Lot = item.Lot;
+            found.NetWeight = item.NetWeight;
+            found.RemovedFromInventory = item.RemovedFromInventory;
+            found.ScanDate = item.ScanDate;
+            found.SerialNumber = item.SerialNumber;
+            _db.LiveInventoryItems.Update(found);
+        }
+        else
+        {
+            _db.LiveInventoryItems.Update(item);
+        }
         await _db.SaveChangesAsync();
     }
 
