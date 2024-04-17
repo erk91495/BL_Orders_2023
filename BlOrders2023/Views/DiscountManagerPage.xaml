@@ -64,8 +64,8 @@
                 <sf:GridTextColumn MappingName="Description"/>
                 <sf:GridTextColumn MappingName="Type" UseBindingValue="True" DisplayBinding="{Binding Path=Type, Converter={StaticResource EnumDescriptionConverter}}"/>
                 <sf:GridTextColumn MappingName="Modifier"/>
-                <sf:GridTextColumn MappingName="StartDate"/>
-                <sf:GridTextColumn MappingName="EndDate"/>
+                <sf:GridDateColumn MappingName="StartDate" DisplayDateFormat="M/d/yyyy"/>
+                <sf:GridDateColumn MappingName="EndDate" DisplayDateFormat="M/d/yyyy"/>
             </sf:SfDataGrid.Columns>
             <!--<sf:SfDataGrid.DetailsViewDefinition>
                 <sf:GridViewDefinition RelationalColumn="Products">

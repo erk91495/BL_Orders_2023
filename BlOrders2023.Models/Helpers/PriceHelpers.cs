@@ -13,7 +13,7 @@ public static class PriceHelpers
     public static decimal CalculateCustomerPrice(Product product, WholesaleCustomer customer)
     {
         var customerPrice = GetCustomerPrice(product, customer);
-        var discounts = product.Discounts.Where(d => d.Customers.Contains(customer) || d.Customers.IsNullOrEmpty());
+        var discounts = product.Discounts.Where(d => d.Customers.Any(c => c.CustID == customer.CustID) || d.Customers.IsNullOrEmpty());
         if (!discounts.IsNullOrEmpty())
         {
 
@@ -46,7 +46,7 @@ public static class PriceHelpers
         //Apply Largest set price first and then apply percent discounts
         var workingPrice = price;
         var percentTotal = (decimal)activeDiscouns.Where(d => d.Type == Enums.DiscountTypes.PercentOff).Sum(d => d.Modifier);
-        var setPrice = discounts.Where(d => d.Type == Enums.DiscountTypes.SetPrice).OrderByDescending(d => d.Modifier).FirstOrDefault();
+        var setPrice = activeDiscouns.Where(d => d.Type == Enums.DiscountTypes.SetPrice).OrderByDescending(d => d.Modifier).FirstOrDefault();
 
         if (setPrice != null)
         {
