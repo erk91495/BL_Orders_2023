@@ -13,7 +13,7 @@
 	<Nullable>enable</Nullable>
 	<UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <PackageCertificateThumbprint>02B5F3CC6E63AC80B4E792D8734BCE7B6E1F40C2</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>CF344DAF6F6CE1C49B7C706A855902077B041A96</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <PackageIcon>Square150x150Logo.scale-100.png</PackageIcon>
     <AssemblyName>BIGTurkey</AssemblyName>
