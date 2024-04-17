@@ -34,22 +34,22 @@ internal class SqlProductsTable : IProductsTable
         {
             if (productID == null)
             {
-                result = _db.Products.Where(p => !p.Inactive).ToList();
+                result = _db.Products.Where(p => !p.Inactive).Include(d => d.Discounts).ToList();
             }
             else
             {
-                result = _db.Products.Where(product => !product.Inactive && product.ProductID == productID).ToList();
+                result = _db.Products.Where(product => !product.Inactive && product.ProductID == productID).Include(d => d.Discounts).ToList();
             }
         }
         else
         {
             if (productID == null)
             {
-                result = _db.Products.Where(p => !p.Inactive).AsNoTrackingWithIdentityResolution().ToList();
+                result = _db.Products.Where(p => !p.Inactive).Include(d => d.Discounts).AsNoTrackingWithIdentityResolution().ToList();
             }
             else
             {
-                result = _db.Products.Where(product => !product.Inactive && product.ProductID == productID).AsNoTrackingWithIdentityResolution().ToList();
+                result = _db.Products.Where(product => !product.Inactive && product.ProductID == productID).Include(d => d.Discounts).AsNoTrackingWithIdentityResolution().ToList();
             }
         }
 
@@ -66,22 +66,22 @@ internal class SqlProductsTable : IProductsTable
         {
             if(ProductID == null)
             {
-                return await _db.Products.Where(p => !p.Inactive).OrderBy(product => product.ProductID).ToListAsync();
+                return await _db.Products.Where(p => !p.Inactive).Include(d => d.Discounts).OrderBy(product => product.ProductID).ToListAsync();
             }
             else
             {
-                return await _db.Products.Where(p => !p.Inactive && p.ProductID == ProductID).ToListAsync();
+                return await _db.Products.Where(p => !p.Inactive && p.ProductID == ProductID).Include(d => d.Discounts).ToListAsync();
             }
         }
         else
         {
             if (ProductID == null)
             {
-                return await _db.Products.Where(p => !p.Inactive).OrderBy(product => product.ProductID).AsNoTrackingWithIdentityResolution().ToListAsync();
+                return await _db.Products.Where(p => !p.Inactive).Include(d => d.Discounts).OrderBy(product => product.ProductID).AsNoTrackingWithIdentityResolution().ToListAsync();
             }
             else
             {
-                return await _db.Products.Where(p => !p.Inactive && p.ProductID == ProductID).AsNoTrackingWithIdentityResolution().ToListAsync();
+                return await _db.Products.Where(p => !p.Inactive && p.ProductID == ProductID).Include(d => d.Discounts).AsNoTrackingWithIdentityResolution().ToListAsync();
             }
         }
         
