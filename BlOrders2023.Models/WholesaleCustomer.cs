@@ -146,5 +146,43 @@ public class WholesaleCustomer
     {
         return CustomerName;
     }
+
+    public override bool Equals(object? obj) => obj is WholesaleCustomer customer && CustID == customer.CustID && CustomerName == customer.CustomerName && Address == customer.Address && City == customer.City && State == customer.State && ZipCode == customer.ZipCode && BillingCustomerName == customer.BillingCustomerName && BillingAddress == customer.BillingAddress && BillingCity == customer.BillingCity && BillingState == customer.BillingState && BillingZipCode == customer.BillingZipCode && Phone == customer.Phone && PhoneExt == customer.PhoneExt && Phone_2 == customer.Phone_2 && Phone2Ext == customer.Phone2Ext && Buyer == customer.Buyer && LastPurchase == customer.LastPurchase && Fax == customer.Fax && Inactive == customer.Inactive && Email == customer.Email && SingleProdPerPallet == customer.SingleProdPerPallet && CustomerClassID == customer.CustomerClassID && UseSameAddress == customer.UseSameAddress && AllocationType == customer.AllocationType && EqualityComparer<CustomerClass>.Default.Equals(CustomerClass, customer.CustomerClass) && COD == customer.COD && EqualityComparer<List<Order>>.Default.Equals(Orders, customer.Orders) && EqualityComparer<WholesaleCustomerNote?>.Default.Equals(Note, customer.Note) && EqualityComparer<IEnumerable<Discount>>.Default.Equals(Discounts, customer.Discounts) && EqualityComparer<CustomerClass>.Default.Equals(_customerClass, customer._customerClass);
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(CustID);
+        hash.Add(CustomerName);
+        hash.Add(Address);
+        hash.Add(City);
+        hash.Add(State);
+        hash.Add(ZipCode);
+        hash.Add(BillingCustomerName);
+        hash.Add(BillingAddress);
+        hash.Add(BillingCity);
+        hash.Add(BillingState);
+        hash.Add(BillingZipCode);
+        hash.Add(Phone);
+        hash.Add(PhoneExt);
+        hash.Add(Phone_2);
+        hash.Add(Phone2Ext);
+        hash.Add(Buyer);
+        hash.Add(LastPurchase);
+        hash.Add(Fax);
+        hash.Add(Inactive);
+        hash.Add(Email);
+        hash.Add(SingleProdPerPallet);
+        hash.Add(CustomerClassID);
+        hash.Add(UseSameAddress);
+        hash.Add(AllocationType);
+        hash.Add(CustomerClass);
+        hash.Add(COD);
+        hash.Add(Orders);
+        hash.Add(Note);
+        hash.Add(Discounts);
+        hash.Add(_customerClass);
+        return hash.ToHashCode();
+    }
     #endregion Methods
 }
