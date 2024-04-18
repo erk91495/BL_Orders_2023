@@ -72,4 +72,10 @@ public abstract class ReportBase : IReport
         });
 
     }
+
+    public virtual string GetFileName()
+    {
+        var type = GetType();
+        return $"{type.Name}" + "_" + DateTime.Now.ToFileTime();
+    }
 }

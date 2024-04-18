@@ -191,4 +191,9 @@ public class ShippingList : ReportBase
         
         });
     }
+
+    public override string GetFileName()
+    {
+        return $"ShippingList_{_order.OrderID}_" + _reportDate.ToFileTime();
+    }
 }

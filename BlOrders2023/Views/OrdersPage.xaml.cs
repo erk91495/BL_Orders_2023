@@ -414,13 +414,13 @@ public sealed partial class OrdersPage : Page
         if (printInvoice)
         {
             var toTotal = ViewModel.GetTotalsCategories();
-            var filePath = await reportGenerator.GenerateWholesaleInvoice(ViewModel.SelectedOrder,toTotal);
+            var invoiceReport = reportGenerator.GetWholesaleInvoice(ViewModel.SelectedOrder,toTotal);
 
             
             if (function == ReportFunctions.Print )
             {
-                var printer = new PDFPrinterService(filePath);
-                await printer.PrintPdfAsync(printSettings);
+                var printer = new ReportPrinterService(invoiceReport);
+                await printer.PrintAsync(printSettings);
             }
             else if(function == ReportFunctions.Display )
             {
@@ -428,11 +428,12 @@ public sealed partial class OrdersPage : Page
                 {
                     ContentType = "application/pdf"
                 };
-                _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+                _ = Launcher.LaunchUriAsync(new Uri(await reportGenerator.GenerateReportPDFAsync(invoiceReport)), options);
             }
             else if(function == ReportFunctions.Email ) 
             {
-                var shippingListPath = await reportGenerator.GenerateShippingList(ViewModel.SelectedOrder);
+                var shippingListPath = await reportGenerator.GenerateReportPDFAsync(reportGenerator.GetShippingList(ViewModel.SelectedOrder));
+                var invoicePath = await reportGenerator.GenerateReportPDFAsync(invoiceReport);
                 var selectedOrder = ViewModel.SelectedOrder;
                 if(!selectedOrder.Customer.Email.IsNullOrEmpty())
                 {
@@ -445,7 +446,7 @@ public sealed partial class OrdersPage : Page
                         $"Phone {App.CompanyInfo.Phone}\r\n" +
                         $"{App.CompanyInfo.Email}\r\n" +
                         $"{App.CompanyInfo.Website}";
-                    Helpers.Helpers.SendEmailAsync(selectedOrder.Customer.Email,subject,body,new List<string>() {filePath, shippingListPath });
+                    Helpers.Helpers.SendEmailAsync(selectedOrder.Customer.Email,subject,body,new List<string>() {invoicePath, shippingListPath });
                 }
             }
             
@@ -460,13 +461,13 @@ public sealed partial class OrdersPage : Page
 
     private async Task PrintOrderAsync(bool autoprint = true)
     {
-        var filePath = await reportGenerator.GeneratePickList(ViewModel.SelectedOrder);
+        var report =  reportGenerator.GetPickList(ViewModel.SelectedOrder);
 
         if(autoprint)
         {
             PrinterSettings printSettings = new();
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            var printer = new ReportPrinterService(report);
+            await printer.PrintAsync(printSettings);
             if (ViewModel.SelectedOrder.OrderStatus == OrderStatus.Ordered)
             {
                 ViewModel.SelectedOrder.OrderStatus = Models.Enums.OrderStatus.Filling;
@@ -479,21 +480,21 @@ public sealed partial class OrdersPage : Page
             {
                 ContentType = "application/pdf"
             };
-            _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+            _ = Launcher.LaunchUriAsync(new Uri(await reportGenerator.GenerateReportPDFAsync(report)), options);
         }
 
     }
 
     private async Task PrintShippingList(bool autoprint = true)
     {
-        var filePath = await reportGenerator.GenerateShippingList(ViewModel.SelectedOrder);
+        var report = reportGenerator.GetShippingList(ViewModel.SelectedOrder);
 
 
         if (autoprint)
         {
             PrinterSettings printSettings = new();
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            var printer = new ReportPrinterService(report);
+            await printer.PrintAsync(printSettings);
         }
         else
         {
@@ -501,7 +502,7 @@ public sealed partial class OrdersPage : Page
             {
                 ContentType = "application/pdf"
             };
-            _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+            _ = Launcher.LaunchUriAsync(new Uri(await reportGenerator.GenerateReportPDFAsync(report)), options);
         }
     }
     private async Task PrintPalletTicketsAsync(bool autoprint = true)
@@ -551,15 +552,15 @@ public sealed partial class OrdersPage : Page
         {
             IPalletizer palletizer = new BoxPalletizer(new() { SingleItemPerPallet = ViewModel.SelectedOrder.Customer.SingleProdPerPallet ?? false }, ViewModel.SelectedOrder);
             var pallets = await palletizer.PalletizeAsync();
-            var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.SelectedOrder, pallets);
+            var filePath = reportGenerator.GetPalletLoadingReport(ViewModel.SelectedOrder, pallets);
 
             if(autoprint)
             {
                 PrinterSettings printSettings = new();
                 printSettings.Copies = 1;
                 printSettings.Duplex = Duplex.Simplex;
-                var printer = new PDFPrinterService(filePath);
-                await printer.PrintPdfAsync(printSettings);
+                var printer = new ReportPrinterService(filePath);
+                await printer.PrintAsync(printSettings);
             }
             else
             {
@@ -567,7 +568,7 @@ public sealed partial class OrdersPage : Page
                 {
                     ContentType = "application/pdf"
                 };
-                _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+                _ = Launcher.LaunchUriAsync(new Uri(await reportGenerator.GenerateReportPDFAsync(filePath)), options);
             }
 
             ViewModel.SelectedOrder.PalletTicketPrinted = true;

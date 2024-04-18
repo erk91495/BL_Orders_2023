@@ -389,17 +389,17 @@ public sealed partial class FillOrdersPage : Page
         if (printInvoice)
         {
             var toTotal = ViewModel.GetTotalsCategories();
-            var filePath = await reportGenerator.GenerateWholesaleInvoice(ViewModel.Order, toTotal);
+            var report = reportGenerator.GetWholesaleInvoice(ViewModel.Order, toTotal);
 
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            var printer = new ReportPrinterService(report);
+            await printer.PrintAsync(printSettings);
 
-            filePath = await reportGenerator.GenerateShippingList(ViewModel.Order);
+            var filePath = reportGenerator.GetShippingList(ViewModel.Order);
             Windows.System.LauncherOptions options = new()
             {
                 ContentType = "application/pdf"
             };
-            _ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+            _ = Windows.System.Launcher.LaunchUriAsync(new Uri(await reportGenerator.GenerateReportPDFAsync(filePath)), options);
 
 
             if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
@@ -429,7 +429,7 @@ public sealed partial class FillOrdersPage : Page
                     return;
                 }
             }
-            var filePath = await reportGenerator.GeneratePickList(ViewModel.Order);
+            var filePath = reportGenerator.GetPickList(ViewModel.Order);
 
             //Windows.System.LauncherOptions options = new()
             //{
@@ -439,8 +439,8 @@ public sealed partial class FillOrdersPage : Page
 
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            var printer = new ReportPrinterService(filePath);
+            await printer.PrintAsync(printSettings);
 
             if (ViewModel.OrderStatus == OrderStatus.Ordered)
             {
@@ -499,13 +499,13 @@ public sealed partial class FillOrdersPage : Page
             {
                 IPalletizer palletizer = new BoxPalletizer(new(){SingleItemPerPallet = ViewModel.Customer.SingleProdPerPallet ?? false}, ViewModel.Order);
                 var pallets = await palletizer.PalletizeAsync();
-                var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+                var report = reportGenerator.GetPalletLoadingReport(ViewModel.Order, pallets);
 
                 PrinterSettings printSettings = new();
                 printSettings.Copies = 1;
                 printSettings.Duplex = Duplex.Simplex;
-                var printer = new PDFPrinterService(filePath);
-                await printer.PrintPdfAsync(printSettings);
+                var printer = new ReportPrinterService(report);
+                await printer.PrintAsync(printSettings);
 
                 ViewModel.Order.PalletTicketPrinted = true;
                 await ViewModel.SaveOrderAsync();

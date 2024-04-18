@@ -438,12 +438,14 @@ public class OrderAllocator : IAllocatorService
     public async Task<string> GenerateAllocationSummary() 
     {
         ReportGenerator generator = new(_db.CompanyInfo);
-        return await Task.Run(() => generator.GenerateAllocationSummaryReport(Orders, _config.AllocatorMode, AllocationTime));
+        var report = generator.GetAllocationSummaryReport(Orders, _config.AllocatorMode, AllocationTime);
+        return await generator.GenerateReportPDFAsync(report);
     }
 
     public async Task<string> GenerateAllocationDetails()
     {
         ReportGenerator generator = new(_db.CompanyInfo);
-        return await Task.Run(() => generator.GenerateAllocationDetailsReport(Orders, _allocationGroups, _config.AllocatorMode, AllocationTime));
+        var report = generator.GetAllocationDetailsReport(Orders, _allocationGroups, _config.AllocatorMode, AllocationTime);
+        return await generator.GenerateReportPDFAsync(report);
     }
 }

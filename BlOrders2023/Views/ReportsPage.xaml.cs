@@ -79,7 +79,7 @@ public sealed partial class ReportsPage : Page
     {
         if(sender is ReportControl control)
         {
-            var reportPath = string.Empty;
+            List<IReport>? report = null;
             if(control.ReportType == typeof(WholesaleInvoice))
             {
                 SingleValueInputDialog dialog = new SingleValueInputDialog()
@@ -113,7 +113,7 @@ public sealed partial class ReportsPage : Page
                         if (order != null)
                         {
                             var toTotal = ViewModel.GetTotalsCategories();
-                            reportPath = await reportGenerator.GenerateWholesaleInvoice(order, toTotal);
+                            report = new() { reportGenerator.GetWholesaleInvoice(order, toTotal) };
                         }
                         else
                         {
@@ -139,7 +139,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     spinner.IsVisible = true;
                     var values = ViewModel.GetOrderTotals(startDate, endDate);
-                    reportPath = await reportGenerator.GenerateWholesaleOrderTotals(values, startDate, endDate);
+                    report = new() { reportGenerator.GetWholesaleOrderTotals(values, startDate, endDate) };
                     
                     ContentDialog d = new()
                     {
@@ -153,7 +153,7 @@ public sealed partial class ReportsPage : Page
 
 
                     var orders = res == ContentDialogResult.Primary ? await ViewModel.GetOrdersByPickupDateAsync(startDate,endDate) : ViewModel.GetOrdersByPickupDateThenName(startDate, endDate);
-                    reportPath = await reportGenerator.GenerateWholesaleOrderPickupRecap(orders, startDate, endDate);
+                    report = new() { reportGenerator.GetWholesaleOrderPickupRecap(orders, startDate, endDate) };
                 }
             }
             else if(control.ReportType == typeof(WholesaleOrderTotals))
@@ -166,7 +166,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     spinner.IsVisible = true;
                     var values = ViewModel.GetOrderTotals(startDate, endDate);
-                    reportPath = await reportGenerator.GenerateWholesaleOrderTotals(values, startDate, endDate);
+                    report = new() { reportGenerator.GetWholesaleOrderTotals(values, startDate, endDate) };
                 }
             }
             else if(control.ReportType == typeof(WholesalePaymentsReport))
@@ -179,7 +179,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset endDate = new DateTimeOffset(dateTuple.Item2.Value.Year, dateTuple.Item2.Value.Month, dateTuple.Item2.Value.Day, 23, 59, 59, TimeSpan.Zero);
                     spinner.IsVisible = true;
                     var values = ViewModel.GetWholesalePayments(startDate, endDate);
-                    reportPath = await reportGenerator.GenerateWholesalePaymentsReport(values, startDate, endDate);
+                    report = new() { reportGenerator.GetWholesalePaymentsReport(values, startDate, endDate) };
                 }
             }
             else if(control.ReportType == typeof(ShippingList))
@@ -214,7 +214,7 @@ public sealed partial class ReportsPage : Page
                         var order = ViewModel.GetOrder(id);
                         if (order != null)
                         {
-                            reportPath = await reportGenerator.GenerateShippingList(order);
+                            report = new() { reportGenerator.GetShippingList(order) };
                         }
                         else
                         {
@@ -244,7 +244,7 @@ public sealed partial class ReportsPage : Page
                     spinner.IsVisible = true;
                     customer = custDialog.ViewModel.SelectedCustomer;
                     var values = ViewModel.GetUnpaidInvoicedInvoices(customer);
-                    reportPath = await reportGenerator.GenerateUnpaidInvoicesReport(values);
+                    report = new() { reportGenerator.GetUnpaidInvoicesReport(values) };
                     
                 }
             }
@@ -286,7 +286,7 @@ public sealed partial class ReportsPage : Page
                                 };
                                 await d.ShowAsync();
                             }
-                            reportPath = await reportGenerator.GenerateAggregateInvoiceReport(values, startDate, endDate);
+                            report = new() { reportGenerator.GetAggregateInvoiceReport(values, startDate, endDate) };
                         }
 
                     }
@@ -296,7 +296,7 @@ public sealed partial class ReportsPage : Page
             {
                 spinner.IsVisible = true;
                 var values = await ViewModel.GetOutstandingOrdersAsync();
-                reportPath = await reportGenerator.GenerateOutstandingBalancesReport(values);
+                report = new() { reportGenerator.GetOutstandingBalancesReport(values) };
             }
             else if(control.ReportType == typeof(QuarterlySalesReport))
             {
@@ -308,7 +308,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     spinner.IsVisible = true;
                     var values = await ViewModel.GetProductTotalsAsync(startDate, endDate);
-                    reportPath = await reportGenerator.GenerateQuarterlySalesReport(values, startDate, endDate);
+                    report = new() {  reportGenerator.GetQuarterlySalesReport(values, startDate, endDate) };
                 }
             }
             else if(control.ReportType == typeof(FrozenOrdersReport))
@@ -321,7 +321,7 @@ public sealed partial class ReportsPage : Page
                     DateTimeOffset endDate = (DateTimeOffset)dateTuple.Item2;
                     spinner.IsVisible = true;
                     var values = ViewModel.GetFrozenOrders(startDate, endDate);
-                    reportPath = await reportGenerator.GenerateFrozenOrdersReport(values, startDate, endDate);
+                    report = new() { reportGenerator.GetFrozenOrdersReport(values, startDate, endDate) };
                 }
             }
             else if (control.ReportType == typeof(PickList))
@@ -357,7 +357,7 @@ public sealed partial class ReportsPage : Page
                         var order = await ViewModel.GetOrderAsync(id);
                         if (order != null)
                         {
-                            reportPath = await reportGenerator.GeneratePickList(order);
+                            report = new() { reportGenerator.GetPickList(order) };
                         }
                         else
                         {
@@ -436,7 +436,7 @@ public sealed partial class ReportsPage : Page
                             {
                                 IPalletizer palletizer = new BoxPalletizer(new PalletizerConfig() { SingleItemPerPallet = order.Customer.SingleProdPerPallet ?? false }, order);
                                 IEnumerable<Pallet> pallets = await palletizer.PalletizeAsync();
-                                reportPath = await reportGenerator.GeneratePalletLoadingReport(order, pallets);
+                                report = reportGenerator.GetPalletLoadingReport(order, pallets);
                             }
                         }
                         else
@@ -457,7 +457,7 @@ public sealed partial class ReportsPage : Page
             {
                 spinner.IsVisible = true;
                 var currentInventory = ViewModel.GetInventoryTotals();
-                reportPath = await reportGenerator.GenerateCurrentInventoryReport(currentInventory);
+                report = new() { reportGenerator.GetCurrentInventoryReport(currentInventory) };
             }
             else if(control.ReportType == typeof(InventoryDetailsReport))
             {
@@ -471,7 +471,7 @@ public sealed partial class ReportsPage : Page
                     var orders = ViewModel.GetNonFrozenOrdersByPickupDate(startDate, endDate);
                     var currentInventory = ViewModel.GetInventoryTotals();
                     var notFilled = ViewModel.GetAllocatedNotReceivedTotals();
-                    reportPath = await reportGenerator.GenerateInventoryDetailsReport(currentInventory, orders, notFilled, startDate, endDate);
+                    report = new() { reportGenerator.GetInventoryDetailsReport(currentInventory, orders, notFilled, startDate, endDate) };
                 }
 
             }
@@ -486,7 +486,7 @@ public sealed partial class ReportsPage : Page
                     spinner.IsVisible = true;
                     var orders = ViewModel.GetOutOfStateOrders(startDate, endDate);
                     var currentInventory = ViewModel.GetInventory();
-                    reportPath = await reportGenerator.GenerateOutOfStateSalesReport(orders, startDate, endDate);
+                    report = new() { reportGenerator.GetOutOfStateSalesReport(orders, startDate, endDate) };
                 }
             }
             else if(control.ReportType == typeof(BillOfLadingReport))
@@ -520,7 +520,7 @@ public sealed partial class ReportsPage : Page
                             var inputTime = billOfLadingInput.AppointmentTime.Value;
                             appointmentDate = new DateTime(inputDate.Year, inputDate.Month, inputDate.Day, inputTime.Hour, inputTime.Minute, inputTime.Second);
                         }
-                        reportPath = await reportGenerator.GenerateBillOfLadingReport(orders,items,customer,carrier,trailerNumber,trailerSeal, appointmentDate);
+                        report = new() { reportGenerator.GetBillOfLadingReport(orders,items,customer,carrier,trailerNumber,trailerSeal, appointmentDate) };
                     }
                 }
 
@@ -557,7 +557,7 @@ public sealed partial class ReportsPage : Page
                             fieldsToMatch.Contains("PackDate"),fieldsToMatch.Contains("Scanline"),startDate,endDate);
                         if(!items.IsNullOrEmpty())
                         {
-                            reportPath = await reportGenerator.GenerateShippingItemAuditReport(items, item, fieldsToMatch, startDate, endDate);
+                            report = new() { reportGenerator.GetShippingItemAuditReport(items, item, fieldsToMatch, startDate, endDate) };
                         }
                         else
                         {
@@ -609,7 +609,7 @@ public sealed partial class ReportsPage : Page
                     }
                     else
                     {
-                        reportPath = await reportGenerator.GenerateProductCategoryTotalsReport(orderItems, startDate, endDate);
+                        report = new() { reportGenerator.GetProductCategoryTotalsReport(orderItems, startDate, endDate) };
                     }
                     
                 }
@@ -654,7 +654,7 @@ public sealed partial class ReportsPage : Page
                         else
                         {
                             var products = ViewModel.GetProducts();
-                            reportPath = await reportGenerator.GenerateProductCategoryDetailsReport(orderItems, products, startDate, endDate);
+                            report = new() { reportGenerator.GetProductCategoryDetailsReport(orderItems, products, startDate, endDate) };
 
                         }
                     }
@@ -683,7 +683,7 @@ public sealed partial class ReportsPage : Page
                         if(!orders.IsNullOrEmpty())
                         {
                             spinner.IsVisible=true;
-                            reportPath = await reportGenerator.GenerateWholesaleInvoiceTotalsReport(customer,orders,dateTuple.Item1.Value,dateTuple.Item2.Value);
+                            report = new() { reportGenerator.GetWholesaleInvoiceTotalsReport(customer,orders,dateTuple.Item1.Value,dateTuple.Item2.Value) };
                         }
                         else
                         {
@@ -715,7 +715,7 @@ public sealed partial class ReportsPage : Page
 
                     var allItems = new List<IEnumerable<ProductTotalsItem>> { current, off1Year, off2Year };
 
-                    reportPath = await reportGenerator.GenerateHistoricalQuarterlySalesReport(allItems, startDate.Date, endDate.Date);
+                    report = new() { reportGenerator.GetHistoricalQuarterlySalesReport(allItems, startDate.Date, endDate.Date) };
                 }
             }
             else if(control.ReportType == typeof(HistoricalProductCategoryTotalsReport))
@@ -741,7 +741,7 @@ public sealed partial class ReportsPage : Page
 
                     var allItems = new List<IEnumerable<OrderItem>> { current, off1Year, off2Year };
 
-                    reportPath = await reportGenerator.GenerateHistoricalProductCategoryTotalsReport(categories, allItems, startDate.Date, endDate.Date);
+                    report = new() { reportGenerator.GetHistoricalProductCategoryTotalsReport(categories, allItems, startDate.Date, endDate.Date) };
                 }
             }
             else if(control.ReportType == typeof(YieldStudyReport))
@@ -763,7 +763,7 @@ public sealed partial class ReportsPage : Page
                     date = new(date.Year, date.Month, date.Day,0,0,0,TimeSpan.FromHours(-4));
                     var items = await ViewModel.GetLiveInventoryItems(date);
 
-                    reportPath = await reportGenerator.GenerateYieldStudyReport(items, date.DateTime);
+                    report = new() { reportGenerator.GetYieldStudyReport(items, date.DateTime) };
                 }
             }
             else
@@ -779,13 +779,14 @@ public sealed partial class ReportsPage : Page
                 await d.ShowAsync();
             }
 
-            if (reportPath != string.Empty)
+            if (!report.IsNullOrEmpty())
             {
+                var filePath = await reportGenerator.GenerateReportPDFAsync(report);
                 LauncherOptions options = new()
                 {
                     ContentType = "application/pdf"
                 };
-                _ = Launcher.LaunchUriAsync(new Uri(reportPath), options);
+                _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
             }
             spinner.IsVisible = false;
 

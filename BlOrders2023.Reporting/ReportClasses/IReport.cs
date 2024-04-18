@@ -5,4 +5,5 @@ namespace BlOrders2023.Reporting.ReportClasses;
 
 public interface IReport : IDocument
 {
+    public abstract string GetFileName();
 }

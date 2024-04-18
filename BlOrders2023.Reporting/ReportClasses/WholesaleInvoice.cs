@@ -74,7 +74,7 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
                     column.Item().AlignRight().Text(time =>
                     {
                         time.Span("Printed: ").Style(subTitleStyle).Style(smallFooterStyle);
-                        time.Span($"{DateTime.Now.ToString():d}").Style(smallFooterStyle);
+                        time.Span($"{_reportDate.ToString():d}").Style(smallFooterStyle);
                     });
                     column.Item();
                     //Invoice Number
@@ -336,5 +336,10 @@ public class WholesaleInvoice(CompanyInfo companyInfo, Order order, IEnumerable<
 
         });
         
+    }
+
+    public override string GetFileName()
+    {
+        return $"Invoice_{_order.OrderID}_" + _reportDate.ToFileTime();
     }
 }

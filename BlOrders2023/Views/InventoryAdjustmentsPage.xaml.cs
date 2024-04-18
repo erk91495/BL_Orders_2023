@@ -161,9 +161,9 @@ public sealed partial class InventoryAdjustmentsPage : Page
                 item.Total += item.LastAdjustment;
             }
             var generator = new ReportGenerator(App.CompanyInfo);
-            var path = await generator.GenerateCurrentInventoryReport(ViewModel.Inventory);
-            PDFPrinterService printerService = new(path);
-            _ = printerService.PrintPdfAsync();
+            var report = generator.GetCurrentInventoryReport(ViewModel.Inventory);
+            ReportPrinterService printerService = new(report);
+            _ = printerService.PrintAsync();
             ContentDialog contentDialog = new()
             {
                 XamlRoot = XamlRoot,

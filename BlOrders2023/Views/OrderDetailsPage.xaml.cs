@@ -667,13 +667,13 @@ public sealed partial class OrderDetailsPage : Page
         if (printInvoice)
         {
             var toTotal = ViewModel.GetTotalsCategories();
-            var filePath = await reportGenerator.GenerateWholesaleInvoice(ViewModel.Order, toTotal);
+            var report = reportGenerator.GetWholesaleInvoice(ViewModel.Order, toTotal);
 
 
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            var printer = new ReportPrinterService(report);
+            await printer.PrintAsync(printSettings);
 
-            filePath = await reportGenerator.GenerateShippingList(ViewModel.Order);
+            var filePath = await reportGenerator.GenerateReportPDFAsync( reportGenerator.GetShippingList(ViewModel.Order));
             Windows.System.LauncherOptions options = new()
             {
                 ContentType = "application/pdf"
@@ -713,12 +713,12 @@ public sealed partial class OrderDetailsPage : Page
                     return;
                 }
             }
-            var filePath = await reportGenerator.GeneratePickList(ViewModel.Order);
+            var report = reportGenerator.GetPickList(ViewModel.Order);
 
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            var printer = new ReportPrinterService(report);
+            await printer.PrintAsync(printSettings);
 
             if (ViewModel.OrderStatus == OrderStatus.Ordered)
             {
@@ -775,13 +775,13 @@ public sealed partial class OrderDetailsPage : Page
         {
             BoxPalletizer palletizer = new(new() { SingleItemPerPallet = ViewModel.Customer.SingleProdPerPallet ?? false }, ViewModel.Order);
             var pallets = await palletizer.PalletizeAsync();
-            var filePath = await reportGenerator.GeneratePalletLoadingReport(ViewModel.Order, pallets);
+            var report = reportGenerator.GetPalletLoadingReport(ViewModel.Order, pallets);
 
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;
             printSettings.Duplex = Duplex.Simplex;
-            var printer = new PDFPrinterService(filePath);
-            await printer.PrintPdfAsync(printSettings);
+            var printer = new ReportPrinterService(report);
+            await printer.PrintAsync(printSettings);
 
             ViewModel.Order.PalletTicketPrinted = true;
             await ViewModel.SaveCurrentOrderAsync();
