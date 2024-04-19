@@ -37,6 +37,7 @@ using System.Security.AccessControl;
 using Microsoft.UI.Xaml.Media.Animation;
 using System.Runtime.CompilerServices;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,6 +50,7 @@ public sealed partial class ReportsPage : Page
 {
     private enum PromptTypes
     {
+        None,
         OrderID,
         Date,
         DateRange,
@@ -57,7 +59,37 @@ public sealed partial class ReportsPage : Page
         CustomersAndOrders,
         BillOfLading,
         ProductCategories,
+        AuditTrail,
     }
+
+    private readonly Dictionary<Type,PromptTypes[]> ReportPromptsMap = new() 
+    {
+        {typeof(WholesaleInvoice), [PromptTypes.OrderID] },
+        {typeof(WholesaleOrderPickupRecap), [PromptTypes.DateRange]},
+        {typeof(WholesaleOrderTotals), [PromptTypes.DateRange]},
+        {typeof(WholesalePaymentsReport), [PromptTypes.DateRange]},
+        {typeof(ShippingList), [PromptTypes.OrderID]},
+        {typeof(UnpaidInvoicesReport), [PromptTypes.Customer]},
+        {typeof(AggregateInvoiceReport), [PromptTypes.Customers, PromptTypes.DateRange] },
+        {typeof(OutstandingBalancesReport), [PromptTypes.None]},
+        {typeof(QuarterlySalesReport), [PromptTypes.DateRange]},
+        {typeof(FrozenOrdersReport), [PromptTypes.DateRange]},
+        {typeof(PickList), [PromptTypes.OrderID]},
+        {typeof(PalletLoadingReport), [PromptTypes.OrderID]},
+        {typeof(CurrentInventoryReport), [PromptTypes.None]},
+        {typeof(InventoryDetailsReport), [PromptTypes.DateRange]},
+        {typeof(OutOfStateSalesReport), [PromptTypes.DateRange]},
+        {typeof(BillOfLadingReport), [PromptTypes.BillOfLading]},
+        {typeof(ShippingItemAuditReport), [PromptTypes.AuditTrail]},
+        {typeof(ProductCategoryTotalsReport), [PromptTypes.DateRange]},
+        {typeof(ProductCategoryDetailsReport), [PromptTypes.DateRange, PromptTypes.ProductCategories]},
+        {typeof(WholesaleInvoiceTotalsReport), [PromptTypes.DateRange, PromptTypes.Customer]},
+        {typeof(HistoricalQuarterlySalesReport), [PromptTypes.DateRange]},
+        {typeof(HistoricalProductCategoryTotalsReport), [PromptTypes.DateRange]},
+        {typeof(YieldStudyReport), [PromptTypes.Date]},
+    };
+
+
 
     #region Properties
     public ReportsPageViewModel ViewModel { get; }
@@ -336,6 +368,7 @@ public sealed partial class ReportsPage : Page
             }
             else if(control.ReportType == typeof(BillOfLadingReport))
             {
+                spinner.IsVisible = true;
                 var userInputs = await GetUserInput(PromptTypes.BillOfLading);
                 
                 if(!userInputs.Any(i => i == null))
@@ -347,61 +380,11 @@ public sealed partial class ReportsPage : Page
             else if(control.ReportType == typeof(ShippingItemAuditReport))
             {
                 spinner.IsVisible = true;
-                var dialog = new AuditDataInputDialog(){ XamlRoot = XamlRoot };
-                var res = await dialog.ShowAsync();
-                if(res == ContentDialogResult.Primary)
+                var userInputs = await GetUserInput(PromptTypes.AuditTrail);
+
+                if (!userInputs.Any(i => i == null))
                 {
-                    var fieldsToMatch = dialog.GetCheckedBoxes();
-                    ShippingItem? item = null;
-                    if (dialog.InputType == InputTypes.Scanline)
-                    {
-                        item = ViewModel.GetShippingItem(dialog.Scanline);
-                    }
-                    else if (dialog.InputType == InputTypes.Serial && dialog.ProductID != null)
-                    {
-                        item = ViewModel.GetShippingItem((int)dialog.ProductID, dialog.Serial);
-                    }
-                    if(item != null)
-                    {
-                        DateTime? startDate = null;
-                        DateTime? endDate = null;
-                        if (fieldsToMatch.Contains("DateRange"))
-                        {
-                            DateTime sDate = dialog.DateRange.StartDate.Value.Date;
-                            DateTime eDate = dialog.DateRange.EndDate.Value.Date;
-                            startDate = new DateTime(sDate.Year, sDate.Month, sDate.Day, 0, 0, 0, 0, DateTimeKind.Local);
-                            endDate = new DateTime(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, DateTimeKind.Local);
-                        }
-                        var items = ViewModel.GetShippingItems(item,fieldsToMatch.Contains("ProductID"),fieldsToMatch.Contains("Serial"),
-                            fieldsToMatch.Contains("PackDate"),fieldsToMatch.Contains("Scanline"),startDate,endDate);
-                        if(!items.IsNullOrEmpty())
-                        {
-                           args = [items, item, fieldsToMatch, startDate, endDate];
-                        }
-                        else
-                        {
-                            ContentDialog d = new()
-                            {
-                                XamlRoot = XamlRoot,
-                                Title = "Error",
-                                Content = $"This error shouldnt happen, but it did",
-                                PrimaryButtonText = "ok",
-                            };
-                            await d.ShowAsync();
-                        }
-                        
-                    }
-                    else
-                    {
-                        ContentDialog d = new()
-                        {
-                            XamlRoot = XamlRoot,
-                            Title = "Error",
-                            Content = $"No products were found matching the given criteria",
-                            PrimaryButtonText = "ok",
-                        };
-                        await d.ShowAsync();
-                    }
+                    args = userInputs;
                 }
 
             }
@@ -720,6 +703,66 @@ public sealed partial class ReportsPage : Page
                         return[categories.Where(i => categorySelect.SelectedItems.Contains(i.CategoryName)).ToList()];
                     }
                     return[null];
+                }
+            case PromptTypes.AuditTrail:
+                {
+                    var dialog = new AuditDataInputDialog() { XamlRoot = XamlRoot };
+                    var res = await dialog.ShowAsync();
+                    if (res == ContentDialogResult.Primary)
+                    {
+                        var fieldsToMatch = dialog.GetCheckedBoxes();
+                        ShippingItem? item = null;
+                        if (dialog.InputType == InputTypes.Scanline)
+                        {
+                            item = ViewModel.GetShippingItem(dialog.Scanline);
+                        }
+                        else if (dialog.InputType == InputTypes.Serial && dialog.ProductID != null)
+                        {
+                            item = ViewModel.GetShippingItem((int)dialog.ProductID, dialog.Serial);
+                        }
+                        if (item != null)
+                        {
+                            DateTime? startDate = null;
+                            DateTime? endDate = null;
+                            if (fieldsToMatch.Contains("DateRange"))
+                            {
+                                DateTime sDate = dialog.DateRange.StartDate.Value.Date;
+                                DateTime eDate = dialog.DateRange.EndDate.Value.Date;
+                                startDate = new DateTime(sDate.Year, sDate.Month, sDate.Day, 0, 0, 0, 0, DateTimeKind.Local);
+                                endDate = new DateTime(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, DateTimeKind.Local);
+                            }
+                            var items = ViewModel.GetShippingItems(item, fieldsToMatch.Contains("ProductID"), fieldsToMatch.Contains("Serial"),
+                                fieldsToMatch.Contains("PackDate"), fieldsToMatch.Contains("Scanline"), startDate, endDate);
+                            if (!items.IsNullOrEmpty())
+                            {
+                                return [items, item, fieldsToMatch, startDate, endDate];
+                            }
+                            else
+                            {
+                                ContentDialog d = new()
+                                {
+                                    XamlRoot = XamlRoot,
+                                    Title = "Error",
+                                    Content = $"This error shouldnt happen, but it did",
+                                    PrimaryButtonText = "ok",
+                                };
+                                await d.ShowAsync();
+                            }
+
+                        }
+                        else
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "Error",
+                                Content = $"No products were found matching the given criteria",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                        }
+                    }
+                    return [null];
                 }
             default:
                 return [null];
