@@ -7,6 +7,7 @@ using BlOrders2023.Reporting.ReportClasses;
 using Microsoft.IdentityModel.Tokens;
 using QuestPDF.Fluent;
 using System.Diagnostics;
+using System.Reflection;
 using System.Security.AccessControl;
 
 
@@ -99,14 +100,9 @@ public class ReportGenerator
         return new PickList(CompanyInfo, order);
     }
 
-    public List<IReport> GetPalletLoadingReport(Order order, IEnumerable<Pallet> pallets)
+    public IReport GetPalletLoadingReport(Order order, IEnumerable<Pallet> pallets)
     {
-        List<IReport> palletPages = new List<IReport>();
-        foreach (var pallet in pallets)
-        {
-            palletPages.Add(new PalletLoadingReport(CompanyInfo, order, pallet));
-        }
-        return palletPages;
+        return new PalletLoadingReport(CompanyInfo, order, pallets);
     }
 
     public IReport GetAllocationSummaryReport(IEnumerable<Order> orders, AllocatorMode mode, DateTime allocationTime)
@@ -159,7 +155,7 @@ public class ReportGenerator
         return new WholesaleInvoiceTotalsReport(CompanyInfo, customer, orders, startDate, endDate);
     }
 
-    public IReport GetHistoricalQuarterlySalesReport(IEnumerable<IEnumerable<ProductTotalsItem>> totals, DateTime startDate, DateTime endDate)
+    public IReport GetHistoricalQuarterlySalesReport(List<IEnumerable<ProductTotalsItem>> totals, DateTime startDate, DateTime endDate)
     {
         return new HistoricalQuarterlySalesReport(CompanyInfo, totals, startDate, endDate);
     }
@@ -172,6 +168,13 @@ public class ReportGenerator
     public IReport GetYieldStudyReport(IEnumerable<LiveInventoryItem> items, DateTime productionDate)
     {
         return new YieldStudyReport(CompanyInfo, items, productionDate);
+    }
+
+    public IReport GetReport(Type type, params object[] args)
+    {
+        object[] companyArgs = [CompanyInfo];
+        companyArgs = [.. companyArgs, .. args];
+        return (IReport)Activator.CreateInstance(type, companyArgs);
     }
 
     public async Task<string> GenerateReportPDFAsync(IReport report, string filepath = null)

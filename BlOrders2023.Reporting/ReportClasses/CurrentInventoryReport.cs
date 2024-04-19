@@ -61,7 +61,7 @@ public  class CurrentInventoryReport : ReportBase
                 table.ColumnsDefinition(column =>
                 {
                     column.RelativeColumn(2);
-                    column.RelativeColumn(6);
+                    column.RelativeColumn(8);
                     column.RelativeColumn(2);
                     column.RelativeColumn(2);
                     column.RelativeColumn(2);
