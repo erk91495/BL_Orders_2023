@@ -26,7 +26,6 @@
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMaxWidth">1200</x:Double>
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
-        <vmconverters:EnumToStringConverter x:Key="EnumToStringConverter"/>
     </ContentDialog.Resources>
 
     <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">

@@ -29,7 +29,7 @@ public class WholesaleOrderTotals : ReportBase
     {
         container.Row(row =>
         {
-            row.RelativeItem(2).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Wholesale Order Pickup Recap").Style(titleStyle);
+            row.RelativeItem(2).AlignCenter().Text($"{_companyInfo.ShortCompanyName} Wholesale Order Totals").Style(titleStyle);
             row.RelativeItem(1).AlignRight().Column(column =>
             {
                 column.Item().Text($"From: {_startDate.ToString("M/d/yy")}").Style(subTitleStyle);

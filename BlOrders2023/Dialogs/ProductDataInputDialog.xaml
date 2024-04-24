@@ -27,7 +27,6 @@
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMaxWidth">1200</x:Double>
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
-        <vmconverters:EnumToStringConverter x:Key="EnumToStringConverter"/>
         <vmconverters:NullIntToStringConverter x:Key="NullIntToStringConverter"/>
         <vmconverters:DecimalToDoubleConverter x:Key="DecimalToDoubleConverter"/>
         <vmconverters:NullIntToDoubleConverter x:Key="NullIntToDoubleConverter"/>

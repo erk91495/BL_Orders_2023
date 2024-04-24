@@ -9,14 +9,70 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:BlOrders2023.UserControls"
+    xmlns:models="using:BlOrders2023.Models"
+    xmlns:reports="using:BlOrders2023.Reporting"
+    xmlns:linq="using:System.Linq"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <!--d:Source="{Binding Groups, Source={d:DesignData Source=/DataModel/ControlInfoData.json, Type=data:ControlInfoDataSource}}"-->
+        <CollectionViewSource
+            x:Name="cvsGroups"
+            IsSourceGrouped="True"
+            Source="{x:Bind Grouped}"/>
+
+        <DataTemplate x:Key="ZoomedInTemplate" x:DataType="models:ReportControlBase">
+            <StackPanel MinWidth="200" Margin="12,6,12,6">
+                <TextBlock Text="{x:Bind ReportName}" />
+                <TextBlock
+                    Width="300"
+                    HorizontalAlignment="Left"
+                    Text="{x:Bind ReportCategory}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ZoomedInGroupHeaderTemplate">
+            <TextBlock Text="{Binding Key}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ZoomedOutTemplate">
+            <!--<TextBlock
+                Text="Zommed Out"
+                TextWrapping="Wrap" />-->
+        </DataTemplate>
+    </Page.Resources>
+
 
     <Grid>
         <uc:SpinnerOverlay x:Name="spinner" IsVisible="False"/>
-        <StackPanel>
-            <ItemsRepeater ItemsSource="{x:Bind ReportsList}">
-            </ItemsRepeater>
-        
-        </StackPanel>
+        <!-- The ItemsRepeater and ScrollViewer used: -->
+        <SemanticZoom>
+            <SemanticZoom.ZoomedInView>
+                <GridView ItemsSource="{x:Bind cvsGroups.View}" 
+                          SelectionMode="Single"
+                          ItemTemplate="{StaticResource ZoomedInTemplate}"
+                          ItemClick="GridView_ItemClick" 
+                          SelectionChanged="GridView_SelectionChanged">
+                    <GridView.GroupStyle>
+                        <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}" />
+                    </GridView.GroupStyle>
+                </GridView>
+
+            </SemanticZoom.ZoomedInView>
+            
+            <SemanticZoom.ZoomedOutView>
+                <GridView ItemsSource="{x:Bind cvsGroups.View}" 
+                          SelectionMode="None"
+                          ItemTemplate="{StaticResource ZoomedOutTemplate}">
+                    <GridView.GroupStyle>
+                        <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}" />
+                    </GridView.GroupStyle>
+                </GridView>
+
+            </SemanticZoom.ZoomedOutView>
+        </SemanticZoom>
+
+
     </Grid>
 </Page>

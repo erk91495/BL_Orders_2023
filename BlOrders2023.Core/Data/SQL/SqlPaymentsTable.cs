@@ -18,6 +18,10 @@ internal class SqlPaymentsTable : IPaymentsTable
     {
         return _db.Payments.Where(p => p.PaymentDate >= startDate && p.PaymentDate <= endDate).OrderBy(p => p.PaymentDate).ThenBy(p => p.Customer.CustomerName).ToList();
     }
+    public async Task<IEnumerable<Payment>> GetPaymentsAsync(DateTime startDate, DateTime endDate)
+    {
+        return await _db.Payments.Where(p => p.PaymentDate >= startDate && p.PaymentDate <= endDate).OrderBy(p => p.PaymentDate).ThenBy(p => p.Customer.CustomerName).ToListAsync();
+    }
 
     public async Task<IEnumerable<Payment>> GetPaymentsAsync(string query = null)
     {

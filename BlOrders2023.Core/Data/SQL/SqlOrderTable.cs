@@ -81,6 +81,15 @@ internal class SqlOrderTable : IOrderTable
             .ToList();
     }
 
+    public async Task<IEnumerable<Order>> GetFrozenOrdersByPickupDateAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await _db.Orders
+            .Where(o => o.Frozen == true && o.PickupDate >= startDate && o.PickupDate <= endDate)
+            .OrderBy(o => o.PickupDate.Date)
+            .ThenBy(o => o.PickupTime.TimeOfDay)
+            .ToListAsync();
+    }
+
     /// <summary>
     /// Gets all of the Orders from the database
     /// </summary>
@@ -186,6 +195,14 @@ internal class SqlOrderTable : IOrderTable
             .ThenBy(o => o.PickupTime.TimeOfDay)
             .ToList();
     }
+    public async Task<IEnumerable<Order>> GetNonFrozenByPickupDateAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await _db.Orders
+            .Where(o => o.Frozen != true && o.PickupDate >= startDate && o.PickupDate <= endDate)
+            .OrderBy(o => o.PickupDate.Date)
+            .ThenBy(o => o.PickupTime.TimeOfDay)
+            .ToListAsync();
+    }
 
     public async Task<IEnumerable<Order>> GetByCustomerIDAndPickupDateAsync(IEnumerable<int> CustomerIDs, DateTimeOffset startDate, DateTimeOffset endDate)
     {
@@ -215,12 +232,23 @@ internal class SqlOrderTable : IOrderTable
             .ToList();
     }
 
-    public async Task<IEnumerable<Order>> GetUnpaidInvoicedInvoicesAsync()
+    public async Task<IEnumerable<Order>> GetUnpaidInvoicedInvoicesAsync(WholesaleCustomer? customer = null)
     {
-        return await _db.Orders.Where(o => o.OrderStatus == Models.Enums.OrderStatus.Invoiced)
-                               .OrderBy(o => o.PickupDate.Date)
-                               .ThenBy(o => o.Customer.CustomerName)
-                               .ToListAsync();
+        if(customer == null)
+        {
+            return await _db.Orders.Where(o => o.OrderStatus == Models.Enums.OrderStatus.Invoiced)
+                                   .OrderBy(o => o.PickupDate.Date)
+                                   .ThenBy(o => o.Customer.CustomerName)
+                                   .ToListAsync();
+        }
+        else
+        {
+            return await _db.Orders.Where(o => o.CustID == customer.CustID
+                                          && o.OrderStatus <= Models.Enums.OrderStatus.Invoiced)
+                                   .OrderBy(o => o.PickupDate.Date)
+                                   .ThenBy(o => o.Customer.CustomerName)
+                                   .ToListAsync();
+        }
     }
 
     public IEnumerable<Order> GetByPickupDateThenName(DateTimeOffset startDate, DateTimeOffset endDate)
@@ -340,6 +368,11 @@ internal class SqlOrderTable : IOrderTable
     public IEnumerable<Order> GetOutOfStateOrders(DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return _db.Orders.Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate && o.Customer.State != States.OH.ToString()).ToList();
+    }
+
+    public async Task<IEnumerable<Order>> GetOutOfStateOrdersAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await _db.Orders.Where(o => o.PickupDate >= startDate && o.PickupDate <= endDate && o.Customer.State != States.OH.ToString()).ToListAsync();
     }
     #endregion Methods
 }
