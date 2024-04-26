@@ -14,9 +14,23 @@
     CloseButtonText="Cancel"
     Title="Remove Item From Inventory">
 
-    <StackPanel>
-        <uc:BarcodeInputTextBox MinWidth="300" Header="Scanline" TextChanged="BarcodeInputTextBox_TextChanged" AcceptsReturn="True"/>
-        <ListView ItemsSource="{x:Bind Scanlines, Mode=OneWay}"></ListView>
-        <ComboBox Header="Removal Reason" ItemsSource="{x:Bind RemovalReasons,Mode=OneWay}" SelectedItem="{x:Bind SelectedReason, Mode=TwoWay}" DisplayMemberPath="RemovalReason" MinWidth="300"/>
-    </StackPanel>
+    <RelativePanel>
+        <uc:BarcodeInputTextBox x:Name="InputBox" 
+                                MinWidth="300" 
+                                Header="Scanline" 
+                                TextChanged="BarcodeInputTextBox_TextChanged" 
+                                AcceptsReturn="True"
+                                RelativePanel.AlignTopWithPanel="True"/>
+        <ListView x:Name="ItemsList"
+                  RelativePanel.Below="InputBox" 
+                  RelativePanel.Above="RemovalBox"
+                  ItemsSource="{x:Bind Scanlines, Mode=OneWay}"/>
+        <ComboBox x:Name="RemovalBox"
+                  Header="Removal Reason"
+                  RelativePanel.AlignBottomWithPanel="True"
+                  ItemsSource="{x:Bind RemovalReasons,Mode=OneWay}" 
+                  SelectedItem="{x:Bind SelectedReason, Mode=TwoWay}" 
+                  DisplayMemberPath="RemovalReason" 
+                  MinWidth="300"/>
+    </RelativePanel>
 </ContentDialog>
