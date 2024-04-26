@@ -10,11 +10,13 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class ShippingItemAuditReportViewModel : IReportControlViewModel<ShippingItemAuditReport>
+internal class ShippingItemAuditReportViewModel : IReportViewModel<ShippingItemAuditReport>
 {
     public ReportCategory ReportCategories => ReportCategory.Miscellaneous;
 
     public List<PromptTypes> Prompts => [PromptTypes.AuditTrail];
+
+    public string ReportDescription => "Gets all items matching the given item's properties.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

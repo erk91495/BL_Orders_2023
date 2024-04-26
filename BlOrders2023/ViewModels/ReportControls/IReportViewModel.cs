@@ -12,7 +12,7 @@ using static BlOrders2023.Models.ReportPrompts;
 using BlOrders2023.Reporting;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-public interface IReportControlViewModel<T>
+public interface IReportViewModel<T>
     where T : IReport
 {
     public virtual Type ReportType => typeof(T);
@@ -24,7 +24,9 @@ public interface IReportControlViewModel<T>
             var displayNameAtt = (typeof(T).GetCustomAttribute(typeof(DisplayNameAttribute), true) as DisplayNameAttribute);
             return (displayNameAtt != null ? displayNameAtt.DisplayName : nameof(T));
         }
-    }         
+    }    
+    
+    public abstract string ReportDescription { get; }
 
     public ReportCategory ReportCategories
     {

@@ -10,12 +10,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class WholesaleOrderPickupRecapViewModel : IReportControlViewModel<WholesaleOrderPickupRecap>
+internal class WholesaleOrderPickupRecapViewModel : IReportViewModel<WholesaleOrderPickupRecap>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Orders;
 
     public List<PromptTypes> Prompts => [PromptTypes.DateRange, PromptTypes.OrderByDateOrAlphabetical];
+
+    public string ReportDescription => "Gets the orders to be picked up during the given date range. Can be ordered by pickup date or alphabetical.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

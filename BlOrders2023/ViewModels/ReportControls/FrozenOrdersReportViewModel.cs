@@ -10,12 +10,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class FrozenOrdersReportViewModel : IReportControlViewModel<FrozenOrdersReport>
+internal class FrozenOrdersReportViewModel : IReportViewModel<FrozenOrdersReport>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Orders;
 
     public List<PromptTypes> Prompts => [PromptTypes.DateRange];
+
+    public string ReportDescription => "Gets frozen orders for the given date range.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

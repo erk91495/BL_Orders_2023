@@ -10,12 +10,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class WholesalePaymentReportViewModel : IReportControlViewModel<WholesalePaymentsReport>
+internal class WholesalePaymentReportViewModel : IReportViewModel<WholesalePaymentsReport>
 {
     private IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Sales;
 
     public List<PromptTypes> Prompts => [PromptTypes.DateRange];
+
+    public string ReportDescription => "Gets payments entered during the given date range.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

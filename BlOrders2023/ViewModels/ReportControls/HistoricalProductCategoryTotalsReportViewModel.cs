@@ -7,15 +7,18 @@ using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
+using Windows.Devices.Sms;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class HistoricalProductCategoryTotalsReportViewModel : IReportControlViewModel<HistoricalProductCategoryTotalsReport>
+internal class HistoricalProductCategoryTotalsReportViewModel : IReportViewModel<HistoricalProductCategoryTotalsReport>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Sales;
 
     public List<PromptTypes> Prompts => [PromptTypes.DateRange];
+
+    public string ReportDescription => "Gets sales totals by category compared to the previous two years.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

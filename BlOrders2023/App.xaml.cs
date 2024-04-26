@@ -159,29 +159,29 @@ public partial class App : Application
             services.AddTransient<DiscountDataEntryDialogViewModel>();
 
             //ReportControl
-            services.AddTransient<IReportControlViewModel<AggregateInvoiceReport>,AggregateInvoiceReportViewModel>();
-            services.AddTransient<IReportControlViewModel<BillOfLadingReport>, BillOfLadingReportViewModel>();
-            services.AddTransient<IReportControlViewModel<CurrentInventoryReport>, CurrentInventoryReportViewModel>();
-            services.AddTransient<IReportControlViewModel<FrozenOrdersReport>, FrozenOrdersReportViewModel>();
-            services.AddTransient<IReportControlViewModel<HistoricalProductCategoryTotalsReport>, HistoricalProductCategoryTotalsReportViewModel>();
-            services.AddTransient<IReportControlViewModel<HistoricalQuarterlySalesReport>, HistoricalQuarterlySalesReportViewModel>();
-            services.AddTransient<IReportControlViewModel<InventoryDetailsReport>, InventoryDetailsReportViewModel>();
-            services.AddTransient<IReportControlViewModel<OutOfStateSalesReport>, OutOfStateSalesReportViewModel>();
-            services.AddTransient<IReportControlViewModel<OutstandingBalancesReport>, OutstandingBalancesReportViewModel>();
-            services.AddTransient<IReportControlViewModel<PalletLoadingReport>, PalletLoadingReportViewModel>();
-            services.AddTransient<IReportControlViewModel<PickList>, PickListReportViewModel>();
-            services.AddTransient<IReportControlViewModel<ProductCategoryDetailsReport>, ProductCategoryDetailsReportViewModel>();
-            services.AddTransient<IReportControlViewModel<ProductCategoryTotalsReport>, ProductCategoryTotalsReportViewModel>();
-            services.AddTransient<IReportControlViewModel<QuarterlySalesReport>, QuarterlySalesReportViewModel>();
-            services.AddTransient<IReportControlViewModel<ShippingItemAuditReport>, ShippingItemAuditReportViewModel>();
-            services.AddTransient<IReportControlViewModel<ShippingList>, ShippingListReportViewModel>();
-            services.AddTransient<IReportControlViewModel<UnpaidInvoicesReport>, UnpaidInvoicesReportViewModel>();
-            services.AddTransient<IReportControlViewModel<WholesaleInvoice>, WholesaleInvoiceReportViewModel>();
-            services.AddTransient<IReportControlViewModel<WholesaleInvoiceTotalsReport>, WholesaleInvoiceTotalsReportViewModel>();
-            services.AddTransient<IReportControlViewModel<WholesaleOrderPickupRecap>, WholesaleOrderPickupRecapViewModel>();
-            services.AddTransient<IReportControlViewModel<WholesaleOrderTotals>, WholesaleOrderTotalsViewModel>();
-            services.AddTransient<IReportControlViewModel<WholesalePaymentsReport>, WholesalePaymentReportViewModel>();
-            services.AddTransient<IReportControlViewModel<YieldStudyReport>, YieldStudyReportViewModel>();
+            services.AddTransient<IReportViewModel<AggregateInvoiceReport>,AggregateInvoiceReportViewModel>();
+            services.AddTransient<IReportViewModel<BillOfLadingReport>, BillOfLadingReportViewModel>();
+            services.AddTransient<IReportViewModel<CurrentInventoryReport>, CurrentInventoryReportViewModel>();
+            services.AddTransient<IReportViewModel<FrozenOrdersReport>, FrozenOrdersReportViewModel>();
+            services.AddTransient<IReportViewModel<HistoricalProductCategoryTotalsReport>, HistoricalProductCategoryTotalsReportViewModel>();
+            services.AddTransient<IReportViewModel<HistoricalQuarterlySalesReport>, HistoricalQuarterlySalesReportViewModel>();
+            services.AddTransient<IReportViewModel<InventoryDetailsReport>, InventoryDetailsReportViewModel>();
+            services.AddTransient<IReportViewModel<OutOfStateSalesReport>, OutOfStateSalesReportViewModel>();
+            services.AddTransient<IReportViewModel<OutstandingBalancesReport>, OutstandingBalancesReportViewModel>();
+            services.AddTransient<IReportViewModel<PalletLoadingReport>, PalletLoadingReportViewModel>();
+            services.AddTransient<IReportViewModel<PickList>, PickListReportViewModel>();
+            services.AddTransient<IReportViewModel<ProductCategoryDetailsReport>, ProductCategoryDetailsReportViewModel>();
+            services.AddTransient<IReportViewModel<ProductCategoryTotalsReport>, ProductCategoryTotalsReportViewModel>();
+            services.AddTransient<IReportViewModel<QuarterlySalesReport>, QuarterlySalesReportViewModel>();
+            services.AddTransient<IReportViewModel<ShippingItemAuditReport>, ShippingItemAuditReportViewModel>();
+            services.AddTransient<IReportViewModel<ShippingList>, ShippingListReportViewModel>();
+            services.AddTransient<IReportViewModel<UnpaidInvoicesReport>, UnpaidInvoicesReportViewModel>();
+            services.AddTransient<IReportViewModel<WholesaleInvoice>, WholesaleInvoiceReportViewModel>();
+            services.AddTransient<IReportViewModel<WholesaleInvoiceTotalsReport>, WholesaleInvoiceTotalsReportViewModel>();
+            services.AddTransient<IReportViewModel<WholesaleOrderPickupRecap>, WholesaleOrderPickupRecapViewModel>();
+            services.AddTransient<IReportViewModel<WholesaleOrderTotals>, WholesaleOrderTotalsViewModel>();
+            services.AddTransient<IReportViewModel<WholesalePaymentsReport>, WholesalePaymentReportViewModel>();
+            services.AddTransient<IReportViewModel<YieldStudyReport>, YieldStudyReportViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

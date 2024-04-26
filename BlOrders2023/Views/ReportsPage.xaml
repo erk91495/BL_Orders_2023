@@ -11,35 +11,41 @@
     xmlns:uc="using:BlOrders2023.UserControls"
     xmlns:models="using:BlOrders2023.Models"
     xmlns:reports="using:BlOrders2023.Reporting"
-    xmlns:linq="using:System.Linq"
+    xmlns:wuxdata="using:Microsoft.UI.Xaml.Data"
     mc:Ignorable="d">
 
     <Page.Resources>
         <!--d:Source="{Binding Groups, Source={d:DesignData Source=/DataModel/ControlInfoData.json, Type=data:ControlInfoDataSource}}"-->
         <CollectionViewSource
             x:Name="cvsGroups"
+            d:Source="{Binding Grouped}"
             IsSourceGrouped="True"
-            Source="{x:Bind Grouped}"/>
+            ItemsPath="Items"
+            Source="{x:Bind Grouped, Mode=OneWay}"/>
 
-        <DataTemplate x:Key="ZoomedInTemplate" x:DataType="models:ReportControlBase">
-            <StackPanel MinWidth="200" Margin="12,6,12,6">
-                <TextBlock Text="{x:Bind ReportName}" />
-                <TextBlock
+        <DataTemplate x:Key="ZoomedInTemplate" x:DataType="models:ReportViewBase">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="ms-appx:///Assets/FileIcon.png" MaxWidth="30"/>
+                <StackPanel MinWidth="200" Margin="12,6,12,6">
+                    <TextBlock Text="{x:Bind ReportName}" Style="{StaticResource SubtitleTextBlockStyle}" FontSize="16"/>
+                    <TextBlock
                     Width="300"
                     HorizontalAlignment="Left"
-                    Text="{x:Bind ReportCategory}"
-                    TextWrapping="Wrap" />
+                    Text="{x:Bind ReportDescription}"
+                    TextWrapping="Wrap"/>
+                </StackPanel>
             </StackPanel>
+
         </DataTemplate>
 
-        <DataTemplate x:Key="ZoomedInGroupHeaderTemplate">
-            <TextBlock Text="{Binding Key}"/>
+        <DataTemplate x:Key="ZoomedInGroupHeaderTemplate" x:DataType="models:ReportGroup">
+            <TextBlock Text="{x:Bind Category}"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="ZoomedOutTemplate">
-            <!--<TextBlock
-                Text="Zommed Out"
-                TextWrapping="Wrap" />-->
+        <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="wuxdata:ICollectionViewGroup">
+            <TextBlock
+                Text="{x:Bind ((models:ReportGroup)Group).Category}"
+                TextWrapping="Wrap" />
         </DataTemplate>
     </Page.Resources>
 
@@ -47,30 +53,28 @@
     <Grid>
         <uc:SpinnerOverlay x:Name="spinner" IsVisible="False"/>
         <!-- The ItemsRepeater and ScrollViewer used: -->
-        <SemanticZoom>
+        <SemanticZoom IsZoomedInViewActive="True">
             <SemanticZoom.ZoomedInView>
                 <GridView ItemsSource="{x:Bind cvsGroups.View}" 
-                          SelectionMode="Single"
+                          SelectionMode="None"
                           ItemTemplate="{StaticResource ZoomedInTemplate}"
-                          ItemClick="GridView_ItemClick" 
-                          SelectionChanged="GridView_SelectionChanged">
+                          IsItemClickEnabled="True"
+                          ItemClick="GridView_ItemClick">
                     <GridView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}" />
                     </GridView.GroupStyle>
                 </GridView>
 
             </SemanticZoom.ZoomedInView>
-            
             <SemanticZoom.ZoomedOutView>
-                <GridView ItemsSource="{x:Bind cvsGroups.View}" 
+                <ListView ItemsSource="{x:Bind cvsGroups.View.CollectionGroups}" 
                           SelectionMode="None"
-                          ItemTemplate="{StaticResource ZoomedOutTemplate}">
-                    <GridView.GroupStyle>
-                        <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}" />
-                    </GridView.GroupStyle>
-                </GridView>
+                          ItemTemplate="{StaticResource ZoomedOutTemplate}"
+                          IsItemClickEnabled="True">
+                </ListView>
 
             </SemanticZoom.ZoomedOutView>
+
         </SemanticZoom>
 
 

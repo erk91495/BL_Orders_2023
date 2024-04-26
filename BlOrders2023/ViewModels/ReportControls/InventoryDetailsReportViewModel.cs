@@ -11,12 +11,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class InventoryDetailsReportViewModel : IReportControlViewModel<InventoryDetailsReport>
+internal class InventoryDetailsReportViewModel : IReportViewModel<InventoryDetailsReport>
 {
     private IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Inventory;
 
     public List<PromptTypes> Prompts => [PromptTypes.DateRange];
+
+    public string ReportDescription => "Gets scanned inventory, adjustments, and ordered totals for the given date range.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

@@ -10,12 +10,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class OutstandingBalancesReportViewModel : IReportControlViewModel<OutstandingBalancesReport>
+internal class OutstandingBalancesReportViewModel : IReportViewModel<OutstandingBalancesReport>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Sales;
 
     public List<ReportPrompts.PromptTypes> Prompts => [PromptTypes.None];
+
+    public string ReportDescription => "Gets all orders with outstanding balances.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

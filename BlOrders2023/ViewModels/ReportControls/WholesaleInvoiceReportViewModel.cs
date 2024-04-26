@@ -10,11 +10,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class WholesaleInvoiceReportViewModel : IReportControlViewModel<WholesaleInvoice>
+internal class WholesaleInvoiceReportViewModel : IReportViewModel<WholesaleInvoice>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Invoicing;
     public List<PromptTypes> Prompts => [PromptTypes.OrderID];
+
+    public string ReportDescription => "Get the invoice for the given order number.";
+
     public async Task<object?[]> GetData(object[] userInputs)
     {
         var id = (int)userInputs[0];

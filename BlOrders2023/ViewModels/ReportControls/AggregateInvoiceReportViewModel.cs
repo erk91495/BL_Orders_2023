@@ -13,12 +13,14 @@ using BlOrders2023.Core.Data;
 using BlOrders2023.Reporting.ReportClasses;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class AggregateInvoiceReportViewModel : IReportControlViewModel<AggregateInvoiceReport>
+internal class AggregateInvoiceReportViewModel : IReportViewModel<AggregateInvoiceReport>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
 
     public ReportCategory ReportCategories => ReportCategory.Orders;
     public List<PromptTypes> Prompts => [PromptTypes.Customers, PromptTypes.DateRange];
+
+    public string ReportDescription => "Combines multiple invoices for the given customer over the given date range.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

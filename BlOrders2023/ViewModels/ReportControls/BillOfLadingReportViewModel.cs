@@ -10,12 +10,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class BillOfLadingReportViewModel : IReportControlViewModel<BillOfLadingReport>
+internal class BillOfLadingReportViewModel : IReportViewModel<BillOfLadingReport>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Orders;
 
     public List<PromptTypes> Prompts => [PromptTypes.BillOfLading];
+
+    public string ReportDescription => "Generates a bill of lading for the given order(s).";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

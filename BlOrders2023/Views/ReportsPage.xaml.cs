@@ -20,7 +20,6 @@ using static BlOrders2023.Models.ReportPrompts;
 using System.Reflection.Metadata;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml.Data;
-using BlOrders2023.Reporting;
 using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -39,8 +38,8 @@ public sealed partial class ReportsPage : Page
 
     #region Fields
     private readonly ReportGenerator reportGenerator;
-    private ObservableCollection<ReportControlBase> ReportsList { get; set; }
-    private IEnumerable<IGrouping<ReportCategory,ReportControlBase>> Grouped => ReportsList.GroupBy(r => r.ReportCategory);
+    private ObservableCollection<ReportViewBase> ReportsList { get; set; }
+    private ObservableCollection<ReportGroup> Grouped { get; set; } = new();
     #endregion Fields
 
     #region Constructors
@@ -49,59 +48,30 @@ public sealed partial class ReportsPage : Page
         this.InitializeComponent();
         ViewModel = App.GetService<ReportsPageViewModel>();
         reportGenerator = new(App.CompanyInfo);
+        InitializeReports();
 
+    }
 
-        
-        ReportsList = new();
-        foreach (Type t in Reports.AvalibleReports)
-        {
-            var constructedType = typeof(ReportControl<>).MakeGenericType([t]);
-            var control = (ReportControlBase)Activator.CreateInstance(constructedType);
-            control.ReportSelected += ReportControl_Click;
-            ReportsList.Add(control);
-        }
+    private void InitializeReports()
+    {
+            ReportsList = new();
+            foreach (Type t in Reports.AvalibleReports)
+            {
+                var constructedType = typeof(ReportViewModel<>).MakeGenericType([t]);
+                var control = (ReportViewBase)Activator.CreateInstance(constructedType);
+                ReportsList.Add(control);
+            }
 
+            foreach(var category in ReportsList.Select(i => i.ReportCategory).Distinct())
+            {
+                var group = new ReportGroup() {Category = category};
+                group.Items = ReportsList.Where(i => i.ReportCategory == category).OrderBy(r => r.ReportName).ToObservableCollection();
+                Grouped.Add(group);
+            }
     }
     #endregion Constructors
 
     #region Methods
-    public async void ReportControl_Click(object? sender, EventArgs e)
-    {
-        if(sender is ReportControlBase control)
-        {
-            var prompts = control.Prompts;
-            var userInputs = await GetUserInput(prompts);
-            object?[]? args = null;
-            if(!(userInputs.IsNullOrEmpty() && prompts.FirstOrDefault() != PromptTypes.None))
-            {
-                 args = await control.GetData( userInputs );   
-            }
-            if (!(args.IsNullOrEmpty() || args.Any(i => i == null)))
-            {
-                var report = reportGenerator.GetReport(control.ReportType, args);
-                var filePath = await reportGenerator.GenerateReportPDFAsync(report);
-                LauncherOptions options = new()
-                {
-                    ContentType = "application/pdf"
-                };
-                _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
-            }
-            else
-            {
-                ContentDialog dialog = new ContentDialog()
-                {
-                    XamlRoot = XamlRoot,
-                    Title = "Error",
-                    Content = "No data was found for the given input",
-                    PrimaryButtonText = "OK"
-                };
-                await dialog.ShowAsync();
-            }
-            spinner.IsVisible = false;
-
-        }
-    }
-
     private async Task<object?[]> GetUserInput(IEnumerable<PromptTypes> propmpts)
     {
         List<object?> results = new();
@@ -427,13 +397,40 @@ public sealed partial class ReportsPage : Page
     }
     #endregion Methods
 
-    private void GridView_ItemClick(object sender, ItemClickEventArgs e)
+    private async void GridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Debugger.Break();
-    }
+        if (e.ClickedItem is ReportViewBase control)
+        {
+            var prompts = control.Prompts;
+            var userInputs = await GetUserInput(prompts);
+            object?[]? args = null;
+            if (!(userInputs.Any(i => i == null) && prompts.FirstOrDefault() != PromptTypes.None))
+            {
+                args = await control.GetData(userInputs);
+            }
+            if (!(args.IsNullOrEmpty() || args.Any(i => i == null)))
+            {
+                var report = reportGenerator.GetReport(control.ReportType, args);
+                var filePath = await reportGenerator.GenerateReportPDFAsync(report);
+                LauncherOptions options = new()
+                {
+                    ContentType = "application/pdf"
+                };
+                _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+            }
+            else
+            {
+                ContentDialog dialog = new ContentDialog()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Error",
+                    Content = "No data was found for the given input",
+                    PrimaryButtonText = "OK"
+                };
+                await dialog.ShowAsync();
+            }
+            spinner.IsVisible = false;
 
-    private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        Debugger.Break();
+        }
     }
 }

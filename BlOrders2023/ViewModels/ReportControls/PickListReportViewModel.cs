@@ -10,12 +10,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class PickListReportViewModel : IReportControlViewModel<PickList>
+internal class PickListReportViewModel : IReportViewModel<PickList>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Orders;
 
     public List<PromptTypes> Prompts => [PromptTypes.OrderID];
+
+    public string ReportDescription => "Groups items by type for picking.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

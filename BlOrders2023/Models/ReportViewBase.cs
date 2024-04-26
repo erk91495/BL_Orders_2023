@@ -9,10 +9,11 @@ using static BlOrders2023.Models.ReportPrompts;
 using BlOrders2023.Reporting;
 
 namespace BlOrders2023.Models;
-public abstract  class ReportControlBase
+public abstract  class ReportViewBase
 {
     public abstract Type ReportType { get; }
     public abstract string ReportName { get; }
+    public abstract string ReportDescription { get; }
     public abstract ReportCategory ReportCategory { get; }
     public abstract List<PromptTypes> Prompts { get; }
     public abstract Task<object?[]> GetData(object[] userInputs);

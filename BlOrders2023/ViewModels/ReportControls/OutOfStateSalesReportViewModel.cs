@@ -11,12 +11,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class OutOfStateSalesReportViewModel : IReportControlViewModel<OutOfStateSalesReport>
+internal class OutOfStateSalesReportViewModel : IReportViewModel<OutOfStateSalesReport>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Sales;
 
     public List<PromptTypes> Prompts => [PromptTypes.DateRange];
+
+    public string ReportDescription => "Gets orders sold to customers outside of ohio for the given date range.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

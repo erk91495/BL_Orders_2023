@@ -15,12 +15,14 @@ using Microsoft.UI.Xaml;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class PalletLoadingReportViewModel : IReportControlViewModel<PalletLoadingReport>
+internal class PalletLoadingReportViewModel : IReportViewModel<PalletLoadingReport>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Orders;
 
     public List<PromptTypes> Prompts => [PromptTypes.OrderID];
+
+    public string ReportDescription => "Groups items by pallet for the given order.";
 
     public async Task<object?[]> GetData(object[] userInputs) 
     {

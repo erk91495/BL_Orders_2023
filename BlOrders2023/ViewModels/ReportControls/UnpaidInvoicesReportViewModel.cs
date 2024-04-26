@@ -10,12 +10,14 @@ using BlOrders2023.Reporting.ReportClasses;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class UnpaidInvoicesReportViewModel : IReportControlViewModel<UnpaidInvoicesReport>
+internal class UnpaidInvoicesReportViewModel : IReportViewModel<UnpaidInvoicesReport>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Sales;
 
     public List<PromptTypes> Prompts => [PromptTypes.Customer];
+
+    public string ReportDescription => "Gets all unpaid invoices for the given customer";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

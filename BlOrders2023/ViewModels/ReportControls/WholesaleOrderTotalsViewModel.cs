@@ -12,12 +12,14 @@ using CommunityToolkit.WinUI;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class WholesaleOrderTotalsViewModel : IReportControlViewModel<WholesaleOrderTotals>
+internal class WholesaleOrderTotalsViewModel : IReportViewModel<WholesaleOrderTotals>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Orders;
 
     public List<PromptTypes> Prompts => [PromptTypes.DateRange];
+
+    public string ReportDescription => "Gets total products ordered for the given date range.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

@@ -11,12 +11,14 @@ using Microsoft.IdentityModel.Tokens;
 using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class ProductCategoryTotalsReportViewModel : IReportControlViewModel<ProductCategoryTotalsReport>
+internal class ProductCategoryTotalsReportViewModel : IReportViewModel<ProductCategoryTotalsReport>
 {
     private readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories => ReportCategory.Products;
 
     public List<PromptTypes> Prompts => [PromptTypes.DateRange];
+
+    public string ReportDescription => "Gets product sales totals by category.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {
