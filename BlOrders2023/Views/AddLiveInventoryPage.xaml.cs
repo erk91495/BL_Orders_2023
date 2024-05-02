@@ -55,22 +55,10 @@ namespace BlOrders2023.Views
                 if (hasChanges)
                 {
                     e.Cancel = true;
-                    ContentDialog dialog = new ContentDialog()
-                    {
-                        XamlRoot = XamlRoot,
-                        Title = "Unsaved Changes",
-                        Content = "Are you sure you want to leave? Unsaved changes will be discarded.",
-                        PrimaryButtonText = "Leave",
-                        CloseButtonText = "Cancel",
-                    };
-
-                    var res = await dialog.ShowAsync();
-                    if(res == ContentDialogResult.Primary)
-                    {
-                        e.Cancel = false;
-                        canLeave = true;
-                        Frame.Navigate(e.SourcePageType, e.Parameter);
-                    }
+                    await TrySaveItems();
+                    canLeave = true;
+                    e.Cancel = false;
+                    Frame.Navigate(e.SourcePageType, e.Parameter);
                 }
             }
         }
@@ -195,50 +183,58 @@ namespace BlOrders2023.Views
                 b.IsEnabled = false;
                 Scanline.IsEnabled = false; 
             }
-            try
-            {
-                await ViewModel.SaveItems();
-                ContentDialog d = new()
-                {
-                    XamlRoot = XamlRoot,
-                    Title = "Saved",
-                    Content = $"The Items have been saved",
-                    PrimaryButtonText = "OK",
-                    DefaultButton = ContentDialogButton.Primary,
+            await TrySaveItems();
+        }
 
-                };
-                await d.ShowAsync();
-                hasChanges = false;
-            }
-            catch (DbUpdateConcurrencyException ex)
+        private async Task TrySaveItems()
+        {
+            if (hasChanges)
             {
-                _ = ex;
-                App.LogException(ex);
-                ContentDialog d = new()
+                try
                 {
-                    XamlRoot = XamlRoot,
-                    Title = "Database Write Conflict",
-                    Content = $"Your changes could not be saved",
-                    SecondaryButtonText = "Continue",
-                    DefaultButton = ContentDialogButton.None,
+                    await ViewModel.SaveItems();
+                    ContentDialog d = new()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = "Saved",
+                        Content = $"The Items have been saved",
+                        PrimaryButtonText = "OK",
+                        DefaultButton = ContentDialogButton.Primary,
 
-                };
-                await d.ShowAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                App.LogException(ex);
-                ContentDialog d = new()
+                    };
+                    await d.ShowAsync();
+                    hasChanges = false;
+                }
+                catch (DbUpdateConcurrencyException ex)
                 {
-                    XamlRoot = XamlRoot,
-                    Title = "DbUpdateException",
-                    Content = $"An error occured while trying to save your Order. Please contact your system administrator\r\n" +
-                    $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
-                    SecondaryButtonText = "Continue",
-                    DefaultButton = ContentDialogButton.None,
+                    _ = ex;
+                    App.LogException(ex);
+                    ContentDialog d = new()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = "Database Write Conflict",
+                        Content = $"Your changes could not be saved",
+                        SecondaryButtonText = "Continue",
+                        DefaultButton = ContentDialogButton.None,
 
-                };
-                await d.ShowAsync();
+                    };
+                    await d.ShowAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    App.LogException(ex);
+                    ContentDialog d = new()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = "DbUpdateException",
+                        Content = $"An error occured while trying to save. Please contact your system administrator\r\n" +
+                        $"Details:\r\n{ex.Message}\r\n{ex.InnerException!.Message}",
+                        SecondaryButtonText = "Continue",
+                        DefaultButton = ContentDialogButton.None,
+
+                    };
+                    await d.ShowAsync();
+                }
             }
         }
     }
