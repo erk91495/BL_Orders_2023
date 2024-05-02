@@ -17,10 +17,8 @@ using Windows.System;
 using BlOrders2023.Core.Contracts.Services;
 using Syncfusion.UI.Xaml.Editors;
 using static BlOrders2023.Models.ReportPrompts;
-using System.Reflection.Metadata;
-using CommunityToolkit.WinUI;
-using Microsoft.UI.Xaml.Data;
-using System.Diagnostics;
+using BlOrders2023.Exceptions;
+using Microsoft.VisualBasic.Logging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -118,7 +116,10 @@ public sealed partial class ReportsPage : Page
                         date = new(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.FromHours(-4));
                         return [date];
                     }
-                    return [null];
+                    else
+                    {
+                        throw new UserCanceledException();
+                    }
                 }
             case PromptTypes.DateRange:
                 return Array.ConvertAll(await ShowDateRangeSelectionAsync(), item => (object?)item);
@@ -134,7 +135,7 @@ public sealed partial class ReportsPage : Page
                     {
                         return [custDialog.ViewModel.SelectedCustomer];
                     }
-                    return[null];
+                    throw new UserCanceledException();
                 }
             case PromptTypes.Customers:
                 {
@@ -152,13 +153,17 @@ public sealed partial class ReportsPage : Page
                                 PrimaryButtonText = "ok",
                             };
                             await d.ShowAsync();
+                            throw new UserCanceledException();
                         }
                         else
                         {
                             return [dialog.Customers];
                         }
                     }
-                    return [null];
+                    else
+                    {
+                        throw new UserCanceledException();
+                    }
                 }
             case PromptTypes.CustomersAndOrders:
                 {
@@ -175,7 +180,7 @@ public sealed partial class ReportsPage : Page
                         var customer = dialog.SelectedCustomer;
                         return [orders, customer];
                     }
-                    return [null];
+                    throw new UserCanceledException();
                 }
             case PromptTypes.BillOfLading:
                 {
@@ -211,7 +216,7 @@ public sealed partial class ReportsPage : Page
                             return [orders, items, customer, carrier, trailerNumber, trailerSeal, appointmentDate];
                         }
                     }
-                    return [null];
+                    throw new UserCanceledException();
                 }
             case PromptTypes.ProductCategories:
                 {
@@ -229,7 +234,7 @@ public sealed partial class ReportsPage : Page
                     {
                         return[categories.Where(i => categorySelect.SelectedItems.Contains(i.CategoryName)).ToList()];
                     }
-                    return[null];
+                    throw new UserCanceledException();
                 }
             case PromptTypes.AuditTrail:
                 {
@@ -289,7 +294,7 @@ public sealed partial class ReportsPage : Page
                             await d.ShowAsync();
                         }
                     }
-                    return [null];
+                    throw new UserCanceledException();
                 }
             case PromptTypes.OrderByDateOrAlphabetical:
                 {
@@ -305,7 +310,7 @@ public sealed partial class ReportsPage : Page
                     return [res == ContentDialogResult.Primary];
                 }
             default:
-                return [null];
+                throw new UserCanceledException();
         }
     }
 
@@ -353,14 +358,17 @@ public sealed partial class ReportsPage : Page
                     PrimaryButtonText = "ok",
                 };
                 await d.ShowAsync();
-            return null;
+                return null;
             }
             else
             {
                 return id;
             }
         }
-        return null;
+        else
+        {
+            throw new UserCanceledException();
+        }
     }
 
     private async Task<DateTimeOffset?[]> ShowDateRangeSelectionAsync()
@@ -382,6 +390,7 @@ public sealed partial class ReportsPage : Page
                     PrimaryButtonText = "ok",
                 };
                 await d.ShowAsync();
+                throw new UserCanceledException();
             }
             else
             {
@@ -393,7 +402,10 @@ public sealed partial class ReportsPage : Page
                 return [startDate, endDate];
             }
         }
-        return [null,null];
+        else
+        {
+            throw new UserCanceledException();
+        }
     }
     #endregion Methods
 
@@ -401,36 +413,44 @@ public sealed partial class ReportsPage : Page
     {
         if (e.ClickedItem is ReportViewBase control)
         {
+            spinner.IsVisible = true;
             var prompts = control.Prompts;
-            var userInputs = await GetUserInput(prompts);
-            object?[]? args = null;
-            if (!(userInputs.Any(i => i == null) && prompts.FirstOrDefault() != PromptTypes.None))
+            try
             {
-                args = await control.GetData(userInputs);
-            }
-            if (!(args.IsNullOrEmpty() || args.Any(i => i == null)))
-            {
-                var report = reportGenerator.GetReport(control.ReportType, args);
-                var filePath = await reportGenerator.GenerateReportPDFAsync(report);
-                LauncherOptions options = new()
-                {
-                    ContentType = "application/pdf"
-                };
-                _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
-            }
-            else
-            {
-                ContentDialog dialog = new ContentDialog()
-                {
-                    XamlRoot = XamlRoot,
-                    Title = "Error",
-                    Content = "No data was found for the given input",
-                    PrimaryButtonText = "OK"
-                };
-                await dialog.ShowAsync();
-            }
-            spinner.IsVisible = false;
+                var userInputs = await GetUserInput(prompts);
+                object?[]? args = null;
+                args = await control.GetData(userInputs!);
 
+                if (!(args.IsNullOrEmpty()))
+                {
+                    var report = reportGenerator.GetReport(control.ReportType, args);
+                    var filePath = await reportGenerator.GenerateReportPDFAsync(report);
+                    LauncherOptions options = new()
+                    {
+                        ContentType = "application/pdf"
+                    };
+                    _ = Launcher.LaunchUriAsync(new Uri(filePath), options);
+                }
+                else
+                {
+                    ContentDialog dialog = new ContentDialog()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = "Error",
+                        Content = "No data was found for the given input",
+                        PrimaryButtonText = "OK"
+                    };
+                    await dialog.ShowAsync();
+                }
+                
+            }
+            catch (UserCanceledException)
+            {
+            }
+            finally
+            {
+                spinner.IsVisible = false;
+            }
         }
     }
 }
