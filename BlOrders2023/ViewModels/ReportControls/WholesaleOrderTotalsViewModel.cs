@@ -8,8 +8,6 @@ using BlOrders2023.Core.Data;
 using BlOrders2023.Models;
 using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
-using CommunityToolkit.WinUI;
-using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
 internal class WholesaleOrderTotalsViewModel : IReportViewModel<WholesaleOrderTotals>

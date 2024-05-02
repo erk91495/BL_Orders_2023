@@ -229,6 +229,11 @@ internal class SqlInventoryTable : IInventoryTable
     {
         await _db.Database.ExecuteSqlAsync($"[dbo].[usp_ZeroLiveInventory]");
     }
+
+    public async Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsByScanDateAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await _db.LiveInventoryItems.Where(i => i.ScanDate >= startDate && i .ScanDate <= endDate).OrderBy(i => i.ScanDate).ToListAsync();
+    }
     #endregion Live Inventory Items
 
     #region Live Invetory Logging

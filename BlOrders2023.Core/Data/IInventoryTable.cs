@@ -39,4 +39,5 @@ public interface IInventoryTable
     public IEnumerable<LiveInventoryRemovalReason> GetLiveInventoryRemovalReasons();
     public Task<IEnumerable<LiveInventoryRemovalReason>> GetLiveInventoryRemovalReasonsAsync();
     public Task InsertLiveInventoryRemovalLogItemAsync(LiveInventoryRemovalLogItem removalEntry);
+    public Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsByScanDateAsync(DateTimeOffset startDate, DateTimeOffset endDate);
 }

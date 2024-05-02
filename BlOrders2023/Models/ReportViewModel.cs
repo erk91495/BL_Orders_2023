@@ -25,7 +25,7 @@ public class ReportViewModel<T> : ReportViewBase
 
     public override ReportCategory ReportCategory => ViewModel.ReportCategories;
 
-    public override List<ReportPrompts.PromptTypes> Prompts => ViewModel.Prompts;
+    public override List<PromptTypes> Prompts => ViewModel.Prompts;
 
     public ReportViewModel()
     {

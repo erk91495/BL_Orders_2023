@@ -16,7 +16,6 @@ using Syncfusion.UI.Xaml.Data;
 using Windows.System;
 using BlOrders2023.Core.Contracts.Services;
 using Syncfusion.UI.Xaml.Editors;
-using static BlOrders2023.Models.ReportPrompts;
 using BlOrders2023.Exceptions;
 using Microsoft.VisualBasic.Logging;
 
