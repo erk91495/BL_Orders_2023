@@ -15,7 +15,7 @@ internal class YieldStudyReportViewModel : IReportViewModel<YieldStudyReport>
 
     public List<PromptTypes> Prompts => [PromptTypes.Date];
 
-    public string ReportDescription => "Gets products produced and yeilds  for the given date.";
+    public string ReportDescription => "Gets products produced and yields for the given date.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {

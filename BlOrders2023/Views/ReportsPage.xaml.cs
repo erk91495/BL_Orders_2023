@@ -46,7 +46,6 @@ public sealed partial class ReportsPage : Page
         ViewModel = App.GetService<ReportsPageViewModel>();
         reportGenerator = new(App.CompanyInfo);
         InitializeReports();
-
     }
 
     private void InitializeReports()
