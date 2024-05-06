@@ -18,6 +18,8 @@ using BlOrders2023.Core.Contracts.Services;
 using Syncfusion.UI.Xaml.Editors;
 using BlOrders2023.Exceptions;
 using Microsoft.VisualBasic.Logging;
+using BlOrders2023.ViewModels.ReportControls;
+using System.Reflection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -50,20 +52,30 @@ public sealed partial class ReportsPage : Page
 
     private void InitializeReports()
     {
-            ReportsList = new();
-            foreach (Type t in Reports.AvalibleReports)
-            {
-                var constructedType = typeof(ReportViewModel<>).MakeGenericType([t]);
-                var control = (ReportViewBase)Activator.CreateInstance(constructedType);
-                ReportsList.Add(control);
-            }
+        ReportsList = new();
+        var genericTypes = typeof(IReportViewModel<>).Assembly.GetTypes()
+            .Where(type => type.GetInterfaces()
+                                .Any(i => i.IsGenericType &&
+                                            i.GetGenericTypeDefinition() == typeof(IReportViewModel<>)))
+            .SelectMany(type => type.GetInterfaces()
+                                    .Where(i => i.IsGenericType &&
+                                                i.GetGenericTypeDefinition() == typeof(IReportViewModel<>))
+                                    .Select(i => i.GetGenericArguments().FirstOrDefault()))
+            .Distinct();
 
-            foreach(var category in ReportsList.Select(i => i.ReportCategory).Distinct())
-            {
-                var group = new ReportGroup() {Category = category};
-                group.Items = ReportsList.Where(i => i.ReportCategory == category).OrderBy(r => r.ReportName).ToObservableCollection();
-                Grouped.Add(group);
-            }
+        foreach (Type t in genericTypes)
+        {
+            var constructedType = typeof(ReportViewModel<>).MakeGenericType([t]);
+            var control = (ReportViewBase)Activator.CreateInstance(constructedType);
+            ReportsList.Add(control);
+        }
+
+        foreach(var category in Enum.GetValues(typeof(ReportCategory)).Cast<ReportCategory>())
+        {
+            var group = new ReportGroup() {Category = category};
+            group.Items = ReportsList.Where(i => i.ReportCategory == category).OrderBy(r => r.ReportName).ToObservableCollection();
+            Grouped.Add(group);
+        }
     }
     #endregion Constructors
 

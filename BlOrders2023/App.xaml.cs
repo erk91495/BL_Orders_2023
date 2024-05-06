@@ -183,6 +183,7 @@ public partial class App : Application
             services.AddTransient<IReportViewModel<WholesalePaymentsReport>, WholesalePaymentReportViewModel>();
             services.AddTransient<IReportViewModel<YieldStudyReport>, YieldStudyReportViewModel>();
             services.AddTransient<IReportViewModel<ProductionDetailsReport> , ProductionDetailsReportViewModel>();
+            services.AddTransient<IReportViewModel<ProductionSummaryReport>, ProductionSummaryReportViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
