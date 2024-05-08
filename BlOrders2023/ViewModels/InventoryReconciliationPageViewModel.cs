@@ -102,6 +102,7 @@ public class InventoryReconciliationPageViewModel : ViewModelBase
             {
                 adjustment.ManualAdjustments = 0;
                 adjustment.LastAdjustment = 0;
+                adjustment.LastAdjustmentReason = "Reconciliation";
                 await _db.Inventory.UpsertAdjustmentAsync(adjustment);
             }
             

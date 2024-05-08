@@ -19,6 +19,7 @@ public class InventoryAuditItem : ObservableObject
     private int _startingQuantity;
     private int _adjustmentQuantity;
     private int _endingQuantity;
+    private string? _adjustmentReason;
     #endregion Fields
 
     #region Properties
@@ -30,5 +31,6 @@ public class InventoryAuditItem : ObservableObject
     public int StartingQuantity { get => _startingQuantity; set => SetProperty(ref _startingQuantity, value);}
     public int AdjustmentQuantity { get => _adjustmentQuantity; set => SetProperty(ref _adjustmentQuantity, value); }
     public int EndingQuantity { get => _endingQuantity; set => SetProperty(ref _endingQuantity, value);}
+    public string? AdjustmentReason{ get => _adjustmentReason; set => SetProperty(ref _adjustmentReason, value); }
     #endregion Properties
 }
