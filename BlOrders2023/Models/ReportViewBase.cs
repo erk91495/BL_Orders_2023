@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using static BlOrders2023.Models.ReportPrompts;
 using BlOrders2023.Reporting;
 
 namespace BlOrders2023.Models;

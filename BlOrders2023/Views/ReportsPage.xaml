@@ -24,17 +24,32 @@
             Source="{x:Bind Grouped, Mode=OneWay}"/>
 
         <DataTemplate x:Key="ZoomedInTemplate" x:DataType="models:ReportViewBase">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="ms-appx:///Assets/FileIcon.png" MaxWidth="30"/>
-                <StackPanel MinWidth="200" Margin="12,6,12,6">
-                    <TextBlock Text="{x:Bind ReportName}" Style="{StaticResource SubtitleTextBlockStyle}" FontSize="16"/>
-                    <TextBlock
-                    Width="300"
+            <Grid Height="Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Image Source="ms-appx:///Assets/FileIcon.png" MaxHeight="59" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Margin="0,0,0,10"/>
+
+                 <TextBlock 
+                     Grid.Column="1" Grid.Row="0"
+                     Text="{x:Bind ReportName}" 
+                     Style="{StaticResource SubtitleTextBlockStyle}" 
+                     FontSize="16"
+                     Margin="10,0,0,0"/>
+                <TextBlock
+                    Grid.Column="1" Grid.Row="1"
+                    Width="410"
+                    VerticalAlignment="Top"
                     HorizontalAlignment="Left"
                     Text="{x:Bind ReportDescription}"
-                    TextWrapping="Wrap"/>
-                </StackPanel>
-            </StackPanel>
+                    TextWrapping="Wrap"
+                    Margin="10,0,0,10"/>
+            </Grid>
 
         </DataTemplate>
 
@@ -45,13 +60,13 @@
         <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="wuxdata:ICollectionViewGroup">
             <TextBlock
                 Text="{x:Bind ((models:ReportGroup)Group).Category}"
-                TextWrapping="Wrap" />
+                TextWrapping="WrapWholeWords" />
         </DataTemplate>
     </Page.Resources>
 
 
     <Grid>
-        <uc:SpinnerOverlay x:Name="spinner" IsVisible="False"/>
+        <uc:SpinnerOverlay x:Name="spinner" IsVisible="False" Canvas.ZIndex="5" />
         <!-- The ItemsRepeater and ScrollViewer used: -->
         <SemanticZoom IsZoomedInViewActive="True">
             <SemanticZoom.ZoomedInView>

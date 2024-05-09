@@ -8,7 +8,6 @@ using BlOrders2023.Models;
 using BlOrders2023.Reporting;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
-using static BlOrders2023.Models.ReportPrompts;
 using BlOrders2023.Core.Data;
 using BlOrders2023.Reporting.ReportClasses;
 

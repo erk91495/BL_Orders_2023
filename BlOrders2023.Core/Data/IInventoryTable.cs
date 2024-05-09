@@ -20,8 +20,8 @@ public interface IInventoryTable
     public Task<IEnumerable<InventoryTotalItem>> GetInventoryTotalItemsAsync(IEnumerable<int> ids = null);
     public Task UpsertAdjustmentAsync(InventoryAdjustmentItem item);
     public Task UpsertAdjustmentsAsync(IEnumerable<InventoryAdjustmentItem> inventory);
-    public Task AdjustInventoryAsync(InventoryTotalItem item);
-    public Task AdjustInventoryAsync(int id, int adjustment);
+    public Task AdjustInventoryAsync(InventoryTotalItem item, string? reason);
+    public Task AdjustInventoryAsync(int id, int adjustment, string? reason);
     public bool InsertLiveInventoryItem(LiveInventoryItem item);
     public Task<bool> InsertLiveInventoryItemAsync(LiveInventoryItem item);
     public bool DeleteLiveInventoryItem(LiveInventoryItem item);
@@ -39,4 +39,5 @@ public interface IInventoryTable
     public IEnumerable<LiveInventoryRemovalReason> GetLiveInventoryRemovalReasons();
     public Task<IEnumerable<LiveInventoryRemovalReason>> GetLiveInventoryRemovalReasonsAsync();
     public Task InsertLiveInventoryRemovalLogItemAsync(LiveInventoryRemovalLogItem removalEntry);
+    public Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsByScanDateAsync(DateTimeOffset startDate, DateTimeOffset endDate);
 }

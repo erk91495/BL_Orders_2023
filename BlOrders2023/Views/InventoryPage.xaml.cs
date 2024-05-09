@@ -113,6 +113,7 @@ public sealed partial class InventoryPage : Page
             {
                 await ShowLockedoutDialog("Complete", $"All items removed");
             }
+            await ViewModel.QueryInventory();
         }
     }
 
@@ -129,7 +130,7 @@ public sealed partial class InventoryPage : Page
         var res = await contentDialog.ShowAsync();
         if(res == ContentDialogResult.Primary)
         {
-            await ViewModel.ZeroLiveInventoryAsync();
+            //await ViewModel.ZeroLiveInventoryAsync();
         }
     }
     private async void ReloadInventoryFlyout_Click(object sender, RoutedEventArgs e)

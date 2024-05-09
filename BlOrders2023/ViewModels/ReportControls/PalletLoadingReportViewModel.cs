@@ -12,7 +12,6 @@ using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
-using static BlOrders2023.Models.ReportPrompts;
 
 namespace BlOrders2023.ViewModels.ReportControls;
 internal class PalletLoadingReportViewModel : IReportViewModel<PalletLoadingReport>

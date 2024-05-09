@@ -17,6 +17,7 @@ public class InventoryAdjustmentItem: ObservableObject
     private int _manualAdjustment;
     private int _lastAdjustment;
     private short? _sortIndex;
+    private string? _lastAdjustmentReason;
 
     [Key]
     [Required]
@@ -42,6 +43,11 @@ public class InventoryAdjustmentItem: ObservableObject
     {
         get => _sortIndex; 
         set => SetProperty(ref _sortIndex, value);
+    }
+    public string? LastAdjustmentReason
+    {
+        get => _lastAdjustmentReason;
+        set => SetProperty(ref _lastAdjustmentReason, value);
     }
 
     [ForeignKey(nameof(ProductID))]

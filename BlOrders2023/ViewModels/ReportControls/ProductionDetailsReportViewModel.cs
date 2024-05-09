@@ -9,20 +9,21 @@ using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
 
 namespace BlOrders2023.ViewModels.ReportControls;
-internal class FrozenOrdersReportViewModel : IReportViewModel<FrozenOrdersReport>
+
+class ProductionDetailsReportViewModel : IReportViewModel<ProductionDetailsReport>
 {
-    private readonly IBLDatabase _db = App.GetNewDatabase();
-    public ReportCategory ReportCategories => ReportCategory.Orders;
+    private readonly IBLDatabase _db = App.GetNewDatabase(); 
+    public string ReportDescription => "Lists items scanned into Inventory by scan date";
+
+    public ReportCategory ReportCategories => ReportCategory.Production;
 
     public List<PromptTypes> Prompts => [PromptTypes.DateRange];
-
-    public string ReportDescription => "Gets frozen orders for the given date range.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {
         DateTimeOffset startDate = (DateTimeOffset)userInputs[0];
         DateTimeOffset endDate = (DateTimeOffset)userInputs[1];
-        var values = await _db.Orders.GetFrozenOrdersByPickupDateAsync(startDate, endDate);
-        return [values, startDate, endDate];
+        var res = await _db.Inventory.GetInventoryItemsByScanDateAsync(startDate, endDate);
+        return [res, startDate, endDate];
     }
 }

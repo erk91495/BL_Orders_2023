@@ -121,13 +121,13 @@ public class InventoryAdjustmentsPageViewModel : ViewModelBase
         ///CalculateAdjustments();
         foreach (var item in Inventory)
         {
-            await _db.Inventory.AdjustInventoryAsync(item);
+            await _db.Inventory.AdjustInventoryAsync(item,"Manual Adjustment From Adjustments Page");
         }
     }
 
     internal async Task SaveAsync(InventoryTotalItem item)
     {
-        await _db.Inventory.AdjustInventoryAsync(item);
+        await _db.Inventory.AdjustInventoryAsync(item, "Manual Adjustment From Adjustments Page");
     }
     #endregion Methods
 

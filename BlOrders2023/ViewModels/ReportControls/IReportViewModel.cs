@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using BlOrders2023.Models;
 using BlOrders2023.Reporting;
 using BlOrders2023.Reporting.ReportClasses;
-using static BlOrders2023.Models.ReportPrompts;
-using BlOrders2023.Reporting;
 
 namespace BlOrders2023.ViewModels.ReportControls;
 public interface IReportViewModel<T>

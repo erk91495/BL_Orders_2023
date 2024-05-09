@@ -38,6 +38,7 @@
                 <sf:GridNumericColumn MappingName="StartingQuantity" HeaderText="Starting Value"/>
                 <sf:GridNumericColumn MappingName="AdjustmentQuantity" HeaderText="Adjustment"/>
                 <sf:GridNumericColumn MappingName="EndingQuantity" HeaderText="Ending Value"/>
+                <sf:GridTextColumn MappingName="AdjustmentReason" HeaderText="Reason"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
     </Grid>

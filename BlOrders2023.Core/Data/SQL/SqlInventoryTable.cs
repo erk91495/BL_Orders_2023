@@ -71,9 +71,9 @@ internal class SqlInventoryTable : IInventoryTable
         }
         await _db.SaveChangesAsync();
     }
-    public async Task AdjustInventoryAsync(InventoryTotalItem item)
+    public async Task AdjustInventoryAsync(InventoryTotalItem item, string? reason)
     {
-        var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {item.ProductID}, {item.LastAdjustment}");
+        var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {item.ProductID}, {item.LastAdjustment}, {reason}");
         if (res == 0)
         {
             _db.InventoryAdjustments.Add(new InventoryAdjustmentItem()
@@ -87,9 +87,9 @@ internal class SqlInventoryTable : IInventoryTable
         }
     }
 
-    public async Task AdjustInventoryAsync(int ProductID, int LastAdjustment)
+    public async Task AdjustInventoryAsync(int ProductID, int LastAdjustment, string? reason)
     {
-        var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {ProductID}, {LastAdjustment}");
+        var res = await _db.Database.ExecuteSqlAsync($"[dbo].[usp_AdjustInventory] {ProductID}, {LastAdjustment}, {reason}");
         if (res == 0)
         {
             _db.InventoryAdjustments.Add(new InventoryAdjustmentItem()
@@ -105,7 +105,7 @@ internal class SqlInventoryTable : IInventoryTable
 
     public async Task<IEnumerable<InventoryAuditItem>> GetInventoryAuditLogAsync()
     {
-        return await _db.InventoryAuditItems.ToListAsync();
+        return await _db.InventoryAuditItems.OrderByDescending(i => i.TransactionDate).ToListAsync();
     }
     #endregion Inventory Adjustments
 
@@ -228,6 +228,11 @@ internal class SqlInventoryTable : IInventoryTable
     public async Task ZeroLiveInventoryAsync()
     {
         await _db.Database.ExecuteSqlAsync($"[dbo].[usp_ZeroLiveInventory]");
+    }
+
+    public async Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsByScanDateAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+    {
+        return await _db.LiveInventoryItems.Where(i => i.ScanDate >= startDate && i .ScanDate <= endDate).OrderBy(i => i.ScanDate).ToListAsync();
     }
     #endregion Live Inventory Items
 
