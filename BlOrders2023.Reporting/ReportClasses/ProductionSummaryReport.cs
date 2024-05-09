@@ -86,7 +86,7 @@ public class ProductionSummaryReport : ReportBase
 
                 foreach (var items in _items.GroupBy(i => i.ScanDate.Value.Date))
                 {
-                    table.Cell().ColumnSpan(5).Element(GroupHeader).Text($"Scanned On: {items.Key:d/M/yy}").Style(tableTextStyle);
+                    table.Cell().ColumnSpan(5).Element(GroupHeader).Text($"Scanned On: {items.Key:M/d/yy}").Style(tableTextStyle);
 
                     static IContainer GroupHeader(IContainer container)
                     {
