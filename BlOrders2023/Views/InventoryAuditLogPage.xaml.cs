@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using BlOrders2023.Models;
+using BlOrders2023.Reporting;
+using BlOrders2023.Reporting.ReportClasses;
+using BlOrders2023.Services;
 using BlOrders2023.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -30,5 +34,20 @@ public sealed partial class InventoryAuditLogPage : Page
     {
         this.InitializeComponent();
         ViewModel = App.GetService<InventoryAuditLogPageViewModel>();
+    }
+
+    private async void PrintButton_Click(object sender, RoutedEventArgs e)
+    {
+        var items = AuditGrid.View.Records.Select(e => e.Data as InventoryAuditItem).ToList();
+        var reportGenerator = new ReportGenerator(App.GetNewDatabase().CompanyInfo);
+        var report = reportGenerator.GetReport(typeof(InventoryAdjustmentsAuditReport),[items]);
+        
+        var filePath = await reportGenerator.GenerateReportPDFAsync(report);
+        Windows.System.LauncherOptions options = new()
+        {
+            ContentType = "application/pdf"
+        };
+        _ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
+
     }
 }
