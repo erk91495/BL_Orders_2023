@@ -12,7 +12,7 @@
   <Identity
     Name="BIGTurkey"
     Publisher="CN=BL"
-    Version="3.1.7.0" />
+    Version="3.2.0.0" />
   <Properties>
     <DisplayName>Big Turkey</DisplayName>
     <PublisherDisplayName>Eric</PublisherDisplayName>
