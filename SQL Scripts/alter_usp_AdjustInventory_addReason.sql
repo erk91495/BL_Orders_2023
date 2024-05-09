@@ -16,7 +16,8 @@ GO
 ALTER PROCEDURE [dbo].[usp_AdjustInventory]
 	-- Add the parameters for the stored procedure here
 	@ProductID int,
-	@Adjustment int
+	@Adjustment int,
+	@Reason nvarchar(255) NULL
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -25,7 +26,8 @@ BEGIN
     -- Insert statements for procedure here
 	UPDATE tbl_InventoryAdjustments SET 
 		ManualAdjustments = @Adjustment + ManualAdjustments
-		,LastAdjustment = @Adjustment
+		,LastAdjustment = @Adjustment,
+		LastAdjustmentReason = @Reason
 	WHERE ProductID = @ProductID
 END
 GO
