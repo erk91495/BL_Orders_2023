@@ -12,6 +12,11 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <muxc:ProgressBar
                x:Name="progressBar"
                HorizontalAlignment="Stretch"
@@ -20,16 +25,15 @@
                IsIndeterminate="True"
                Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
                Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-               RelativePanel.AlignRightWithPanel="True"
-               RelativePanel.AlignLeftWithPanel="True"
-               RelativePanel.AlignTopWithPanel="True"/>
+               Grid.Row="0"/>
         <sf:SfDataGrid x:Name="AuditGrid"
                        ItemsSource="{x:Bind ViewModel.AuditLog, Mode=OneWay}"
                        AutoGenerateColumns="False"
                        IsReadOnly="True"
                        ColumnWidthMode="AutoWithLastColumnFill"
                        AllowFiltering="True"
-                       AllowSorting="True">
+                       AllowSorting="True"
+                       Grid.Row="1">
             <sf:SfDataGrid.Columns>
                 <sf:GridDateColumn MappingName="TransactionDate" HeaderText="Transaction Date"/>
                 <sf:GridTextColumn MappingName="WorkstationName" HeaderText="Worksation"/>
@@ -41,5 +45,6 @@
                 <sf:GridTextColumn MappingName="AdjustmentReason" HeaderText="Reason"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
+        <Button Content="Print" Click="PrintButton_Click" Grid.Row="2" HorizontalAlignment="Right" Width="100"/>
     </Grid>
 </Page>
