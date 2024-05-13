@@ -319,6 +319,8 @@ public sealed partial class ReportsPage : Page
                     var res = await d.ShowAsync();
                     return [res == ContentDialogResult.Primary];
                 }
+            case PromptTypes.None:
+                return [];
             default:
                 throw new UserCanceledException();
         }
