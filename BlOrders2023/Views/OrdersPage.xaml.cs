@@ -24,6 +24,7 @@ using CommunityToolkit.WinUI;
 using System.Diagnostics;
 using BlOrders2023.Core.Contracts.Services;
 using Microsoft.IdentityModel.Tokens;
+using BlOrders2023.Reporting.ReportClasses;
 
 namespace BlOrders2023.Views;
 
@@ -432,7 +433,7 @@ public sealed partial class OrdersPage : Page
             }
             else if(function == ReportFunctions.Email ) 
             {
-                var shippingListPath = await reportGenerator.GenerateReportPDFAsync(reportGenerator.GetShippingList(ViewModel.SelectedOrder));
+                var shippingListPath = await reportGenerator.GenerateReportPDFAsync(reportGenerator.GetReport(typeof(ShippingList), [ViewModel.SelectedOrder]));
                 var invoicePath = await reportGenerator.GenerateReportPDFAsync(invoiceReport);
                 var selectedOrder = ViewModel.SelectedOrder;
                 if(!selectedOrder.Customer.Email.IsNullOrEmpty())
@@ -461,7 +462,7 @@ public sealed partial class OrdersPage : Page
 
     private async Task PrintOrderAsync(bool autoprint = true)
     {
-        var report =  reportGenerator.GetPickList(ViewModel.SelectedOrder);
+        var report =  reportGenerator.GetReport(typeof(PickList), [ViewModel.SelectedOrder]);
 
         if(autoprint)
         {
@@ -487,7 +488,7 @@ public sealed partial class OrdersPage : Page
 
     private async Task PrintShippingList(bool autoprint = true)
     {
-        var report = reportGenerator.GetShippingList(ViewModel.SelectedOrder);
+        var report = reportGenerator.GetReport(typeof(ShippingList), [ViewModel.SelectedOrder]);
 
 
         if (autoprint)
@@ -552,7 +553,7 @@ public sealed partial class OrdersPage : Page
         {
             IPalletizer palletizer = new BoxPalletizer(new() { SingleItemPerPallet = ViewModel.SelectedOrder.Customer.SingleProdPerPallet ?? false }, ViewModel.SelectedOrder);
             var pallets = await palletizer.PalletizeAsync();
-            var filePath = reportGenerator.GetPalletLoadingReport(ViewModel.SelectedOrder, pallets);
+            var filePath = reportGenerator.GetReport(typeof(PalletLoadingReport), [ViewModel.SelectedOrder, pallets]);
 
             if(autoprint)
             {

@@ -10,6 +10,7 @@ using BlOrders2023.Exceptions;
 using BlOrders2023.Models;
 using BlOrders2023.Models.Enums;
 using BlOrders2023.Reporting;
+using BlOrders2023.Reporting.ReportClasses;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.IdentityModel.Tokens;
 
@@ -438,14 +439,14 @@ public class OrderAllocator : IAllocatorService
     public async Task<string> GenerateAllocationSummary() 
     {
         ReportGenerator generator = new(_db.CompanyInfo);
-        var report = generator.GetAllocationSummaryReport(Orders, _config.AllocatorMode, AllocationTime);
+        var report = generator.GetReport(typeof(AllocationSummaryReport), [Orders, _config.AllocatorMode, AllocationTime]);
         return await generator.GenerateReportPDFAsync(report);
     }
 
     public async Task<string> GenerateAllocationDetails()
     {
         ReportGenerator generator = new(_db.CompanyInfo);
-        var report = generator.GetAllocationDetailsReport(Orders, _allocationGroups, _config.AllocatorMode, AllocationTime);
+        var report = generator.GetReport(typeof(AllocationDetailsReport), [Orders, _allocationGroups, _config.AllocatorMode, AllocationTime]);
         return await generator.GenerateReportPDFAsync(report);
     }
 }

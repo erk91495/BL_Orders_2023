@@ -9,6 +9,7 @@ using BlOrders2023.Contracts.Services;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
 using BlOrders2023.Reporting;
+using BlOrders2023.Reporting.ReportClasses;
 using BlOrders2023.Services;
 using BlOrders2023.ViewModels;
 using Microsoft.IdentityModel.Tokens;
@@ -161,7 +162,7 @@ public sealed partial class InventoryAdjustmentsPage : Page
                 item.Total += item.LastAdjustment;
             }
             var generator = new ReportGenerator(App.CompanyInfo);
-            var report = generator.GetCurrentInventoryReport(ViewModel.Inventory);
+            var report = generator. GetReport(typeof(CurrentInventoryReport), [ViewModel.Inventory]);
             ReportPrinterService printerService = new(report);
             _ = printerService.PrintAsync();
             ContentDialog contentDialog = new()

@@ -20,6 +20,7 @@ using BlOrders2023.Core.Contracts.Services;
 using Syncfusion.UI.Xaml.DataGrid;
 using Microsoft.UI.Xaml.Input;
 using NLog;
+using BlOrders2023.Reporting.ReportClasses;
 
 namespace BlOrders2023.Views;
 
@@ -394,12 +395,12 @@ public sealed partial class FillOrdersPage : Page
             var printer = new ReportPrinterService(report);
             await printer.PrintAsync(printSettings);
 
-            var filePath = reportGenerator.GetShippingList(ViewModel.Order);
+            var filePath = await reportGenerator.GenerateReportPDFAsync(reportGenerator.GetReport(typeof(ShippingList), [ViewModel.Order]));
             Windows.System.LauncherOptions options = new()
             {
                 ContentType = "application/pdf"
             };
-            _ = Windows.System.Launcher.LaunchUriAsync(new Uri(await reportGenerator.GenerateReportPDFAsync(filePath)), options);
+            _ = Windows.System.Launcher.LaunchUriAsync(new Uri(filePath), options);
 
 
             if (ViewModel.OrderStatus == OrderStatus.Filling || ViewModel.OrderStatus == OrderStatus.Filled)
@@ -429,7 +430,7 @@ public sealed partial class FillOrdersPage : Page
                     return;
                 }
             }
-            var filePath = reportGenerator.GetPickList(ViewModel.Order);
+            var filePath = reportGenerator.GetReport(typeof(PickList), [ViewModel.Order]);
 
             //Windows.System.LauncherOptions options = new()
             //{
@@ -499,7 +500,7 @@ public sealed partial class FillOrdersPage : Page
             {
                 IPalletizer palletizer = new BoxPalletizer(new(){SingleItemPerPallet = ViewModel.Customer.SingleProdPerPallet ?? false}, ViewModel.Order);
                 var pallets = await palletizer.PalletizeAsync();
-                var report = reportGenerator.GetPalletLoadingReport(ViewModel.Order, pallets);
+                var report = reportGenerator .GetReport(typeof(PalletLoadingReport), [ViewModel.Order, pallets]);
 
                 PrinterSettings printSettings = new();
                 printSettings.Copies = 1;

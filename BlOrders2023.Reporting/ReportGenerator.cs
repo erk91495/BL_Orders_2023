@@ -51,121 +51,121 @@ public class ReportGenerator
         return new WholesaleInvoice(CompanyInfo, order, categoriesToTotal);
     }
 
-    public IReport GetWholesaleOrderPickupRecap(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetWholesaleOrderPickupRecap(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new WholesaleOrderPickupRecap(CompanyInfo, orders, startDate, endDate);
     }
 
-    public IReport GetWholesaleOrderTotals(IEnumerable<OrderTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetWholesaleOrderTotals(IEnumerable<OrderTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new WholesaleOrderTotals(CompanyInfo, items, startDate, endDate);
     }
-    public IReport GetWholesalePaymentsReport(IEnumerable<Payment> payments, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetWholesalePaymentsReport(IEnumerable<Payment> payments, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new WholesalePaymentsReport(CompanyInfo, payments, startDate, endDate);
     }
 
-    public IReport GetUnpaidInvoicesReport(IEnumerable<Order> orders)
+    private IReport GetUnpaidInvoicesReport(IEnumerable<Order> orders)
     {
         return new UnpaidInvoicesReport(CompanyInfo, orders);
     }
 
-    public IReport GetShippingList(Order order)
+    private IReport GetShippingList(Order order)
     {
         return new ShippingList(CompanyInfo, order);
     }
 
-    public IReport GetAggregateInvoiceReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetAggregateInvoiceReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new AggregateInvoiceReport(CompanyInfo, orders, startDate, endDate);
     }
 
-    public IReport GetOutstandingBalancesReport(IEnumerable<Order> orders)
+    private IReport GetOutstandingBalancesReport(IEnumerable<Order> orders)
     {
         return new OutstandingBalancesReport(CompanyInfo, orders);
     }
 
-    public IReport GetQuarterlySalesReport(IEnumerable<ProductTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetQuarterlySalesReport(IEnumerable<ProductTotalsItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new QuarterlySalesReport(CompanyInfo, items, startDate, endDate);
     }
 
-    public IReport GetFrozenOrdersReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetFrozenOrdersReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new FrozenOrdersReport(CompanyInfo, orders, startDate, endDate);
     }
 
-    public IReport GetPickList(Order order)
+    private IReport GetPickList(Order order)
     {
         return new PickList(CompanyInfo, order);
     }
 
-    public IReport GetPalletLoadingReport(Order order, IEnumerable<Pallet> pallets)
+    private IReport GetPalletLoadingReport(Order order, IEnumerable<Pallet> pallets)
     {
         return new PalletLoadingReport(CompanyInfo, order, pallets);
     }
 
-    public IReport GetAllocationSummaryReport(IEnumerable<Order> orders, AllocatorMode mode, DateTime allocationTime)
+    private IReport GetAllocationSummaryReport(IEnumerable<Order> orders, AllocatorMode mode, DateTime allocationTime)
     {
         return new AllocationSummaryReport(CompanyInfo, orders, mode, allocationTime);
     }
 
-    public IReport GetAllocationDetailsReport(IEnumerable<Order> orders, IEnumerable<AllocationGroup> allocationGroups, AllocatorMode mode, DateTime allocationTime)
+    private IReport GetAllocationDetailsReport(IEnumerable<Order> orders, IEnumerable<AllocationGroup> allocationGroups, AllocatorMode mode, DateTime allocationTime)
     {
         return new AllocationDetailsReport(CompanyInfo, orders, allocationGroups, mode, allocationTime);
     }
 
-    public IReport GetCurrentInventoryReport(IEnumerable<InventoryTotalItem> inventory)
+    private IReport GetCurrentInventoryReport(IEnumerable<InventoryTotalItem> inventory)
     {
         return new CurrentInventoryReport(CompanyInfo, inventory); 
     }
 
-    public IReport GetInventoryDetailsReport(IEnumerable<InventoryTotalItem> inventory, IEnumerable<Order> orders, Dictionary<int, int> allocatedNotReceived, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetInventoryDetailsReport(IEnumerable<InventoryTotalItem> inventory, IEnumerable<Order> orders, Dictionary<int, int> allocatedNotReceived, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new InventoryDetailsReport(CompanyInfo, inventory, orders, allocatedNotReceived, startDate, endDate);
     }
 
-    public IReport GetOutOfStateSalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetOutOfStateSalesReport(IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new OutOfStateSalesReport(CompanyInfo, orders, startDate, endDate);
     }
 
-    public IReport GetBillOfLadingReport(IEnumerable<Order> orders, IEnumerable<BillOfLadingItem> items, WholesaleCustomer customer, string carrierName, string trailerNumber, string trailerSeal, DateTime? appointmentDate)
+    private IReport GetBillOfLadingReport(IEnumerable<Order> orders, IEnumerable<BillOfLadingItem> items, WholesaleCustomer customer, string carrierName, string trailerNumber, string trailerSeal, DateTime? appointmentDate)
     {
         return new BillOfLadingReport(CompanyInfo, orders, items, customer, carrierName, trailerNumber, trailerSeal, appointmentDate);
     }
 
-    public IReport GetShippingItemAuditReport(IEnumerable<ShippingItem> items, ShippingItem item, IList<string> fieldsToMatch, DateTime? startDate, DateTime? endDate)
+    private IReport GetShippingItemAuditReport(IEnumerable<ShippingItem> items, ShippingItem item, IList<string> fieldsToMatch, DateTime? startDate, DateTime? endDate)
     {
         return new ShippingItemAuditReport(CompanyInfo, items, item, fieldsToMatch, startDate, endDate);
     }
 
-    public IReport GetProductCategoryTotalsReport(IEnumerable<OrderItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetProductCategoryTotalsReport(IEnumerable<OrderItem> items, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new ProductCategoryTotalsReport(CompanyInfo, items, startDate, endDate);
     }
 
-    public IReport GetProductCategoryDetailsReport(IEnumerable<OrderItem> items, IEnumerable<Product> products, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetProductCategoryDetailsReport(IEnumerable<OrderItem> items, IEnumerable<Product> products, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new ProductCategoryDetailsReport(CompanyInfo, items, products, startDate, endDate);
     }
 
-    public IReport GetWholesaleInvoiceTotalsReport(WholesaleCustomer customer, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetWholesaleInvoiceTotalsReport(WholesaleCustomer customer, IEnumerable<Order> orders, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new WholesaleInvoiceTotalsReport(CompanyInfo, customer, orders, startDate, endDate);
     }
 
-    public IReport GetHistoricalQuarterlySalesReport(List<IEnumerable<ProductTotalsItem>> totals, DateTime startDate, DateTime endDate)
+    private IReport GetHistoricalQuarterlySalesReport(List<IEnumerable<ProductTotalsItem>> totals, DateTime startDate, DateTime endDate)
     {
         return new HistoricalQuarterlySalesReport(CompanyInfo, totals, startDate, endDate);
     }
 
-    public IReport GetHistoricalProductCategoryTotalsReport(IEnumerable<ProductCategory> categories, IEnumerable<IEnumerable<OrderItem>>items, DateTimeOffset startDate, DateTimeOffset endDate)
+    private IReport GetHistoricalProductCategoryTotalsReport(IEnumerable<ProductCategory> categories, IEnumerable<IEnumerable<OrderItem>>items, DateTimeOffset startDate, DateTimeOffset endDate)
     {
         return new HistoricalProductCategoryTotalsReport(CompanyInfo, categories, items, startDate, endDate);
     }
 
-    public IReport GetYieldStudyReport(IEnumerable<LiveInventoryItem> items, DateTime productionDate)
+    private IReport GetYieldStudyReport(IEnumerable<LiveInventoryItem> items, DateTime productionDate)
     {
         return new YieldStudyReport(CompanyInfo, items, productionDate);
     }

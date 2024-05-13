@@ -31,6 +31,7 @@ using sf = Syncfusion.UI.Xaml.Core;
 using Windows.UI.ViewManagement;
 using System.Drawing;
 using Microsoft.UI.Xaml.Media;
+using BlOrders2023.Reporting.ReportClasses;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -673,7 +674,7 @@ public sealed partial class OrderDetailsPage : Page
             var printer = new ReportPrinterService(report);
             await printer.PrintAsync(printSettings);
 
-            var filePath = await reportGenerator.GenerateReportPDFAsync( reportGenerator.GetShippingList(ViewModel.Order));
+            var filePath = await reportGenerator.GenerateReportPDFAsync( reportGenerator.GetReport(typeof(ShippingList), [ViewModel.Order]));
             Windows.System.LauncherOptions options = new()
             {
                 ContentType = "application/pdf"
@@ -713,7 +714,7 @@ public sealed partial class OrderDetailsPage : Page
                     return;
                 }
             }
-            var report = reportGenerator.GetPickList(ViewModel.Order);
+            var report = reportGenerator.GetReport(typeof(PickList),[ViewModel.Order]);
 
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;
@@ -775,7 +776,7 @@ public sealed partial class OrderDetailsPage : Page
         {
             BoxPalletizer palletizer = new(new() { SingleItemPerPallet = ViewModel.Customer.SingleProdPerPallet ?? false }, ViewModel.Order);
             var pallets = await palletizer.PalletizeAsync();
-            var report = reportGenerator.GetPalletLoadingReport(ViewModel.Order, pallets);
+            var report = reportGenerator.GetReport(typeof(PalletLoadingReport), [ViewModel.Order, pallets]);
 
             PrinterSettings printSettings = new();
             printSettings.Copies = 1;
