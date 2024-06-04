@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace BlOrders2023.Core.Data.SQL;
 
