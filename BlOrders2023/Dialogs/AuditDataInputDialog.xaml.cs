@@ -123,6 +123,10 @@ public sealed partial class AuditDataInputDialog : ContentDialog, INotifyPropert
         {
             boxes.Add("DateRange");
         }
+        if(ckbLotCode.IsChecked == true)
+        {
+            boxes.Add("LotCode");
+        }
         return boxes;
     }
 
@@ -170,7 +174,8 @@ public sealed partial class AuditDataInputDialog : ContentDialog, INotifyPropert
                 || (ckbSerial.IsChecked ?? false)
                 || (ckbPackDate.IsChecked ?? false)
                 || (ckbScanline.IsChecked ?? false)
-                || (ckbDateRange.IsChecked ?? false);
+                || (ckbDateRange.IsChecked ?? false)
+                || (ckbLotCode.IsChecked ?? false);
             noErrors = dateRangeOk && scanlineOk && serialOk && someMatchChecked;
             if (!noErrors)
             {

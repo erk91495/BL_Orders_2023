@@ -106,20 +106,21 @@ public class ShippingItemAuditReport : ReportBase
 
     protected override void ComposeContent(IContainer container)
     {
-        var groupedItems = _shippingItems.GroupBy(i => i.Order.Customer);
+        var groupedItems = _shippingItems.GroupBy(i => i.Order?.Customer);
         container.Column(column => {
             column.Item().Table(table =>
             {
                 table.ColumnsDefinition(column =>
                 {
-                    column.RelativeColumn(2);
-                    column.RelativeColumn(2);
+                    column.RelativeColumn(1.5f);
+                    column.RelativeColumn(1.5f);
                     column.RelativeColumn(1);
                     column.RelativeColumn(11);
                     column.RelativeColumn(12);
                     column.RelativeColumn(4);
-                    column.RelativeColumn(4);
-                    column.RelativeColumn(4);
+                    column.RelativeColumn(5);
+                    column.RelativeColumn(3);
+                    column.RelativeColumn(3);
                 });
 
                 //table.Header(header =>
@@ -132,7 +133,7 @@ public class ShippingItemAuditReport : ReportBase
 
                 foreach (var group in groupedItems)
                 {
-                    table.Cell().ColumnSpan(8).Element(SubHeaderCellStyle).Text($"{group.Key}").Style(tableHeaderStyle);
+                    table.Cell().ColumnSpan(9).Element(SubHeaderCellStyle).Text($"{group.Key}").Style(tableHeaderStyle);
                     var groupedByID = group.ToList().GroupBy(i => i.OrderID);
                     foreach (var order in groupedByID )
                     {
@@ -141,7 +142,8 @@ public class ShippingItemAuditReport : ReportBase
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"ID").Style(tableTextStyle);
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Product Name").Style(tableTextStyle);
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Scanline").Style(tableTextStyle);
-                        table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Package Weight").Style(tableTextStyle);
+                        table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Pack Wt.").Style(tableTextStyle).AlignRight();
+                        table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"LotCode").Style(tableTextStyle).AlignCenter();
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Pack Date").Style(tableTextStyle);
                         table.Cell().ColumnSpan(1).Element(SubHeaderCellStyle).Text($"Scan Date").Style(tableTextStyle);
                         float totalWt = 0;
@@ -152,7 +154,8 @@ public class ShippingItemAuditReport : ReportBase
                             table.Cell().Element(MainTableCellStyle).Text($"{item.ProductID}").Style(tableTextStyle);
                             table.Cell().Element(MainTableCellStyle).Text($"{item.Product.ProductName}").Style(tableTextStyle);
                             table.Cell().Element(MainTableCellStyle).Text($"{item.Scanline}").Style(tableTextStyle);
-                            table.Cell().Element(MainTableCellStyle).Text($"{item.PickWeight:N2}").Style(tableTextStyle);
+                            table.Cell().Element(MainTableCellStyle).Text($"{item.PickWeight:N2}").Style(tableTextStyle).AlignRight();
+                            table.Cell().Element(MainTableCellStyle).Text($"{item.LotCode:N2}").Style(tableTextStyle).AlignCenter();
                             totalWt += item.PickWeight ?? 0;
                             var packDateString = item.PackDate.HasValue ? item.PackDate.Value.ToShortDateString() : string.Empty;
                             table.Cell().Element(MainTableCellStyle).Text($"{packDateString}").Style(tableTextStyle);
@@ -160,8 +163,8 @@ public class ShippingItemAuditReport : ReportBase
                             table.Cell().Element(MainTableCellStyle).Text($"{scanDateString}").Style(tableTextStyle);
                         }
                         table.Cell().ColumnSpan(5);
-                        table.Cell().Element(SubTotalCellStyle).Text($"{totalWt:N2}").Style(tableTextStyle).SemiBold();
-                        table.Cell().ColumnSpan(2);
+                        table.Cell().Element(SubTotalCellStyle).Text($"{totalWt:N2}").Style(tableTextStyle).SemiBold().AlignRight();
+                        table.Cell().ColumnSpan(3);
                         static IContainer SubTotalCellStyle(IContainer container)
                         {
                             return container.PaddingVertical(2);

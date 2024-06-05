@@ -50,19 +50,21 @@
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
                 <CheckBox x:Name="ckbProductID" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Product ID" Grid.Column="0" Grid.Row="0"/>
                 <CheckBox x:Name="ckbSerial" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Serial" Grid.Column="1" Grid.Row="0"/>
                 <CheckBox x:Name="ckbPackDate" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Pack Date" Grid.Column="0" Grid.Row="1"/>
                 <CheckBox x:Name="ckbScanline" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Scanline" Grid.Column="1" Grid.Row="1"/>
-                <CheckBox x:Name="ckbDateRange" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Pack Date Range" Grid.Column="0" Grid.Row="2"/>
+                <CheckBox x:Name="ckbLotCode" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Lot Code" Grid.Column="0" Grid.Row="2"/>
+                <CheckBox x:Name="ckbDateRange" Checked="ckb_Checked" Unchecked="ckb_Checked" Content="Pack Date Range" Grid.Column="0" Grid.Row="3"/>
                 <sf:SfCalendarDateRangePicker x:Name="DateRangePicker" 
                                               PlaceholderText="Select a date range" 
                                               SelectedRange="{x:Bind DateRange, Mode=TwoWay}"
                                               VerticalAlignment="Center"
                                               DropDownPlacement="Right"
                                               Grid.Column="1"
-                                              Grid.Row="2"/>
+                                              Grid.Row="3"/>
             </Grid>
         </StackPanel>
     </StackPanel>
