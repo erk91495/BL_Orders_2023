@@ -18,5 +18,6 @@ public interface IShipDetailsTable
     public IEnumerable<ShippingItem> GetShippingItems(DateTimeOffset startDate, DateTimeOffset endDate);
     public ShippingItem? Get(string scanline);
     public ShippingItem? Get(int productID, string serial);
-    public IEnumerable<ShippingItem> GetShippingItems(ShippingItem item, bool? matchProductID, bool? matchSerial, bool? matchPackDate, bool? matchScanline, DateTime? startDate, DateTime? endDate);
+    public ShippingItem? GetByLot(string lotCode);
+    public IEnumerable<ShippingItem> GetShippingItems(ShippingItem item, bool? matchProductID, bool? matchSerial, bool? matchPackDate, bool? matchScanline, bool? matchLot, DateTime? startDate, DateTime? endDate);
 }

@@ -91,7 +91,12 @@ internal class SqlShipDetailsTable : IShipDetailsTable
         
     }
 
-    public IEnumerable<ShippingItem> GetShippingItems(ShippingItem item, bool? matchProductID, bool? matchSerial, bool? matchPackDate, bool? matchScanline, DateTime? startDate, DateTime? endDate)
+    public ShippingItem? GetByLot(string lotCode)
+    {
+        return _db.ShippingItems.Where(s => s.LiveInventoryItem != null && s.LiveInventoryItem.Lot.Lot.Equals(lotCode)).First();
+    }
+
+    public IEnumerable<ShippingItem> GetShippingItems(ShippingItem item, bool? matchProductID, bool? matchSerial, bool? matchPackDate, bool? matchScanline, bool? matchLot, DateTime? startDate, DateTime? endDate)
     {
         var predicate = PredicateBuilder.New<ShippingItem>(true);
         if(matchProductID == true)
@@ -110,6 +115,10 @@ internal class SqlShipDetailsTable : IShipDetailsTable
         if (matchScanline == true)
         {
             predicate.And(i => i.Scanline == item.Scanline);
+        }
+        if (matchLot == true) 
+        {
+            predicate.And(i => i.LotCode == item.LotCode);
         }
         if(startDate != null && endDate != null)
         {

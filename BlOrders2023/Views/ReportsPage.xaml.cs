@@ -20,6 +20,8 @@ using BlOrders2023.Exceptions;
 using Microsoft.VisualBasic.Logging;
 using BlOrders2023.ViewModels.ReportControls;
 using System.Reflection;
+using Microsoft.UI.Xaml;
+using System.Diagnostics.Eventing.Reader;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -254,6 +256,7 @@ public sealed partial class ReportsPage : Page
                     {
                         var fieldsToMatch = dialog.GetCheckedBoxes();
                         ShippingItem? item = null;
+
                         if (dialog.InputType == InputTypes.Scanline)
                         {
                             item = ViewModel.GetShippingItem(dialog.Scanline);
@@ -261,6 +264,11 @@ public sealed partial class ReportsPage : Page
                         else if (dialog.InputType == InputTypes.Serial && dialog.ProductID != null)
                         {
                             item = ViewModel.GetShippingItem((int)dialog.ProductID, dialog.Serial);
+                        }
+                        else if(dialog.InputType == InputTypes.LotCode)
+                        {
+                            item = ViewModel.GetShippingItemByLot(dialog.Scanline);
+                            fieldsToMatch.Add("LotCode");
                         }
                         if (item != null)
                         {
@@ -274,7 +282,7 @@ public sealed partial class ReportsPage : Page
                                 endDate = new DateTime(eDate.Year, eDate.Month, eDate.Day, 23, 59, 59, 999, DateTimeKind.Local);
                             }
                             var items = ViewModel.GetShippingItems(item, fieldsToMatch.Contains("ProductID"), fieldsToMatch.Contains("Serial"),
-                                fieldsToMatch.Contains("PackDate"), fieldsToMatch.Contains("Scanline"), startDate, endDate);
+                                fieldsToMatch.Contains("PackDate"), fieldsToMatch.Contains("Scanline"), fieldsToMatch.Contains("LotCode"), startDate, endDate);
                             if (!items.IsNullOrEmpty())
                             {
                                 return [items, item, fieldsToMatch, startDate, endDate];

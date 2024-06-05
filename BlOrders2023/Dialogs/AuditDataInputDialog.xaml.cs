@@ -29,6 +29,8 @@ public enum InputTypes
     Scanline,
     [Description("ID and Serial")]
     Serial,
+    [Description("Lot Code")]
+    LotCode,
 }
 
 public sealed partial class AuditDataInputDialog : ContentDialog, INotifyPropertyChanged
@@ -158,42 +160,53 @@ public sealed partial class AuditDataInputDialog : ContentDialog, INotifyPropert
 
     private bool AllNeededInfoinput()
     {
-        var dateRangeOk = ckbDateRange.IsChecked == true ? DateRange != null && DateRange.StartDate != null && DateRange.EndDate != null : true;
-        var scanlineOk = InputType == InputTypes.Scanline ? !Scanline.IsNullOrEmpty() : true;
-        var serialOk = InputType == InputTypes.Serial ? (ProductID != null &&  ProductID > 0) : true;
-        var someMatchChecked = (ckbProductID.IsChecked ?? false) 
-            || (ckbSerial.IsChecked ?? false) 
-            || (ckbPackDate.IsChecked ?? false)
-            || (ckbScanline.IsChecked ?? false) 
-            || (ckbDateRange.IsChecked ?? false);
-        var noErrors =  dateRangeOk && scanlineOk && serialOk && someMatchChecked;
-        if (!noErrors)
+        var noErrors = false;
+        if(InputType == InputTypes.Scanline || InputType == InputTypes.Serial)
         {
-            if (!dateRangeOk)
+            var dateRangeOk = ckbDateRange.IsChecked == true ? DateRange != null && DateRange.StartDate != null && DateRange.EndDate != null : true;
+            var scanlineOk = InputType == InputTypes.Scanline ? !Scanline.IsNullOrEmpty() : true;
+            var serialOk = InputType == InputTypes.Serial ? (ProductID != null && ProductID > 0) : true;
+            var someMatchChecked = (ckbProductID.IsChecked ?? false)
+                || (ckbSerial.IsChecked ?? false)
+                || (ckbPackDate.IsChecked ?? false)
+                || (ckbScanline.IsChecked ?? false)
+                || (ckbDateRange.IsChecked ?? false);
+            noErrors = dateRangeOk && scanlineOk && serialOk && someMatchChecked;
+            if (!noErrors)
             {
-                MatchErrorBlock.Text = "Date Range cannot be empty";
-                MatchErrorBlock.Visibility = Visibility.Visible;
+                if (!dateRangeOk)
+                {
+                    MatchErrorBlock.Text = "Date Range cannot be empty";
+                    MatchErrorBlock.Visibility = Visibility.Visible;
+                }
+                else if (!scanlineOk)
+                {
+                    MatchErrorBlock.Text = "Scanline cannot be empty";
+                    MatchErrorBlock.Visibility = Visibility.Visible;
+                }
+                else if (!serialOk)
+                {
+                    MatchErrorBlock.Text = "ProductID cannot be empty";
+                    MatchErrorBlock.Visibility = Visibility.Visible;
+                }
+                else if (!someMatchChecked)
+                {
+                    MatchErrorBlock.Text = "At least one match option must be selected";
+                    MatchErrorBlock.Visibility = Visibility.Visible;
+                }
             }
-            else if(!scanlineOk)
+            else
             {
-                MatchErrorBlock.Text = "Scanline cannot be empty";
-                MatchErrorBlock.Visibility = Visibility.Visible;
-            }else if (!serialOk)
-            {
-                MatchErrorBlock.Text = "ProductID cannot be empty";
-                MatchErrorBlock.Visibility = Visibility.Visible;
-            }
-            else if(!someMatchChecked)
-            {
-                MatchErrorBlock.Text = "At least one match option must be selected";
-                MatchErrorBlock.Visibility = Visibility.Visible;
+                MatchErrorBlock.Text = "";
+                MatchErrorBlock.Visibility = Visibility.Collapsed;
             }
         }
-        else
+        else if(InputType == InputTypes.LotCode)
         {
-            MatchErrorBlock.Text = "";
-            MatchErrorBlock.Visibility = Visibility.Collapsed;
+            noErrors = (!Scanline.IsNullOrEmpty());
         }
+
+      
         return noErrors;
     }
 
@@ -204,6 +217,28 @@ public sealed partial class AuditDataInputDialog : ContentDialog, INotifyPropert
 
     private void InputTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-
+        if(sender is ComboBox comboBox) 
+        {
+            switch (InputType)
+            {
+                case InputTypes.Scanline:
+                    StringInputBox.Visibility = Visibility.Visible;
+                    NumberInputBox.Visibility = Visibility.Collapsed;
+                    MatchStack.Visibility = Visibility.Visible;
+                    StringInputBox.Header = "Scanline";
+                    break;
+                case InputTypes.LotCode:
+                    StringInputBox.Visibility = Visibility.Visible;
+                    NumberInputBox.Visibility = Visibility.Collapsed;
+                    MatchStack.Visibility = Visibility.Collapsed;
+                    StringInputBox.Header = "Lot Code";
+                    break;
+                case InputTypes.Serial:
+                    StringInputBox.Visibility = Visibility.Collapsed;
+                    NumberInputBox.Visibility = Visibility.Visible;
+                    MatchStack.Visibility = Visibility.Visible;
+                    break;
+            }
+        }
     }
 }

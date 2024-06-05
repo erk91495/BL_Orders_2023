@@ -1,15 +1,6 @@
 ﻿using BlOrders2023.Models;
-using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-
 namespace BlOrders2023.Core.Data.SQL;
 
 internal class SqlProductsTable : IProductsTable

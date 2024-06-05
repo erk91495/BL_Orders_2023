@@ -107,7 +107,7 @@ public class GS1_128Barcode : IBarcode
             else if (ai.Equals("10"))
             {
                 //we dont save this ai so just carry it through to the scanline
-                UpdateAI(ai, _AIValues[ai]);
+                UpdateAI(ai, item.LotCode ?? "");
             }
             //PRODUCTION DATE
             else if (ai.Equals("11"))
@@ -272,7 +272,8 @@ public class GS1_128Barcode : IBarcode
             //Batch or lot number
             else if (ai.Equals("10"))
             {
-                //var lotCode = data;
+                var lotCode = data;
+                item.LotCode = lotCode;
                 success = true;
             }
             //ProductionDate data (YYMMDD)

@@ -89,15 +89,20 @@ public class ReportsPageViewModel : ObservableRecipient
 
     internal IEnumerable<ShippingItem> GetShippingItems(ShippingItem item, bool? matchProductID = null,
                                                         bool? matchSerial = null, bool? matchPackDate = null,
-                                                        bool? matchScanline = null,
+                                                        bool? matchScanline = null, bool? matchLot = null,
                                                         DateTime? startDate = null, DateTime? endDate = null)
     {
-        return App.GetNewDatabase().ShipDetails.GetShippingItems(item, matchProductID, matchSerial, matchPackDate, matchScanline, startDate, endDate);
+        return App.GetNewDatabase().ShipDetails.GetShippingItems(item, matchProductID, matchSerial, matchPackDate, matchScanline, matchLot, startDate, endDate);
     }
 
     internal ShippingItem? GetShippingItem(string scanline)
     {
         return App.GetNewDatabase().ShipDetails.Get(scanline);
+    }
+
+    internal ShippingItem? GetShippingItemByLot(string lotCode)
+    {
+        return App.GetNewDatabase().ShipDetails.GetByLot(lotCode);
     }
 
     internal ShippingItem? GetShippingItem(int productID, string serial)
