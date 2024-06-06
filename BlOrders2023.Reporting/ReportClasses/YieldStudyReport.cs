@@ -14,12 +14,12 @@ namespace BlOrders2023.Reporting.ReportClasses;
 public class YieldStudyReport : ReportBase
 {
     private readonly IEnumerable<LiveInventoryItem> _inventoryItems;
-    private readonly DateTime _productionDate;
+    private readonly string _lotCode;
 
-    public YieldStudyReport(CompanyInfo companyInfo, IEnumerable<LiveInventoryItem> items, DateTime productionDate) : base(companyInfo)
+    public YieldStudyReport(CompanyInfo companyInfo, IEnumerable<LiveInventoryItem> items, string lotCode) : base(companyInfo)
     {
         _inventoryItems = items;
-        _productionDate = productionDate;
+        _lotCode = lotCode;
     }
 
     protected override void ComposeHeader(IContainer container)
@@ -42,7 +42,7 @@ public class YieldStudyReport : ReportBase
 
                 row.RelativeItem(1).AlignRight().Column(column =>
                 {
-                    column.Item().Text($"Packed On: {_productionDate:M/d/yyyy}").Style(subTitleStyle);
+                    column.Item().Text($"Lot Code: {_lotCode}").Style(subTitleStyle);
                 });
             });
         });

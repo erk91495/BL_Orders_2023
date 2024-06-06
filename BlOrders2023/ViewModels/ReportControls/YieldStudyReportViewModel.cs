@@ -13,14 +13,14 @@ internal class YieldStudyReportViewModel : IReportViewModel<YieldStudyReport>
     public readonly IBLDatabase _db = App.GetNewDatabase();
     public ReportCategory ReportCategories =>  ReportCategory.Products;
 
-    public List<PromptTypes> Prompts => [PromptTypes.Date];
+    public List<PromptTypes> Prompts => [PromptTypes.LotCode];
 
     public string ReportDescription => "Gets products produced and yields for the given date.";
 
     public async Task<object?[]> GetData(object[] userInputs)
     {
-        DateTimeOffset date = (DateTimeOffset)userInputs[0];
-        var items = await _db.Inventory.GetInventoryItemsAsync(date,date);
-        return [items, date.DateTime];
+        string lotCode = (string)userInputs[0];
+        var items = await _db.Inventory.GetInventoryItemsAsync(lotCode);
+        return [items, lotCode];
     }
 }

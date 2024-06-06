@@ -128,6 +128,11 @@ internal class SqlInventoryTable : IInventoryTable
         return await _db.LiveInventoryItems.Where(i => i.PackDate >= startDate.Date && i.PackDate <= endDate.Date).ToListAsync();
     }
 
+    public async Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsAsync(string lotCode)
+    {
+        return await _db.LiveInventoryItems.Where(i => i.LotCode == lotCode).ToListAsync();
+    }
+
     public async Task<IEnumerable<LiveInventoryItem>> GetInventoryItemsAsync(IEnumerable<int> ids = null)
     {
         if (ids != null)

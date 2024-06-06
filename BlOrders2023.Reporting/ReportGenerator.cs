@@ -165,9 +165,9 @@ public class ReportGenerator
         return new HistoricalProductCategoryTotalsReport(CompanyInfo, categories, items, startDate, endDate);
     }
 
-    private IReport GetYieldStudyReport(IEnumerable<LiveInventoryItem> items, DateTime productionDate)
+    private IReport GetYieldStudyReport(IEnumerable<LiveInventoryItem> items, string lotCode)
     {
-        return new YieldStudyReport(CompanyInfo, items, productionDate);
+        return new YieldStudyReport(CompanyInfo, items, lotCode);
     }
 
     public IReport GetReport(Type type, params object[] args)

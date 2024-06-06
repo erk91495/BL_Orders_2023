@@ -17,6 +17,7 @@ public enum PromptTypes
     BillOfLading,
     ProductCategories,
     AuditTrail,
-    OrderByDateOrAlphabetical
+    OrderByDateOrAlphabetical,
+    LotCode,
 }
 

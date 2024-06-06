@@ -22,6 +22,7 @@ using BlOrders2023.ViewModels.ReportControls;
 using System.Reflection;
 using Microsoft.UI.Xaml;
 using System.Diagnostics.Eventing.Reader;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -326,6 +327,42 @@ public sealed partial class ReportsPage : Page
                     };
                     var res = await d.ShowAsync();
                     return [res == ContentDialogResult.Primary];
+                }
+            case PromptTypes.LotCode:
+                {
+                    SingleValueInputDialog dialog = new()
+                    {
+                        Title = "Lot Code",
+                        Prompt = "Please Enter A Lot Code",
+                        XamlRoot = XamlRoot,
+                        PrimaryButtonText = "Submit",
+                        SecondaryButtonText = "Cancel",
+                    };
+                    var result = await dialog.ShowAsync();
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        if (dialog.Value.IsNullOrEmpty())
+                        {
+                            ContentDialog d = new()
+                            {
+                                XamlRoot = XamlRoot,
+                                Title = "User Error",
+                                Content = $"Invalid Order ID {dialog.Value}.\r\n " +
+                                $"Please enter a numeric value",
+                                PrimaryButtonText = "ok",
+                            };
+                            await d.ShowAsync();
+                            return null;
+                        }
+                        else
+                        {
+                            return [dialog.Value];
+                        }
+                    }
+                    else
+                    {
+                        throw new UserCanceledException();
+                    }
                 }
             case PromptTypes.None:
                 return [];
