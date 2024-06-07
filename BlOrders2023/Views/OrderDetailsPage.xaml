@@ -368,6 +368,10 @@
             <sf:SfDataGrid.TableSummaryRows>
                 <sf:GridTableSummaryRow ShowSummaryInRow="False">
                     <sf:GridSummaryRow.SummaryColumns>
+                        <sf:GridSummaryColumn Name="Net Wt."
+                                              MappingName="PickWeight"
+                                              Format="'{Sum:N2}'"
+                                              SummaryType="DoubleAggregate" />
                         <sf:GridSummaryColumn Name="Quantity"
                                               MappingName="Quantity"
                                               Format="'{Sum}'"
