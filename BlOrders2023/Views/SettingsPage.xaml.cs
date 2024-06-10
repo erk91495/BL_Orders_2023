@@ -20,6 +20,33 @@ public sealed partial class SettingsPage : Page
     {
         ViewModel = App.GetService<SettingsViewModel>();
         InitializeComponent();
+        AddPageSelctionItems();
+    }
+
+    private void AddPageSelctionItems()
+    {
+        PageSelectionCombo.Items.Add("Orders Page");
+        PageSelectionCombo.Items.Add("Settings Page");
+        PageSelectionCombo.Items.Add("Fill Orders Page");
+        PageSelectionCombo.Items.Add("Inventory Page");
+        var settings = App.GetService<ILocalSettingsService>();
+        var startPage = settings.ReadSetting<string>(LocalSettingsKeys.StartupPage);
+        if(startPage == typeof(OrdersPageViewModel).FullName)
+        {
+            PageSelectionCombo.SelectedValue = "Orders Page";
+        }
+        else if (startPage == typeof(SettingsViewModel).FullName) 
+        {
+            PageSelectionCombo.SelectedValue = "Settings Page";
+        }
+        else if (startPage == typeof(FillOrdersPageViewModel).FullName)
+        {
+            PageSelectionCombo.SelectedValue = "Fill Orders Page";
+        }
+        else if (startPage == typeof(InventoryPageViewModel).FullName)
+        {
+            PageSelectionCombo.SelectedValue = "Inventory Page";
+        }
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -34,5 +61,38 @@ public sealed partial class SettingsPage : Page
     {
         IssueSubmitterInputDialog dialog = new() { XamlRoot = XamlRoot};
         await dialog.ShowAsync();
+    }
+
+    private async void PageSelectionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var settings = App.GetService<ILocalSettingsService>();
+        if(sender is ComboBox box)
+        {
+            switch (box.SelectedValue)
+            {
+                case "Orders Page":
+                    {
+                        await settings.SaveSettingAsync(LocalSettingsKeys.StartupPage, typeof(OrdersPageViewModel).FullName);
+                        break;
+                    }
+                case "Settings Page":
+                    {
+                        await settings.SaveSettingAsync(LocalSettingsKeys.StartupPage, typeof(SettingsViewModel).FullName);
+                        break;
+                    }
+                case "Fill Orders Page":
+                    {
+                        await settings.SaveSettingAsync(LocalSettingsKeys.StartupPage, typeof(FillOrdersPageViewModel).FullName);
+                        break;
+                    }
+                case "Inventory Page":
+                    {
+                        await settings.SaveSettingAsync(LocalSettingsKeys.StartupPage, typeof(InventoryPageViewModel).FullName);
+                        break;
+                    }
+                default:
+                    break;
+            }
+        }
     }
 }

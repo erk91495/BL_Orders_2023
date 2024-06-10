@@ -2,6 +2,7 @@
 using BlOrders2023.Helpers;
 using BlOrders2023.Services;
 using BlOrders2023.ViewModels;
+using BlOrders2023.Views;
 using Microsoft.UI.Xaml;
 
 namespace BlOrders2023.Activation;
@@ -31,7 +32,8 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
         }
         else
         {
-            _navigationService.NavigateTo(typeof(OrdersPageViewModel).FullName!, args.Arguments);
+            var startupPage = settings.ReadSetting<string>(LocalSettingsKeys.StartupPage) ?? typeof(OrdersPageViewModel).FullName;
+            _navigationService.NavigateTo(startupPage, args.Arguments);
         }
         
 

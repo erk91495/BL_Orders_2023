@@ -7,6 +7,7 @@
     xmlns:helpers="using:BlOrders2023.ViewModels.Converters"
     xmlns:xaml="using:Microsoft.UI.Xaml"
     xmlns:uc="using:BlOrders2023.UserControls"
+    xmlns:labs="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
     <Page.Resources>
         <helpers:EnumToBoolConverter x:Key="EnumToBooleanConverter" />
@@ -18,9 +19,15 @@
                 <uc:SqlConnectionSettingsPanel x:Name="DatabaseSettings"/>
 
                 <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <labs:SettingsCard Header="Startup Page">
+                    <labs:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE7C3;"/>
+                    </labs:SettingsCard.HeaderIcon>
+                    <ComboBox x:Name="PageSelectionCombo" SelectionChanged="PageSelectionCombo_SelectionChanged"/>
+
+                </labs:SettingsCard>
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <TextBlock x:Uid="Settings_Theme" />
-
                     <StackPanel Margin="{StaticResource XSmallTopMargin}">
                         <RadioButton x:Uid="Settings_Theme_Light"
                                      Command="{x:Bind ViewModel.SwitchThemeCommand}"

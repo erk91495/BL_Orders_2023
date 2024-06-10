@@ -3,6 +3,8 @@ using BlOrders2023.Core.Contracts.Services;
 using BlOrders2023.Core.Helpers;
 using BlOrders2023.Helpers;
 using BlOrders2023.Models;
+using BlOrders2023.ViewModels;
+using BlOrders2023.Views;
 using Microsoft.Extensions.Options;
 
 using Windows.ApplicationModel;
@@ -71,6 +73,7 @@ public class LocalSettingsService : ILocalSettingsService
         SaveSetting(LocalSettingsKeys.FirstRun, false);
         SaveSetting(LocalSettingsKeys.DBConnectionString, "Data Source=BL4;Initial Catalog=BL_Enterprise;User ID=;Trust Server Certificate=True;Authentication=ActiveDirectoryIntegrated");
         SaveSetting(LocalSettingsKeys.DBSettingsSet, false);
+        SaveSetting(LocalSettingsKeys.StartupPage, nameof(OrdersPage));
     }
 
     private void AddMissingSettings()
@@ -89,7 +92,12 @@ public class LocalSettingsService : ILocalSettingsService
         {
             SaveSetting(LocalSettingsKeys.DBSettingsSet, false);
         }
-        
+
+        if (!SettingKeyExists(LocalSettingsKeys.StartupPage))
+        {
+            SaveSetting(LocalSettingsKeys.StartupPage, typeof(FillOrdersPageViewModel).FullName);
+        }
+
     }
 
     private async Task InitializeAsync()
