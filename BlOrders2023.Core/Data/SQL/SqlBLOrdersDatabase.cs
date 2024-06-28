@@ -43,6 +43,7 @@ public class SqlBLOrdersDatabase : IBLDatabase
     public IProductCategoriesTable ProductCategories => new SqlProductCategoriesTable(_dbContext);
     public IReportsTable Reports => new SqlReportsTable(_dbContext);
     public IDiscountTable Discounts => new SqlDiscountsTable(_dbContext);
+    public IRecipeTable Recipes => new SqlRecipeTable(_dbContext);
     public Version dbVersion 
     {
         get

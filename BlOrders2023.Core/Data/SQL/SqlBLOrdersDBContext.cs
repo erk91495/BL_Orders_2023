@@ -54,6 +54,8 @@ public class SqlBLOrdersDBContext : DbContext
                 v => (DiscountTypes)v);
         modelBuilder.Entity<Discount>().HasMany(e => e.Products).WithMany(p => p.Discounts).UsingEntity<DiscountProductMap>();
         modelBuilder.Entity<Discount>().HasMany(e => e.Customers).WithMany(c => c.Discounts).UsingEntity<DiscountCustomerMap>();
+        modelBuilder.Entity<Recipe>().HasMany(e => e.MasterIngredients).WithMany(m => m.Recipes).UsingEntity<RecipeMasterIngredientsMap>();
+        modelBuilder.Entity<MasterIngredient>().HasMany(e => e.Ingredients).WithMany(i => i.MasterIngredients).UsingEntity<MasterIngredientIngredientsMap>();
     }
 
     public DbSet<InventoryAdjustmentItem> InventoryAdjustments { get; set; }
@@ -81,4 +83,9 @@ public class SqlBLOrdersDBContext : DbContext
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<DiscountCustomerMap> DiscountCustomerMap { get; set; }
     public DbSet<DiscountProductMap> DiscountProductMap { get; set; }
+    public DbSet<Recipe> Recipes { get; set; }
+    public DbSet<MasterIngredient> MasterIngredients { get; set; }
+    public DbSet<Ingredient> Ingredients { get; set; }
+    public DbSet<MasterIngredientIngredientsMap> MasterIngredientIngredientsMaps { get; set; }
+    public DbSet<RecipeMasterIngredientsMap> RecipeMasterIngredientsMaps { get; set; }
 }
